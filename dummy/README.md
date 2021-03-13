@@ -21,7 +21,7 @@ The driver keeps track of how many times *_read() has been called.
 If the number of calls is less than the number of milliseconds the call returns 2. Otherwise it returns 0.
 
 The buffer is filled with to entries of structure TDCHit. 
-````C++
+```C++
 num_calls = // the number of times *_read() has been called since *_start_capture()
 normal = //random number with mean = 5000 and standard deviation = 30
 buffer[0].time = num_calls * 1000000000;
