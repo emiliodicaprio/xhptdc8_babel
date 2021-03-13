@@ -11,9 +11,10 @@ Eventually you will also find utility functions such as default configurations f
 
     .
     ├── lib/      # real and dummy driver libraries and header files
+    ├── dummy/    # dummy library to enable development in this repository without access to the hardware
     ├── util/     # utility functions common to all wrappers
     └── python/   # python wrapper around driver and utilities
-(created by [tree.nathanfriend.io](https://tree.nathanfriend.io/?s=(%27options!(%27fancy!true~fullPath!false~trailingSlash!true)~6(%276%27lib%2F4*real-dummy2%20libraries-header%20files%5Cn5%2F.*5ity%20functions%20common%20to3ll0s%5Cnpython%2F*python03round2-5ities%27)~version!%271%27)*4%23%20-3nd%204%200%20wrapper2%20driver3%20a4.%205util6source!%01654320.-*)
+(created by [tree.nathanfriend.io](https://tree.nathanfriend.io/?s=(%27options!(%27fancy!true~fullPath!false~trailingSlash!true)~8(%278%27lib09*real-62drivBlibraries-headBfiles56y0*62library.enable%20development%20inDhiCrepositor2without4ccess.the%20hardware570%20*7it2functionCcommon.all3s5python%2F*python34rouAdriver-7ities%27)~version!%271%27)*9%20%23%20-4A.Do%200%2F%202y%203%20wrapper4%20a5%5Cn6dumm7util8source!9%20%20And%20Ber%20Cs%20D%20t%01DCBA987654320.-*)
 
 ## License
 
