@@ -2,7 +2,9 @@
 This is the source code for the dummy libraries that can be found in the /lib/ directory of this repository.
 They implmeent the same API as the driver for the xHPTDC8 and are intended to allow development without access to the hardware.
 
- The dummy driver can be link to any program that can link to the real driver library. Calls to the driver functions will return data that is consistent with the driver documentation in the User Guide that can be found on the [xHPTDC8 product page](https://www.cronologic.de/products/tdcs/xhptdc8-pcie).
+The dummy driver can be link to any program that can link to the real driver library. Calls to the driver functions will return data that is consistent with the driver documentation in the User Guide that can be found on the [xHPTDC8 product page](https://www.cronologic.de/products/tdcs/xhptdc8-pcie).
+
+See the [README.md](../README.md) for licensing information.
 
 ## Emulation
 The dummy driver mostly does not emulate the behaviour of the xHPTDC. Most fields in the info structures return constant values.
@@ -12,7 +14,7 @@ Some emulations of the device behaviour is done:
 ### driver states
 The state of the driver returns the actual state depending on teh calls to *_init(), *_close(), *_start_capture() and *_stop_capture().
 
-## tdc data
+### tdc data
 The dummy driver emulates a situation where one start and one stop hit appear at a rate of 1kHz. To do this, the dummy driver maintains track of how the millieconds that are elapsed since the call to *_start_capture().
 
 ### grouping mode
