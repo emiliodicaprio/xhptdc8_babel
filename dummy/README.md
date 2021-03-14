@@ -4,7 +4,7 @@ They implmeent the same API as the driver for the xHPTDC8 and are intended to al
 
 The dummy driver can be link to any program that can link to the real driver library. Calls to the driver functions will return data that is consistent with the driver documentation in the User Guide that can be found on the [xHPTDC8 product page](https://www.cronologic.de/products/tdcs/xhptdc8-pcie).
 
-See the [README.md](../README.md) for licensing information.
+See [README.md](../README.md) of the repository for licensing information.
 
 ## Emulation
 The dummy driver mostly does not emulate the behaviour of the xHPTDC. Most fields in the info structures return constant values.
