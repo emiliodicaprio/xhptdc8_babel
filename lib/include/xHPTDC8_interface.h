@@ -517,7 +517,7 @@ extern "C" {
 		*/
 		int ignore_calibration;
 
-	} xtdc8manager_init_parameters;
+	} xhptdc8manager_init_parameters; //$$ renamed to hp
 
 	/*!	\ingroup initparamsstruct
 	*	\brief struct for the initialization of the xTDC8Manager
@@ -822,9 +822,9 @@ extern "C" {
 	//!< external 10 MHz provided at J12 (no longer supported)
 #define XHPTDC8_CLK_J12 1
 	//!< internal 10 MHz oscillator
-#define XHPTDC8_CLK_INTERAL_OSC 2
+#define XHPTDC8_CLK_OSC 2
 	//!< external 10 MHz provided at the internal LEMO connector 
-#define XHPTDC8_CLK_INTERAL_LEMO 4
+#define XHPTDC8_CLK_LEMO 4
 
 	/*! \ingroup tempinfo
 	*	\brief contains temperature measurements
@@ -959,7 +959,7 @@ extern "C" {
 	* /brief Configure the optional grouping functionality
 	*
 	*/
-	typedef struct {
+	struct xhptdc8_grouping_configuration { //$$ Changed
 		/*! \brief Das ist der Kanel auf den Getriggert wird.
 		*/
 		int trigger_channel; // <= i32TriggerChannel
@@ -1016,7 +1016,7 @@ extern "C" {
 			*/
 		bool overlap = false; // <= bAllowOverlap;
 		
-	} xhptdc8_grouping_configuration;
+	} ; //$$ Removed xhptdc8_grouping_configuration
 
 
 	/*! \ingroup confstruct Structure xhptdc8_device_configuration
@@ -1092,7 +1092,7 @@ extern "C" {
 		*	dc_offset for an input must be set to the relative switching voltage for the input standard in use. If
 		*	the pulses are negative, a negative switching threshold must be set and vice versa.
 		*/
-		double tdc_trigger_offset[XHPTDC8_TDC_CHANNEL_COUNT];
+		double dc_offset[XHPTDC8_TDC_CHANNEL_COUNT];
 		xhptdc8_trigger trigger[XHPTDC8_TRIGGER_COUNT]; //!< Configuration of external trigger sources
 		xhptdc8_tiger_block gating_block[XHPTDC8_GATE_COUNT]; //!< configuration of the gating blocks
 		xhptdc8_tiger_block tiger_block[XHPTDC8_TIGER_COUNT]; //!< configuration of the timing generator blocks
@@ -1151,6 +1151,8 @@ extern "C" {
 		*/
 		xhptdc8_grouping_configuration grouping;
 
+		void* bin_to_ps;	//$$ added from user guide
+
 	} xhptdc8_manager_configuration;
 
 	/*!	\ingroup conffuncts
@@ -1186,7 +1188,7 @@ extern "C" {
 	*	\param *error_code is type int
 	*	\param **error_message is type const char
 	*/
-	XHPTDC8_API int xhptdc8_count_devices(int *error_code, const char** error_message);
+	XHPTDC8_API int xhptdc8_count_devices(int *error_code, char** error_message);
 
 	/*!	\ingroup initfuncts
 	* @{
@@ -1198,7 +1200,7 @@ extern "C" {
 	*	Return values are listed @link defdefinpar here @endlink.
 	*	\param init is type *xtdc8manager_init_parameters
 	*/
-	XHPTDC8_API int xhptdc8_get_default_init_parameters(xtdc8manager_init_parameters *init);
+	XHPTDC8_API int xhptdc8_get_default_init_parameters(xhptdc8manager_init_parameters *init); //$$ struct renamed to hp
 
 	/*!	\brief Open and initialize the xHPTDC8 board with the given index.
 	*
@@ -1208,7 +1210,7 @@ extern "C" {
 	*	\param *error_code is type int
 	*	\param **error_message is type char. The buffer for the error message has to contain at least 80 chars.
 	*/
-	XHPTDC8_API xhptdc8_manager *xhptdc8_init(xtdc8manager_init_parameters *params, int *error_code, const char** error_message);
+	XHPTDC8_API xhptdc8_manager *xhptdc8_init(xhptdc8manager_init_parameters *params, int *error_code, const char** error_message);
 
 	/*!	\ingroup statfuncts
 	*	\brief Returns the driver version, same format as xhptdc8_static_info::driver_revision
