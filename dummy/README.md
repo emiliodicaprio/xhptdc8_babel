@@ -12,7 +12,7 @@ The dummy driver mostly does not emulate the behaviour of the xHPTDC. Most field
 Some emulations of the device behaviour is done:
 
 ### driver states
-The state of the driver returns the actual state depending on teh calls to *_init(), *_close(), *_start_capture() and *_stop_capture().
+The state of the driver returns the actual state depending on the calls to *_init(), *_close(), *_start_capture() and *_stop_capture().
 
 ### tdc data
 The dummy driver emulates a situation where one start and one stop hit appear at a rate of 1kHz. To do this, the dummy driver maintains track of how the millieconds that are elapsed since the call to *_start_capture().
