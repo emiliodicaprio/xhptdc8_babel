@@ -13,17 +13,62 @@
 #define XHPTDC8_VETO_INSIDE		1
 #define XHPTDC8_VETO_OUTSIDE	2
 
+int init_static_info_internal(xhptdc8_static_info* info);
+void _set_last_error_internal(xhptdc8_manager* xhptdc8_mgr, const char* format, ...);
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-const char* InvalidDevMgr = "Invalid device manager!";
-const char MSG_OK[3] = { "OK" };
-const char lastErrorMessageDummy[20] = "Last Error Message!";
+	enum ManagerState
+	{
+		CREATED = 0,
+		INITIALIZED = 1,
+		CONFIGURED = 2,
+		CAPTURING = 3,
+		PAUSED = 4,
+		CLOSED = 5
+	};
+
+	typedef struct xhptdc8_dummy_manager_ xhptdc8_dummy_manager;
+	struct xhptdc8_dummy_manager_
+	{
+		xhptdc8manager_init_parameters params;
+		xhptdc8_static_info staticInfo;
+		int state;
+		xhptdc8_manager_configuration p_mgr_cfg;
+		/*
+		* In Milliseconds
+		*/
+		long start_capture_time;
+		/*
+		* Saves time captured because of call of pause() or stop()
+		*/
+		long captured_stored_time;
+		/*
+		* Number of calls to xhptdc8_read_hits()
+		* How many times *_read() has been called.
+		*/
+		long read_hits_count;
+		/*
+		* Timestamp of calling *_read() function
+		*/
+		long last_read_time;
+
+		const static size_t MaxErrorMessageSize = 10000;
+		char last_error_message[MaxErrorMessageSize];
+	} ;
+
+	const char* InvalidDevMgr = "Invalid device manager!";
+	const char MSG_OK[3] = { "OK" };
+	const char lastErrorMessageDummy[20] = "Last Error Message!";
+
+	int xhptdc8_is_valid_device(xhptdc8_manager* xhptdc8_mgr);
+	int xhptdc8_is_valid_device_index(xhptdc8_manager* xhptdc8_mgr, int index);
+
 
 #ifdef __cplusplus
 }
 #endif
 
 #endif
-

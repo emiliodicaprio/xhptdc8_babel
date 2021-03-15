@@ -4,7 +4,7 @@
 //
 
 /*! \file
-*	\brief The functions provided by the API are declared in xTDC8_interface.h.
+*	\brief The functions provided by the API are declared in xHPTDC8_interface.h.
 *
 *	The API is a DLL with C linkage.
 */
@@ -40,7 +40,7 @@
 /*!@}*/
 /*! \defgroup device Structure xhptdc8_device
 */
-/*!	\defgroup initparamsstruct Structure xtdc8manager_init_parameters
+/*!	\defgroup initparamsstruct Structure xhptdc8manager_init_parameters
 *	\brief struct for the initialization of the xHPTDC8
 *
 *	this structure MUST be completely INITIALIZED
@@ -250,7 +250,7 @@
 #define XHPTDC8_DEFAULT_BUFFER_SIZE 0x400000				// 4 MB
 
 /*! \ingroup devices count maximum for grouping	*/
-#define	XTDC8MANAGER_DEVICES_MAX 8
+#define	XHPTDC8MANAGER_DEVICES_MAX 8
 
 /*! \ingroup constants Constants
 * @{
@@ -301,27 +301,27 @@
 /*! \ingroup defdcoffset
 *@{
 */
-#define XHPTDC8_DC_OFFSET_BASELINE		+1.32
-#define XHPTDC8_DC_OFFSET_P_NIM			+0.35
-#define XHPTDC8_DC_OFFSET_P_CMOS		+1.18
-#define XHPTDC8_DC_OFFSET_P_LVCMOS_33	+1.18
-#define XHPTDC8_DC_OFFSET_P_LVCMOS_25	+1.18
-#define XHPTDC8_DC_OFFSET_P_LVCMOS_18	+0.90
-#define XHPTDC8_DC_OFFSET_P_TTL			+1.18
-#define XHPTDC8_DC_OFFSET_P_LVTTL_33	+1.18
-#define XHPTDC8_DC_OFFSET_P_LVTTL_25	+1.18
-#define XHPTDC8_DC_OFFSET_P_SSTL_3		+1.18
-#define XHPTDC8_DC_OFFSET_P_SSTL_2		+1.18
-#define XHPTDC8_DC_OFFSET_N_NIM			-0.35
-#define XHPTDC8_DC_OFFSET_N_CMOS		-1.32
-#define XHPTDC8_DC_OFFSET_N_LVCMOS_33	-1.32
-#define XHPTDC8_DC_OFFSET_N_LVCMOS_25	-1.25
-#define XHPTDC8_DC_OFFSET_N_LVCMOS_18	-0.90
-#define XHPTDC8_DC_OFFSET_N_TTL			-1.32
-#define XHPTDC8_DC_OFFSET_N_LVTTL_33	-1.32
-#define XHPTDC8_DC_OFFSET_N_LVTTL_25	-1.25
-#define XHPTDC8_DC_OFFSET_N_SSTL_3		-1.32
-#define XHPTDC8_DC_OFFSET_N_SSTL_2		-1.25
+#define XHPTDC8_THRESHOLD_BASELINE		+1.32
+#define XHPTDC8_THRESHOLD_P_NIM			+0.35
+#define XHPTDC8_THRESHOLD_P_CMOS		+1.18
+#define XHPTDC8_THRESHOLD_P_LVCMOS_33	+1.18
+#define XHPTDC8_THRESHOLD_P_LVCMOS_25	+1.18
+#define XHPTDC8_THRESHOLD_P_LVCMOS_18	+0.90
+#define XHPTDC8_THRESHOLD_P_TTL			+1.18
+#define XHPTDC8_THRESHOLD_P_LVTTL_33	+1.18
+#define XHPTDC8_THRESHOLD_P_LVTTL_25	+1.18
+#define XHPTDC8_THRESHOLD_P_SSTL_3		+1.18
+#define XHPTDC8_THRESHOLD_P_SSTL_2		+1.18
+#define XHPTDC8_THRESHOLD_N_NIM			-0.35
+#define XHPTDC8_THRESHOLD_N_CMOS		-1.32
+#define XHPTDC8_THRESHOLD_N_LVCMOS_33	-1.32
+#define XHPTDC8_THRESHOLD_N_LVCMOS_25	-1.25
+#define XHPTDC8_THRESHOLD_N_LVCMOS_18	-0.90
+#define XHPTDC8_THRESHOLD_N_TTL			-1.32
+#define XHPTDC8_THRESHOLD_N_LVTTL_33	-1.32
+#define XHPTDC8_THRESHOLD_N_LVTTL_25	-1.25
+#define XHPTDC8_THRESHOLD_N_SSTL_3		-1.32
+#define XHPTDC8_THRESHOLD_N_SSTL_2		-1.25
 /*!@}*/
 
 /*!\ingroup deftriggersource
@@ -460,7 +460,7 @@ extern "C" {
 
 
 	/*!	\ingroup initparamsstruct
-	*	\brief struct for the initialization of the xTDC8Manager
+	*	\brief struct for the initialization of the xHPTDC8Manager
 	*
 	*	this structure MUST be completely INITIALIZED
 	*/
@@ -520,7 +520,7 @@ extern "C" {
 	} xhptdc8manager_init_parameters; //$$ renamed to hp
 
 	/*!	\ingroup initparamsstruct
-	*	\brief struct for the initialization of the xTDC8Manager
+	*	\brief struct for the initialization of the xHPTDC8Manager
 	*
 	*	this structure MUST be completely INITIALIZED
 	*/
@@ -1015,6 +1015,10 @@ extern "C" {
 			/*! \brief Muss auf false bleiben, kann später mal benutzt werden, um auch überlappende Gruppen zu erzeugen
 			*/
 		bool overlap = false; // <= bAllowOverlap;
+
+		/*
+		*/
+		bool enable = false; 
 		
 	} ; //$$ Removed xhptdc8_grouping_configuration
 
@@ -1092,7 +1096,7 @@ extern "C" {
 		*	dc_offset for an input must be set to the relative switching voltage for the input standard in use. If
 		*	the pulses are negative, a negative switching threshold must be set and vice versa.
 		*/
-		double dc_offset[XHPTDC8_TDC_CHANNEL_COUNT];
+		double thresholds[XHPTDC8_TDC_CHANNEL_COUNT];
 		xhptdc8_trigger trigger[XHPTDC8_TRIGGER_COUNT]; //!< Configuration of external trigger sources
 		xhptdc8_tiger_block gating_block[XHPTDC8_GATE_COUNT]; //!< configuration of the gating blocks
 		xhptdc8_tiger_block tiger_block[XHPTDC8_TIGER_COUNT]; //!< configuration of the timing generator blocks
@@ -1144,7 +1148,7 @@ extern "C" {
 		/** \brief xhptdc_device_configuration device_configs
 		*
 		*/
-		xhptdc8_device_configuration device_configs[XTDC8MANAGER_DEVICES_MAX];
+		xhptdc8_device_configuration device_configs[XHPTDC8MANAGER_DEVICES_MAX];
 
 		/** \brief xhptdc8_grouping_configuration grouping
 		*
@@ -1196,9 +1200,9 @@ extern "C" {
 	/*!	\brief Sets up the standard parameters
 	*
 	*	Gets a set of default parameters for @link xhptdc8_init xhptdc8_init() @endlink . This must always
-	*	be used to initialize the @link initparamsstruct xtdc8manager_init_parameter() @endlink structure.
+	*	be used to initialize the @link initparamsstruct xhptdc8manager_init_parameter() @endlink structure.
 	*	Return values are listed @link defdefinpar here @endlink.
-	*	\param init is type *xtdc8manager_init_parameters
+	*	\param init is type *xhptdc8manager_init_parameters
 	*/
 	XHPTDC8_API int xhptdc8_get_default_init_parameters(xhptdc8manager_init_parameters *init); //$$ struct renamed to hp
 
@@ -1206,7 +1210,7 @@ extern "C" {
 	*
 	*	With error_code and error_message the user must provide pointers where error information should be
 	*	written by the driver. Return values are listed @link definit here @endlink.
-	*	\param *params type xtdc8manager_init_parameters
+	*	\param *params type xhptdc8manager_init_parameters
 	*	\param *error_code is type int
 	*	\param **error_message is type char. The buffer for the error message has to contain at least 80 chars.
 	*/
