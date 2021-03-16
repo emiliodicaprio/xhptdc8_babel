@@ -150,9 +150,6 @@
 *	xhptdc8_tiger_block @endlink
 * @{
 */
-/*!	\defgroup tdcmode #defines for tdc_mode
-*	\brief tdc_mode can be either grouped or continuous
-*/
 /*!	\defgroup defdcoffset #defines for dc_offset
 *	\brief dc_offset values for various signal standards
 *
@@ -289,13 +286,6 @@
 */
 #define XHPTDC8_BUFFER_ALLOCATE		0	//!< either allocated (only option currently)
 #define XHPTDC8_BUFFER_USE_PHYSICAL	1	//!< or physical
-/*!@}*/
-
-/*! \ingroup tdcmode
-*@{
-*/
-#define XHPTDC8_TDC_MODE_GROUPED	0	//!< grouped tdc_mode
-#define XHPTDC8_TDC_MODE_CONTINUOUS	1	//!< continuous tdc_mode: not supported yet
 /*!@}*/
 
 /*! \ingroup defdcoffset
@@ -1044,9 +1034,6 @@ extern "C" {
 				  * all versions up to first release.
 				  */
 		int version;
-		/** \brief tdc_mode can be either grouped or continuous
-		 */
-		int tdc_mode;
 		/** \brief component to create a trigger either periodically or randomly.
 		*
 		*  To be exact, there are two parameters M = @link auto_trigger_period auto_trigger_period @endlink

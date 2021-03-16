@@ -389,7 +389,6 @@ extern "C" int xhptdc8_get_default_configuration(xhptdc8_manager * xhptdc8_mgr,
 		config->device_configs[device_index].version = XHPTDC8_DEVICE_CONFIG_VERSION;
 		config->device_configs[device_index].auto_trigger_period = 0;
 		config->device_configs[device_index].auto_trigger_random_exponent = 0;
-		config->device_configs[device_index].tdc_mode = XHPTDC8_TDC_MODE_GROUPED;
 
 		for (int channel_index = 0; channel_index < XHPTDC8_TDC_CHANNEL_COUNT; channel_index++)
 		{
