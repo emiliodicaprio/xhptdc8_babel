@@ -13,9 +13,6 @@
 #define XHPTDC8_VETO_INSIDE		1
 #define XHPTDC8_VETO_OUTSIDE	2
 
-int init_static_info_internal(xhptdc8_static_info* info);
-void _set_last_error_internal(xhptdc8_manager* xhptdc8_mgr, const char* format, ...);
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -63,12 +60,17 @@ extern "C" {
 	const char MSG_OK[3] = { "OK" };
 	const char lastErrorMessageDummy[20] = "Last Error Message!";
 
-	int xhptdc8_is_valid_device(xhptdc8_manager* xhptdc8_mgr);
-	int xhptdc8_is_valid_device_index(xhptdc8_manager* xhptdc8_mgr, int index);
+	crono_bool_t xhptdc8_is_valid_device(xhptdc8_manager* xhptdc8_mgr);
+	crono_bool_t xhptdc8_is_valid_device_index(xhptdc8_manager* xhptdc8_mgr, int index);
 
 
 #ifdef __cplusplus
 }
 #endif
+
+int init_static_info_internal(xhptdc8_static_info* info);
+void _set_last_error_internal(xhptdc8_manager* xhptdc8_mgr, const char* format, ...);
+int _xhptdc8_read_hits_for_groups_internal(xhptdc8_dummy_manager* mngr, TDCHit* hit_buf, size_t size);
+int _xhptdc8_read_hits_for_NO_groups_internal(xhptdc8_dummy_manager* mngr, TDCHit* hit_buf, size_t size);
 
 #endif

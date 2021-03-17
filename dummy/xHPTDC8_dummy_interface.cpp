@@ -5,6 +5,9 @@
 #include "xHPTDC8_dummy_interface.h"
 #include <random>
 
+static std::default_random_engine g_generator; // Random engine generator
+static std::normal_distribution<double> g_distribution(5000.0, 30.0);
+
 //_____________________________________________________________________________
 // Driver Information APIs
 // 
@@ -15,7 +18,7 @@
 */
 extern "C" int xhptdc8_get_driver_revision()
 {
-	return 0;
+	return VER_FILE_VERSION;
 }
 
 /*
@@ -665,67 +668,91 @@ extern "C" int xhptdc8_read_hits(xhptdc8_manager* xhptdc8_mgr, TDCHit* hit_buf, 
 
 	if ( mngr->p_mgr_cfg.grouping.enable )
 	{
-		if (mngr->read_hits_count < mngr->captured_stored_time)
-		// The number of calls is less than the number of milliseconds elapsed since 
-		// the call to *_start_capture().
+		int ret = _xhptdc8_read_hits_for_groups_internal(mngr, hit_buf, size);
+		switch (ret)
 		{
-			if (size < 2)
-			{
-				_set_last_error_internal(xhptdc8_mgr, "Buffer size is too small!");
-				return 0;
-			}
-			int normal; //random number with mean = 5000 and standard deviation = 30
-			std::default_random_engine generator;
-			std::normal_distribution<double> distribution(5000.0, 30.0);
-			normal = int(distribution(generator));
-
-			hit_buf[0].time = mngr->read_hits_count * 1000000000;
-			hit_buf[1].time = mngr->read_hits_count * 1000000000 + normal;
-			hit_buf[0].channel = 0;
-			hit_buf[1].channel = 1;
-			hit_buf[0].type = XHPTDC8_TDCHIT_TYPE_RISING;
-			hit_buf[1].type = XHPTDC8_TDCHIT_TYPE_RISING;
-			hit_buf[0].bin = 0;
-			hit_buf[1].bin = 0;
-
-			return 2 ;
-		}
-		else
-		{
+		case 2:
+			return 2;
+			break;
+		case 0:
+		case -1:
+		default:
 			_set_last_error_internal(xhptdc8_mgr, "Buffer size is too small!");
-			return 0;
+			return ret ;
 		}
 	}
 	else
 	// Grouping is not enabled
 	{
-		// Calculate ms_since_last_call
-		SYSTEMTIME time;
-		GetSystemTime(&time);
-		long current_timestamp = (time.wSecond * 1000) + time.wMilliseconds;
-		long ms_since_last_call = current_timestamp - mngr->last_read_time;
-		mngr->last_read_time = current_timestamp;
+		return _xhptdc8_read_hits_for_NO_groups_internal(mngr, hit_buf, size);
+	}
+}
 
-		// Calculate normal
-		int normal; //random number with mean = 5000 and standard deviation = 30
-		std::default_random_engine generator;
-		std::normal_distribution<double> distribution(5000.0, 30.0);
-		normal = int(distribution(generator));
+/*
+*  xhptdc8_read_hits when groups are note enabled
+*/
+int _xhptdc8_read_hits_for_NO_groups_internal(xhptdc8_dummy_manager* mngr, TDCHit* hit_buf, size_t size)
+{
+	// Calculate ms_since_last_call
+	SYSTEMTIME time;
+	GetSystemTime(&time);
+	long current_timestamp = (time.wSecond * 1000) + time.wMilliseconds;
+	long ms_since_last_call = current_timestamp - mngr->last_read_time;
+	mngr->last_read_time = current_timestamp;
 
-		// Fill the hits
-		size_t max_hits_number = ((ms_since_last_call * 2) < (size - 1)) ? (ms_since_last_call * 2) : (size - 1);
-		for (int hit_index = 0; hit_index < max_hits_number; hit_index += 2) /*2 as we fill couples of entries every time*/
+	// Calculate normal
+	int normal;
+
+	// Fill the hits
+	size_t max_hits_number = ((ms_since_last_call * 2) < (size - 1)) ? (ms_since_last_call * 2) : (size - 1);
+	for (int hit_index = 0; hit_index < max_hits_number; hit_index += 2) /*2 as we fill couples of entries every time*/
+	{
+		normal = int(g_distribution(g_generator)); // for each hit_index, a new random shall be computed.
+
+		hit_buf[hit_index + 0].time = (ms_since_last_call + hit_index) * 1000000000;
+		hit_buf[hit_index + 1].time = (ms_since_last_call + hit_index) * 1000000000 + normal;
+		hit_buf[hit_index + 0].channel = 0;
+		hit_buf[hit_index + 1].channel = 1;
+		hit_buf[hit_index + 0].type = XHPTDC8_TDCHIT_TYPE_RISING;
+		hit_buf[hit_index + 1].type = XHPTDC8_TDCHIT_TYPE_RISING;
+		hit_buf[hit_index + 0].bin = 0;
+		hit_buf[hit_index + 1].bin = 0;
+	}
+	return int(max_hits_number);
+}
+
+/*
+* xhptdc8_read_hits when groups are enabled
+* Return 2: Successfully filled hit_buf
+*		 0: Error, buffer is smaller than milliseconds
+*		-1: Error, buffer size is smaller than 2
+*/
+int _xhptdc8_read_hits_for_groups_internal(xhptdc8_dummy_manager* mngr, TDCHit * hit_buf, size_t size)
+{
+	if (mngr->read_hits_count < mngr->captured_stored_time)
+	// The number of calls is less than the number of milliseconds elapsed since 
+	// the call to *_start_capture().
+	{
+		if (size < 2)
 		{
-			hit_buf[hit_index + 0].time = (ms_since_last_call + hit_index) * 1000000000;
-			hit_buf[hit_index + 1].time = (ms_since_last_call + hit_index) * 1000000000 + normal;
-			hit_buf[hit_index + 0].channel = 0;
-			hit_buf[hit_index + 1].channel = 1;
-			hit_buf[hit_index + 0].type = XHPTDC8_TDCHIT_TYPE_RISING;
-			hit_buf[hit_index + 1].type = XHPTDC8_TDCHIT_TYPE_RISING;
-			hit_buf[hit_index + 0].bin = 0;
-			hit_buf[hit_index + 1].bin = 0;
+			return -1;
 		}
-		return int(max_hits_number);
+		int normal = int(g_distribution(g_generator));
+
+		hit_buf[0].time = mngr->read_hits_count * 1000000000;
+		hit_buf[1].time = mngr->read_hits_count * 1000000000 + normal;
+		hit_buf[0].channel = 0;
+		hit_buf[1].channel = 1;
+		hit_buf[0].type = XHPTDC8_TDCHIT_TYPE_RISING;
+		hit_buf[1].type = XHPTDC8_TDCHIT_TYPE_RISING;
+		hit_buf[0].bin = 0;
+		hit_buf[1].bin = 0;
+
+		return 2;
+	}
+	else
+	{
+		return 0;
 	}
 }
 
@@ -733,32 +760,36 @@ extern "C" int xhptdc8_read_hits(xhptdc8_manager* xhptdc8_mgr, TDCHit* hit_buf, 
 // Internal Functions
 //
 /*
-* Return 1: Is Valid
-*		 0: Is Invalid
+* Return true : Is Valid
+*		 false: Is Invalid
 */
-extern "C" int xhptdc8_is_valid_device(xhptdc8_manager* xhptdc8_mgr)
+extern "C" crono_bool_t xhptdc8_is_valid_device(xhptdc8_manager* xhptdc8_mgr)
 {
 	if (	(nullptr == xhptdc8_mgr)
 		||  (nullptr == xhptdc8_mgr->xhptdc8manager)
 		)
 	{
-		return 0;
+		return false;
 	}
-	return 1;
+	return true;
 }
 
-extern "C" int xhptdc8_is_valid_device_index(xhptdc8_manager* xhptdc8_mgr, int index)
+/*
+* Return true : Is Valid
+*		 false: Is Invalid
+*/
+extern "C" crono_bool_t xhptdc8_is_valid_device_index(xhptdc8_manager* xhptdc8_mgr, int index)
 {
 	if (!xhptdc8_is_valid_device(xhptdc8_mgr))
-		return 0;
+		return false;
 
 	if ((index < 0)
 		|| (index >= XHPTDC8MANAGER_DEVICES_MAX)
 		)
 	{
-		return 0;
+		return false;
 	}
-	return 1;
+	return true;
 }
 
 void _set_last_error_internal(xhptdc8_manager* xhptdc8_mgr, const char * format, ...) 
