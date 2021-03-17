@@ -34,6 +34,7 @@ jobs:
     - name: Build Release x86
       env: 
           X86_OUTPUT_DIR: .\dummy\msvscpp\msvscpp\Release\
+          DLL_PATH: ${{X86_OUTPUT_DIR}}xHPTDC8_dummy.dll
       working-directory: ${{env.GITHUB_WORKSPACE}}
       # Add additional options to the MSBuild command line here (like platform or verbosity level).
       # See https://docs.microsoft.com/visualstudio/msbuild/msbuild-command-line-reference
