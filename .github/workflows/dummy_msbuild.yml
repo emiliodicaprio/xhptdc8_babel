@@ -34,14 +34,16 @@ jobs:
     - name: Build Release x86
       env: 
           X86_OUTPUT_DIR: .\dummy\msvscpp\msvscpp\Release\
-          DLL_PATH: ${{X86_OUTPUT_DIR}}xHPTDC8_dummy.dll
+          DLL_FILE_PATH:  .\dummy\msvscpp\msvscpp\Release\xHPTDC8_dummy.dll
+          LIB_FILE_PATH:  .\dummy\msvscpp\msvscpp\Release\xHPTDC8_dummy.lib
+          OUTPUT_LIB_PTH: .\lib\x86
       working-directory: ${{env.GITHUB_WORKSPACE}}
       # Add additional options to the MSBuild command line here (like platform or verbosity level).
       # See https://docs.microsoft.com/visualstudio/msbuild/msbuild-command-line-reference
       run: |
         msbuild ${{env.SOLUTION_FILE_PATH}} /m /property:Configuration=Release /property:Platform=x86
-        Copy-Item ${{X86_OUTPUT_DIR}}xHPTDC8_dummy.dll -Destination \lib\x86
-        Copy-Item ${{X86_OUTPUT_DIR}}xHPTDC8_dummy.lib -Destination \lib\x86
+        Copy-Item ${{DLL_FILE_PATH}} -Destination ${{OUTPUT_LIB_PTH}}
+        Copy-Item ${{LIB_FILE_PATH}} -Destination ${{OUTPUT_LIB_PTH}}
         Remove-Item -Path ${{X86_OUTPUT_DIR}} -Recurse
       
     - name: Build Release x64
