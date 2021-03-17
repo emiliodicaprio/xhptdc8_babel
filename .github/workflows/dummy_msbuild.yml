@@ -64,7 +64,7 @@ jobs:
       working-directory: ${{env.GITHUB_WORKSPACE}}
       run: |
         msbuild ${{env.SOLUTION_FILE_PATH}} /m /property:Configuration=Release /property:Platform=${{env.BUILD_PLATFORM}}
-        Copy-Item ${{env.X64_OUTPUT_DIR}}${{DUMMY_DLL_NAME}} -Destination ${{env.X64_OUTPUT_LIB_PTH}}
-        Copy-Item ${{env.X64_OUTPUT_DIR}}${{DUMMY_LIB_NAME}} -Destination ${{env.X64_OUTPUT_LIB_PTH}}
+        Copy-Item ${{env.X64_OUTPUT_DIR}}${{env.DUMMY_DLL_NAME}} -Destination ${{env.X64_OUTPUT_LIB_PTH}}
+        Copy-Item ${{env.X64_OUTPUT_DIR}}${{env.DUMMY_LIB_NAME}} -Destination ${{env.X64_OUTPUT_LIB_PTH}}
         dir ${{env.OUTPUT_LIB_PTH}}
   
