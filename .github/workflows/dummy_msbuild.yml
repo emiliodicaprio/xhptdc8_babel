@@ -55,8 +55,8 @@ jobs:
           author_name: Internal Workflow Action
           message: 'Internal Build'
           add: |
-            ${{env.X86_OUTPUT_LIB_PTH}}${{DUMMY_DLL_NAME}}
-            ${{env.X86_OUTPUT_LIB_PTH}}${{DUMMY_LIB_NAME}}
+            ${{env.X86_OUTPUT_LIB_PTH}}${{env.DUMMY_DLL_NAME}}
+            ${{env.X86_OUTPUT_LIB_PTH}}${{env.DUMMY_LIB_NAME}}
           
     - name: Build Release x64
       env:
