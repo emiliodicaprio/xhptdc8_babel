@@ -42,9 +42,9 @@ jobs:
       # See https://docs.microsoft.com/visualstudio/msbuild/msbuild-command-line-reference
       run: |
         msbuild ${{env.SOLUTION_FILE_PATH}} /m /property:Configuration=Release /property:Platform=x86
-        Copy-Item ${{DLL_FILE_PATH}} -Destination ${{OUTPUT_LIB_PTH}}
-        Copy-Item ${{LIB_FILE_PATH}} -Destination ${{OUTPUT_LIB_PTH}}
-        Remove-Item -Path ${{X86_OUTPUT_DIR}} -Recurse
+        Copy-Item ${{env.DLL_FILE_PATH}} -Destination ${{env.OUTPUT_LIB_PTH}}
+        Copy-Item ${{env.LIB_FILE_PATH}} -Destination ${{env.OUTPUT_LIB_PTH}}
+        Remove-Item -Path ${{env.X86_OUTPUT_DIR}} -Recurse
       
     - name: Build Release x64
       env:
@@ -52,6 +52,6 @@ jobs:
       working-directory: ${{env.GITHUB_WORKSPACE}}
       run: |
         msbuild ${{env.SOLUTION_FILE_PATH}} /m /property:Configuration=Release /property:Platform=x64
-        Copy-Item ${{X64_OUTPUT_DIR}}xHPTDC8_dummy.dll -Destination \lib\x64
-        Copy-Item ${{X64_OUTPUT_DIR}}xHPTDC8_dummy.lib -Destination \lib\x64
-        Remove-Item -Path ${{X64_OUTPUT_DIR}} -Recurse
+        Copy-Item ${{env.X64_OUTPUT_DIR}}xHPTDC8_dummy.dll -Destination \lib\x64
+        Copy-Item ${{env.X64_OUTPUT_DIR}}xHPTDC8_dummy.lib -Destination \lib\x64
+        Remove-Item -Path ${{env.X64_OUTPUT_DIR}} -Recurse
