@@ -33,9 +33,9 @@ jobs:
 
     - name: Build Release x86
       env: 
-          X86_OUTPUT_DIR: .\dummy\msvscpp\msvscpp\Release\
-          DLL_FILE_PATH: .\dummy\msvscpp\msvscpp\Release\xHPTDC8_dummy.dll
-          LIB_FILE_PATH: .\dummy\msvscpp\msvscpp\Release\xHPTDC8_dummy.lib
+          X86_OUTPUT_DIR: .\dummy\msvscpp\Release\
+          DLL_FILE_PATH: .\dummy\msvscpp\Release\xHPTDC8_dummy.dll
+          LIB_FILE_PATH: .\dummy\msvscpp\Release\xHPTDC8_dummy.lib
           OUTPUT_LIB_PTH: .\lib\x86
       working-directory: ${{env.GITHUB_WORKSPACE}}
       # Add additional options to the MSBuild command line here (like platform or verbosity level).
@@ -48,7 +48,7 @@ jobs:
       
     - name: Build Release x64
       env:
-         X64_OUTPUT_DIR: .\dummy\msvscpp\msvscpp\x64\Release\
+         X64_OUTPUT_DIR: .\dummy\msvscpp\x64\Release\
       working-directory: ${{env.GITHUB_WORKSPACE}}
       run: |
         msbuild ${{env.SOLUTION_FILE_PATH}} /m /property:Configuration=Release /property:Platform=x64
