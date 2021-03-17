@@ -6,7 +6,9 @@ on:
     - '/dummy/**'
 env:
    # Path to the solution file relative to the root of the project.
-  SOLUTION_FILE_PATH: ./dummy/msvscpp/
+  SOLUTION_FILE_PATH: .\dummy\msvscpp\
+  X86_OUTPUT_DIR: .\dummy\msvscpp\msvscpp\Release\
+  X64_OUTPUT_DIR: .\dummy\msvscpp\msvscpp\x64\Release\
 
   # Configuration type to build.
   # You can convert this to a build matrix if you need coverage of multiple configuration types.
@@ -37,9 +39,16 @@ jobs:
       # See https://docs.microsoft.com/visualstudio/msbuild/msbuild-command-line-reference
       run: |
         msbuild ${{env.SOLUTION_FILE_PATH}} /m /property:Configuration=Release /property:Platform=x86
-        Copy-Item \dummy\msvscpp\msvscpp\Release\xHPTDC8_dummy.dll -Destination \lib\x86
-        Copy-Item \dummy\msvscpp\msvscpp\Release\xHPTDC8_dummy.lib -Destination \lib\x86
-        Remove-Item -Path \dummy\msvscpp\msvscpp\Release -Recurse
+        Copy-Item ${{X86_OUTPUT_DIR}}xHPTDC8_dummy.dll -Destination \lib\x86
+        Copy-Item ${{X86_OUTPUT_DIR}}xHPTDC8_dummy.lib -Destination \lib\x86
+        Remove-Item -Path ${{X86_OUTPUT_DIR}} -Recurse
       
+    - name: Build Release x64
+      working-directory: ${{env.GITHUB_WORKSPACE}}
+      run: |
+        msbuild ${{env.SOLUTION_FILE_PATH}} /m /property:Configuration=Release /property:Platform=x64
+        Copy-Item ${{X64_OUTPUT_DIR}}xHPTDC8_dummy.dll -Destination \lib\x64
+        Copy-Item ${{X64_OUTPUT_DIR}}xHPTDC8_dummy.lib -Destination \lib\x64
+        Remove-Item -Path ${{X64_OUTPUT_DIR}} -Recurse
       
       
