@@ -14,11 +14,13 @@ env:
   BUILD_CONFIGURATION: Release
   SOLUTION_FILE_PATH: .\dummy\msvscpp\
   X86_OUTPUT_DIR: .\dummy\msvscpp\Release\
-  X86_REPO_LIB_PTH: .\lib\x86\
+  X86_REPO_LIB_PTH: .\lib\x86dummy\
   X64_OUTPUT_DIR: .\dummy\msvscpp\x64\Release\
-  X64_REPO_LIB_PTH: .\lib\x64\
-  DUMMY_DLL_NAME: xHPTDC8_dummy.dll
-  DUMMY_LIB_NAME: xHPTDC8_dummy.lib
+  X64_REPO_LIB_PTH: .\lib\x64dummy\
+  X86_DUMMY_DLL_NAME: xhptdc8_driver.dll
+  X86_DUMMY_LIB_NAME: xhptdc8_driver.lib 
+  X64_DUMMY_DLL_NAME: xhptdc8_driver_64.dll
+  X64_DUMMY_LIB_NAME: xhptdc8_driver_64.lib
 
 jobs:
   build:
@@ -27,8 +29,8 @@ jobs:
        run:
          shell: powershell
     env: 
-          X86_REPO_LIB_PTH_COMMIT: ./lib/x86/
-          X64_REPO_LIB_PTH_COMMIT: ./lib/x64/
+          X86_REPO_LIB_PTH_COMMIT: ./lib/x86dummy/
+          X64_REPO_LIB_PTH_COMMIT: ./lib/x64dummy/
           COMMIT_MSG: 'Internal build due to Dummy-Library code change' 
         
     steps:
@@ -49,22 +51,22 @@ jobs:
       # See https://docs.microsoft.com/visualstudio/msbuild/msbuild-command-line-reference
       run: |
         msbuild ${{env.SOLUTION_FILE_PATH}} /m /property:Configuration=Release /property:Platform=${{env.BUILD_PLATFORM}}
-        Copy-Item ${{env.X86_OUTPUT_DIR}}${{env.DUMMY_DLL_NAME}} -Destination ${{env.X86_REPO_LIB_PTH}}
-        Copy-Item ${{env.X86_OUTPUT_DIR}}${{env.DUMMY_LIB_NAME}} -Destination ${{env.X86_REPO_LIB_PTH}}
+        Copy-Item ${{env.X86_OUTPUT_DIR}}${{env.X86_DUMMY_DLL_NAME}} -Destination ${{env.X86_REPO_LIB_PTH}}
+        Copy-Item ${{env.X86_OUTPUT_DIR}}${{env.X86_DUMMY_LIB_NAME}} -Destination ${{env.X86_REPO_LIB_PTH}}
         
     - name: Commit x86 DLL
       uses: EndBug/add-and-commit@v7.0.0
       with:
           author_name: Internal Workflow Action
           message: ${{env.COMMIT_MSG}}
-          add: ${{env.X86_REPO_LIB_PTH_COMMIT}}${{env.DUMMY_DLL_NAME}}
+          add: ${{env.X86_REPO_LIB_PTH_COMMIT}}${{env.X86_DUMMY_DLL_NAME}}
 
     - name: Commit x86 Lib
       uses: EndBug/add-and-commit@v7.0.0
       with:
           author_name: Internal Workflow Action
           message: ${{env.COMMIT_MSG}}
-          add: ${{env.X86_REPO_LIB_PTH_COMMIT}}${{env.DUMMY_LIB_NAME}}
+          add: ${{env.X86_REPO_LIB_PTH_COMMIT}}${{env.X86_DUMMY_LIB_NAME}}
 
     - name: Build Release x64
       env:
@@ -72,20 +74,19 @@ jobs:
       working-directory: ${{env.GITHUB_WORKSPACE}}
       run: |
         msbuild ${{env.SOLUTION_FILE_PATH}} /m /property:Configuration=Release /property:Platform=${{env.BUILD_PLATFORM}}
-        Copy-Item ${{env.X64_OUTPUT_DIR}}${{env.DUMMY_DLL_NAME}} -Destination ${{env.X64_REPO_LIB_PTH}}
-        Copy-Item ${{env.X64_OUTPUT_DIR}}${{env.DUMMY_LIB_NAME}} -Destination ${{env.X64_REPO_LIB_PTH}}
-        dir ${{env.X64_REPO_LIB_PTH}}
+        Copy-Item ${{env.X64_OUTPUT_DIR}}${{env.X64_DUMMY_DLL_NAME}} -Destination ${{env.X64_REPO_LIB_PTH}}
+        Copy-Item ${{env.X64_OUTPUT_DIR}}${{env.X64_DUMMY_LIB_NAME}} -Destination ${{env.X64_REPO_LIB_PTH}}
   
     - name: Commit x64 DLL
       uses: EndBug/add-and-commit@v7.0.0
       with:
           author_name: Internal Workflow Action
           message: ${{env.COMMIT_MSG}}
-          add: ${{env.X64_REPO_LIB_PTH_COMMIT}}${{env.DUMMY_DLL_NAME}}
+          add: ${{env.X64_REPO_LIB_PTH_COMMIT}}${{env.X64_DUMMY_DLL_NAME}}
           
     - name: Commit x64 Lib
       uses: EndBug/add-and-commit@v7.0.0
       with:
           author_name: Internal Workflow Action
           message: ${{env.COMMIT_MSG}}
-          add: ${{env.X64_REPO_LIB_PTH_COMMIT}}${{env.DUMMY_LIB_NAME}} 
+          add: ${{env.X64_REPO_LIB_PTH_COMMIT}}${{env.X64_DUMMY_LIB_NAME}} 
