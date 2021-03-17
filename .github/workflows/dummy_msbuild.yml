@@ -49,9 +49,11 @@ jobs:
     - name: Build Release x64
       env:
          X64_OUTPUT_DIR: .\dummy\msvscpp\x64\Release\
+         OUTPUT_LIB_PTH: .\lib\x86
       working-directory: ${{env.GITHUB_WORKSPACE}}
       run: |
         msbuild ${{env.SOLUTION_FILE_PATH}} /m /property:Configuration=Release /property:Platform=x64
-        Copy-Item ${{env.X64_OUTPUT_DIR}}xHPTDC8_dummy.dll -Destination \lib\x64
-        Copy-Item ${{env.X64_OUTPUT_DIR}}xHPTDC8_dummy.lib -Destination \lib\x64
+        dir
+        Copy-Item ${{env.X64_OUTPUT_DIR}}xHPTDC8_dummy.dll -Destination ${{env.OUTPUT_LIB_PTH}}
+        Copy-Item ${{env.X64_OUTPUT_DIR}}xHPTDC8_dummy.lib -Destination ${{env.OUTPUT_LIB_PTH}}
         Remove-Item -Path ${{env.X64_OUTPUT_DIR}} -Recurse
