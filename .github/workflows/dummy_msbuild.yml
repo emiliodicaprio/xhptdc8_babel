@@ -1,13 +1,13 @@
 name: Dummy_MSBuild
+# Upon any change in sub files of ./dummy, the action does the following:
+# 1. Builds the Dummy Library Release x64 & x86 DLL & Lib, using MSBuild
+# 2. Copies the DLLs & Libs to the corresponding folders on ./lib repository folder, and commits
 
 on: 
   push:
     paths:
     - 'dummy/**'
 env:
-   # Path to the solution file relative to the root of the project.
-  SOLUTION_FILE_PATH: .\dummy\msvscpp\
-
   # Configuration type to build.
   # You can convert this to a build matrix if you need coverage of multiple configuration types.
   # https://docs.github.com/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
@@ -33,8 +33,9 @@ jobs:
     steps:
     - name: Checkout Code
       uses: actions/checkout@v2
-      with:
-        path: ./dummy
+      # Inprovement: Uncomment & adjust if we can check out only: ./lib & ./dummy instead of the whole repository
+      # with:
+      #  path: ./dummy ./lib
       
     - name: Add MSBuild to PATH
       uses: microsoft/setup-msbuild@v1
