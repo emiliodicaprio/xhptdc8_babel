@@ -62,15 +62,15 @@ Write-Host "Build is done, log file is found in: "$Log_File_Path
 Write-Host "Checking build results"
 #Select-String -Path $Log_File_Path -Pattern 'Error'
 
-[String]$x86_DLL_Path = [String]$x86_Release_Path + "\xHPTDC8_dummy.dll"
-[String]$x86_Lib_Path = [String]$x86_Release_Path + "\xHPTDC8_dummy.lib"
+[String]$x86_DLL_Path = [String]$x86_Release_Path + "\xhptdc8_driver.dll"
+[String]$x86_Lib_Path = [String]$x86_Release_Path + "\xhptdc8_driver.lib"
 if(!(Test-Path -Path $x86_DLL_Path))
 {
     Write-Host -ForegroundColor RED "Error generating DLL"
 }
 else
 {
-    [String]$Babel_Libx86_Path = $Babel_Path + "\lib\x86"
+    [String]$Babel_Libx86_Path = $Babel_Path + "\lib\x86dummy"
     Copy-Item $x86_DLL_Path -Destination $Babel_Libx86_Path
     Copy-Item $x86_Lib_Path -Destination $Babel_Libx86_Path
     Write-Host -ForegroundColor GREEN "DLL and Lib are copied successfully to the corresponding lib folder: " $Babel_Libx86_Path
@@ -104,15 +104,15 @@ Write-Host "Build Log Is Found In: "$Log_File_Path
 
 Write-Host "Checking Build Results"
 
-[String]$x64_DLL_Path = [String]$x64_Release_Path + "\xHPTDC8_dummy.dll"
-[String]$x64_Lib_Path = [String]$x64_Release_Path + "\xHPTDC8_dummy.lib"
+[String]$x64_DLL_Path = [String]$x64_Release_Path + "\xhptdc8_driver_64.dll"
+[String]$x64_Lib_Path = [String]$x64_Release_Path + "\xhptdc8_driver_64.lib"
 if(!(Test-Path -Path $x64_DLL_Path))
 {
     Write-Host -ForegroundColor RED "Error generating DLL"
 }
 else
 {
-    [String]$Babel_Libx64_Path = $Babel_Path + "\lib\x64"
+    [String]$Babel_Libx64_Path = $Babel_Path + "\lib\x64dummy"
     Copy-Item $x64_DLL_Path -Destination $Babel_Libx64_Path
     Copy-Item $x64_Lib_Path -Destination $Babel_Libx64_Path
     Write-Host -ForegroundColor GREEN "DLL and Lib are copied successfully to the corresponding lib folder: " $Babel_Libx64_Path
