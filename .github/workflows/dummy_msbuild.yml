@@ -26,6 +26,9 @@ jobs:
           X64_OUTPUT_LIB_PTH: .\lib\x86\
           DUMMY_DLL_NAME: xHPTDC8_dummy.dll
           DUMMY_LIB_NAME: xHPTDC8_dummy.lib
+          X86_OUTPUT_LIB_PTH_COMMIT: ./lib/x86/
+          X64_OUTPUT_LIB_PTH_COMMIT: ./lib/x64/
+          COMMIT_MSG: 'Internal build due to Dummy-Library code change' 
         
     steps:
     - name: Checkout Code
@@ -49,15 +52,20 @@ jobs:
         Copy-Item ${{env.X86_OUTPUT_DIR}}${{env.DUMMY_DLL_NAME}} -Destination ${{env.X86_OUTPUT_LIB_PTH}}
         Copy-Item ${{env.X86_OUTPUT_DIR}}${{env.DUMMY_LIB_NAME}} -Destination ${{env.X86_OUTPUT_LIB_PTH}}
         
-    - name: Commit x86 Files
+    - name: Commit x86 DLL
       uses: EndBug/add-and-commit@v7.0.0
-      env: 
-          X86_OUTPUT_LIB_PTH: ./lib/x86/
       with:
           author_name: Internal Workflow Action
-          message: 'Internal Build'
-          add: ${{env.X86_OUTPUT_LIB_PTH}}${{env.DUMMY_DLL_NAME}}
-          
+          message: ${{env.COMMIT_MSG}}
+          add: ${{env.X86_OUTPUT_LIB_PTH_COMMIT}}${{env.DUMMY_DLL_NAME}}
+
+    - name: Commit x86 Lib
+      uses: EndBug/add-and-commit@v7.0.0
+      with:
+          author_name: Internal Workflow Action
+          message: ${{env.COMMIT_MSG}}
+          add: ${{env.X86_OUTPUT_LIB_PTH_COMMIT}}${{env.DUMMY_LIB_NAME}}
+
     - name: Build Release x64
       env:
         BUILD_PLATFORM: x64
@@ -68,14 +76,17 @@ jobs:
         Copy-Item ${{env.X64_OUTPUT_DIR}}${{env.DUMMY_LIB_NAME}} -Destination ${{env.X64_OUTPUT_LIB_PTH}}
         dir ${{env.OUTPUT_LIB_PTH}}
   
-    - name: Commit x64 Files
-      env: 
-          X64_OUTPUT_LIB_PTH: ./lib/x64/
+    - name: Commit x64 DLL
       uses: EndBug/add-and-commit@v7.0.0
       with:
           author_name: Internal Workflow Action
-          message: 'Internal Build'
-          add: |
-            ${{env.X64_OUTPUT_LIB_PTH}}${{env.DUMMY_DLL_NAME}}
-            ${{env.X64_OUTPUT_LIB_PTH}}${{env.DUMMY_LIB_NAME}}
-      
+          message: ${{env.COMMIT_MSG}}
+          add: ${{env.X64_OUTPUT_LIB_PTH_COMMIT}}${{env.DUMMY_DLL_NAME}}
+          
+    - name: Commit x64 Lib
+      uses: EndBug/add-and-commit@v7.0.0
+      with:
+          author_name: Internal Workflow Action
+          message: ${{env.COMMIT_MSG}}
+          add: ${{env.X64_OUTPUT_LIB_PTH_COMMIT}}${{env.DUMMY_LIB_NAME}}
+  
