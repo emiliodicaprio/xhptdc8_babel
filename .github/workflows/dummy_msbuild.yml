@@ -21,9 +21,9 @@ jobs:
          shell: powershell
     env: 
           X86_OUTPUT_DIR: .\dummy\msvscpp\Release\
-          X86_OUTPUT_LIB_PTH: .\lib\x86
+          X86_OUTPUT_LIB_PTH: .\lib\x86\
           X64_OUTPUT_DIR: .\dummy\msvscpp\x64\Release\
-          X64_OUTPUT_LIB_PTH: .\lib\x86
+          X64_OUTPUT_LIB_PTH: .\lib\x86\
           DUMMY_DLL_NAME: xHPTDC8_dummy.dll
           DUMMY_LIB_NAME: xHPTDC8_dummy.lib
         
@@ -68,3 +68,12 @@ jobs:
         Copy-Item ${{env.X64_OUTPUT_DIR}}${{env.DUMMY_LIB_NAME}} -Destination ${{env.X64_OUTPUT_LIB_PTH}}
         dir ${{env.OUTPUT_LIB_PTH}}
   
+    - name: Commit x64 Files
+      uses: EndBug/add-and-commit@v7.0.0
+      with:
+          author_name: Internal Workflow Action
+          message: 'Internal Build'
+          add: |
+            ${{env.X64_OUTPUT_LIB_PTH}}${{env.DUMMY_DLL_NAME}}
+            ${{env.X64_OUTPUT_LIB_PTH}}${{env.DUMMY_LIB_NAME}}
+          
