@@ -12,6 +12,12 @@ env:
   # You can convert this to a build matrix if you need coverage of multiple configuration types.
   # https://docs.github.com/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
   BUILD_CONFIGURATION: Release
+  X86_OUTPUT_DIR: .\dummy\msvscpp\Release\
+  X86_REPO_LIB_PTH: .\lib\x86\
+  X64_OUTPUT_DIR: .\dummy\msvscpp\x64\Release\
+  X64_REPO_LIB_PTH: .\lib\x64\
+  DUMMY_DLL_NAME: xHPTDC8_dummy.dll
+  DUMMY_LIB_NAME: xHPTDC8_dummy.lib
 
 jobs:
   build:
@@ -20,12 +26,6 @@ jobs:
        run:
          shell: powershell
     env: 
-          X86_OUTPUT_DIR: .\dummy\msvscpp\Release\
-          X86_REPO_LIB_PTH: .\lib\x86\
-          X64_OUTPUT_DIR: .\dummy\msvscpp\x64\Release\
-          X64_REPO_LIB_PTH: .\lib\x64\
-          DUMMY_DLL_NAME: xHPTDC8_dummy.dll
-          DUMMY_LIB_NAME: xHPTDC8_dummy.lib
           X86_REPO_LIB_PTH_COMMIT: ./lib/x86/
           X64_REPO_LIB_PTH_COMMIT: ./lib/x64/
           COMMIT_MSG: 'Internal build due to Dummy-Library code change' 
@@ -87,5 +87,4 @@ jobs:
       with:
           author_name: Internal Workflow Action
           message: ${{env.COMMIT_MSG}}
-          add: ${{env.X64_REPO_LIB_PTH_COMMIT}}${{env.DUMMY_LIB_NAME}}
-  
+          add: ${{env.X64_REPO_LIB_PTH_COMMIT}}${{env.DUMMY_LIB_NAME}} 
