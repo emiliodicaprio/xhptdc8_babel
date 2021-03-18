@@ -15,16 +15,12 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <None Include="cpp.hint" />
     <None Include="..\..\build_ms.ps1">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="msvscpp.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="pch.h">
@@ -44,9 +40,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="msvscpp.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="dllmain.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
