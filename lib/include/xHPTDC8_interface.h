@@ -4,7 +4,7 @@
 //
 
 /*! \file
-*	\brief The functions provided by the API are declared in xHPTDC8_interface.h.
+*	\brief The functions provided by the API are declared in xTDC8_interface.h.
 *
 *	The API is a DLL with C linkage.
 */
@@ -40,7 +40,7 @@
 /*!@}*/
 /*! \defgroup device Structure xhptdc8_device
 */
-/*!	\defgroup initparamsstruct Structure xhptdc8manager_init_parameters
+/*!	\defgroup initparamsstruct Structure xhptdc8_manager_init_parameters
 *	\brief struct for the initialization of the xHPTDC8
 *
 *	this structure MUST be completely INITIALIZED
@@ -237,21 +237,19 @@
 #define XHPTDC8_API_VERSION 1
 #define XHPTDC8_STATIC_INFO_VERSION 1
 #define XHPTDC8_FAST_INFO_VERSION 2
-#define XHPTDC8_PARAM_INFO_VERSION 1
+#define XHPTDC8_PARAM_INFO_VERSION 2
 #define XHPTDC8_TEMP_INFO_VERSION 3
 #define XHPTDC8_CLOCK_INFO_VERSION 1
 #define XHPTDC8_DEVICE_CONFIG_VERSION 3
 #define XHPTDC8_MANAGER_CONFIG_VERSION 1
 
-
-#define XHPTDC8_DEFAULT_BUFFER_SIZE 0x400000				// 4 MB
-
-/*! \ingroup devices count maximum for grouping	*/
-#define	XHPTDC8MANAGER_DEVICES_MAX 8
-
 /*! \ingroup constants Constants
 * @{
 */
+
+/*! \ingroup devices count maximum for grouping	*/
+#define	XHPTDC8_MANAGER_DEVICES_MAX 8
+
 /*! \brief the number of analog input channels
 *
 * used by
@@ -288,10 +286,11 @@
 #define XHPTDC8_BUFFER_USE_PHYSICAL	1	//!< or physical
 /*!@}*/
 
+
 /*! \ingroup defdcoffset
 *@{
 */
-#define XHPTDC8_THRESHOLD_BASELINE		+1.32
+#define XHPTDC8_INPUT_BASELINE			+1.32
 #define XHPTDC8_THRESHOLD_P_NIM			+0.35
 #define XHPTDC8_THRESHOLD_P_CMOS		+1.18
 #define XHPTDC8_THRESHOLD_P_LVCMOS_33	+1.18
@@ -331,7 +330,7 @@
 #define XHPTDC8_TRIGGER_SOURCE_TDC_EXT_SYNC		0x00000400	// 10
 #define XHPTDC8_TRIGGER_SOURCE_ADC1_CNV			0x00000800	// 11
 #define XHPTDC8_TRIGGER_SOURCE_ADC2_CNV			0x00001000	// 12
-//unused										0x00002000	// 13
+#define XHPTDC8_TRIGGER_SOURCE_SOFTWARE			0x00002000	// 13
 #define XHPTDC8_TRIGGER_SOURCE_AUTO				0x00004000	// 14
 #define XHPTDC8_TRIGGER_SOURCE_ONE				0x00008000	// 15
 /*!@}*/
@@ -439,18 +438,21 @@ extern "C" {
 
 #define crono_bool_t unsigned char
 
+	/* Handle to manager information struct */
+	typedef void* xhptdc8_manager;
+
 	/*!\ingroup device
 	* \brief struct storing properties of the device in use
 	*/
-	typedef struct {
-		/*! \brief xHPTDC8
-		*/
-		void * xhptdc8manager;
-	} xhptdc8_manager;
+	//typedef struct {
+	//	/*! \brief xHPTDC8
+	//	*/
+	//	void * xhptdc8manager;
+	//} xhptdc8_manager;
 
 
 	/*!	\ingroup initparamsstruct
-	*	\brief struct for the initialization of the xHPTDC8Manager
+	*	\brief struct for the initialization of the xTDC8Manager
 	*
 	*	this structure MUST be completely INITIALIZED
 	*/
@@ -483,7 +485,8 @@ extern "C" {
 		*/
 		int device_type;
 
-		/*! \brief The update delay of the writing pointer after a packet has been send over PCIe.
+		/*! \brief The update delay of the writing pointer after a packet has been send over PCIe. Specified in
+		*	multiples of 16 ns. Should not be changed by the user.
 		*
 		*	The base unit is 16 to 32 ns.
 		*/
@@ -507,10 +510,10 @@ extern "C" {
 		*/
 		int ignore_calibration;
 
-	} xhptdc8manager_init_parameters; //$$ renamed to hp
+	} xhptdc8_manager_init_parameters;
 
 	/*!	\ingroup initparamsstruct
-	*	\brief struct for the initialization of the xHPTDC8Manager
+	*	\brief struct for the initialization of the xTDC8Manager
 	*
 	*	this structure MUST be completely INITIALIZED
 	*/
@@ -521,25 +524,29 @@ extern "C" {
 		*/
 		/*! \brief
 		*
-		*
+		*	The time stamp of the hit in picoseconds. If grouping is enabled the timestamp is relative to the
+		*	trigger or the separate zero reference of the group. Otherwise the timestampe is continuously
+		*	counting up from the call to start_capture().
 		*/
 		long long time;
 
 		/*!	\brief
 		*
-		*
+		*	For the forst in the system this 0 to 7 for the TDC channels A to H. 8 or 9 for ADC data. Data
+		*	from channels 8 and 9 should usually be treated as data from the same channel. For the other
+		*	boards the channel number is incremented by board_id  10
 		*
 		*/
 		unsigned char channel;
 
 		/*! \brief
-		*
+		*	Additional information on the type of hit recorded
 		*/
 		unsigned char type;
 
 		/*! \brief
 		*
-		*
+		*	For ADC hits this contains the sampled voltage. For TDC hits the content is undefined.
 		*
 		*/
 		unsigned short bin;
@@ -554,27 +561,27 @@ extern "C" {
 	*	\param *hit_buf is type TDCHit
 	*	\param read_max is type size_t
 	*/
-	XHPTDC8_API int xhptdc8_read_hits(xhptdc8_manager *xhptdc8_mgr, TDCHit* hit_buf, size_t read_max);
+	XHPTDC8_API int xhptdc8_read_hits(xhptdc8_manager hMgr, TDCHit* hit_buf, size_t read_max);
 
 	/*!	\ingroup initfuncts
-	*	\brief finalize the driver for this device
+	*	\brief Finalize the driver for this device
 	*
 	*	Return values are listed @link defclose here @endlink.
 	*	\param *xhptdc8_mgr is type @link xhptdc8_manager xhptdc8_manager @endlink
 	*/
-	XHPTDC8_API int xhptdc8_close(xhptdc8_manager *xhptdc8_mgr);
+	XHPTDC8_API int xhptdc8_close(xhptdc8_manager hMgr);
 
 	/*!	\ingroup runtime
 	*	\brief start timing generator
 	*	\param *xhptdc8_mgr is type @link xhptdc8_manager xhptdc8_manager @endlink
 	*/
-	XHPTDC8_API int xhptdc8_start_tiger(xhptdc8_manager *xhptdc8_mgr, int index);
+	XHPTDC8_API int xhptdc8_start_tiger(xhptdc8_manager hMgr, int index);
 
 	/*!	\ingroup runtime
 	*	\brief stop timing generator
 	*	\param *xhptdc8_mgr is type @link xhptdc8_manager xhptdc8_manager @endlink
 	*/
-	XHPTDC8_API int xhptdc8_stop_tiger(xhptdc8_manager *xhptdc8_mgr, int index);
+	XHPTDC8_API int xhptdc8_stop_tiger(xhptdc8_manager hMgr, int index);
 
 	/*!	\ingroup runtime
 	*	\brief start data acquisition
@@ -582,7 +589,7 @@ extern "C" {
 	*	Return values are listed @link defstartcap here @endlink.
 	*	\param *xhptdc8_mgr is type @link xhptdc8_manager xhptdc8_manager @endlink
 	*/
-	XHPTDC8_API int xhptdc8_start_capture(xhptdc8_manager *xhptdc8_mgr);
+	XHPTDC8_API int xhptdc8_start_capture(xhptdc8_manager hMgr);
 
 	/*!	\ingroup runtime
 	*	\brief	pause data acquisition
@@ -590,7 +597,7 @@ extern "C" {
 	*	Return values are listed @link defpausecap here @endlink.
 	*	\param *xhptdc8_mgr is type @link xhptdc8_manager xhptdc8_manager @endlink
 	*/
-	XHPTDC8_API int xhptdc8_pause_capture(xhptdc8_manager *xhptdc8_mgr);
+	XHPTDC8_API int xhptdc8_pause_capture(xhptdc8_manager hMgr);
 
 	/*!	\ingroup runtime
 	*	\brief resume data acquisition
@@ -599,7 +606,7 @@ extern "C" {
 	*	Return values are listed @link defcontcap here @endlink.
 	*	\param *xhptdc8_mgr is type @link xhptdc8_manager xhptdc8_manager @endlink
 	*/
-	XHPTDC8_API int xhptdc8_continue_capture(xhptdc8_manager *xhptdc8_mgr);
+	XHPTDC8_API int xhptdc8_continue_capture(xhptdc8_manager hMgr);
 
 	/*!	\ingroup runtime
 	*	\brief	stop data acquisition
@@ -607,8 +614,15 @@ extern "C" {
 	*	Return values are listed @link defstopcap here @endlink.
 	*	\param *xhptdc8_mgr is type @link xhptdc8_manager xhptdc8_manager @endlink
 	*/
-	XHPTDC8_API int xhptdc8_stop_capture(xhptdc8_manager *xhptdc8_mgr);
+	XHPTDC8_API int xhptdc8_stop_capture(xhptdc8_manager hMgr);
 
+	/*!	\ingroup runtime
+	*	\brief generate a software trigger event
+	*
+	*	Return values are listed @link defstopcap here @endlink.
+	*	\param *xhptdc8_mgr is type @link xhptdc8_manager xhptdc8_manager @endlink
+	*/
+	XHPTDC8_API int xhptdc8_software_trigger(xhptdc8_manager hMgr, int index);
 
 	/*! \ingroup staticinfo
 	*	\brief Structure contains static information
@@ -698,7 +712,7 @@ extern "C" {
 	*	\param *xhptdc8_mgr of type xhptdc8_manager
 	*	\param *info of type xhptdc8_static_info
 	*/
-	XHPTDC8_API int xhptdc8_get_static_info(xhptdc8_manager *xhptdc8_mgr, int index, xhptdc8_static_info* info);
+	XHPTDC8_API int xhptdc8_get_static_info(xhptdc8_manager hMgr, int index, xhptdc8_static_info* info);
 
 	/*! \ingroup fastinfo
 	*	\brief contains fast dynamic information
@@ -718,9 +732,8 @@ extern "C" {
 		* Reports 0, if no fan is present.
 		*/
 		int fpga_rpm;
-		/*!	\brief Alert bits from temperature sensor and the system monitor
-		*
-		*	- bit 0:	TDC over temperature alarm
+		/*!	\brief Alert bits from temperature sensor and the system monitor. Bit 0 is set if the TDC temperature
+		* exceeds 140°C. In this case the TDC did shut down and the device needs to be reinitialized.
 		*/
 		int alerts;
 		/*! \brief organizes power supply of PCIe lanes.
@@ -745,7 +758,7 @@ extern "C" {
 	*	\param *xhptdc8_mgr of type xhptdc8_manager
 	*	\param *info of type xhptdc8_fast_info
 	*/
-	XHPTDC8_API int xhptdc8_get_fast_info(xhptdc8_manager *xhptdc8_mgr, int index, xhptdc8_fast_info * info);
+	XHPTDC8_API int xhptdc8_get_fast_info(xhptdc8_manager hMgr, int index, xhptdc8_fast_info * info);
 
 	/*! \ingroup paraminfo
 	*	\brief contains configuration changes
@@ -787,7 +800,7 @@ extern "C" {
 	*	\param *xhptdc8_mgr of type xhptdc8_manager
 	*	\param *info of type xhptdc8_device
 	*/
-	XHPTDC8_API int xhptdc8_get_param_info(xhptdc8_manager *xhptdc8_mgr, int index, xhptdc8_param_info* info);
+	XHPTDC8_API int xhptdc8_get_param_info(xhptdc8_manager hMgr, int index, xhptdc8_param_info* info);
 
 
 	/*! \ingroup tempinfo
@@ -807,7 +820,7 @@ extern "C" {
 		int fpga;		//!< Temperature read from the FPGA's internal ring oscillator
 	} xhptdc8_temperature_info;
 
-	XHPTDC8_API int xhptdc8_get_temperature_info(xhptdc8_manager *xhptdc8_mgr, int index, xhptdc8_temperature_info* info);
+	XHPTDC8_API int xhptdc8_get_temperature_info(xhptdc8_manager hMgr, int index, xhptdc8_temperature_info* info);
 
 	//!< external 10 MHz provided at J12 (no longer supported)
 #define XHPTDC8_CLK_J12 1
@@ -828,26 +841,32 @@ extern "C" {
 		to 0 for all versions up to first release.
 		*/
 		int version;				//!< The version number
-		crono_bool_t cdce_locked;	//!< CDCE62005 PLL locked
+		crono_bool_t cdce_locked;	//!< CDCE62005 PLL locked. Set if the jitter cleaning PLL clock synthesizer achieved lock
 		int cdce_version;			//!< CDCE62005 version
 		int clock_source;			//!< 1: J12 clock, 2: internal 10 MHz, 4: LEMO clock
 		crono_bool_t fpga_locked;	//!< FPGA datapath PLL locked
 	} xhptdc8_clock_info;
 
-	XHPTDC8_API int xhptdc8_get_clock_info(xhptdc8_manager *xhptdc8_mgr, int index, xhptdc8_clock_info* info);
+	XHPTDC8_API int xhptdc8_get_clock_info(xhptdc8_manager hMgr, int index, xhptdc8_clock_info* info);
 
 	/*! \ingroup readout
 	*	\brief returns most recent error message
 	*	\param *device_manager is type xhptdc8_manager
 	*/
-	XHPTDC8_API const char* xhptdc8_get_last_error_message(xhptdc8_manager *xhptdc8_mgr);
+	//XHPTDC8_API const char* xhptdc8_get_last_error_message(xhptdc8_manager hMgr);
 
+	/*! \ingroup readout
+	*	\brief returns most recent error message
+	*	\param *device_manager is type xhptdc8_manager
+	*/
+	XHPTDC8_API const char* xhptdc8_get_last_error_message(xhptdc8_manager hMgr, int index = -1);
+	
 	/*!	\ingroup readout
-	*	\brief returns the type of the device
+	*	\brief returns the type of the device as CRONO_DEVICE_XHPTDC8.
 	*
 	*	@link devicetype CRONO_DEVICE_XHPTDC8 @endlink
 	*/
-	XHPTDC8_API int xhptdc8_get_device_type(xhptdc8_manager *xhptdc8_mgr);
+	XHPTDC8_API int xhptdc8_get_device_type(xhptdc8_manager hMgr, int index);
 
 	/*!	\ingroup channel
 	*	\brief Contains TDC channel settings
@@ -883,7 +902,9 @@ extern "C" {
 		*/
 		int mode;
 		/*! \brief set pulse polarity
-		*
+		*	Inverts output polarity. Default is set to false. For gating blocks, a value of false blocks inputs
+		*	between start and stop, a value of true blocks outputs outside that interval. The TiGer creates
+		*	a high pulse from start to stop unless negated.
 		*  default value: false
 		*/
 		crono_bool_t negate;
@@ -934,7 +955,7 @@ extern "C" {
 		crono_bool_t watchdog_readout;			//!< send watchdog measurements
 
 		int watchdog_interval;					//!< number of 150 MHz clock cycles between watchdog triggers
-		double trigger_offset;					//!< trigger threshold of ADC sample trigger
+		double trigger_threshold;				//!< trigger threshold of ADC sample trigger
 	} xhptdc8_adc_channel;
 
 	//!< use TiGeR pulse for alignment (pulses are present on LEMO inputs during alignment).
@@ -945,72 +966,76 @@ extern "C" {
 #define XHPTDC8_ALIGN_RESERVED 2
 
 
+#define XHPTDC8_GROUPING_VETO_OFF 0
+#define XHPTDC8_GROUPING_VETO_INSIDE 1
+#define XHPTDC8_GROUPING_VETO_OUTSIDE 2
+
 	/*! \ingroup grpconfstruct Structure xhptdc8_grouping_configuration
 	* /brief Configure the optional grouping functionality
 	*
 	*/
-	struct xhptdc8_grouping_configuration { //$$ Changed
+	typedef struct {
+		/*! \brief Das ist das Flag ob nach Gruppen gefiltert wird.
+		*/
+		bool enabled = false;
+
 		/*! \brief Das ist der Kanel auf den Getriggert wird.
 		*/
 		int trigger_channel; // <= i32TriggerChannel
 
 		/*! \brief  -1 für disable; Ansonsten kanal relativ zu dem die Zeiten berechnet werden.
-		*/	
+		*/
 		int zero_channel;// <= i32TimeZeroChannel
-					
+
 		/*! \brief Der Nullpunkt wird um dieses Intervall nach einer Flanke auf dem 0 - Kanal gesetzt.
 		*/
 		__int64 zero_channel_offset; // <= i64OffsetTimeZeroChannel_ps
-		
+
 		/*! \brief Der Anfang des Zeitbereichs für die Gruppe.
 		*/
 		__int64 range_start; // <= i64GroupRangeStart_ps
-		
+
 		/*! \brief Das Ende des Zeitbereichs für die Gruppe.
 		*/
 		__int64 range_stop; // <= i64GroupRangeEnd_ps
-		
+
 		/*! \brief Nach einem Trigger wird so lange wie hier eingestellt ist keine Gruppe erzeugt.
 		* Vorschlag: Entfällt, das geht mit einem Gating - Block auf dem Trigger - Kanal.Dann muss es intern auf 0 gesetzt werden.
 		*/
 		__int64 trigger_deadtime; // <= i64TriggerDeadTime_ps
-			
+
 		/*! \brief Gruppe wird nur erzeugt, wenn im folgenden Zeitfenster mindestens ein Hit ist.
 		*/
 		crono_bool_t require_window_hit; // <= i32AdvancesTriggger Channel
-		/*! \brief 
+		/*! \brief
 		*/
 		__int64 window_start;// <= i64AdvancedTriggerChannelWindowStart_ps;
-		/*! \brief 
+		/*! \brief
 		*/
 		__int64 window_stop; // <= i64AdvancedTriggerChannelWindowStop_ps;
 
 		/*! \brief (Hierfür braucht es noch defines)
 		XHPTDC8_VET_OFF 0 = kein VETO
 		XHPTDC8_VET_INSIDE 1 = alles zwischen veto_start und veto_stop wird verworfen
-		XHPTDC8_VET_OUTSIDE 2 = alles außerhalb veto_start und veto_stop wird verworfen		
+		XHPTDC8_VET_OUTSIDE 2 = alles außerhalb veto_start und veto_stop wird verworfen
 		*/
 		crono_bool_t veto_mode; // <= iUseVeto
 		/*! \brief Das soll in ps angegeben werden.Es ist verwirrend, da die Einheit zu wecheln.Wir können es intern umrechnen, wenn wir den eigentlich code nicht anfassen wollen.
 		*/
-			__int64 veto_start; // <= i64VetoStart_bins
-		/*! \brief Das soll in ps angegeben werden.Es ist verwirrend, da die Einheit zu wecheln.Wir können es intern umrechnen, wenn wir den eigentlich code nicht anfassen wollen.
-		*/
+		__int64 veto_start; // <= i64VetoStart_bins
+	/*! \brief Das soll in ps angegeben werden.Es ist verwirrend, da die Einheit zu wecheln.Wir können es intern umrechnen, wenn wir den eigentlich code nicht anfassen wollen.
+	*/
 		__int64 veto_stop; // <= i64VetoStop_bins
-			
+
 		/*! \brief Angaben des veto fensters sind relativ zum 0 - Kanal
 		*/
-		crono_bool_t veto_relative_to_zero; // <= bVetoIsRelativeToTimeZeroChannel;
-		
+		bool veto_relative_to_zero; // <= bVetoIsRelativeToTimeZeroChannel;
+
 			/*! \brief Muss auf false bleiben, kann später mal benutzt werden, um auch überlappende Gruppen zu erzeugen
 			*/
-		bool overlap = false; // <= bAllowOverlap;
+		bool overlap; // <= bAllowOverlap;
 
-		/*
-		*/
-		bool enable = false; 
-		
-	} ; //$$ Removed xhptdc8_grouping_configuration
+	} xhptdc8_grouping_configuration;
 
 
 	/*! \ingroup confstruct Structure xhptdc8_device_configuration
@@ -1034,6 +1059,7 @@ extern "C" {
 				  * all versions up to first release.
 				  */
 		int version;
+
 		/** \brief component to create a trigger either periodically or randomly.
 		*
 		*  To be exact, there are two parameters M = @link auto_trigger_period auto_trigger_period @endlink
@@ -1083,8 +1109,8 @@ extern "C" {
 		*	dc_offset for an input must be set to the relative switching voltage for the input standard in use. If
 		*	the pulses are negative, a negative switching threshold must be set and vice versa.
 		*/
-		double thresholds[XHPTDC8_TDC_CHANNEL_COUNT];
-		xhptdc8_trigger trigger[XHPTDC8_TRIGGER_COUNT]; //!< Configuration of external trigger sources
+		double trigger_threshold[XHPTDC8_TDC_CHANNEL_COUNT];
+		xhptdc8_trigger trigger[XHPTDC8_TRIGGER_COUNT]; //!< Configures the polarity of the external trigger sources.
 		xhptdc8_tiger_block gating_block[XHPTDC8_GATE_COUNT]; //!< configuration of the gating blocks
 		xhptdc8_tiger_block tiger_block[XHPTDC8_TIGER_COUNT]; //!< configuration of the timing generator blocks
 		xhptdc8_channel channel[XHPTDC8_TDC_CHANNEL_COUNT]; //!< configure polaritiy, type and threshold for the TDC channels
@@ -1131,18 +1157,16 @@ extern "C" {
 				  * all versions up to first release.
 				  */
 		int version;
-		
+
 		/** \brief xhptdc_device_configuration device_configs
-		*
+		*	A structure with the configuration for an individual xHPTDC8 board
 		*/
-		xhptdc8_device_configuration device_configs[XHPTDC8MANAGER_DEVICES_MAX];
+		xhptdc8_device_configuration device_configs[XHPTDC8_MANAGER_DEVICES_MAX];
 
 		/** \brief xhptdc8_grouping_configuration grouping
-		*
+		*	Structure with the parameters for grouping
 		*/
 		xhptdc8_grouping_configuration grouping;
-
-		void* bin_to_ps;	//$$ added from user guide
 
 	} xhptdc8_manager_configuration;
 
@@ -1153,7 +1177,7 @@ extern "C" {
 	*	\param *xhptdc8_mgr of type xhptdc8_manager
 	*	\param *manager_config of type xhptdc8_manager_configuration
 	*/
-	XHPTDC8_API int xhptdc8_get_default_configuration(xhptdc8_manager *xhptdc8_mgr, xhptdc8_manager_configuration *mgr_config);
+	XHPTDC8_API int xhptdc8_get_default_configuration(xhptdc8_manager hMgr, xhptdc8_manager_configuration *mgr_config);
 	/*!	\ingroup conffuncts
 	*	\brief gets current manager configuration
 	*
@@ -1161,7 +1185,7 @@ extern "C" {
 	*	\param *xhptdc8_mgr of type xhptdc8_manager
 	*	\param *mgr_config of type xhptdc8_manager_configuration
 	*/
-	XHPTDC8_API int xhptdc8_get_current_configuration(xhptdc8_manager *xhptdc8_mgr, xhptdc8_manager_configuration *mgr_config);
+	XHPTDC8_API int xhptdc8_get_current_configuration(xhptdc8_manager hMgr, xhptdc8_manager_configuration *mgr_config);
 	/*!	\ingroup conffuncts
 	*	\brief configures xHPTDC8 device
 	*
@@ -1171,15 +1195,15 @@ extern "C" {
 	*/
 	/* the config information is copied, so can be changed after the
 	called */
-	XHPTDC8_API int xhptdc8_configure(xhptdc8_manager *xhptdc8_mgr, xhptdc8_manager_configuration *mgr_config);
+	XHPTDC8_API int xhptdc8_configure(xhptdc8_manager hMgr, xhptdc8_manager_configuration *mgr_config);
 
 
 	/*!	\ingroup initfuncts
-	*	\brief Return the number of boards that are supported by this driver in the system.
+	*	\brief Returns the number of boards present in the system that are supported by this driver.
 	*	\param *error_code is type int
 	*	\param **error_message is type const char
 	*/
-	XHPTDC8_API int xhptdc8_count_devices(int *error_code, char** error_message);
+	XHPTDC8_API int xhptdc8_count_devices(int *error_code, const char** error_message);
 
 	/*!	\ingroup initfuncts
 	* @{
@@ -1187,29 +1211,29 @@ extern "C" {
 	/*!	\brief Sets up the standard parameters
 	*
 	*	Gets a set of default parameters for @link xhptdc8_init xhptdc8_init() @endlink . This must always
-	*	be used to initialize the @link initparamsstruct xhptdc8manager_init_parameter() @endlink structure.
+	*	be used to initialize the @link initparamsstruct xtdc8manager_init_parameter() @endlink structure.
 	*	Return values are listed @link defdefinpar here @endlink.
-	*	\param init is type *xhptdc8manager_init_parameters
+	*	\param init is type *xhptdc8_manager_init_parameters
 	*/
-	XHPTDC8_API int xhptdc8_get_default_init_parameters(xhptdc8manager_init_parameters *init); //$$ struct renamed to hp
+	XHPTDC8_API int xhptdc8_get_default_init_parameters(xhptdc8_manager_init_parameters *init);
 
 	/*!	\brief Open and initialize the xHPTDC8 board with the given index.
 	*
 	*	With error_code and error_message the user must provide pointers where error information should be
 	*	written by the driver. Return values are listed @link definit here @endlink.
-	*	\param *params type xhptdc8manager_init_parameters
+	*	\param *params type xhptdc8_manager_init_parameters
 	*	\param *error_code is type int
 	*	\param **error_message is type char. The buffer for the error message has to contain at least 80 chars.
 	*/
-	XHPTDC8_API xhptdc8_manager *xhptdc8_init(xhptdc8manager_init_parameters *params, int *error_code, const char** error_message);
+	XHPTDC8_API void xhptdc8_init(xhptdc8_manager *p_hMgr,  xhptdc8_manager_init_parameters *params, int *error_code, const char** error_message);
 
 	/*!	\ingroup statfuncts
-	*	\brief Returns the driver version, same format as xhptdc8_static_info::driver_revision
+	*	\brief Returns the driver version, same format as xhptdc8_static_info.driver_revision
 	*/
 	XHPTDC8_API int xhptdc8_get_driver_revision();
 
 	/*!	\ingroup statfuncts
-*	\brief Returns the driver version including SVN build revision as a string with format x.y.z.svn
+*	\brief Returns the driver version including SVN build revision as a string
 	*/
 	XHPTDC8_API const char* xhptdc8_get_driver_revision_str();
 
