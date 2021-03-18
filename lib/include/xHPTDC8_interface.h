@@ -974,7 +974,8 @@ extern "C" {
 	* /brief Configure the optional grouping functionality
 	*
 	*/
-	typedef struct {
+	typedef struct xhptdc8_grouping_configuration_ xhptdc8_grouping_configuration;
+	struct xhptdc8_grouping_configuration_ {
 		/*! \brief Das ist das Flag ob nach Gruppen gefiltert wird.
 		*/
 		bool enabled = false;
@@ -1035,7 +1036,7 @@ extern "C" {
 			*/
 		bool overlap; // <= bAllowOverlap;
 
-	} xhptdc8_grouping_configuration;
+	} ;
 
 
 	/*! \ingroup confstruct Structure xhptdc8_device_configuration
