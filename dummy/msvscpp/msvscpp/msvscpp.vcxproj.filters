@@ -39,6 +39,9 @@
     <ClInclude Include="..\..\xHPTDC8_dummy_interface.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\xHPTDC8_RC.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="msvscpp.cpp">

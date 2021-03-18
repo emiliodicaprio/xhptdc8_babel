@@ -5,6 +5,7 @@
 #include "xHPTDC8_interface.h"
 #include "xHPTDC8_dummy_interface.h"
 #include <random>
+#include "xHPTDC8_RC.h"
 
 static std::default_random_engine g_generator; // Random engine generator
 static std::normal_distribution<double> g_distribution(5000.0, 30.0);
@@ -519,19 +520,19 @@ extern "C" int xhptdc8_start_capture(xhptdc8_manager* xhptdc8_mgr)
 	xhptdc8_dummy_manager* mngr = (xhptdc8_dummy_manager*)(xhptdc8_mgr->xhptdc8manager);
 
 	if (mngr->state == ManagerState::CREATED || mngr->state == ManagerState::INITIALIZED) {
-		_set_last_error_internal(xhptdc8_mgr, "Device is not configured, cannot start.");
+		_set_last_error_internal(xhptdc8_mgr, ERR_MSG_DEVICE_NOT_CONF);
 		return XHPTDC8_WRONG_STATE;
 	}
 	if (mngr->state == ManagerState::CAPTURING) {
-		_set_last_error_internal(xhptdc8_mgr, "Device is already capturing.");
+		_set_last_error_internal(xhptdc8_mgr, ERR_MSG_DEVICE_IS_CAPTURING);
 		return XHPTDC8_WRONG_STATE;
 	}
 	if (mngr->state == ManagerState::PAUSED) {
-		_set_last_error_internal(xhptdc8_mgr, "Device is already capturing.");
+		_set_last_error_internal(xhptdc8_mgr, ERR_MSG_DEVICE_IS_CAPTURING);
 		return XHPTDC8_WRONG_STATE;
 	}
 	if (mngr->state == ManagerState::CLOSED) {
-		_set_last_error_internal(xhptdc8_mgr, "Device is already closed.");
+		_set_last_error_internal(xhptdc8_mgr, ERR_MSG_DEVICE_IS_CLOSED);
 		return XHPTDC8_WRONG_STATE;
 	}
 
@@ -559,7 +560,7 @@ extern "C" int xhptdc8_pause_capture(xhptdc8_manager* xhptdc8_mgr)
 	xhptdc8_dummy_manager* mngr = (xhptdc8_dummy_manager*)(xhptdc8_mgr->xhptdc8manager);
 
 	if (mngr->state != ManagerState::CAPTURING) {
-		_set_last_error_internal(xhptdc8_mgr, "Device is not capturing!");
+		_set_last_error_internal(xhptdc8_mgr, ERR_MSG_DEVICE_IS_NOT_CAPURING);
 		return XHPTDC8_WRONG_STATE;
 	}
 
@@ -586,7 +587,7 @@ extern "C" int xhptdc8_continue_capture(xhptdc8_manager* xhptdc8_mgr)
 	xhptdc8_dummy_manager* mngr = (xhptdc8_dummy_manager*)(xhptdc8_mgr->xhptdc8manager);
 
 	if (mngr->state != ManagerState::PAUSED) {
-		_set_last_error_internal(xhptdc8_mgr, "Device is not paused!");
+		_set_last_error_internal(xhptdc8_mgr, ERR_MSG_DEVICE_IS_NOT_PAUSED);
 		return XHPTDC8_WRONG_STATE;
 	}
 

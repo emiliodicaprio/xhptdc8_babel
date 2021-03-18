@@ -167,6 +167,7 @@
     <ClInclude Include="..\..\..\lib\include\crono_interface.h" />
     <ClInclude Include="..\..\..\lib\include\xHPTDC8_interface.h" />
     <ClInclude Include="..\..\xHPTDC8_dummy_interface.h" />
+    <ClInclude Include="..\..\xHPTDC8_RC.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="msvscpp.h" />
     <ClInclude Include="pch.h" />
