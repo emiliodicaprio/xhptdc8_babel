@@ -1,4 +1,5 @@
 //
+// Dummy Library APIs Implementation
 // 
 #include "pch.h"
 #include "xHPTDC8_interface.h"
@@ -31,6 +32,9 @@ extern "C" const char* xhptdc8_get_driver_revision_str()
 
 /*
 * Returns the number of boards present in the system that are supported by this driver.
+* 
+* Specific to Dummy Library: 
+* - For demo purpose, we have only one device
 */
 extern "C" int xhptdc8_count_devices(int* error_code, char** error_message)
 {
@@ -41,8 +45,8 @@ extern "C" int xhptdc8_count_devices(int* error_code, char** error_message)
 		return XHPTDC8_INVALID_ARGUMENTS;
 
 	*error_code = 0;
-	*error_message = (char*)MSG_OK; //$$ Memory allocation? Mention that in the guide.
-	return 1;
+	*error_message = (char*)MSG_OK; 
+	return 1;	// One Device is supported
 }
 
 //_____________________________________________________________________________
@@ -101,6 +105,10 @@ extern "C" int xhptdc8_get_default_init_parameters(xhptdc8manager_init_parameter
 * buffer in the location provided by the user.
 * The paramter params is a structure of type xhptdc8_init_parameters that 
 * must be completely initialized.
+*
+* Specific to Dummy Library:
+* - For demo purpose, we have only one device
+*
 */
 extern "C" xhptdc8_manager* xhptdc8_init(xhptdc8manager_init_parameters* params,
 	int* error_code, const char** error_message)
@@ -180,6 +188,11 @@ extern "C" int xhptdc8_get_device_type(xhptdc8_manager* xhptdc8_mgr)
 	if (!xhptdc8_is_valid_device(xhptdc8_mgr))
 		return XHPTDC8_INVALID_ARGUMENTS;
 
+	// Validate that the device manager device_type is set properly
+	xhptdc8_dummy_manager* mngr = (xhptdc8_dummy_manager*)(xhptdc8_mgr->xhptdc8manager);
+	if (CRONO_DEVICE_XHPTDC8 != mngr->params.device_type)
+		return XHPTDC8_INVALID_ARGUMENTS;
+
 	return CRONO_DEVICE_XHPTDC8;
 }
 
@@ -198,6 +211,10 @@ extern "C" const char* xhptdc8_get_last_error_message(xhptdc8_manager* xhptdc8_m
 * Returns fast dynamic information.
 * This call gets a structure that contains dynamic information that can 
 * be obtained within a few microseconds.
+*
+* Specific to Dummy Library:
+* - For demo purpose, we have only one device, index is always 0
+* 
 */
 extern "C" int xhptdc8_get_fast_info(xhptdc8_manager* xhptdc8_mgr, int index,
 		xhptdc8_fast_info* info)
@@ -224,6 +241,10 @@ extern "C" int xhptdc8_get_fast_info(xhptdc8_manager* xhptdc8_mgr, int index,
 /*
 * Returns configuration changes. 
 * Gets a structure that contains information that changes indirectly due to configuration changes.
+*
+* Specific to Dummy Library:
+* - For demo purpose, we have only one device, index is always 0
+*
 */
 extern "C" int xhptdc8_get_param_info(xhptdc8_manager* xhptdc8_mgr, int index,
 	xhptdc8_param_info* info)
@@ -248,6 +269,10 @@ extern "C" int xhptdc8_get_param_info(xhptdc8_manager* xhptdc8_mgr, int index,
 * Contains static information.
 * Gets a structure that contains information about the board that 
 * does not change during run time.
+*
+* Specific to Dummy Library:
+* - For demo purpose, we have only one device, index is always 0
+*
 */
 extern "C" int xhptdc8_get_static_info(xhptdc8_manager* xhptdc8_mgr, int index,
 	xhptdc8_static_info* info)
@@ -265,6 +290,10 @@ extern "C" int xhptdc8_get_static_info(xhptdc8_manager* xhptdc8_mgr, int index,
 
 /*
 * Get temperature measurements from multiple sources on the board.
+*
+* Specific to Dummy Library:
+* - For demo purpose, we have only one device, index is always 0
+*
 */
 extern "C" int xhptdc8_get_temperature_info(xhptdc8_manager* xhptdc8_mgr, int index,
 	xhptdc8_temperature_info* info)
@@ -286,6 +315,10 @@ extern "C" int xhptdc8_get_temperature_info(xhptdc8_manager* xhptdc8_mgr, int in
 
 /*
 * Get information on clocking configuration an status.
+*
+* Specific to Dummy Library:
+* - For demo purpose, we have only one device, index is always 0
+*
 */
 extern "C" int xhptdc8_get_clock_info(xhptdc8_manager* xhptdc8_mgr, int index,
 	xhptdc8_clock_info* info)
@@ -598,6 +631,10 @@ extern "C" int xhptdc8_stop_capture(xhptdc8_manager* xhptdc8_mgr)
 
 /*
 * Start timing generator.This can be done independantly of the state of the data acquisition.
+*
+* Specific to Dummy Library:
+* - For demo purpose, we have only one device, index is always 0
+*
 */
 extern "C" int xhptdc8_start_tiger(xhptdc8_manager* xhptdc8_mgr, int index)
 {
@@ -620,6 +657,10 @@ extern "C" int xhptdc8_start_tiger(xhptdc8_manager* xhptdc8_mgr, int index)
 
 /*
 * Stop timing generator.This can be done independantly of the state of the data acquisition.
+*
+* Specific to Dummy Library:
+* - For demo purpose, we have only one device, index is always 0
+*
 */
 extern "C" int xhptdc8_stop_tiger(xhptdc8_manager* xhptdc8_mgr, int index)
 {
@@ -769,6 +810,8 @@ extern "C" crono_bool_t xhptdc8_is_valid_device(xhptdc8_manager* xhptdc8_mgr)
 		||  (nullptr == xhptdc8_mgr->xhptdc8manager)
 		)
 	{
+		// No need to set the last error message, as XHPTDC8_INVALID_ARGUMENTS 
+		// should be returned by the caller
 		return false;
 	}
 	return true;
@@ -780,13 +823,21 @@ extern "C" crono_bool_t xhptdc8_is_valid_device(xhptdc8_manager* xhptdc8_mgr)
 */
 extern "C" crono_bool_t xhptdc8_is_valid_device_index(xhptdc8_manager* xhptdc8_mgr, int index)
 {
+	return _xhptdc8_is_valid_device_index_inernal(xhptdc8_mgr, index);
+}
+
+/*
+* Only one device is supported in the Dummy Library, so, index should be always 0
+*/
+crono_bool_t _xhptdc8_is_valid_device_index_inernal(xhptdc8_manager * xhptdc8_mgr, int index)
+{
 	if (!xhptdc8_is_valid_device(xhptdc8_mgr))
 		return false;
 
-	if ((index < 0)
-		|| (index >= XHPTDC8MANAGER_DEVICES_MAX)
-		)
+	if (0 != index )
 	{
+		// No need to set the last error message, as XHPTDC8_INVALID_ARGUMENTS 
+		// should be returned by the caller
 		return false;
 	}
 	return true;

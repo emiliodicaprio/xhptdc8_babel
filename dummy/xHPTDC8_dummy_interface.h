@@ -72,5 +72,6 @@ int init_static_info_internal(xhptdc8_static_info* info);
 void _set_last_error_internal(xhptdc8_manager* xhptdc8_mgr, const char* format, ...);
 int _xhptdc8_read_hits_for_groups_internal(xhptdc8_dummy_manager* mngr, TDCHit* hit_buf, size_t size);
 int _xhptdc8_read_hits_for_NO_groups_internal(xhptdc8_dummy_manager* mngr, TDCHit* hit_buf, size_t size);
+crono_bool_t _xhptdc8_is_valid_device_index_inernal(xhptdc8_manager* xhptdc8_mgr, int index);
 
 #endif
