@@ -329,7 +329,7 @@ extern "C" int xhptdc8_get_clock_info(xhptdc8_manager hMgr, int index,
 	info->version = XHPTDC8_CLOCK_INFO_VERSION;
 	info->cdce_locked = 0;
 	info->cdce_version = 0;
-	info->clock_source = XHPTDC8_CLK_OSC;
+	info->use_ext_clock = false;
 	info->fpga_locked = 0;
 
 	return XHPTDC8_OK;
