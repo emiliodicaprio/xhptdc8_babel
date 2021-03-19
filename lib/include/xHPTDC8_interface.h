@@ -497,18 +497,18 @@ extern "C" {
 		*  If set to 1 enable multiboard operation.
 		*  If set to 0 disable multiboard operation.
 		*/
-		int multiboard;
+		crono_bool_t multiboard;
 
 		/*! \brief Select external 10 MHz reference.
 		*
 		*  If set to 1 use external 10 MHz reference.
 		*  If set to 0 use internal reference.
 		*/
-		int use_ext_clock;
+		crono_bool_t use_ext_clock;
 
 		/*!
 		*/
-		int ignore_calibration;
+		crono_bool_t ignore_calibration;
 
 	} xhptdc8_manager_init_parameters;
 
@@ -695,7 +695,7 @@ extern "C" {
 		*
 		*	If not 0 the driver found valid calibration data in the flash on the board and is using it.
 		*/
-		int flash_valid;
+		crono_bool_t flash_valid;
 
 		/*! \brief calibration date
 		*
@@ -843,7 +843,7 @@ extern "C" {
 		int version;				//!< The version number
 		crono_bool_t cdce_locked;	//!< CDCE62005 PLL locked. Set if the jitter cleaning PLL clock synthesizer achieved lock
 		int cdce_version;			//!< CDCE62005 version
-		int clock_source;			//!< 1: J12 clock, 2: internal 10 MHz, 4: LEMO clock
+		crono_bool_t use_ext_clock; //!< false: internal 10 MHz, true: LEMO clock
 		crono_bool_t fpga_locked;	//!< FPGA datapath PLL locked
 	} xhptdc8_clock_info;
 
@@ -1029,11 +1029,11 @@ extern "C" {
 
 		/*! \brief Angaben des veto fensters sind relativ zum 0 - Kanal
 		*/
-		bool veto_relative_to_zero; // <= bVetoIsRelativeToTimeZeroChannel;
+		crono_bool_t veto_relative_to_zero; // <= bVetoIsRelativeToTimeZeroChannel;
 
 			/*! \brief Muss auf false bleiben, kann später mal benutzt werden, um auch überlappende Gruppen zu erzeugen
 			*/
-		bool overlap; // <= bAllowOverlap;
+		crono_bool_t overlap; // <= bAllowOverlap;
 
 	} xhptdc8_grouping_configuration;
 
@@ -1167,6 +1167,10 @@ extern "C" {
 		*	Structure with the parameters for grouping
 		*/
 		xhptdc8_grouping_configuration grouping;
+
+		/** \brief *.Reserved for future use.
+		*/
+		void* bin_to_ps;
 
 	} xhptdc8_manager_configuration;
 
