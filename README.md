@@ -10,11 +10,12 @@ Eventually you will also find utility functions such as default configurations f
 ## Directory Structure
 
     .
-    ├── lib/      # real and dummy driver libraries and header files
-    ├── dummy/    # dummy library to enable development in this repository without access to the hardware
-    ├── util/     # utility functions common to all wrappers
-    └── python/   # python wrapper around driver and utilities
-(created by [tree.nathanfriend.io](https://tree.nathanfriend.io/?s=(%27options!(%27fancy!true~fullPath!false~trailingSlash!true)~8(%278%27lib09*real-62drivBlibraries-headBfiles56y0*62library.enable%20development%20inDhiCrepositor2without4ccess.the%20hardware570%20*7it2functionCcommon.all3s5python%2F*python34rouAdriver-7ities%27)~version!%271%27)*9%20%23%20-4A.Do%200%2F%202y%203%20wrapper4%20a5%5Cn6dumm7util8source!9%20%20And%20Ber%20Cs%20D%20t%01DCBA987654320.-*)
+    ├── lib/        # real and dummy driver libraries and header files
+    ├── dummy/      # dummy library to enable development in this repository without access to the hardware
+    ├── util/       # utility functions common to all wrappers
+    ├── ug_example/ # c++ example of how to use the driver
+    └── python/     # python wrapper around driver and utilities
+(created by [tree.nathanfriend.io](https://tree.nathanfriend.io/?s=(%27options!(%27fancy!true~fullPa9!false~trailingSlash!true)~C(%27C%27lib23*real.708ies.headF%20files472*78y-enabl5development%20in%209iGrepositorEwi9outAccess-95hardware4B2%20*BitEfunctionGcommon-all6s4ug_example2Dc%2B%2B%20exampl5of%20how-us59e04py9on%2F*py9on6Around0.Bities%27)~vFsion!%271%27)*33%20D-%20to%20.And%200%20drivF2%2F%203%20%204%5Cn5e%206%20wrappF7dummy8%20librar9thA%20aButilCsource!D%23%20Ey%20FerGs%20%01GFEDCBA987654320.-*)
 
 ## License
 
