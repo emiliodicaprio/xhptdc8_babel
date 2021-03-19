@@ -974,11 +974,10 @@ extern "C" {
 	* /brief Configure the optional grouping functionality
 	*
 	*/
-	typedef struct xhptdc8_grouping_configuration_ xhptdc8_grouping_configuration;
-	struct xhptdc8_grouping_configuration_ {
+	typedef struct {
 		/*! \brief Das ist das Flag ob nach Gruppen gefiltert wird.
 		*/
-		bool enabled = false;
+		crono_bool_t enabled;
 
 		/*! \brief Das ist der Kanel auf den Getriggert wird.
 		*/
@@ -1036,7 +1035,7 @@ extern "C" {
 			*/
 		bool overlap; // <= bAllowOverlap;
 
-	} ;
+	} xhptdc8_grouping_configuration;
 
 
 	/*! \ingroup confstruct Structure xhptdc8_device_configuration

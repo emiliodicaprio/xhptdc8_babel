@@ -475,6 +475,7 @@ extern "C" int xhptdc8_get_default_configuration(xhptdc8_manager hMgr,
 	config->grouping.veto_stop = 0;
 	config->grouping.veto_relative_to_zero = false;
 	config->grouping.overlap = false;
+	config->grouping.enabled = false;
 	
 	//config->bin_to_ps = NULL;
 
