@@ -28,7 +28,7 @@ The Solution and Project are created using Microsoft Visual Studio 2019, as a Co
 
 ## Building Using MS Visual Studio
 Nothing special, just:
-1. Using MS Visual Studio compatible version, open the solution file: `ug_example_msvscpp\ug_example_msvscpp.sln`
+1. Using MS Visual Studio compatible version, open the solution file: `\ug_example_msvscpp\ug_example_msvscpp.sln`
 2. Select the needed _Configuration_ and _Environment_ to build.
 3. Hit _Build ug_example_msvscpp_, and check the built executable file in the corresponsing directory as per the [table above](https://github.com/cronologic-de/xhptdc8_babel/edit/main/ug_example/README.md#Project_Environments_and_Configurations).
 
