@@ -113,26 +113,35 @@ extern "C" int xhptdc8_get_default_init_parameters(xhptdc8_manager_init_paramete
 * - For demo purpose, we have only one device
 *
 */										 
-extern "C" void xhptdc8_init(xhptdc8_manager* p_hMgr, 
+const static size_t MaxErrorMessageSize = 10000;
+static char lastErrorMessage[MaxErrorMessageSize];
+extern "C" void xhptdc8_init(xhptdc8_manager* p_hMgr,
 	xhptdc8_manager_init_parameters* params, int* error_code, const char** error_message)
 {
-	p_hMgr = NULL;
+	lastErrorMessage[0] = 0;
+	*p_hMgr = NULL;
 
+	if (nullptr != error_message)
+	{
+		*error_message = (const char*)lastErrorMessage;
+	}
 	if (nullptr == error_code)
 	{
 		*error_code = XHPTDC8_INVALID_ARGUMENTS;
+		snprintf(lastErrorMessage, MaxErrorMessageSize, ERR_MSG_INIT_FAILED_FMT, ERR_MSG_INVALID_ARGS);
 		return;
 	}
-
 	if (nullptr == params)
 	{
 		*error_code = XHPTDC8_INVALID_ARGUMENTS;
+		snprintf(lastErrorMessage, MaxErrorMessageSize, ERR_MSG_INIT_FAILED_FMT, ERR_MSG_INVALID_ARGS);
 		return ;
 	}
 
 	xhptdc8_dummy_manager* xhptdc8Manager = new xhptdc8_dummy_manager;
 	if (nullptr == xhptdc8Manager)
 	{
+		snprintf(lastErrorMessage, MaxErrorMessageSize, ERR_MSG_INIT_FAILED_FMT, ERR_MSG_MEMORY_ALLOC);
 		return;
 	}
 	memset(xhptdc8Manager, 0, sizeof(xhptdc8_dummy_manager));
@@ -140,11 +149,12 @@ extern "C" void xhptdc8_init(xhptdc8_manager* p_hMgr,
 	// Initialize the structure
 	init_static_info_internal(&(xhptdc8Manager->staticInfo));
 	memset(&(xhptdc8Manager->p_mgr_cfg), 0, sizeof(xhptdc8_manager_configuration));
-	if (XHPTDC8_OK != xhptdc8_get_default_init_parameters(&(xhptdc8Manager->params)))
+	*error_code = xhptdc8_get_default_init_parameters(&(xhptdc8Manager->params));
+	if (XHPTDC8_OK == (*error_code))
 	{
-		return ;
+		xhptdc8Manager->state = ManagerState::INITIALIZED;
+		*p_hMgr = (xhptdc8_manager*)xhptdc8Manager;
 	}
-	xhptdc8Manager->state = ManagerState::INITIALIZED;
 }
 
 /*
@@ -198,7 +208,7 @@ extern "C" int xhptdc8_get_device_type(xhptdc8_manager hMgr, int index)
 extern "C" const char* xhptdc8_get_last_error_message(xhptdc8_manager hMgr, int index)
 {
 	if (!xhptdc8_is_valid_manager(hMgr))
-		return ERR_MSG_DUMMY_LAST;
+		return ERR_MSG_INVALID_MANAGER;
 	xhptdc8_dummy_manager* mngr = (xhptdc8_dummy_manager*)(hMgr);
 	return mngr->last_error_message;
 }

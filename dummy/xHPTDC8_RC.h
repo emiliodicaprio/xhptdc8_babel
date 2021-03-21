@@ -11,7 +11,10 @@ static char ERR_MSG_DEVICE_IS_NOT_CAPURING[25] ={ "Device is not capturing!" };
 static char ERR_MSG_DEVICE_IS_NOT_PAUSED[22] =	{ "Device is not paused!" };
 static char ERR_MSG_TIGER_DEVICE_NOT_CONF[46] =	{ "Device is not configured, cannot start TiGer." };
 static char ERR_MSG_BUFFER_SIZE_SMALL[27] =		{ "Buffer size is too small!" };
-static char ERR_MSG_DUMMY_LAST[20] =			{ "Last Error Message!" };
+static char ERR_MSG_INVALID_MANAGER[27] =		{ "Manager is invalid!" };
+static char ERR_MSG_INIT_FAILED_FMT[39] =		{ "xtdc8Manager initialization failed: %s" };
+static char ERR_MSG_INVALID_ARGS[18] =			{ "invalid arguments" };
+static char ERR_MSG_MEMORY_ALLOC[18] =			{ "memory allocation" };
 
 #endif // !XHPTDC8_RESOURCE_H
 
