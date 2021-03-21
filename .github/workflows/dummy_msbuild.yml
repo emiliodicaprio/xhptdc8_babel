@@ -1,4 +1,4 @@
-name: Dummy_MSBuild
+name: Dummy Library MSBuild
 # Upon any change in sub files of ./dummy, the action does the following:
 # 1. Builds the Dummy Library Release x64 & x86 DLL & Lib, using MSBuild
 # 2. Copies the DLLs & Libs to the corresponding folders on ./lib repository folder, and commits
