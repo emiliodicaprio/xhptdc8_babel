@@ -5,11 +5,10 @@
 #include <windows.h>
 #include "crono_interface.h"
 #include "xHPTDC8_interface.h"
-#include "xhptdc8_user_guide_example.h"
 
 typedef unsigned int uint32;
 typedef unsigned __int64 uint64;
-
+int exit_on_fail(xhptdc8_manager hMgr, int status, const char* message);
 
 // crate a manager object that provides access to all xHPTDC8 in the system
 xhptdc8_manager initialize_xhptdc8(int buffer_size) {
