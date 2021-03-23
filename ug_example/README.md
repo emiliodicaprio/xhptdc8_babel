@@ -41,7 +41,7 @@ To run the executable file using _Dummy Library_:
 ## Debugging the sample
 Nothing special about using MS Visual Studio in debugging the project, just go ahead using MS Visual Studio debugger.
 
-## Using Dummy Library
+### Debug Dummy Library
 When using _Dummy Library_, you can build the _Debug Configuration_ of _xhptdc8_driver_64.dll_, and copy it in the executable file directory, you can then go into the _Dummy Library_ code as well while debugging the sample.
 
 
