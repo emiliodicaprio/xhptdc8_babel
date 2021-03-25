@@ -158,6 +158,10 @@ Here is the complete elements of the manager configuration sturcture, including 
    veto_relative_to_zero : true 
    overlap : true 
 ```
+#### Assigning the the values to multiple substructures
+YAML allows to reused definitions from one place of the structure multiple times without writing them all over again.
+This can be useful to set multiple boards to the same setting or multiple channels of one board.
+This [this website](http://blogs.perl.org/users/tinita/2019/05/reusing-data-with-yaml-anchors-aliases-and-merge-keys.html) for a very short description how this works.
 
 # test_msvscpp Project
 
