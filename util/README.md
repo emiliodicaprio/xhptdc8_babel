@@ -64,6 +64,7 @@ int xhptdc8_apply_yaml(xhptdc8_manager_configuration* cfg, const char* yaml_stri
 ```
 
 Sample YAML:
+* The format will change, see [issue 17](https://github.com/cronologic-de/xhptdc8_babel/issues/17)
 ```YAML
  manager_config: 
   device_configs: 
