@@ -63,6 +63,37 @@ This API is of the following signature:
 int xhptdc8_apply_yaml(xhptdc8_manager_configuration* cfg, const char* yaml_string);
 ```
 
+Sample YAML:
+```YAML
+ manager_config: 
+  device_configs: 
+   - 
+    trigger : 
+     - 
+      falling : false 
+      rising : true 
+    trigger_threshold : 
+     - 0.3499 
+     - 0.35 
+     - 0.36666 
+    gating_block : 
+     - 
+      mode : 1 
+      negate : true 
+    auto_trigger_period : 20 
+   - 
+    trigger : 
+     - 
+      falling : true 
+      rising : false 
+    channel : 
+     - 
+      enable : true
+      rising : false 
+  grouping : 
+   enabled : true 
+```
+
 # test_msvscpp Project
 
 ## About
