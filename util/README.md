@@ -94,6 +94,70 @@ Sample YAML:
    enabled : true 
 ```
 
+#### All Elements YAML
+Here is the complete elements of the manager configuration sturcture, including sample values; you can copy your YAML elements from the YAML below, just keep the spaces before the elements, and refer to both the user guide and the xhptdc8_interface.h for the members specifications:
+
+```YAML
+ manager_config: 
+  device_configs: 
+   - 
+    auto_trigger_period : 20 
+    auto_trigger_random_exponent : 20 
+    trigger_threshold : 
+     - 0.3499 
+     - 0.35 
+     - 0.36666 
+    trigger : 
+     - 
+      falling : false 
+      rising : true 
+    gating_block : 
+     - 
+      mode : 1 
+      negate : true 
+      retrigger : true 
+      extend : true 
+      start : 10 
+      stop : 190 
+      sources : 1 
+    tiger_block : 
+     - 
+      mode : 2 
+      negate : true 
+      retrigger : true 
+      extend : true 
+      start : 20 
+      stop : 200 
+      sources : 2 
+    channel : 
+     - 
+      enable : true
+      rising : true 
+    adc_channel : 
+     enable : true 
+     watchdog_readout : true 
+     watchdog_interval : 5 
+     trigger_threshold : 6 
+    skip_alignment : true 
+    alignment_source : 1 
+  grouping : 
+   enabled : true 
+   trigger_channel : 3 
+   zero_channel : 2 
+   zero_channel_offset : 1 
+   range_start : 12345 
+   range_stop : 23456 
+   trigger_deadtime : 25 
+   require_window_hit : true 
+   window_start : 10 
+   window_stop : 20 
+   veto_mode : 2 
+   veto_start : 30 
+   veto_stop : 40 
+   veto_relative_to_zero : true 
+   overlap : true 
+```
+
 # test_msvscpp Project
 
 ## About
