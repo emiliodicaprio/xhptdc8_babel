@@ -10,7 +10,7 @@ typedef unsigned int uint32;
 typedef unsigned __int64 uint64;
 int exit_on_fail(xhptdc8_manager hMgr, int status, const char* message);
 
-// crate a manager object that provides access to all xHPTDC8 in the system
+// create a manager object that provides access to all xHPTDC8 in the system
 xhptdc8_manager initialize_xhptdc8(int buffer_size) {
 	// prepare initialization
 	xhptdc8_manager_init_parameters params;
@@ -95,7 +95,7 @@ void print_hit(TDCHit* hit) {
 
 	printf("Channel %u - Time %llu - Type %x", hit->channel, hit->time, hit->type);
 	if (adc_data)
-		printf(" - ADC Data : %channel_index", (int)(hit->bin));
+		printf(" - ADC Data : %d", (int)(hit->bin));
 
 	printf("\n");
 }
@@ -126,11 +126,11 @@ void read_hits_wrapper(xhptdc8_manager xhptdc8_man, int events_per_read) {
 			TDCHit* hit = &(hit_buffer[i]);
 			print_hit(hit);
 			if ((total_events++ % 100) == 0)
-				printf("Sum: %channel_index - Packet events: %channel_index\n", total_events, hit_count);
+				printf("Sum: %d - Packet events: %d\n", total_events, hit_count);
 		}
 	}
 
-	delete hit_buffer;
+	delete[] hit_buffer;
 }
 
 // utility function to check for error, print error message and exit
