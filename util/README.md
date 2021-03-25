@@ -8,6 +8,7 @@ Windows DLL that provides utility functionalities for xHPTDC8 Driver
 
 ### Project Environments and Configurations
 - Project Settings -> Include Directories : `..\..\include;..\..\..\lib\include;.\ryml_src;` is added.
+
 | Configuration | Environment   | Output Directory | Library Name    |
 | ------------- |-------------  |----------------- | --------------- |
 | Debug         | x64           | ..\..\lib\x64    | xhptdc8_util_64 |  
