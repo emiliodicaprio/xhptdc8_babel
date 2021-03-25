@@ -6,6 +6,8 @@
 #include "xhptdc8_interface.h"
 
 void test_apply_yaml_all_keys_structure();
+void test_apply_yaml_breif_sample();
+
 /*
 * String has all keys of the manager_config structure
 */
@@ -71,21 +73,61 @@ char mngr_all_keys_sample[1213] =
 "   overlap : true \n"
 };
 
+char mngr_brief_sample[447] =
+{
+" manager_config: \n"
+"  device_configs: \n"
+"   - \n"
+"    trigger : \n"
+"     - \n"
+"      falling : false \n"
+"      rising : true \n"
+"    trigger_threshold : \n"
+"     - 0.3499 \n"
+"     - 0.35 \n"
+"     - 0.36666 \n"
+"    gating_block : \n"
+"     - \n"
+"      mode : 1 \n"
+"      negate : true \n"
+"    auto_trigger_period : 20 \n"
+"   - \n"
+"    trigger : \n"
+"     - \n"
+"      falling : true \n"
+"      rising : false \n"
+"    channel : \n"
+"     - \n"
+"      enable : true\n"
+"      rising : false \n"
+"  grouping : \n"
+"   enabled : true \n"
+};
+
 int main()
 {
 	test_apply_yaml_all_keys_structure();
+	test_apply_yaml_breif_sample();
 }
 
-void test_apply_yaml_all_keys_structure()
+void test_apply_yaml(char* src)
 {
-	xhptdc8_manager hMgr ;
+	xhptdc8_manager hMgr;
 	xhptdc8_manager_init_parameters* params = NULL;
 	int error_code;
 	char* error_message = NULL;
 	xhptdc8_init(&hMgr, params, &error_code, (const char**)&error_message);
 	xhptdc8_manager_configuration* cfg = new xhptdc8_manager_configuration;
 	xhptdc8_get_default_configuration(hMgr, cfg);
-	xhptdc8_apply_yaml(cfg, mngr_all_keys_sample);
+	xhptdc8_apply_yaml(cfg, src);
 	xhptdc8_configure(hMgr, cfg);
 	delete cfg;
+}
+void test_apply_yaml_all_keys_structure()
+{
+	test_apply_yaml(mngr_all_keys_sample);
+}
+void test_apply_yaml_breif_sample()
+{
+	test_apply_yaml(mngr_brief_sample);
 }

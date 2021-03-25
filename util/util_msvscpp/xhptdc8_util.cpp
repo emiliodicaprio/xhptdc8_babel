@@ -146,7 +146,7 @@ int xhptdc8_apply_trigger_threshold_yaml(const ryml::NodeRef* device_config_node
     {
         return XHPTDC8_APPLY_YAML_ERR_EMPTY_DEV_CONF;
     }
-    ryml::NodeRef trigger_threshold_node = (*device_config_node)["trigger_threshold"];
+    ryml::NodeRef trigger_threshold_node = (*device_config_node).find_child("trigger_threshold");
     if (!RYML_NODE_EXISTS(trigger_threshold_node))
     {
         return 0;
@@ -190,7 +190,7 @@ int xhptdc8_apply_trigger_yaml(const ryml::NodeRef* device_config_node,
     {
         return XHPTDC8_APPLY_YAML_ERR_EMPTY_DEV_CONF;
     }
-    ryml::NodeRef trigger_node = (*device_config_node)["trigger"];
+    ryml::NodeRef trigger_node = (*device_config_node).find_child("trigger");
     if (!RYML_NODE_EXISTS(trigger_node))
     {
         return 0;
@@ -207,7 +207,7 @@ int xhptdc8_apply_trigger_yaml(const ryml::NodeRef* device_config_node,
     }
     for (int trigger_index = 0; trigger_index < triggers_count; trigger_index++)
     {
-        ryml::NodeRef falling_node = trigger_node[trigger_index]["falling"];
+        ryml::NodeRef falling_node = trigger_node[trigger_index].find_child("falling");
         if (RYML_NODE_EXISTS_AND_HAS_VAL(falling_node))
         {
             c4::csubstr val = falling_node.val();
@@ -224,7 +224,7 @@ int xhptdc8_apply_trigger_yaml(const ryml::NodeRef* device_config_node,
                 return XHPTDC8_APPLY_YAML_INVALID_TRIGGERS_FALL;
             }
         }
-        ryml::NodeRef rising_node = trigger_node[trigger_index]["rising"];
+        ryml::NodeRef rising_node = trigger_node[trigger_index].find_child("rising");
         if (RYML_NODE_EXISTS_AND_HAS_VAL(rising_node))
         {
             c4::csubstr val = rising_node.val();
@@ -261,7 +261,7 @@ int xhptdc8_apply_channel_yaml(const ryml::NodeRef* device_config_node,
     {
         return XHPTDC8_APPLY_YAML_ERR_EMPTY_DEV_CONF;
     }
-    ryml::NodeRef channel_node = (*device_config_node)["channel"];
+    ryml::NodeRef channel_node = (*device_config_node).find_child("channel");
     if (!RYML_NODE_EXISTS(channel_node))
     {
         return 0;
@@ -278,7 +278,7 @@ int xhptdc8_apply_channel_yaml(const ryml::NodeRef* device_config_node,
     }
     for (int channel_index = 0; channel_index < channels_count; channel_index++)
     {
-        ryml::NodeRef falling_node = channel_node[channel_index]["falling"];
+        ryml::NodeRef falling_node = channel_node[channel_index].find_child("falling");
         if (RYML_NODE_EXISTS_AND_HAS_VAL(falling_node))
         {
             c4::csubstr val = falling_node.val();
@@ -295,7 +295,7 @@ int xhptdc8_apply_channel_yaml(const ryml::NodeRef* device_config_node,
                 return XHPTDC8_APPLY_YAML_INVALID_CHANNEL_ENABLE;
             }
         }
-        ryml::NodeRef rising_node = channel_node[channel_index]["rising"];
+        ryml::NodeRef rising_node = channel_node[channel_index].find_child("rising");
         if (RYML_NODE_EXISTS_AND_HAS_VAL(rising_node))
         {
             c4::csubstr val = rising_node.val();
@@ -332,13 +332,13 @@ int xhptdc8_apply_adc_channel_yaml(const ryml::NodeRef* device_config_node,
     {
         return XHPTDC8_APPLY_YAML_ERR_EMPTY_DEV_CONF;
     }
-    ryml::NodeRef adc_channel_node = (*device_config_node)["adc_channel"];
+    ryml::NodeRef adc_channel_node = (*device_config_node).find_child("adc_channel");
     if (!RYML_NODE_EXISTS(adc_channel_node))
     {
         return 0;
     }
     // enable
-    ryml::NodeRef enable_node = adc_channel_node["enable"];
+    ryml::NodeRef enable_node = adc_channel_node.find_child("enable");
     if (RYML_NODE_EXISTS_AND_HAS_VAL(enable_node))
     {
         c4::csubstr val = enable_node.val();
@@ -356,7 +356,7 @@ int xhptdc8_apply_adc_channel_yaml(const ryml::NodeRef* device_config_node,
         }
     }
     // watchdog_readout
-    ryml::NodeRef watchdog_readout_node = adc_channel_node["watchdog_readout"];
+    ryml::NodeRef watchdog_readout_node = adc_channel_node.find_child("watchdog_readout");
     if (RYML_NODE_EXISTS_AND_HAS_VAL(watchdog_readout_node))
     {
         c4::csubstr val = watchdog_readout_node.val();
@@ -374,7 +374,7 @@ int xhptdc8_apply_adc_channel_yaml(const ryml::NodeRef* device_config_node,
         }
     }
     // watchdog_interval
-    ryml::NodeRef watchdog_interval_node = adc_channel_node["watchdog_interval"];
+    ryml::NodeRef watchdog_interval_node = adc_channel_node.find_child("watchdog_interval");
     if (RYML_NODE_EXISTS_AND_HAS_VAL(watchdog_interval_node))
     {
         int val = _node_val_toi_internal(&watchdog_interval_node);
@@ -388,7 +388,7 @@ int xhptdc8_apply_adc_channel_yaml(const ryml::NodeRef* device_config_node,
         }
     }
     // trigger_threshold
-    ryml::NodeRef trigger_threshold_node = adc_channel_node["trigger_threshold"];
+    ryml::NodeRef trigger_threshold_node = adc_channel_node.find_child("trigger_threshold");
     if (RYML_NODE_EXISTS_AND_HAS_VAL(trigger_threshold_node))
     {
         double val = _node_val_tod_internal(&trigger_threshold_node);
@@ -420,7 +420,7 @@ int xhptdc8_apply_gating_block_yaml(const ryml::NodeRef* device_config_node,
     {
         return XHPTDC8_APPLY_YAML_ERR_EMPTY_DEV_CONF;
     }
-    ryml::NodeRef gating_block_node = (*device_config_node)["gating_block"];
+    ryml::NodeRef gating_block_node = (*device_config_node).find_child("gating_block");
     if (!RYML_NODE_EXISTS(gating_block_node))
     {
         return 0;
@@ -438,7 +438,7 @@ int xhptdc8_apply_gating_block_yaml(const ryml::NodeRef* device_config_node,
     for (int gating_block_index = 0; gating_block_index < gating_blocks_count; gating_block_index++)
     {
         // mode
-        ryml::NodeRef mode_node = gating_block_node[gating_block_index]["mode"];
+        ryml::NodeRef mode_node = gating_block_node[gating_block_index].find_child("mode");
         if (RYML_NODE_EXISTS_AND_HAS_VAL(mode_node))
         {
             int val = _node_val_toi_internal(&mode_node);
@@ -454,7 +454,7 @@ int xhptdc8_apply_gating_block_yaml(const ryml::NodeRef* device_config_node,
             }
         }
         // negate
-        ryml::NodeRef negate_node = gating_block_node[gating_block_index]["negate"];
+        ryml::NodeRef negate_node = gating_block_node[gating_block_index].find_child("negate");
         if (RYML_NODE_EXISTS_AND_HAS_VAL(negate_node))
         {
             c4::csubstr val = negate_node.val();
@@ -472,7 +472,7 @@ int xhptdc8_apply_gating_block_yaml(const ryml::NodeRef* device_config_node,
             }
         }
         // retrigger
-        ryml::NodeRef retrigger_node = gating_block_node[gating_block_index]["retrigger"];
+        ryml::NodeRef retrigger_node = gating_block_node[gating_block_index].find_child("retrigger");
         if (RYML_NODE_EXISTS_AND_HAS_VAL(retrigger_node))
         {
             c4::csubstr val = retrigger_node.val();
@@ -491,7 +491,7 @@ int xhptdc8_apply_gating_block_yaml(const ryml::NodeRef* device_config_node,
         }
         // Ignore "extend", not implemented
         // start
-        ryml::NodeRef start_node = gating_block_node[gating_block_index]["start"];
+        ryml::NodeRef start_node = gating_block_node[gating_block_index].find_child("start");
         if (RYML_NODE_EXISTS_AND_HAS_VAL(start_node))
         {
             int val = _node_val_toi_internal(&start_node);
@@ -505,7 +505,7 @@ int xhptdc8_apply_gating_block_yaml(const ryml::NodeRef* device_config_node,
             }
         }
         // stop
-        ryml::NodeRef stop_node = gating_block_node[gating_block_index]["stop"];
+        ryml::NodeRef stop_node = gating_block_node[gating_block_index].find_child("stop");
         if (RYML_NODE_EXISTS_AND_HAS_VAL(stop_node))
         {
             int val = _node_val_toi_internal(&stop_node);
@@ -526,7 +526,7 @@ int xhptdc8_apply_gating_block_yaml(const ryml::NodeRef* device_config_node,
             }
         }
         // sources
-        ryml::NodeRef sources_node = gating_block_node[gating_block_index]["sources"];
+        ryml::NodeRef sources_node = gating_block_node[gating_block_index].find_child("sources");
         if (RYML_NODE_EXISTS_AND_HAS_VAL(sources_node))
         {
             int val = _node_val_toi_internal(&sources_node);
@@ -559,7 +559,7 @@ int xhptdc8_apply_tiger_block_yaml(const ryml::NodeRef* device_config_node,
     {
         return XHPTDC8_APPLY_YAML_ERR_EMPTY_DEV_CONF;
     }
-    ryml::NodeRef tiger_block_node = (*device_config_node)["tiger_block"];
+    ryml::NodeRef tiger_block_node = (*device_config_node).find_child("tiger_block");
     if (!RYML_NODE_EXISTS(tiger_block_node))
     {
         return 0;
@@ -577,7 +577,7 @@ int xhptdc8_apply_tiger_block_yaml(const ryml::NodeRef* device_config_node,
     for (int tiger_block_index = 0; tiger_block_index < tiger_blocks_count; tiger_block_index++)
     {
         // mode
-        ryml::NodeRef mode_node = tiger_block_node[tiger_block_index]["mode"];
+        ryml::NodeRef mode_node = tiger_block_node[tiger_block_index].find_child("mode");
         if (RYML_NODE_EXISTS_AND_HAS_VAL(mode_node))
         {
             int val = _node_val_toi_internal(&mode_node);
@@ -593,7 +593,7 @@ int xhptdc8_apply_tiger_block_yaml(const ryml::NodeRef* device_config_node,
             }
         }
         // negate
-        ryml::NodeRef negate_node = tiger_block_node[tiger_block_index]["negate"];
+        ryml::NodeRef negate_node = tiger_block_node[tiger_block_index].find_child("negate");
         if (RYML_NODE_EXISTS_AND_HAS_VAL(negate_node))
         {
             c4::csubstr val = negate_node.val();
@@ -611,7 +611,7 @@ int xhptdc8_apply_tiger_block_yaml(const ryml::NodeRef* device_config_node,
             }
         }
         // retrigger
-        ryml::NodeRef retrigger_node = tiger_block_node[tiger_block_index]["retrigger"];
+        ryml::NodeRef retrigger_node = tiger_block_node[tiger_block_index].find_child("retrigger");
         if (RYML_NODE_EXISTS_AND_HAS_VAL(retrigger_node))
         {
             c4::csubstr val = retrigger_node.val();
@@ -630,7 +630,7 @@ int xhptdc8_apply_tiger_block_yaml(const ryml::NodeRef* device_config_node,
         }
         // Ignore "extend", not implemented
         // start
-        ryml::NodeRef start_node = tiger_block_node[tiger_block_index]["start"];
+        ryml::NodeRef start_node = tiger_block_node[tiger_block_index].find_child("start");
         if (RYML_NODE_EXISTS_AND_HAS_VAL(start_node))
         {
             int val = _node_val_toi_internal(&start_node);
@@ -644,7 +644,7 @@ int xhptdc8_apply_tiger_block_yaml(const ryml::NodeRef* device_config_node,
             }
         }
         // stop
-        ryml::NodeRef stop_node = tiger_block_node[tiger_block_index]["stop"];
+        ryml::NodeRef stop_node = tiger_block_node[tiger_block_index].find_child("stop");
         if (RYML_NODE_EXISTS_AND_HAS_VAL(stop_node))
         {
             int val = _node_val_toi_internal(&stop_node);
@@ -665,7 +665,7 @@ int xhptdc8_apply_tiger_block_yaml(const ryml::NodeRef* device_config_node,
             }
         }
         // sources
-        ryml::NodeRef sources_node = tiger_block_node[tiger_block_index]["sources"];
+        ryml::NodeRef sources_node = tiger_block_node[tiger_block_index].find_child("sources");
         if (RYML_NODE_EXISTS_AND_HAS_VAL(sources_node))
         {
             int val = _node_val_toi_internal(&sources_node);
@@ -698,13 +698,13 @@ int xhptdc8_apply_grouping_yaml(const ryml::NodeRef* config_mngr_node,
     {
         return XHPTDC8_APPLY_YAML_ERR_NO_CONF_MNGR;
     }
-    ryml::NodeRef grouping_node = (*config_mngr_node)["grouping"];
+    ryml::NodeRef grouping_node = (*config_mngr_node).find_child("grouping");
     if (!RYML_NODE_EXISTS(grouping_node))
     {
         return 0;
     }
     // enabled
-    ryml::NodeRef enabled_node = grouping_node["enabled"];
+    ryml::NodeRef enabled_node = grouping_node.find_child("enabled");
     if (RYML_NODE_EXISTS_AND_HAS_VAL(enabled_node))
     {
         c4::csubstr val = enabled_node.val();
@@ -722,7 +722,7 @@ int xhptdc8_apply_grouping_yaml(const ryml::NodeRef* config_mngr_node,
         }
     }
     // trigger_channel
-    ryml::NodeRef trigger_channel_node = grouping_node["trigger_channel"];
+    ryml::NodeRef trigger_channel_node = grouping_node.find_child("trigger_channel");
     if (RYML_NODE_EXISTS_AND_HAS_VAL(trigger_channel_node))
     {
         int val = _node_val_toi_internal(&trigger_channel_node);
@@ -736,7 +736,7 @@ int xhptdc8_apply_grouping_yaml(const ryml::NodeRef* config_mngr_node,
         }
     }
     // zero_channel
-    ryml::NodeRef zero_channel_node = grouping_node["zero_channel"];
+    ryml::NodeRef zero_channel_node = grouping_node.find_child("zero_channel");
     if (RYML_NODE_EXISTS_AND_HAS_VAL(zero_channel_node))
     {
         int val = _node_val_toi_internal(&zero_channel_node);
@@ -750,7 +750,7 @@ int xhptdc8_apply_grouping_yaml(const ryml::NodeRef* config_mngr_node,
         }
     }
     // zero_channel_offset
-    ryml::NodeRef zero_channel_offset_node = grouping_node["zero_channel_offset"];
+    ryml::NodeRef zero_channel_offset_node = grouping_node.find_child("zero_channel_offset");
     if (RYML_NODE_EXISTS_AND_HAS_VAL(zero_channel_offset_node))
     {
         long long val = _node_val_toll_internal(&zero_channel_offset_node);
@@ -764,21 +764,21 @@ int xhptdc8_apply_grouping_yaml(const ryml::NodeRef* config_mngr_node,
         }
     }
     // range_start
-    ryml::NodeRef range_start_node = grouping_node["range_start"];
+    ryml::NodeRef range_start_node = grouping_node.find_child("range_start");
     if (RYML_NODE_EXISTS_AND_HAS_VAL(range_start_node))
     {
         long long val = _node_val_toll_internal(&range_start_node);
         manager_config->grouping.range_start = val;
     }
     // range_stop
-    ryml::NodeRef range_stop_node = grouping_node["range_stop"];
+    ryml::NodeRef range_stop_node = grouping_node.find_child("range_stop");
     if (RYML_NODE_EXISTS_AND_HAS_VAL(range_stop_node))
     {
         long long val = _node_val_toll_internal(&range_stop_node);
         manager_config->grouping.range_stop = val;
     }
     // trigger_deadtime
-    ryml::NodeRef trigger_deadtime_node = grouping_node["trigger_deadtime"];
+    ryml::NodeRef trigger_deadtime_node = grouping_node.find_child("trigger_deadtime");
     if (RYML_NODE_EXISTS_AND_HAS_VAL(trigger_deadtime_node))
     {
         long long val = _node_val_toll_internal(&trigger_deadtime_node);
@@ -792,7 +792,7 @@ int xhptdc8_apply_grouping_yaml(const ryml::NodeRef* config_mngr_node,
         }
     }
     // require_window_hit
-    ryml::NodeRef require_window_hit_node = grouping_node["require_window_hit"];
+    ryml::NodeRef require_window_hit_node = grouping_node.find_child("require_window_hit");
     if (RYML_NODE_EXISTS_AND_HAS_VAL(require_window_hit_node))
     {
         c4::csubstr val = require_window_hit_node.val();
@@ -810,21 +810,21 @@ int xhptdc8_apply_grouping_yaml(const ryml::NodeRef* config_mngr_node,
         }
     }
     // window_start
-    ryml::NodeRef window_start_node = grouping_node["window_start"];
+    ryml::NodeRef window_start_node = grouping_node.find_child("window_start");
     if (RYML_NODE_EXISTS_AND_HAS_VAL(window_start_node))
     {
         long long val = _node_val_toll_internal(&window_start_node);
         manager_config->grouping.window_start = val;
     }
     // window_stop
-    ryml::NodeRef window_stop_node = grouping_node["window_stop"];
+    ryml::NodeRef window_stop_node = grouping_node.find_child("window_stop");
     if (RYML_NODE_EXISTS_AND_HAS_VAL(window_stop_node))
     {
         long long val = _node_val_toll_internal(&window_stop_node);
         manager_config->grouping.window_stop = val;
     }
     // veto_mode
-    ryml::NodeRef veto_mode_node = grouping_node["veto_mode"];
+    ryml::NodeRef veto_mode_node = grouping_node.find_child("veto_mode");
     if (RYML_NODE_EXISTS_AND_HAS_VAL(veto_mode_node))
     {
         int val = _node_val_toi_internal(&veto_mode_node);
@@ -838,21 +838,21 @@ int xhptdc8_apply_grouping_yaml(const ryml::NodeRef* config_mngr_node,
         }
     }
     // veto_start
-    ryml::NodeRef veto_start_node = grouping_node["veto_start"];
+    ryml::NodeRef veto_start_node = grouping_node.find_child("veto_start");
     if (RYML_NODE_EXISTS_AND_HAS_VAL(veto_start_node))
     {
         long long val = _node_val_toll_internal(&veto_start_node);
         manager_config->grouping.veto_start = val;
     }
     // veto_stop
-    ryml::NodeRef veto_stop_node = grouping_node["veto_stop"];
+    ryml::NodeRef veto_stop_node = grouping_node.find_child("veto_stop");
     if (RYML_NODE_EXISTS_AND_HAS_VAL(veto_stop_node))
     {
         long long val = _node_val_toll_internal(&veto_stop_node);
         manager_config->grouping.veto_stop = val;
     }
     // veto_relative_to_zero
-    ryml::NodeRef veto_relative_to_zero_node = grouping_node["veto_relative_to_zero"];
+    ryml::NodeRef veto_relative_to_zero_node = grouping_node.find_child("veto_relative_to_zero");
     if (RYML_NODE_EXISTS_AND_HAS_VAL(veto_relative_to_zero_node))
     {
         c4::csubstr val = veto_relative_to_zero_node.val();
@@ -893,7 +893,7 @@ int xhptdc8_apply_device_config_yaml(const ryml::NodeRef* device_config_node,
     list_ryml_children(device_config_node);
 #endif
 
-    ryml::NodeRef auto_trigger_period_node = (*device_config_node)["auto_trigger_period"];
+    ryml::NodeRef auto_trigger_period_node = (*device_config_node).find_child("auto_trigger_period");
     if (RYML_NODE_EXISTS_AND_HAS_VAL(auto_trigger_period_node))
     {
         int val = _node_val_toi_internal(&auto_trigger_period_node);
@@ -907,8 +907,10 @@ int xhptdc8_apply_device_config_yaml(const ryml::NodeRef* device_config_node,
         }
     }
     // auto_trigger_period
+    ryml::NodeRef ch = (*device_config_node).find_child("auto_trigger_random_exponent");
+    bool b = RYML_NODE_EXISTS_AND_HAS_VAL(ch) ;
     ryml::NodeRef auto_trigger_random_exponent_node = 
-            (*device_config_node)["auto_trigger_random_exponent"];
+            (*device_config_node).find_child("auto_trigger_random_exponent");
     if (RYML_NODE_EXISTS_AND_HAS_VAL(auto_trigger_random_exponent_node))
     {
         int val = _node_val_toi_internal(&auto_trigger_random_exponent_node);
@@ -959,7 +961,7 @@ int xhptdc8_apply_device_config_yaml(const ryml::NodeRef* device_config_node,
         return result;
     }
     // skip_alignment
-    ryml::NodeRef skip_alignment_node = (*device_config_node)["skip_alignment"];
+    ryml::NodeRef skip_alignment_node = (*device_config_node).find_child("skip_alignment");
     if (RYML_NODE_EXISTS_AND_HAS_VAL(skip_alignment_node))
     {
         c4::csubstr val = skip_alignment_node.val();
@@ -977,7 +979,7 @@ int xhptdc8_apply_device_config_yaml(const ryml::NodeRef* device_config_node,
         }
     }
     // alignment_source
-    ryml::NodeRef alignment_source_node = (*device_config_node)["alignment_source"];
+    ryml::NodeRef alignment_source_node = (*device_config_node).find_child("alignment_source");
     if (RYML_NODE_EXISTS_AND_HAS_VAL(alignment_source_node))
     {
         int val = _node_val_toi_internal(&alignment_source_node);
@@ -1015,7 +1017,7 @@ int xhptdc8_apply_yaml(xhptdc8_manager_configuration* manager_config, const char
     // Parse YAML String and build the tree
     c4::substr config_mngr_src((char*)yaml_string, strlen(yaml_string)) ;
     ryml::Tree config_mngr_tree = ryml::parse(config_mngr_src);
-    //$$config_mngr_tree.resolve();
+    config_mngr_tree.resolve();
     
     // Get and validate Cofiguration Manager node
     ryml::NodeRef device_configs_node;
