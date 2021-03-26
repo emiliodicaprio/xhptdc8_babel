@@ -7,6 +7,7 @@
 
 void test_apply_yaml_all_keys_structure();
 void test_apply_yaml_breif_sample();
+void test_apply_yaml_array_map_sample();
 
 /*
 * String has all keys of the manager_config structure
@@ -77,27 +78,69 @@ char mngr_brief_sample[447] =
 {
 " manager_config: \n"
 "  device_configs: \n"
-"   - \n"
+"   0: \n"
 "    trigger : \n"
-"     - \n"
 "      falling : false \n"
 "      rising : true \n"
 "    trigger_threshold : \n"
-"     - 0.3499 \n"
-"     - 0.35 \n"
-"     - 0.36666 \n"
+"     0: 0.3499 \n"
+"     1: 0.35 \n"
+"     2: 0.36666 \n"
 "    gating_block : \n"
-"     - \n"
+"     0: \n"
 "      mode : 1 \n"
 "      negate : true \n"
 "    auto_trigger_period : 20 \n"
-"   - \n"
+"   1: \n"
 "    trigger : \n"
-"     - \n"
+"     0: \n"
 "      falling : true \n"
 "      rising : false \n"
 "    channel : \n"
-"     - \n"
+"     0: \n"
+"      enable : true\n"
+"      rising : false \n"
+"  grouping : \n"
+"   enabled : true \n"
+};
+
+char mngr_array_map_sample[724] =
+{
+" manager_config: \n"
+"  device_configs: \n"
+"   0: \n"
+"    trigger : \n"
+"      falling : false \n"
+"      rising : true \n"
+"    trigger_threshold : \n"
+"     0: 0.3499 \n"
+"    gating_block : \n"
+"      mode : 1 \n"
+"      negate : true \n"
+"    channel : \n"
+"     enable : true\n"
+"     rising : false \n"
+"    auto_trigger_period : 20 \n"
+"    adc_channel: \n"
+"     enable : true \n"
+"     watchdog_readout : true \n"
+"     watchdog_interval: 5 \n"
+"     trigger_threshold : 120 \n"
+"   1: \n"
+"    trigger : \n"
+"     1: \n"
+"      falling : true \n"
+"      rising : false \n"
+"    trigger_threshold : \n"
+"     1: 0.3499 \n"
+"     2: 0.35 \n"
+"     3: 0.36666 \n"
+"    gating_block : \n"
+"     1: \n"
+"      mode : 1 \n"
+"      negate : true \n"
+"    channel : \n"
+"     1: \n"
 "      enable : true\n"
 "      rising : false \n"
 "  grouping : \n"
@@ -106,8 +149,9 @@ char mngr_brief_sample[447] =
 
 int main()
 {
-	test_apply_yaml_all_keys_structure();
-	test_apply_yaml_breif_sample();
+	// test_apply_yaml_all_keys_structure();
+	// test_apply_yaml_breif_sample();
+	test_apply_yaml_array_map_sample();
 }
 
 void test_apply_yaml(char* src)
@@ -130,4 +174,8 @@ void test_apply_yaml_all_keys_structure()
 void test_apply_yaml_breif_sample()
 {
 	test_apply_yaml(mngr_brief_sample);
+}
+void test_apply_yaml_array_map_sample()
+{
+	test_apply_yaml(mngr_array_map_sample);
 }

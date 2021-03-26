@@ -207,7 +207,7 @@
     <ClInclude Include="ryml_src\c4\windows_push.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\xhptdc8_util.cpp" />
+    <ClCompile Include="..\xhptdc8_util_yaml.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

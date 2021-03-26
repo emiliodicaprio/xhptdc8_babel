@@ -176,7 +176,7 @@
     <ClCompile Include="ryml_src\c4\time.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\xhptdc8_util.cpp">
+    <ClCompile Include="..\xhptdc8_util_yaml.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
