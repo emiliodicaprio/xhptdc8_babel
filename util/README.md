@@ -10,6 +10,7 @@ The Solution and Project are created using Microsoft Visual Studio 2019
 ### Project Environments and Configurations
 - Project Settings -> Include Directories : `..\..\include;..\..\..\lib\include;.\ryml_src;` is added.
 - Project Settings -> Preprocessor Definitions: `XHPTDC8_UTIL_EXPORTS` is defined.
+- Project Settings -> Preprocessor Definitions: `XHPTDC8_VERBOSE_DEBUG` is defined for _Debug Configurations_ only.
 
 | Configuration | Environment   | Output Directory | Library Name    |
 | ------------- |-------------  |----------------- | --------------- |
