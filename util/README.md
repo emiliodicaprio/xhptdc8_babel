@@ -112,7 +112,7 @@ Applied yaml on node child ([grouping] enabled: true) bool value
 ```
 
 #### Sample YAML with features
-This sample shows how to use Anchors and Aliases, as well as the how it is possible to just modify an element in the middle of the array.
+This sample shows how to use Anchors and Aliases, as well as how it is possible to just modify an element in the middle of the array.
 ```YAML
 threshold : &COMMON_THRESHOLD "120" # Anchor
 trigger_threshold : &CMOS # Another anchor
