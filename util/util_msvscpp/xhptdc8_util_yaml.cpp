@@ -10,6 +10,28 @@ int _get_node_key_name_internal(const ryml::NodeRef* pNode, std::string* buff);
 int _get_node_val_internal(const ryml::NodeRef* pNode, std::string* buff);
 crono_bool_t _is_node_array_map(const ryml::NodeRef* pNode);
 
+#ifdef XHPTDC8_VERBOSE_DEBUG
+#define VERBOSE_DEBUG_MSG(msg) { printf("<> %s\n", msg); }
+#define VERBOSE_DEBUG_MSG_YAML_APPLIED_I(node, key_name, key_val) \
+    {   std::string node_name ; _get_node_key_name_internal(&node, &node_name); \
+        fprintf(stdout, "Applied yaml on node child ([%s] %s: %d) integer value\n", node_name.c_str(), key_name, key_val); }
+#define VERBOSE_DEBUG_MSG_YAML_APPLIED_D(node, key_name, key_val) \
+    {   std::string node_name ; _get_node_key_name_internal(&node, &node_name); \
+        fprintf(stdout, "Applied yaml on node child ([%s] %s: %f) integer value\n", node_name.c_str(), key_name, key_val); }
+#define VERBOSE_DEBUG_MSG_YAML_APPLIED_B(node, key_name, key_val) \
+    {   std::string node_name ; _get_node_key_name_internal(&node, &node_name); \
+        fprintf(stdout, "Applied yaml on node child ([%s] %s: %s) bool value\n", node_name.c_str(), key_name, key_val); }
+#define VERBOSE_DEBUG_MSG_YAML_APPLIED_LL(node, key_name, key_val) \
+    {   std::string node_name ; _get_node_key_name_internal(&node, &node_name); \
+        fprintf(stdout, "Applied yaml on node child ([%s] %s: %ll) long long value\n", node_name.c_str(), key_name, key_val); }
+#else
+#define VERBOSE_DEBUG_MSG(msg) 
+#define VERBOSE_DEBUG_MSG_YAML_APPLIED_I(node, key_name, key_val) 
+#define VERBOSE_DEBUG_MSG_YAML_APPLIED_D(node, key_name, key_val) 
+#define VERBOSE_DEBUG_MSG_YAML_APPLIED_B(node, key_name, key_val) 
+#define VERBOSE_DEBUG_MSG_YAML_APPLIED_LL(node, key_name, key_val) 
+#endif
+
 #define RYML_NODE_EXISTS(ryml_node) ((ryml_node).valid() && !((ryml_node).is_seed()))
 #define RYML_NODE_EXISTS_AND_HAS_VAL(ryml_node) \
     (   (ryml_node).valid() \
@@ -21,7 +43,7 @@ crono_bool_t _is_node_array_map(const ryml::NodeRef* pNode);
       if (RYML_NODE_EXISTS_AND_HAS_VAL(childNode)) {  \
         int val;    \
         if (!_node_val_toi_internal(&childNode, &val))    { return returnedInvalidError; }  \
-        if (validCondition) { targetVar = val;              }       \
+        if (validCondition) { targetVar = val; VERBOSE_DEBUG_MSG_YAML_APPLIED_I(parentNode, childName, val); } \
         else                { return returnedInvalidError;  } } }
 
 #define APPLY_CHILD_DOUBLE_VALUE(parentNode, childName, validCondition, targetVar, returnedInvalidError) \
@@ -29,7 +51,7 @@ crono_bool_t _is_node_array_map(const ryml::NodeRef* pNode);
       if (RYML_NODE_EXISTS_AND_HAS_VAL(childNode)) {  \
         double val;    \
         if (!_node_val_tod_internal(&childNode, &val))    { return returnedInvalidError; }  \
-        if (validCondition) { targetVar = val;              }       \
+        if (validCondition) { targetVar = val; VERBOSE_DEBUG_MSG_YAML_APPLIED_D(parentNode, childName, val);}       \
         else                { return returnedInvalidError;  } } }
 
 #define APPLY_CHILD_LONGLONG_VALUE(parentNode, childName, validCondition, targetVar, returnedInvalidError) \
@@ -37,15 +59,15 @@ crono_bool_t _is_node_array_map(const ryml::NodeRef* pNode);
       if (RYML_NODE_EXISTS_AND_HAS_VAL(childNode)) {  \
         long long val;    \
         if (!_node_val_toll_internal(&childNode, &val))    { return returnedInvalidError; }  \
-        if (validCondition) { targetVar = val;              }       \
+        if (validCondition) { targetVar = val; VERBOSE_DEBUG_MSG_YAML_APPLIED_LL(parentNode, childName, val);}       \
         else                { return returnedInvalidError;  } } }
 
 #define APPLY_CHILD_BOOL_VALUE(parentNode, childName, targetVar, returnedInvalidError) \
     {   ryml::NodeRef childNode = parentNode.find_child(childName);    \
         if (RYML_NODE_EXISTS_AND_HAS_VAL(childNode))    {   \
                 c4::csubstr val = childNode.val();  \
-                if (!val.compare("false"))     { targetVar = false;  }   \
-                else if (!val.compare("true")) { targetVar = true;  }   \
+                if (!val.compare("false"))     { targetVar = false;  VERBOSE_DEBUG_MSG_YAML_APPLIED_B(parentNode, childName, "false");}   \
+                else if (!val.compare("true")) { targetVar = true;   VERBOSE_DEBUG_MSG_YAML_APPLIED_B(parentNode, childName, "true");}   \
                 else    {        return returnedInvalidError;     } } }
 
 
@@ -312,6 +334,7 @@ int xhptdc8_apply_trigger_threshold_yaml(const ryml::NodeRef* device_config_node
             return XHPTDC8_APPLY_YAML_INVALID_THRESHOLD;
         }
         device_config->trigger_threshold[trigger_index_in_cfg] = val;
+        VERBOSE_DEBUG_MSG_YAML_APPLIED_D(*device_config_node, "trigger_threshold", val);
     }
     return trigger_thresholds_count;
 }
@@ -539,6 +562,7 @@ int xhptdc8_apply_gating_block_yaml(const ryml::NodeRef* device_config_node,
                 case XHPTDC8_TIGER_BIDI:
                 case XHPTDC8_TIGER_BIPOLAR:
                     device_config->gating_block[gating_block_index_in_cfg].mode = val;
+                    VERBOSE_DEBUG_MSG_YAML_APPLIED_I(child_node, "mode", val);
                     break;
                 default:
                     return XHPTDC8_APPLY_YAML_GTBLCK_INVALID_MODE;
@@ -576,6 +600,7 @@ int xhptdc8_apply_gating_block_yaml(const ryml::NodeRef* device_config_node,
                     else
                     {
                         device_config->gating_block[gating_block_index_in_cfg].stop = val;
+                        VERBOSE_DEBUG_MSG_YAML_APPLIED_I(gating_block_node, "stop", val);
                     }
                 }
                 else
@@ -607,6 +632,7 @@ int xhptdc8_apply_gating_block_yaml(const ryml::NodeRef* device_config_node,
             case XHPTDC8_TIGER_BIDI:
             case XHPTDC8_TIGER_BIPOLAR:
                 device_config->gating_block[0].mode = val;
+                VERBOSE_DEBUG_MSG_YAML_APPLIED_I(gating_block_node, "mode", val);
                 break;
             default:
                 return XHPTDC8_APPLY_YAML_GTBLCK_INVALID_MODE;
@@ -644,6 +670,7 @@ int xhptdc8_apply_gating_block_yaml(const ryml::NodeRef* device_config_node,
                 else
                 {
                     device_config->gating_block[0].stop = val;
+                    VERBOSE_DEBUG_MSG_YAML_APPLIED_I(gating_block_node, "stop", val);
                 }
             }
             else
@@ -716,6 +743,7 @@ int xhptdc8_apply_tiger_block_yaml(const ryml::NodeRef* device_config_node,
                 case XHPTDC8_TIGER_BIDI:
                 case XHPTDC8_TIGER_BIPOLAR:
                     device_config->tiger_block[tiger_block_index_in_cfg].mode = val;
+                    VERBOSE_DEBUG_MSG_YAML_APPLIED_I(tiger_block_node, "mode", val);
                     break;
                 default:
                     return XHPTDC8_APPLY_YAML_GTBLCK_INVALID_MODE;
@@ -753,6 +781,7 @@ int xhptdc8_apply_tiger_block_yaml(const ryml::NodeRef* device_config_node,
                     else
                     {
                         device_config->tiger_block[tiger_block_index_in_cfg].stop = val;
+                        VERBOSE_DEBUG_MSG_YAML_APPLIED_I(tiger_block_node, "stop", val);
                     }
                 }
                 else
@@ -784,6 +813,7 @@ int xhptdc8_apply_tiger_block_yaml(const ryml::NodeRef* device_config_node,
             case XHPTDC8_TIGER_BIDI:
             case XHPTDC8_TIGER_BIPOLAR:
                 device_config->tiger_block[0].mode = val;
+                VERBOSE_DEBUG_MSG_YAML_APPLIED_I(tiger_block_node, "mode", val);
                 break;
             default:
                 return XHPTDC8_APPLY_YAML_GTBLCK_INVALID_MODE;
@@ -821,6 +851,7 @@ int xhptdc8_apply_tiger_block_yaml(const ryml::NodeRef* device_config_node,
                 else
                 {
                     device_config->tiger_block[0].stop = val;
+                    VERBOSE_DEBUG_MSG_YAML_APPLIED_I(tiger_block_node, "stop", val);
                 }
             }
             else
