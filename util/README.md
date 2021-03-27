@@ -64,37 +64,51 @@ int xhptdc8_apply_yaml(xhptdc8_manager_configuration* cfg, const char* yaml_stri
 ```
 
 Sample YAML:
-* The format will change, see [issue 17](https://github.com/cronologic-de/xhptdc8_babel/issues/17)
 ```YAML
- manager_config: 
-  device_configs: 
-   - 
-    trigger : 
-     - 
-      falling : false 
-      rising : true 
-    trigger_threshold : 
-     - 0.3499 
-     - 0.35 
-     - 0.36666 
-    gating_block : 
-     - 
-      mode : 1 
-      negate : true 
-    auto_trigger_period : 20 
-   - 
-    trigger : 
-     - 
-      falling : true 
-      rising : false 
-    channel : 
-     - 
-      enable : true
-      rising : false 
-  grouping : 
-   enabled : true 
+manager_config: 
+ device_configs: 
+  0: 
+   auto_trigger_period : 20
+   trigger : 
+     falling : false 
+     rising : true 
+   trigger_threshold : 
+    0: 0.3499 
+    1: 0.35 
+    2: 0.36666 
+   gating_block : 
+    0: 
+     mode : 1 
+     negate : true 
+  1: 
+   trigger : 
+    0: 
+     falling : true 
+     rising : false 
+   channel : 
+    0: 
+     enable : true
+     rising : false 
+ grouping : 
+  enabled : true 
 ```
 
+With debugging output as following:
+```
+Applied yaml on node child ([0] auto_trigger_period: 20) integer value
+Applied yaml on node child ([0] trigger_threshold: 0.349900) integer value
+Applied yaml on node child ([0] trigger_threshold: 0.350000) integer value
+Applied yaml on node child ([0] trigger_threshold: 0.366660) integer value
+Applied yaml on node child ([trigger] falling: false) bool value
+Applied yaml on node child ([trigger] rising: true) bool value
+Applied yaml on node child ([0] mode: 1) integer value
+Applied yaml on node child ([0] negate: true) bool value
+Applied yaml on node child ([0] falling: true) bool value
+Applied yaml on node child ([0] rising: false) bool value
+Applied yaml on node child ([0] enable: true) bool value
+Applied yaml on node child ([0] rising: false) bool value
+Applied yaml on node child ([grouping] enabled: true) bool value
+```
 #### All Elements YAML
 Here is the complete elements of the manager configuration sturcture, including sample values; you can copy your YAML elements from the YAML below, just keep the spaces before the elements, and refer to both the user guide and the xhptdc8_interface.h for the members specifications:
 
