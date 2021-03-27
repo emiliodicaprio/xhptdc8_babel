@@ -155,7 +155,7 @@ Applied yaml on node child ([1] rising: false) bool value
 ```
 
 #### All Elements YAML
-Here is the complete elements of the manager configuration sturcture, including sample values; you can copy your YAML elements from the YAML below, just keep the spaces before the elements, and refer to both the user guide and the xhptdc8_interface.h for the members specifications:
+Here is the complete elements of the manager configuration sturcture, including sample values; you can copy your YAML elements from the YAML below, just keep the spaces before the elements, and refer to both the user guide and the [xHPTDC8_interface.h](/lib/include/xHPTDC8_interface.h "xHPTDC8_interface.h") xhptdc8_interface.h for the members specifications:
 
 ```YAML
 manager_config: 
