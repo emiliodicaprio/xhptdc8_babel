@@ -111,6 +111,11 @@ Applied yaml on node child ([0] rising: false) bool value
 Applied yaml on node child ([grouping] enabled: true) bool value
 ```
 
+#### Assigning the values to multiple substructures
+YAML allows to reuse definitions from one place of the structure multiple times without writing them all over again.
+This can be useful to set multiple boards to the same setting or multiple channels of one board.
+This [this website](http://blogs.perl.org/users/tinita/2019/05/reusing-data-with-yaml-anchors-aliases-and-merge-keys.html) for a very short description how this works.
+
 #### Sample YAML with features
 This sample shows how to use Anchors and Aliases, as well as how it is possible to just modify an element in the middle of the array.
 ```YAML
@@ -218,11 +223,6 @@ manager_config:
   veto_relative_to_zero : true 
   overlap : true 
 ```
-
-#### Assigning the the values to multiple substructures
-YAML allows to reused definitions from one place of the structure multiple times without writing them all over again.
-This can be useful to set multiple boards to the same setting or multiple channels of one board.
-This [this website](http://blogs.perl.org/users/tinita/2019/05/reusing-data-with-yaml-anchors-aliases-and-merge-keys.html) for a very short description how this works.
 
 # test_msvscpp Project
 
