@@ -122,12 +122,12 @@ manager_config:
    trigger : 
      falling : false 
      rising : true 
-   trigger_threshold : *CMOS # Alias will be substitudtd by 0.3499
+   trigger_threshold : *CMOS # Alias will be substituted by 0.3499
    adc_channel: 
     enable : true 
     watchdog_readout : true 
     watchdog_interval: 5 
-    trigger_threshold : *COMMON_THRESHOLD # Alias will be substituted 120
+    trigger_threshold : *COMMON_THRESHOLD # Alias will be substituted by 120
   1: 
    trigger_threshold : 
     1: 0.3499 # Start with the second element, leave the first to default
