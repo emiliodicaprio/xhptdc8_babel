@@ -11,6 +11,10 @@ int _get_node_key_name_internal(const ryml::NodeRef* pNode, std::string* buff);
 int _get_node_val_internal(const ryml::NodeRef* pNode, std::string* buff);
 crono_bool_t _is_node_array_map(const ryml::NodeRef* pNode);
 
+const char YAML_XHPTDC8_MANAGER_CONFIG_NAME[15] = { "manager_config" };
+const char YAML_XHPTDC8_DEVICE_CONFIGS_NAME[15] = { "device_configs" };
+const char YAML_XHPTDC8_TIGGER_THRESHOLD_NAME[18] = { "trigger_threshold" };
+
 #ifdef XHPTDC8_VERBOSE_DEBUG
 
 /// <summary>
