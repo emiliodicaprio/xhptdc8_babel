@@ -1,6 +1,6 @@
 name: Util Library MSBuild
-# Upon any change in sub files of ./dummy, the action does the following:
-# 1. Builds the Dummy Library Release x64 & x86 DLL & Lib, using MSBuild
+# Upon any change in sub files of ./util/util_msvscpp, the action does the following:
+# 1. Builds the Util Library Release x64 & x86 DLL & Lib, using MSBuild
 # 2. Copies the DLLs & Libs to the corresponding folders on ./lib repository folder, and commits
 
 on: 
@@ -35,6 +35,9 @@ jobs:
           COMMIT_MSG: 'Internal build due to Util code change' 
 
     steps:
+    - name: Checkout Code
+      uses: actions/checkout@v2
+  
     - name: Add MSBuild to PATH
       uses: microsoft/setup-msbuild@v1
 
