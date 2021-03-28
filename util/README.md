@@ -160,6 +160,21 @@ Applied yaml on node child ([1] enable: true) bool value
 Applied yaml on node child ([1] rising: false) bool value
 ```
 
+#### Index -1 to Apply on All
+The following example will set all 16 triggers of the 4th device (index = 3) to a false falling and true rising:
+
+```YAML
+manager_config: \n"
+ device_configs: \n"
+  3: \n"
+   trigger : \n"
+    -1: # Set all \n"
+     falling : false \n"
+     rising : true \n"
+   trigger_threshold:\n"
+    0: 0.3499 \n"
+```
+
 #### All Elements YAML
 Here is the complete elements of the manager configuration sturcture, including sample values; you can copy your YAML elements from the YAML below, just keep the spaces before the elements, and refer to both the user guide and the [xHPTDC8_interface.h](/lib/include/xHPTDC8_interface.h "xHPTDC8_interface.h") xhptdc8_interface.h for the members specifications:
 
