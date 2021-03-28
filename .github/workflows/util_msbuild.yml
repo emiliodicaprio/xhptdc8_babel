@@ -1,0 +1,43 @@
+name: Util Library MSBuild
+# Upon any change in sub files of ./dummy, the action does the following:
+# 1. Builds the Dummy Library Release x64 & x86 DLL & Lib, using MSBuild
+# 2. Copies the DLLs & Libs to the corresponding folders on ./lib repository folder, and commits
+
+on: 
+  push:
+    paths:
+    - 'util/util_msvscpp/**'
+    
+env:
+  # Path to the solution file relative to the root of the project.
+  SOLUTION_FILE_PATH: .
+
+  # Configuration type to build.
+  # You can convert this to a build matrix if you need coverage of multiple configuration types.
+  # https://docs.github.com/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
+  BUILD_CONFIGURATION: Release
+  SOLUTION_FILE_PATH: .\dummy\msvscpp\
+  X86_OUTPUT_DIR: .\util\util_msvscpp\Release\
+  X86_REPO_LIB_PTH: .\util\lib\x86\
+  X64_OUTPUT_DIR: .\util\util_msvscpp\x64\Release\
+  X64_REPO_LIB_PTH: .\util\lib\x64\
+  X86_UTIL_DLL_NAME: xhptdc8_util.dll
+  X86_UTIL_LIB_NAME: xhptdc8_util.lib 
+  X64_UTIL_DLL_NAME: xhptdc8_util_64.dll
+  X64_UTIL_LIB_NAME: xhptdc8_util_64.lib
+  
+jobs:
+  build:
+    runs-on: windows-latest
+    defaults:
+       run:
+         shell: powershell
+    env: 
+          X86_REPO_LIB_PTH_COMMIT: ./util/lib/x86/
+          X64_REPO_LIB_PTH_COMMIT: ./util/lib/x64/
+          COMMIT_MSG: 'Internal build due to Util code change' 
+
+    steps:
+    - name: Add MSBuild to PATH
+      uses: microsoft/setup-msbuild@v1
+
