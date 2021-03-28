@@ -14,7 +14,7 @@ env:
   # https://docs.github.com/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
   BUILD_CONFIGURATION: Release
   SOLUTION_FILE_PATH: .\util\util_msvscpp
-  X86_OUTPUT_DIR: .\util\util_msvscpp\Release\
+  X86_OUTPUT_DIR: .\util\util_msvscpp\Release\ 
   X86_REPO_LIB_PTH: .\util\lib\x86\
   X64_OUTPUT_DIR: .\util\util_msvscpp\x64\Release\
   X64_REPO_LIB_PTH: .\util\lib\x64\
@@ -49,8 +49,6 @@ jobs:
       # See https://docs.microsoft.com/visualstudio/msbuild/msbuild-command-line-reference
       run: |
         msbuild ${{env.SOLUTION_FILE_PATH}} /m /property:Configuration=Release /property:Platform=${{env.BUILD_PLATFORM}}
-        Copy-Item ${{env.X86_OUTPUT_DIR}}${{env.X86_DLL_NAME}} -Destination ${{env.X86_REPO_LIB_PTH}}
-        Copy-Item ${{env.X86_OUTPUT_DIR}}${{env.X86_LIB_NAME}} -Destination ${{env.X86_REPO_LIB_PTH}}
         
     - name: Commit x86 DLL
       uses: EndBug/add-and-commit@v7.0.0
