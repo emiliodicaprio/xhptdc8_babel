@@ -297,9 +297,10 @@ int xhptdc8_apply_trigger_threshold_yaml(const ryml::NodeRef* device_config_node
 }
 
 /*
-* Return 0: Not found/no impact, no error
-*        N: Count of successfully updated trigger
-*       -ve: Error
+* Return 
+* 0  : Not found/no impact, no error
+* N  : Count of successfully updated trigger
+* -ve: Error
 */
 int xhptdc8_apply_trigger_yaml(const ryml::NodeRef* device_config_node,
         xhptdc8_device_configuration* device_config)
