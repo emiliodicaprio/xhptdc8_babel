@@ -175,6 +175,44 @@ manager_config: \n"
     0: 0.3499 \n"
 ```
 
+With debugging output as following:
+```
+Applied yaml on node child ([3] trigger_threshold: 0.349900) integer value
+Applying -1 element on all <trigger> elements, ignoring all the rest if found
+Applied yaml on node child ([-1] falling: false) bool value
+Applied yaml on node child ([-1] rising: true) bool value
+Applied yaml on node child ([-1] falling: false) bool value
+Applied yaml on node child ([-1] rising: true) bool value
+Applied yaml on node child ([-1] falling: false) bool value
+Applied yaml on node child ([-1] rising: true) bool value
+Applied yaml on node child ([-1] falling: false) bool value
+Applied yaml on node child ([-1] rising: true) bool value
+Applied yaml on node child ([-1] falling: false) bool value
+Applied yaml on node child ([-1] rising: true) bool value
+Applied yaml on node child ([-1] falling: false) bool value
+Applied yaml on node child ([-1] rising: true) bool value
+Applied yaml on node child ([-1] falling: false) bool value
+Applied yaml on node child ([-1] rising: true) bool value
+Applied yaml on node child ([-1] falling: false) bool value
+Applied yaml on node child ([-1] rising: true) bool value
+Applied yaml on node child ([-1] falling: false) bool value
+Applied yaml on node child ([-1] rising: true) bool value
+Applied yaml on node child ([-1] falling: false) bool value
+Applied yaml on node child ([-1] rising: true) bool value
+Applied yaml on node child ([-1] falling: false) bool value
+Applied yaml on node child ([-1] rising: true) bool value
+Applied yaml on node child ([-1] falling: false) bool value
+Applied yaml on node child ([-1] rising: true) bool value
+Applied yaml on node child ([-1] falling: false) bool value
+Applied yaml on node child ([-1] rising: true) bool value
+Applied yaml on node child ([-1] falling: false) bool value
+Applied yaml on node child ([-1] rising: true) bool value
+Applied yaml on node child ([-1] falling: false) bool value
+Applied yaml on node child ([-1] rising: true) bool value
+Applied yaml on node child ([-1] falling: false) bool value
+Applied yaml on node child ([-1] rising: true) bool value
+``` 
+
 #### All Elements YAML
 Here is the complete elements of the manager configuration sturcture, including sample values; you can copy your YAML elements from the YAML below, just keep the spaces before the elements, and refer to both the user guide and the [xHPTDC8_interface.h](/lib/include/xHPTDC8_interface.h "xHPTDC8_interface.h") xhptdc8_interface.h for the members specifications:
 
