@@ -1024,7 +1024,6 @@ int xhptdc8_apply_device_config_yaml(const ryml::NodeRef* device_config_node,
 * Return N  : Count of device configurations updated
 *       -ve : Error
 */
-
 int xhptdc8_apply_yaml(xhptdc8_manager_configuration* manager_config, const char* yaml_string)
 {
     int configs_count = 0;
