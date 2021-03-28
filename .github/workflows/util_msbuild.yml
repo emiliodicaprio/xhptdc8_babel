@@ -54,11 +54,11 @@ jobs:
       with:
           author_name: Internal Workflow Action
           message: ${{env.COMMIT_MSG}}
-          add: ${{env.X86_REPO_LIB_PTH_COMMIT}}${{env.X86_DUMMY_DLL_NAME}}
+          add: ${{env.X86_REPO_LIB_PTH_COMMIT}}${{env.X86_DLL_NAME}}
 
     - name: Commit x86 Lib
       uses: EndBug/add-and-commit@v7.0.0
       with:
           author_name: Internal Workflow Action
           message: ${{env.COMMIT_MSG}}
-          add: ${{env.X86_REPO_LIB_PTH_COMMIT}}${{env.X86_DUMMY_LIB_NAME}}
+          add: ${{env.X86_REPO_LIB_PTH_COMMIT}}${{env.X86_LIB_NAME}}
