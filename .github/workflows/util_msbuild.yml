@@ -18,10 +18,10 @@ env:
   X86_REPO_LIB_PTH: .\util\lib\x86\
   X64_OUTPUT_DIR: .\util\util_msvscpp\x64\Release\
   X64_REPO_LIB_PTH: .\util\lib\x64\
-  X86_UTIL_DLL_NAME: xhptdc8_util.dll
-  X86_UTIL_LIB_NAME: xhptdc8_util.lib 
-  X64_UTIL_DLL_NAME: xhptdc8_util_64.dll
-  X64_UTIL_LIB_NAME: xhptdc8_util_64.lib
+  X86_DLL_NAME: xhptdc8_util.dll
+  X86_LIB_NAME: xhptdc8_util.lib 
+  X64_DLL_NAME: xhptdc8_util_64.dll
+  X64_LIB_NAME: xhptdc8_util_64.lib
   
 jobs:
   build:
@@ -38,3 +38,27 @@ jobs:
     - name: Add MSBuild to PATH
       uses: microsoft/setup-msbuild@v1
 
+    - name: Build Release x86
+      env:
+        BUILD_PLATFORM: x86
+      working-directory: ${{env.GITHUB_WORKSPACE}}
+      # Add additional options to the MSBuild command line here (like platform or verbosity level).
+      # See https://docs.microsoft.com/visualstudio/msbuild/msbuild-command-line-reference
+      run: |
+        msbuild ${{env.SOLUTION_FILE_PATH}} /m /property:Configuration=Release /property:Platform=${{env.BUILD_PLATFORM}}
+        Copy-Item ${{env.X86_OUTPUT_DIR}}${{env.X86_DLL_NAME}} -Destination ${{env.X86_REPO_LIB_PTH}}
+        Copy-Item ${{env.X86_OUTPUT_DIR}}${{env.X86_LIB_NAME}} -Destination ${{env.X86_REPO_LIB_PTH}}
+        
+    - name: Commit x86 DLL
+      uses: EndBug/add-and-commit@v7.0.0
+      with:
+          author_name: Internal Workflow Action
+          message: ${{env.COMMIT_MSG}}
+          add: ${{env.X86_REPO_LIB_PTH_COMMIT}}${{env.X86_DUMMY_DLL_NAME}}
+
+    - name: Commit x86 Lib
+      uses: EndBug/add-and-commit@v7.0.0
+      with:
+          author_name: Internal Workflow Action
+          message: ${{env.COMMIT_MSG}}
+          add: ${{env.X86_REPO_LIB_PTH_COMMIT}}${{env.X86_DUMMY_LIB_NAME}}
