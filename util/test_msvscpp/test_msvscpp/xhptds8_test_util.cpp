@@ -130,9 +130,36 @@ char collection_sample[1000] =
 "     rising : false \n"
 };
 
+char array_variations_sample[1000] =
+{
+"manager_config: \n"
+" device_configs: \n"
+"  3: \n"
+"   trigger : \n"
+"    -1: # Set all \n"
+"     falling : false \n"
+"     rising : true \n"
+"   trigger_threshold:\n"
+"    0: 0.3499 \n"
+"   adc_channel: \n"
+"    enable : true \n"
+"    watchdog_readout : true \n"
+"    watchdog_interval: 5\n"
+"    trigger_threshold : 120\n"
+"  5: \n"
+"   trigger_threshold : \n"
+"    1: 0.3499 # Start with the second element, leave the first to default\n"
+"    2: 0.35 \n"
+"    3: 0.36666 \n"
+"   channel : \n"
+"    -1: # Set all \n"
+"     enable : true\n"
+"     rising : false \n"
+};
+
 int main()
 {
-	test_apply_yaml(mngr_all_keys_sample);
+	test_apply_yaml(array_variations_sample);
 }
 
 void test_apply_yaml(char* src)
