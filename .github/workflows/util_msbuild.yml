@@ -6,14 +6,15 @@ name: Util Library MSBuild
 on: 
   push:
     paths:
-    - 'util/util_msvscpp/**'
+    - 'util/util_msvscpp/util_msvscpp/**'
+    - 'lib/include/**'
     
 env:
   # Configuration type to build.
   # You can convert this to a build matrix if you need coverage of multiple configuration types.
   # https://docs.github.com/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
   BUILD_CONFIGURATION: Release
-  SOLUTION_FILE_PATH: .\util\util_msvscpp
+  SOLUTION_FILE_PATH: .\util\util_msvscpp\util_msvscpp # The util library only
   X86_OUTPUT_DIR: .\util\util_msvscpp\Release\ 
   X86_REPO_LIB_PTH: .\util\lib\x86\
   X64_OUTPUT_DIR: .\util\util_msvscpp\x64\Release\
