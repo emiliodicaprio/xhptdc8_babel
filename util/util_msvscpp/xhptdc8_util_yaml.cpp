@@ -61,7 +61,9 @@ crono_bool_t _is_node_array_map(const ryml::NodeRef* pNode)
         std::string val;
         _get_node_val_internal(&first_child_node, &val);
         VERBOSE_DEBUG_MSG("Error: node shouldn't have value (%s)", val.c_str());
-        return false;
+        // return false;
+        // Not a problem if it has a value, we only care about NOT being sequence
+        // Let the code take care of the value, it's needed in threshold
     }
 
     std::string first_child_key_name;
@@ -198,7 +200,7 @@ int xhptdc8_yaml_get_configs_count(const ryml::NodeRef* config_mngr_node, ryml::
     {
         return XHPTDC8_APPLY_YAML_ERR_EMPTY_CONF_MNGR;
     }
-    (*device_configs_node) = (*config_mngr_node)[YAML_XHPTDC8_DEVICE_CONFIGS_NAME];
+    (*device_configs_node) = (*config_mngr_node).find_child(YAML_XHPTDC8_DEVICE_CONFIGS_NAME);
     if ( !RYML_NODE_EXISTS(*device_configs_node))
     {
         return XHPTDC8_APPLY_YAML_ERR_NO_DEV_CONFS;
@@ -217,7 +219,7 @@ int xhptdc8_yaml_get_configs_count(const ryml::NodeRef* config_mngr_node, ryml::
     */
     if (!_is_node_array_map(device_configs_node))
     {
-        return XHPTDC8_APPLY_YAML_ERR_INVALID_CONFS_STRUTC;
+        return XHPTDC8_APPLY_YAML_INVALID_CONFS_STRUTC;
     }
     return configs_count;
 }
@@ -341,13 +343,13 @@ int xhptdc8_apply_trigger_yaml(const ryml::NodeRef* device_config_node,
     int trigger_children_count = 0;
     trigger_children_count = trigger_node.num_children();
     VALIDATE_CHILDREN_COUNT(trigger_children_count, XHPTDC8_TRIGGER_COUNT, 
-        XHPTDC8_APPLY_YAML_ERR_TRIGGERS_EXCEED_MAX);
+        XHPTDC8_APPLY_YAML_ERR_TRIGGER_EXCEED_MAX);
 
     // Validate node structure as a map
     crono_bool_t is_array_map = _is_node_array_map(&trigger_node);
     if (!is_array_map)
     {
-        return XHPTDC8_APPLY_YAML_INVALID_TRIGGERS_STRUCT;
+        return XHPTDC8_APPLY_YAML_INVALID_TRIGGER_STRUCT;
     }
 
     // Check if -1 in the first item, to apply on all if not provided
@@ -377,7 +379,7 @@ int xhptdc8_apply_trigger_yaml(const ryml::NodeRef* device_config_node,
         trigger_index_in_cfg = _get_node_key_name_toi_internal(&child_node);
 
         VALIDATE_ARRAY_INDEX(trigger_index_in_cfg, XHPTDC8_TRIGGER_COUNT,
-            XHPTDC8_APPLY_YAML_INVALID_TRIGGERS_STRUCT, XHPTDC8_APPLY_YAML_ERR_TRIGGERS_EXCEED_MAX);
+            XHPTDC8_APPLY_YAML_INVALID_TRIGGER_STRUCT, XHPTDC8_APPLY_YAML_ERR_TRIGGER_EXCEED_MAX);
 
         update_from_yaml[trigger_index_in_cfg] = child_node;
     }
@@ -403,10 +405,10 @@ int xhptdc8_apply_trigger_yaml(const ryml::NodeRef* device_config_node,
         }
         // Apply node values to configurations
         APPLY_CHILD_BOOL_VALUE(child_node, "falling",
-            device_config->trigger[trigger_index].falling, XHPTDC8_APPLY_YAML_INVALID_TRIGGERS_FALL);
+            device_config->trigger[trigger_index].falling, XHPTDC8_APPLY_YAML_INVALID_TRIGGER_FALL);
 
         APPLY_CHILD_BOOL_VALUE(child_node, "rising",
-            device_config->trigger[trigger_index].rising, XHPTDC8_APPLY_YAML_INVALID_TRIGGERS_RISING);
+            device_config->trigger[trigger_index].rising, XHPTDC8_APPLY_YAML_INVALID_TRIGGER_RISING);
     }
 
     return apply_first_on_all_elements ? XHPTDC8_TRIGGER_COUNT : trigger_children_count;
@@ -708,7 +710,7 @@ int xhptdc8_apply_tiger_block_yaml(const ryml::NodeRef* device_config_node,
     int tiger_block_children_count = 0;
     tiger_block_children_count = tiger_block_node.num_children();
     VALIDATE_CHILDREN_COUNT(tiger_block_children_count, XHPTDC8_TIGER_COUNT,
-        XHPTDC8_APPLY_YAML_ERR_TGRBLCK_EXCEED_MAX);
+        XHPTDC8_APPLY_YAML_ERR_TGRBLCKS_EXCEED_MAX);
 
     // Validate node structure as a map
     crono_bool_t is_array_map = _is_node_array_map(&tiger_block_node);
@@ -744,7 +746,7 @@ int xhptdc8_apply_tiger_block_yaml(const ryml::NodeRef* device_config_node,
         tiger_block_index_in_cfg = _get_node_key_name_toi_internal(&child_node);
 
         VALIDATE_ARRAY_INDEX(tiger_block_index_in_cfg, XHPTDC8_TIGER_COUNT,
-            XHPTDC8_APPLY_YAML_TGRBLCK_INVALID_STRUCT, XHPTDC8_APPLY_YAML_ERR_TGRBLCK_EXCEED_MAX);
+            XHPTDC8_APPLY_YAML_TGRBLCK_INVALID_STRUCT, XHPTDC8_APPLY_YAML_ERR_TGRBLCKS_EXCEED_MAX);
 
         update_from_yaml[tiger_block_index_in_cfg] = child_node;
     }
@@ -1060,7 +1062,7 @@ int xhptdc8_apply_yaml(xhptdc8_manager_configuration* manager_config, const char
         device_config_index_in_cfg = _get_node_key_name_toi_internal(&child_node);
 
         VALIDATE_ARRAY_INDEX(device_config_index_in_cfg, XHPTDC8_MANAGER_DEVICES_MAX,
-            XHPTDC8_APPLY_YAML_ERR_EMPTY_CONF_MNGR, XHPTDC8_APPLY_YAML_ERR_CONFS_EXCEED_MAX);
+            XHPTDC8_APPLY_YAML_INVALID_CONFS_STRUTC, XHPTDC8_APPLY_YAML_ERR_CONFS_EXCEED_MAX);
 
         update_from_yaml[device_config_index_in_cfg] = child_node;
     }
@@ -1070,17 +1072,17 @@ int xhptdc8_apply_yaml(xhptdc8_manager_configuration* manager_config, const char
     for (int device_config_index = 0; device_config_index < XHPTDC8_MANAGER_DEVICES_MAX; device_config_index++)
     {
         if (RYML_NODE_EXISTS(update_from_yaml[device_config_index]))
-            // Values are provided in YAML by index
+        // Values are provided in YAML by index
         {
             child_node = update_from_yaml[device_config_index];
         }
         else if (apply_first_on_all_elements)
-            // Values are NOT provided in YAML by index but -1 is
+        // Values are NOT provided in YAML by index but -1 is
         {
             child_node = device_configs_first_item_node;
         }
         else
-            // Neither index nor -1 are found in YAML  
+        // Neither index nor -1 are found in YAML  
         {
             // Skip the element
             continue;
