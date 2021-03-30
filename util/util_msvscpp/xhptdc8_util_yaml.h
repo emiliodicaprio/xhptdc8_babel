@@ -33,7 +33,8 @@ const char YAML_XHPTDC8_TIGGER_THRESHOLD_NAME[18] = { "trigger_threshold" };
 /// <param name="key_val">The applied value, of type int</param>  
 #define VERBOSE_DEBUG_MSG_YAML_APPLIED_I(node, key_name, key_val) \
     {   std::string node_name ; _get_node_key_name_internal(&node, &node_name); \
-        fprintf(stdout, "Applied yaml on node child ([%s] %s: %d) integer value\n", node_name.c_str(), key_name, key_val); }
+        fprintf(stdout, "Applied yaml node ([%s]) on conifguation (%s) integer value (%d)\n", \
+        node_name.c_str(), key_name, key_val); }
 
 /// <summary>
 /// Prints a message that a double value <paramref name="key_val"/> is applied 
@@ -45,7 +46,8 @@ const char YAML_XHPTDC8_TIGGER_THRESHOLD_NAME[18] = { "trigger_threshold" };
 /// <param name="key_val">The applied value, of type double</param>  
 #define VERBOSE_DEBUG_MSG_YAML_APPLIED_D(node, key_name, key_val) \
     {   std::string node_name ; _get_node_key_name_internal(&node, &node_name); \
-        fprintf(stdout, "Applied yaml on node child ([%s] %s: %f) integer value\n", node_name.c_str(), key_name, key_val); }
+        fprintf(stdout, "Applied yaml node ([%s]) on conifguation (%s) double value (%f)\n", \
+        node_name.c_str(), key_name, key_val); }
 
 /// <summary>
 /// Prints a message that a boolean value <paramref name="key_val"/> is applied 
@@ -57,7 +59,8 @@ const char YAML_XHPTDC8_TIGGER_THRESHOLD_NAME[18] = { "trigger_threshold" };
 /// <param name="key_val">The applied value, of type chrono_bool_t</param>  
 #define VERBOSE_DEBUG_MSG_YAML_APPLIED_B(node, key_name, key_val) \
     {   std::string node_name ; _get_node_key_name_internal(&node, &node_name); \
-        fprintf(stdout, "Applied yaml on node child ([%s] %s: %s) bool value\n", node_name.c_str(), key_name, key_val); }
+        fprintf(stdout, "Applied yaml node ([%s]) on conifguation (%s) boolean value (%s)\n", \
+        node_name.c_str(), key_name, key_val); }
 
 /// <summary>
 /// Prints a message that a long long value <paramref name="key_val"/> is applied 
@@ -69,7 +72,8 @@ const char YAML_XHPTDC8_TIGGER_THRESHOLD_NAME[18] = { "trigger_threshold" };
 /// <param name="key_val">The applied value, of type long long</param>  
 #define VERBOSE_DEBUG_MSG_YAML_APPLIED_LL(node, key_name, key_val) \
     {   std::string node_name ; _get_node_key_name_internal(&node, &node_name); \
-        fprintf(stdout, "Applied yaml on node child ([%s] %s: %ll) long long value\n", node_name.c_str(), key_name, key_val); }
+        fprintf(stdout, "Applied yaml node ([%s]) on conifguation (%s) long long value (%lld)\n",   \
+        node_name.c_str(), key_name, key_val); }
 
 #else
 /// <summary>
@@ -131,7 +135,7 @@ const char YAML_XHPTDC8_TIGGER_THRESHOLD_NAME[18] = { "trigger_threshold" };
 /// which will be assigned the child's integer value</param>  
 /// <param name="returnedInvalidError">Error code returned in case considtion check failed</param>  
 /// <returns>Nothnig: if node exists, <paramref name="validCondition"/> is valid, 
-/// and <paramref name="targetVar"/> is set successfully, 'false' if not
+/// and <paramref name="targetVar"/> is set successfully, caller function returns 'false' if not
 /// </returns>
 #define APPLY_CHILD_INTEGER_VALUE(parentNode, childName, validCondition, targetVar, returnedInvalidError) \
     { ryml::NodeRef childNode = parentNode.find_child(childName);  \
@@ -155,7 +159,7 @@ const char YAML_XHPTDC8_TIGGER_THRESHOLD_NAME[18] = { "trigger_threshold" };
 /// which will be assigned the child's double value</param>  
 /// <param name="returnedInvalidError">Error code returned in case considtion check failed</param>  
 /// <returns>Nothnig: if node exists, <paramref name="validCondition"/> is valid, 
-/// and <paramref name="targetVar"/> is set successfully, 'false' if not
+/// and <paramref name="targetVar"/> is set successfully, caller function returns 'false' if not
 /// </returns>
 #define APPLY_CHILD_DOUBLE_VALUE(parentNode, childName, validCondition, targetVar, returnedInvalidError) \
     { ryml::NodeRef childNode = parentNode.find_child(childName);  \
@@ -179,7 +183,7 @@ const char YAML_XHPTDC8_TIGGER_THRESHOLD_NAME[18] = { "trigger_threshold" };
 /// which will be assigned the child's long long value</param>  
 /// <param name="returnedInvalidError">Error code returned in case considtion check failed</param>  
 /// <returns>Nothnig: if node exists, <paramref name="validCondition"/> is valid, 
-/// and <paramref name="targetVar"/> is set successfully, 'false' if not
+/// and <paramref name="targetVar"/> is set successfully, caller function returns 'false' if not
 /// </returns>
 #define APPLY_CHILD_LONGLONG_VALUE(parentNode, childName, validCondition, targetVar, returnedInvalidError) \
     { ryml::NodeRef childNode = parentNode.find_child(childName);  \
@@ -202,7 +206,7 @@ const char YAML_XHPTDC8_TIGGER_THRESHOLD_NAME[18] = { "trigger_threshold" };
 /// which will be assigned the child's boolean value</param>  
 /// <param name="returnedInvalidError">Error code returned in case considtion check failed</param>  
 /// <returns>Nothnig: if node exists and <paramref name="targetVar"/> is set successfully, 
-/// 'false' if not
+/// caller function returns 'false' if not
 /// </returns>
 #define APPLY_CHILD_BOOL_VALUE(parentNode, childName, targetVar, returnedInvalidError) \
     {   ryml::NodeRef childNode = parentNode.find_child(childName);    \
@@ -215,7 +219,7 @@ const char YAML_XHPTDC8_TIGGER_THRESHOLD_NAME[18] = { "trigger_threshold" };
 /// <summary>
 /// Validates the parameters of the "xhptdc8_..._config_yaml(const ryml::NodeRef* device_config_node,
 /// xhptdc8_device_configuration* device_config)" functions.
-/// In case of invalid parameters, it returns either XHPTDC8_APPLY_YAML_INVALID_ARGUMENT, 
+/// In case of invalid parameters, caller function returns either XHPTDC8_APPLY_YAML_INVALID_ARGUMENT, 
 /// or XHPTDC8_APPLY_YAML_ERR_EMPTY_DEV_CONF 
 /// </summary>
 #define VALIDATE_APPLY_YAMAL_PARAMS    \
@@ -225,8 +229,8 @@ const char YAML_XHPTDC8_TIGGER_THRESHOLD_NAME[18] = { "trigger_threshold" };
 
 /// <summary>
 /// Validates the array index <paramref name="index"/>:
-/// if less than zero, then it returns <paramref name="less_than_zero_error_code"></paramref>.
-/// if greater than (max_count -1), then it returns <paramref name="exceed_max_count_error_code"></paramref>.
+/// if less than zero, then caller function returns <paramref name="less_than_zero_error_code"></paramref>.
+/// if greater than (max_count -1), then caller function returns <paramref name="exceed_max_count_error_code"></paramref>.
 /// </summary>
 /// <param name="index">The index of the element in the array</param>  
 /// <param name="max_count">The maximum count of the elements allowed in the array</param>  
@@ -237,9 +241,9 @@ const char YAML_XHPTDC8_TIGGER_THRESHOLD_NAME[18] = { "trigger_threshold" };
     if (index > (max_count - 1)) { return exceed_max_count_error_code; }
 
 /// <summary>
-/// Validates the children count:<paramref name="index"/>:
-/// if less than zero, then it returns 0.
-/// if greater than (max_count), then it returns <paramref name="exceed_max_count_error_code"></paramref>.
+/// Validates the children count: <paramref name="children_count"/>:
+/// if less than zero, then caller function returns 0.
+/// if greater than (max_count), then caller function returns <paramref name="exceed_max_count_error_code"></paramref>.
 /// </summary>
 /// <param name="children_count">Number of children</param>  
 /// <param name="max_count">The maximum count of the elements allowed in the array</param>  

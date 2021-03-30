@@ -51,9 +51,18 @@ crono_bool_t _is_node_array_map(const ryml::NodeRef* pNode)
     if (!RYML_NODE_EXISTS(first_child_node))
         return false;
 
-    if (    (!first_child_node.has_key())
-        ||  (first_child_node.has_val()))
+    if (!first_child_node.has_key())
+    {
         return false;
+    }
+
+    if (first_child_node.has_val())
+    {
+        std::string val;
+        _get_node_val_internal(&first_child_node, &val);
+        VERBOSE_DEBUG_MSG("Error: node shouldn't have value (%s)", val.c_str());
+        return false;
+    }
 
     std::string first_child_key_name;
     _get_node_key_name_internal(&first_child_node, &first_child_key_name);
@@ -228,72 +237,87 @@ int xhptdc8_apply_trigger_threshold_yaml(const ryml::NodeRef* device_config_node
     {
         return 0;
     }
-    int trigger_thresholds_count = 0;
-    trigger_thresholds_count = trigger_threshold_node.num_children();
-    if ( trigger_thresholds_count <= 0 )
-    // Empty thresholds, accepted
+    int trigger_threshold_children_count = 0;
+    trigger_threshold_children_count = trigger_threshold_node.num_children();
+    VALIDATE_CHILDREN_COUNT(trigger_threshold_children_count, XHPTDC8_TDC_CHANNEL_COUNT,
+        XHPTDC8_APPLY_YAML_THRESHOLDS_EXCEED_MAX);
+
+    // Validate node structure as a map
+    crono_bool_t is_array_map = _is_node_array_map(&trigger_threshold_node);
+    if (!is_array_map)
     {
-        return 0;
+        return XHPTDC8_APPLY_YAML_INVALID_THRESHOLD_STRUCT;
     }
-    if (trigger_thresholds_count > XHPTDC8_TDC_CHANNEL_COUNT)
-    {
-        return XHPTDC8_APPLY_YAML_THRESHOLDS_EXCEED_MAX;
-    }
-    // Check "-1" in the first item, apply on all
+
+    // Check if -1 in the first item, to apply on all if not provided
     crono_bool_t apply_first_on_all_elements = false;
-    double val_to_apply_on_all_elements;
-    ryml::NodeRef threshold_first_item_node = trigger_threshold_node.child(0);
-    int threshold_index_in_cfg = _get_node_key_name_toi_internal(&threshold_first_item_node);
-    if (-1 == threshold_index_in_cfg)
+    ryml::NodeRef trigger_threshold_first_item_node = trigger_threshold_node.child(0);
+    int first_item_index_in_cfg = _get_node_key_name_toi_internal(&trigger_threshold_first_item_node);
+    if (-1 == first_item_index_in_cfg)
     {
         apply_first_on_all_elements = true;
-        if (!_node_val_tod_internal(&threshold_first_item_node, &val_to_apply_on_all_elements))
-        {
-            return XHPTDC8_APPLY_YAML_INVALID_THRESHOLD;
-        }
-        if ((val_to_apply_on_all_elements < -1.32) || (val_to_apply_on_all_elements > 1.18))
-        {
-            return XHPTDC8_APPLY_YAML_INVALID_THRESHOLD;
-        }
-        
-        trigger_thresholds_count = XHPTDC8_TDC_CHANNEL_COUNT;
-
-        VERBOSE_DEBUG_MSG("Applying -1 element <%d> on all <%s> elements, ignoring all the rest if found\n", 
-            val_to_apply_on_all_elements, "trigger_threshold");
+        VERBOSE_DEBUG_MSG("Applying -1 element on all <%s> elements, overwritten by element if found in YAML\n", 
+            "trigger_threshold");
     }
-    // Loop on the elements
-    for (int threshold_index = 0; threshold_index < trigger_thresholds_count; threshold_index++)
+
+    ryml::NodeRef child_node;
+
+    // Get elements have values in YAML
+    ryml::NodeRef update_from_yaml[XHPTDC8_TDC_CHANNEL_COUNT];
+    for (int threshold_index = 0, trigger_threshold_index_in_cfg;
+        threshold_index < trigger_threshold_children_count; threshold_index++)
     {
-        double val;
-        if (apply_first_on_all_elements)
+        if ((0 == threshold_index) && apply_first_on_all_elements)
+            // First element in YAML is -1
         {
-            val = val_to_apply_on_all_elements;
-            threshold_index_in_cfg = threshold_index;
+            continue; // Skip it
+        }
+        child_node = trigger_threshold_node.child(threshold_index);
+        trigger_threshold_index_in_cfg = _get_node_key_name_toi_internal(&child_node);
+
+        VALIDATE_ARRAY_INDEX(trigger_threshold_index_in_cfg, XHPTDC8_TDC_CHANNEL_COUNT,
+            XHPTDC8_APPLY_YAML_INVALID_THRESHOLD_STRUCT, XHPTDC8_APPLY_YAML_THRESHOLDS_EXCEED_MAX);
+
+        update_from_yaml[trigger_threshold_index_in_cfg] = child_node;
+    }
+
+    // Loop on the elements
+    for (int threshold_index = 0; threshold_index < XHPTDC8_TDC_CHANNEL_COUNT; threshold_index++)
+    {
+        if (RYML_NODE_EXISTS(update_from_yaml[threshold_index]))
+        // Values are provided in YAML by index
+        {
+            child_node = update_from_yaml[threshold_index];
+        }
+        else if (apply_first_on_all_elements)
+        // Values are NOT provided in YAML by index but -1 is 
+        {
+            child_node = trigger_threshold_first_item_node;
         }
         else
+        // Neither index nor -1 are found in YAML  
         {
-            // Get threshold value
-            ryml::NodeRef threshold_item_node;
-            threshold_item_node = trigger_threshold_node.child(threshold_index);
-            threshold_index_in_cfg = _get_node_key_name_toi_internal(&threshold_item_node);
+            // Skip the element
+            continue;
+        }
+        // Apply node values to configurations
 
-            VALIDATE_ARRAY_INDEX(threshold_index_in_cfg, XHPTDC8_TDC_CHANNEL_COUNT,
-                XHPTDC8_APPLY_YAML_INVALID_THRESHOLD_STRUCT, XHPTDC8_APPLY_YAML_THRESHOLDS_EXCEED_MAX);
-
-            if (!_node_val_tod_internal(&threshold_item_node, &val))
-            {
-                return XHPTDC8_APPLY_YAML_INVALID_THRESHOLD;
-            }
-            if ((val < -1.32) || (val > 1.18))
-            {
-                return XHPTDC8_APPLY_YAML_INVALID_THRESHOLD;
-            }
+        double val;
+        // Get threshold value
+        if (!_node_val_tod_internal(&child_node, &val))
+        {
+            return XHPTDC8_APPLY_YAML_INVALID_THRESHOLD;
+        }
+        if ((val < -1.32) || (val > 1.18))
+        {
+            return XHPTDC8_APPLY_YAML_INVALID_THRESHOLD;
         }
         // Apply value
-        device_config->trigger_threshold[threshold_index_in_cfg] = val;
+        device_config->trigger_threshold[threshold_index] = val;
         VERBOSE_DEBUG_MSG_YAML_APPLIED_D(*device_config_node, "trigger_threshold", val);
     }
-    return trigger_thresholds_count;
+
+    return apply_first_on_all_elements ? XHPTDC8_TDC_CHANNEL_COUNT : trigger_threshold_children_count;
 }
 
 /*
@@ -313,60 +337,79 @@ int xhptdc8_apply_trigger_yaml(const ryml::NodeRef* device_config_node,
         return 0;
     }
 
+    // Get node children count (array element size) and validate it
     int trigger_children_count = 0;
     trigger_children_count = trigger_node.num_children();
     VALIDATE_CHILDREN_COUNT(trigger_children_count, XHPTDC8_TRIGGER_COUNT, 
         XHPTDC8_APPLY_YAML_ERR_TRIGGERS_EXCEED_MAX);
 
+    // Validate node structure as a map
     crono_bool_t is_array_map = _is_node_array_map(&trigger_node);
-    if (is_array_map)
+    if (!is_array_map)
     {
-        // Check "-1" in the first item, apply on all
-        crono_bool_t apply_first_on_all_elements = false;
-        ryml::NodeRef trigger_first_item_node = trigger_node.child(0);
-        int trigger_index_in_cfg = _get_node_key_name_toi_internal(&trigger_first_item_node);
-        if (-1 == trigger_index_in_cfg)
-        {
-            apply_first_on_all_elements = true;
-            trigger_children_count = XHPTDC8_TRIGGER_COUNT;
-
-            VERBOSE_DEBUG_MSG("Applying -1 element on all <%s> elements, ignoring all the rest if found\n",
-                "trigger");
-        }
-        // Apply values 
-        ryml::NodeRef child_node;
-        for (int trigger_index = 0; trigger_index < trigger_children_count; trigger_index++)
-        {
-            if (apply_first_on_all_elements)
-            {
-                child_node = trigger_first_item_node ;
-                trigger_index_in_cfg = trigger_index;
-            }
-            else
-            {
-                child_node = trigger_node.child(trigger_index);
-                trigger_index_in_cfg = _get_node_key_name_toi_internal(&child_node);
-
-                VALIDATE_ARRAY_INDEX(trigger_index_in_cfg, XHPTDC8_TRIGGER_COUNT,
-                    XHPTDC8_APPLY_YAML_INVALID_TRIGGERS_STRUCT, XHPTDC8_APPLY_YAML_ERR_TRIGGERS_EXCEED_MAX);
-            }
-            APPLY_CHILD_BOOL_VALUE(child_node, "falling",
-                device_config->trigger[trigger_index_in_cfg].falling, XHPTDC8_APPLY_YAML_INVALID_TRIGGERS_FALL);
-
-            APPLY_CHILD_BOOL_VALUE(child_node, "rising",
-                device_config->trigger[trigger_index_in_cfg].rising, XHPTDC8_APPLY_YAML_INVALID_TRIGGERS_RISING);
-        }
+        return XHPTDC8_APPLY_YAML_INVALID_TRIGGERS_STRUCT;
     }
-    else
-    // Is map with only the values for the first array element 
+
+    // Check if -1 in the first item, to apply on all if not provided
+    crono_bool_t apply_first_on_all_elements = false;
+    ryml::NodeRef trigger_first_item_node = trigger_node.child(0);
+    int first_item_index_in_cfg = _get_node_key_name_toi_internal(&trigger_first_item_node);
+    if (-1 == first_item_index_in_cfg)
     {
-        APPLY_CHILD_BOOL_VALUE(trigger_node, "falling",
-            device_config->trigger[0].falling, XHPTDC8_APPLY_YAML_INVALID_TRIGGERS_FALL);
-
-        APPLY_CHILD_BOOL_VALUE(trigger_node, "rising",
-            device_config->trigger[0].rising, XHPTDC8_APPLY_YAML_INVALID_TRIGGERS_RISING);
+        apply_first_on_all_elements = true;
+        VERBOSE_DEBUG_MSG("Applying -1 element on all <%s> elements, overwritten by element if found in YAML\n",
+            "trigger");
     }
-    return trigger_children_count;
+
+    ryml::NodeRef child_node;
+
+    // Get elements have values in YAML
+    ryml::NodeRef update_from_yaml[XHPTDC8_TRIGGER_COUNT];
+    for (int trigger_index = 0, trigger_index_in_cfg; 
+        trigger_index < trigger_children_count; trigger_index++)
+    {
+        if ((0 == trigger_index) && apply_first_on_all_elements)
+        // First element in YAML is -1
+        {
+            continue; // Skip it
+        }
+        child_node = trigger_node.child(trigger_index);
+        trigger_index_in_cfg = _get_node_key_name_toi_internal(&child_node);
+
+        VALIDATE_ARRAY_INDEX(trigger_index_in_cfg, XHPTDC8_TRIGGER_COUNT,
+            XHPTDC8_APPLY_YAML_INVALID_TRIGGERS_STRUCT, XHPTDC8_APPLY_YAML_ERR_TRIGGERS_EXCEED_MAX);
+
+        update_from_yaml[trigger_index_in_cfg] = child_node;
+    }
+
+    // Apply values 
+    for (int trigger_index = 0; trigger_index < XHPTDC8_TRIGGER_COUNT; trigger_index++)
+    {
+        if (RYML_NODE_EXISTS(update_from_yaml[trigger_index]))
+        // Values are provided in YAML by index
+        {
+            child_node = update_from_yaml[trigger_index];
+        }
+        else if (apply_first_on_all_elements)
+        // Values are NOT provided in YAML by index but -1 is
+        {
+            child_node = trigger_first_item_node;
+        }
+        else
+        // Neither index nor -1 are found in YAML  
+        {
+            // Skip the element
+            continue;   
+        }
+        // Apply node values to configurations
+        APPLY_CHILD_BOOL_VALUE(child_node, "falling",
+            device_config->trigger[trigger_index].falling, XHPTDC8_APPLY_YAML_INVALID_TRIGGERS_FALL);
+
+        APPLY_CHILD_BOOL_VALUE(child_node, "rising",
+            device_config->trigger[trigger_index].rising, XHPTDC8_APPLY_YAML_INVALID_TRIGGERS_RISING);
+    }
+
+    return apply_first_on_all_elements ? XHPTDC8_TRIGGER_COUNT : trigger_children_count;
 }
 
 /*
@@ -384,64 +427,80 @@ int xhptdc8_apply_channel_yaml(const ryml::NodeRef* device_config_node,
     {
         return 0;
     }
+
+    // Get node children count (array element size) and validate it
     int channel_children_count = 0;
     channel_children_count = channel_node.num_children();
     VALIDATE_CHILDREN_COUNT(channel_children_count, XHPTDC8_TDC_CHANNEL_COUNT,
         XHPTDC8_APPLY_YAML_ERR_CHANNELS_EXCEED_MAX);
 
+    // Validate node structure as a map
     crono_bool_t is_array_map = _is_node_array_map(&channel_node);
-    if (is_array_map)
+    if (!is_array_map)
     {
-        // Check "-1" in the first item, apply on all
-        crono_bool_t apply_first_on_all_elements = false;
-        ryml::NodeRef channel_first_item_node = channel_node.child(0);
-        int channel_index_in_cfg = _get_node_key_name_toi_internal(&channel_first_item_node);
-        if (-1 == channel_index_in_cfg)
-        {
-            apply_first_on_all_elements = true;
-            channel_children_count = XHPTDC8_TDC_CHANNEL_COUNT;
-
-            VERBOSE_DEBUG_MSG("Applying -1 element on all <%s> elements, ignoring all the rest if found\n",
-                "channel");
-        }
-        // Apply values 
-        ryml::NodeRef child_node;
-        for (int channel_index = 0; channel_index < channel_children_count; channel_index++)
-        {
-            if (apply_first_on_all_elements)
-            {
-                child_node = channel_first_item_node;
-                channel_index_in_cfg = channel_index;
-            }
-            else
-            {
-                child_node = channel_node.child(channel_index);
-                channel_index_in_cfg = _get_node_key_name_toi_internal(&child_node);
-
-                VALIDATE_ARRAY_INDEX(channel_index_in_cfg, XHPTDC8_TDC_CHANNEL_COUNT,
-                    XHPTDC8_APPLY_YAML_INVALID_CHANNEL_STRUCT, XHPTDC8_APPLY_YAML_ERR_CHANNELS_EXCEED_MAX);
-            }
-            APPLY_CHILD_BOOL_VALUE(child_node, "enable",
-                device_config->channel[channel_index_in_cfg].enable, XHPTDC8_APPLY_YAML_INVALID_CHANNEL_ENABLE);
-
-            APPLY_CHILD_BOOL_VALUE(child_node, "rising",
-                device_config->channel[channel_index_in_cfg].rising, XHPTDC8_APPLY_YAML_INVALID_CHANNEL_RISING);
-        }
+        return XHPTDC8_APPLY_YAML_INVALID_CHANNEL_STRUCT;
     }
-    else
-    // Is map with the values of only the first array element 
+
+    // Check if -1 in the first item, to apply on all if not provided
+    crono_bool_t apply_first_on_all_elements = false;
+    ryml::NodeRef channel_first_item_node = channel_node.child(0);
+    int first_channel_index_in_cfg = _get_node_key_name_toi_internal(&channel_first_item_node);
+    if (-1 == first_channel_index_in_cfg)
     {
-        if (channel_children_count > 2)
-        {
-            return XHPTDC8_APPLY_YAML_INVALID_CHANNEL_STRUCT;
-        }
-        APPLY_CHILD_BOOL_VALUE(channel_node, "enable",
-            device_config->channel[0].enable, XHPTDC8_APPLY_YAML_INVALID_CHANNEL_ENABLE);
-
-        APPLY_CHILD_BOOL_VALUE(channel_node, "rising",
-            device_config->channel[0].rising, XHPTDC8_APPLY_YAML_INVALID_CHANNEL_RISING);
+        apply_first_on_all_elements = true;
+        VERBOSE_DEBUG_MSG("Applying -1 element on all <%s> elements, overwritten by element if found in YAML\n",
+            "channel");
     }
-    return channel_children_count;
+
+    ryml::NodeRef child_node;
+
+    // Get elements have values in YAML
+    ryml::NodeRef update_from_yaml[XHPTDC8_TDC_CHANNEL_COUNT];
+    for (int channel_index = 0, channel_index_in_cfg;
+        channel_index < channel_children_count; channel_index++)
+    {
+        if ((0 == channel_index) && apply_first_on_all_elements)
+        // First element in YAML is -1
+        {
+            continue; // Skip it
+        }
+        child_node = channel_node.child(channel_index);
+        channel_index_in_cfg = _get_node_key_name_toi_internal(&child_node);
+
+        VALIDATE_ARRAY_INDEX(channel_index_in_cfg, XHPTDC8_TDC_CHANNEL_COUNT,
+            XHPTDC8_APPLY_YAML_INVALID_CHANNEL_STRUCT, XHPTDC8_APPLY_YAML_ERR_CHANNELS_EXCEED_MAX);
+
+        update_from_yaml[channel_index_in_cfg] = child_node;
+    }
+
+    // Apply values 
+    for (int channel_index = 0; channel_index < XHPTDC8_TDC_CHANNEL_COUNT; channel_index++)
+    {
+        if (RYML_NODE_EXISTS(update_from_yaml[channel_index]))
+        // Values are provided in YAML by index
+        {
+            child_node = update_from_yaml[channel_index];
+        }
+        else if (apply_first_on_all_elements)
+        // Values are NOT provided in YAML by index but -1 is
+        {
+            child_node = channel_first_item_node;
+        }
+        else
+        // Neither index nor -1 are found in YAML  
+        {
+            // Skip the element
+            continue;
+        }
+
+        APPLY_CHILD_BOOL_VALUE(child_node, "enable",
+            device_config->channel[channel_index].enable, XHPTDC8_APPLY_YAML_INVALID_CHANNEL_ENABLE);
+
+        APPLY_CHILD_BOOL_VALUE(child_node, "rising",
+            device_config->channel[channel_index].rising, XHPTDC8_APPLY_YAML_INVALID_CHANNEL_RISING);
+    }
+
+    return apply_first_on_all_elements ? XHPTDC8_TDC_CHANNEL_COUNT : channel_children_count;
 }
 
 /*
@@ -494,115 +553,73 @@ int xhptdc8_apply_gating_block_yaml(const ryml::NodeRef* device_config_node,
         return 0;
     }
 
+    // Get node children count (array element size) and validate it
     int gating_block_children_count = 0;
     gating_block_children_count = gating_block_node.num_children();
     VALIDATE_CHILDREN_COUNT(gating_block_children_count, XHPTDC8_GATE_COUNT,
         XHPTDC8_APPLY_YAML_ERR_GATE_BLOCK_EXCEED_MAX);
 
+    // Validate node structure as a map
     crono_bool_t is_array_map = _is_node_array_map(&gating_block_node);
-    if (is_array_map)
+    if (!is_array_map)
     {
-        // Check "-1" in the first item, apply on all
-        crono_bool_t apply_first_on_all_elements = false;
-        ryml::NodeRef gating_block_first_item_node = gating_block_node.child(0);
-        int gating_block_index_in_cfg = _get_node_key_name_toi_internal(&gating_block_first_item_node);
-        if (-1 == gating_block_index_in_cfg)
-        {
-            apply_first_on_all_elements = true;
-            gating_block_children_count = XHPTDC8_GATE_COUNT;
-
-            VERBOSE_DEBUG_MSG("Applying -1 element on all <%s> elements, ignoring all the rest if found\n",
-                "gating_block");
-        }
-        // Apply values 
-        ryml::NodeRef child_node;
-        for (int gating_block_index = 0; gating_block_index < gating_block_children_count; gating_block_index++)
-        {
-            if (apply_first_on_all_elements)
-            {
-                child_node = gating_block_first_item_node;
-                gating_block_index_in_cfg = gating_block_index;
-            }
-            else
-            {
-                child_node = gating_block_node.child(gating_block_index);
-                gating_block_index_in_cfg = _get_node_key_name_toi_internal(&child_node);
-
-                VALIDATE_ARRAY_INDEX(gating_block_index_in_cfg, XHPTDC8_GATE_COUNT,
-                    XHPTDC8_APPLY_YAML_GTBLCK_INVALID_STRUCT, XHPTDC8_APPLY_YAML_ERR_GATE_BLOCK_EXCEED_MAX);
-            }
-            // mode
-            ryml::NodeRef mode_node = child_node.find_child("mode");
-            if (RYML_NODE_EXISTS_AND_HAS_VAL(mode_node))
-            {
-                int val;
-                if (!_node_val_toi_internal(&mode_node, &val))
-                {
-                    return XHPTDC8_APPLY_YAML_GTBLCK_INVALID_MODE;
-                }
-                switch (val) {
-                case XHPTDC8_TIGER_OFF:
-                case XHPTDC8_TIGER_OUTPUT:
-                case XHPTDC8_TIGER_BIDI:
-                case XHPTDC8_TIGER_BIPOLAR:
-                    device_config->gating_block[gating_block_index_in_cfg].mode = val;
-                    VERBOSE_DEBUG_MSG_YAML_APPLIED_I(child_node, "mode", val);
-                    break;
-                default:
-                    return XHPTDC8_APPLY_YAML_GTBLCK_INVALID_MODE;
-                }
-            }
-            // negate
-            APPLY_CHILD_BOOL_VALUE(child_node, "negate",
-                device_config->gating_block[gating_block_index_in_cfg].negate, XHPTDC8_APPLY_YAML_GTBLCK_INVALID_NEGATE);
-
-            // retrigger
-            APPLY_CHILD_BOOL_VALUE(child_node, "retrigger",
-                device_config->gating_block[gating_block_index_in_cfg].retrigger, XHPTDC8_APPLY_YAML_GTBLCK_INVALID_RETRIG);
-
-            // Ignore "extend", not implemented
-            // start
-            APPLY_CHILD_INTEGER_VALUE(child_node, "start",
-                ((0 <= val) && (val <= (65536 - 1))), device_config->gating_block[gating_block_index_in_cfg].start,
-                XHPTDC8_APPLY_YAML_GTBLCK_INVALID_START);
-
-            // stop
-            ryml::NodeRef stop_node = child_node.find_child("stop");
-            if (RYML_NODE_EXISTS_AND_HAS_VAL(stop_node))
-            {
-                int val;
-                if (!_node_val_toi_internal(&stop_node, &val))
-                {
-                    return XHPTDC8_APPLY_YAML_GTBLCK_INVALID_STOP;
-                }
-                if ((0 <= val) && (val <= (65536 - 1)))
-                {
-                    if (val < device_config->gating_block[gating_block_index_in_cfg].start)
-                    {
-                        return XHPTDC8_APPLY_YAML_GTBLCK_STOP_B4_START;
-                    }
-                    else
-                    {
-                        device_config->gating_block[gating_block_index_in_cfg].stop = val;
-                        VERBOSE_DEBUG_MSG_YAML_APPLIED_I(gating_block_node, "stop", val);
-                    }
-                }
-                else
-                {
-                    return XHPTDC8_APPLY_YAML_GTBLCK_INVALID_STOP;
-                }
-            }
-            // sources
-            APPLY_CHILD_INTEGER_VALUE(child_node, "sources", val > 0,
-                device_config->gating_block[gating_block_index_in_cfg].sources,
-                XHPTDC8_APPLY_YAML_GTBLCK_INVALID_SOURCES);
-        }
+        return XHPTDC8_APPLY_YAML_GTBLCK_INVALID_STRUCT;
     }
-    else
-    // Is map with the values of only the first array element 
+
+    // Check if -1 in the first item, to apply on all if not provided
+    crono_bool_t apply_first_on_all_elements = false;
+    ryml::NodeRef gating_block_first_item_node = gating_block_node.child(0);
+    int first_item_index_in_cfg = _get_node_key_name_toi_internal(&gating_block_first_item_node);
+    if (-1 == first_item_index_in_cfg)
     {
+        apply_first_on_all_elements = true;
+        VERBOSE_DEBUG_MSG("Applying -1 element on all <%s> elements, overwritten by element if found in YAML\n",
+            "gating_block");
+    }
+
+    ryml::NodeRef child_node;
+
+    // Get elements have values in YAML
+    ryml::NodeRef update_from_yaml[XHPTDC8_GATE_COUNT];
+    for (int gating_block_index = 0, gating_block_index_in_cfg;
+        gating_block_index < gating_block_children_count; gating_block_index++)
+    {
+        if ((0 == gating_block_index) && apply_first_on_all_elements)
+        // First element in YAML is -1
+        {
+            continue; // Skip it
+        }
+        child_node = gating_block_node.child(gating_block_index);
+        gating_block_index_in_cfg = _get_node_key_name_toi_internal(&child_node);
+
+        VALIDATE_ARRAY_INDEX(gating_block_index_in_cfg, XHPTDC8_GATE_COUNT,
+            XHPTDC8_APPLY_YAML_GTBLCK_INVALID_STRUCT, XHPTDC8_APPLY_YAML_ERR_GATE_BLOCK_EXCEED_MAX);
+
+        update_from_yaml[gating_block_index_in_cfg] = child_node;
+    }
+
+    // Apply values 
+    for (int gating_block_index = 0; gating_block_index < XHPTDC8_GATE_COUNT; gating_block_index++)
+    {
+        if (RYML_NODE_EXISTS(update_from_yaml[gating_block_index]))
+        // Values are provided in YAML by index
+        {
+            child_node = update_from_yaml[gating_block_index];
+        }
+        else if (apply_first_on_all_elements)
+        // Values are NOT provided in YAML by index but -1 is
+        {
+            child_node = gating_block_first_item_node;
+        }
+        else
+        // Neither index nor -1 are found in YAML  
+        {
+            // Skip the element
+            continue;
+        }
+
         // mode
-        ryml::NodeRef mode_node = gating_block_node.find_child("mode");
+        ryml::NodeRef mode_node = child_node.find_child("mode");
         if (RYML_NODE_EXISTS_AND_HAS_VAL(mode_node))
         {
             int val;
@@ -615,29 +632,29 @@ int xhptdc8_apply_gating_block_yaml(const ryml::NodeRef* device_config_node,
             case XHPTDC8_TIGER_OUTPUT:
             case XHPTDC8_TIGER_BIDI:
             case XHPTDC8_TIGER_BIPOLAR:
-                device_config->gating_block[0].mode = val;
-                VERBOSE_DEBUG_MSG_YAML_APPLIED_I(gating_block_node, "mode", val);
+                device_config->gating_block[gating_block_index].mode = val;
+                VERBOSE_DEBUG_MSG_YAML_APPLIED_I(child_node, "mode", val);
                 break;
             default:
                 return XHPTDC8_APPLY_YAML_GTBLCK_INVALID_MODE;
             }
         }
         // negate
-        APPLY_CHILD_BOOL_VALUE(gating_block_node, "negate",
-            device_config->gating_block[0].negate, XHPTDC8_APPLY_YAML_GTBLCK_INVALID_NEGATE);
+        APPLY_CHILD_BOOL_VALUE(child_node, "negate",
+            device_config->gating_block[gating_block_index].negate, XHPTDC8_APPLY_YAML_GTBLCK_INVALID_NEGATE);
 
         // retrigger
-        APPLY_CHILD_BOOL_VALUE(gating_block_node, "retrigger",
-            device_config->gating_block[0].retrigger, XHPTDC8_APPLY_YAML_GTBLCK_INVALID_RETRIG);
+        APPLY_CHILD_BOOL_VALUE(child_node, "retrigger",
+            device_config->gating_block[gating_block_index].retrigger, XHPTDC8_APPLY_YAML_GTBLCK_INVALID_RETRIG);
 
         // Ignore "extend", not implemented
         // start
-        APPLY_CHILD_INTEGER_VALUE(gating_block_node, "start",
-            ((0 <= val) && (val <= (65536 - 1))), device_config->gating_block[0].start,
+        APPLY_CHILD_INTEGER_VALUE(child_node, "start",
+            ((0 <= val) && (val <= (65536 - 1))), device_config->gating_block[gating_block_index].start,
             XHPTDC8_APPLY_YAML_GTBLCK_INVALID_START);
 
         // stop
-        ryml::NodeRef stop_node = gating_block_node.find_child("stop");
+        ryml::NodeRef stop_node = child_node.find_child("stop");
         if (RYML_NODE_EXISTS_AND_HAS_VAL(stop_node))
         {
             int val;
@@ -647,14 +664,14 @@ int xhptdc8_apply_gating_block_yaml(const ryml::NodeRef* device_config_node,
             }
             if ((0 <= val) && (val <= (65536 - 1)))
             {
-                if (val < device_config->gating_block[0].start)
+                if (val < device_config->gating_block[gating_block_index].start)
                 {
                     return XHPTDC8_APPLY_YAML_GTBLCK_STOP_B4_START;
                 }
                 else
                 {
-                    device_config->gating_block[0].stop = val;
-                    VERBOSE_DEBUG_MSG_YAML_APPLIED_I(gating_block_node, "stop", val);
+                    device_config->gating_block[gating_block_index].stop = val;
+                    VERBOSE_DEBUG_MSG_YAML_APPLIED_I(child_node, "stop", val);
                 }
             }
             else
@@ -663,11 +680,12 @@ int xhptdc8_apply_gating_block_yaml(const ryml::NodeRef* device_config_node,
             }
         }
         // sources
-        APPLY_CHILD_INTEGER_VALUE(gating_block_node, "sources", val > 0,
-            device_config->gating_block[0].sources,
+        APPLY_CHILD_INTEGER_VALUE(child_node, "sources", val > 0,
+            device_config->gating_block[gating_block_index].sources,
             XHPTDC8_APPLY_YAML_GTBLCK_INVALID_SOURCES);
     }
-    return gating_block_children_count;
+
+    return apply_first_on_all_elements ? XHPTDC8_GATE_COUNT : gating_block_children_count;
 }
 
 /*
@@ -686,115 +704,73 @@ int xhptdc8_apply_tiger_block_yaml(const ryml::NodeRef* device_config_node,
         return 0;
     }
 
+    // Get node children count (array element size) and validate it
     int tiger_block_children_count = 0;
     tiger_block_children_count = tiger_block_node.num_children();
     VALIDATE_CHILDREN_COUNT(tiger_block_children_count, XHPTDC8_TIGER_COUNT,
         XHPTDC8_APPLY_YAML_ERR_TGRBLCK_EXCEED_MAX);
 
+    // Validate node structure as a map
     crono_bool_t is_array_map = _is_node_array_map(&tiger_block_node);
-    if (is_array_map)
+    if (!is_array_map)
     {
-        // Check "-1" in the first item, apply on all
-        crono_bool_t apply_first_on_all_elements = false;
-        ryml::NodeRef tiger_block_first_item_node = tiger_block_node.child(0);
-        int tiger_block_index_in_cfg = _get_node_key_name_toi_internal(&tiger_block_first_item_node);
-        if (-1 == tiger_block_index_in_cfg)
-        {
-            apply_first_on_all_elements = true;
-            tiger_block_children_count = XHPTDC8_TIGER_COUNT;
-
-            VERBOSE_DEBUG_MSG("Applying -1 element on all <%s> elements, ignoring all the rest if found\n",
-                "tiger_block");
-        }
-        // Apply values 
-        ryml::NodeRef child_node;
-        for (int tiger_block_index = 0; tiger_block_index < tiger_block_children_count; tiger_block_index++)
-        {
-            if (apply_first_on_all_elements)
-            {
-                child_node = tiger_block_first_item_node;
-                tiger_block_index_in_cfg = tiger_block_index;
-            }
-            else
-            {
-                child_node = tiger_block_node.child(tiger_block_index);
-                tiger_block_index_in_cfg = _get_node_key_name_toi_internal(&child_node);
-
-                VALIDATE_ARRAY_INDEX(tiger_block_index_in_cfg, XHPTDC8_TIGER_COUNT,
-                    XHPTDC8_APPLY_YAML_TGRBLCK_INVALID_STRUCT, XHPTDC8_APPLY_YAML_ERR_TGRBLCK_EXCEED_MAX);
-            }
-            // mode
-            ryml::NodeRef mode_node = child_node.find_child("mode");
-            if (RYML_NODE_EXISTS_AND_HAS_VAL(mode_node))
-            {
-                int val;
-                if (!_node_val_toi_internal(&mode_node, &val))
-                {
-                    return XHPTDC8_APPLY_YAML_TGRBLCK_INVALID_MODE;
-                }
-                switch (val) {
-                case XHPTDC8_TIGER_OFF:
-                case XHPTDC8_TIGER_OUTPUT:
-                case XHPTDC8_TIGER_BIDI:
-                case XHPTDC8_TIGER_BIPOLAR:
-                    device_config->tiger_block[tiger_block_index_in_cfg].mode = val;
-                    VERBOSE_DEBUG_MSG_YAML_APPLIED_I(tiger_block_node, "mode", val);
-                    break;
-                default:
-                    return XHPTDC8_APPLY_YAML_TGRBLCK_INVALID_MODE;
-                }
-            }
-            // negate
-            APPLY_CHILD_BOOL_VALUE(child_node, "negate",
-                device_config->tiger_block[tiger_block_index_in_cfg].negate, XHPTDC8_APPLY_YAML_TGRBLCK_INVALID_NEGATE);
-
-            // retrigger
-            APPLY_CHILD_BOOL_VALUE(child_node, "retrigger",
-                device_config->tiger_block[tiger_block_index_in_cfg].retrigger, XHPTDC8_APPLY_YAML_TGRBLCK_INVALID_RETRIG);
-
-            // Ignore "extend", not implemented
-            // start
-            APPLY_CHILD_INTEGER_VALUE(child_node, "start",
-                ((0 <= val) && (val <= (65536 - 1))), device_config->tiger_block[tiger_block_index_in_cfg].start,
-                XHPTDC8_APPLY_YAML_TGRBLCK_INVALID_START);
-
-            // stop
-            ryml::NodeRef stop_node = child_node.find_child("stop");
-            if (RYML_NODE_EXISTS_AND_HAS_VAL(stop_node))
-            {
-                int val;
-                if (!_node_val_toi_internal(&stop_node, &val))
-                {
-                    return XHPTDC8_APPLY_YAML_GTBLCK_INVALID_STOP;
-                }
-                if ((0 <= val) && (val <= (65536 - 1)))
-                {
-                    if (val < device_config->tiger_block[tiger_block_index_in_cfg].start)
-                    {
-                        return XHPTDC8_APPLY_YAML_TGRBLCK_STOP_B4_START;
-                    }
-                    else
-                    {
-                        device_config->tiger_block[tiger_block_index_in_cfg].stop = val;
-                        VERBOSE_DEBUG_MSG_YAML_APPLIED_I(tiger_block_node, "stop", val);
-                    }
-                }
-                else
-                {
-                    return XHPTDC8_APPLY_YAML_TGRBLCK_INVALID_STOP;
-                }
-            }
-            // sources
-            APPLY_CHILD_INTEGER_VALUE(child_node, "sources", val > 0,
-                device_config->tiger_block[tiger_block_index_in_cfg].sources,
-                XHPTDC8_APPLY_YAML_TGRBLCK_INVALID_SOURCES);
-        }
+        return XHPTDC8_APPLY_YAML_TGRBLCK_INVALID_STRUCT;
     }
-    else
-    // Is map with the values of only the first array element 
+
+    // Check if -1 in the first item, to apply on all if not provided
+    crono_bool_t apply_first_on_all_elements = false;
+    ryml::NodeRef tiger_block_first_item_node = tiger_block_node.child(0);
+    int first_tiger_block_index_in_cfg = _get_node_key_name_toi_internal(&tiger_block_first_item_node);
+    if (-1 == first_tiger_block_index_in_cfg)
     {
+        apply_first_on_all_elements = true;
+        VERBOSE_DEBUG_MSG("Applying -1 element on all <%s> elements, overwritten by element if found in YAML\n",
+            "tiger_block");
+    }
+
+    ryml::NodeRef child_node;
+
+    // Get elements have values in YAML
+    ryml::NodeRef update_from_yaml[XHPTDC8_TIGER_COUNT];
+    for (int tiger_block_index = 0, tiger_block_index_in_cfg;
+        tiger_block_index < tiger_block_children_count; tiger_block_index++)
+    {
+        if ((0 == tiger_block_index) && apply_first_on_all_elements)
+        // First element in YAML is -1
+        {
+            continue; // Skip it
+        }
+        child_node = tiger_block_node.child(tiger_block_index);
+        tiger_block_index_in_cfg = _get_node_key_name_toi_internal(&child_node);
+
+        VALIDATE_ARRAY_INDEX(tiger_block_index_in_cfg, XHPTDC8_TIGER_COUNT,
+            XHPTDC8_APPLY_YAML_TGRBLCK_INVALID_STRUCT, XHPTDC8_APPLY_YAML_ERR_TGRBLCK_EXCEED_MAX);
+
+        update_from_yaml[tiger_block_index_in_cfg] = child_node;
+    }
+
+    // Apply values 
+    for (int tiger_block_index = 0; tiger_block_index < XHPTDC8_TIGER_COUNT; tiger_block_index++)
+    {
+        if (RYML_NODE_EXISTS(update_from_yaml[tiger_block_index]))
+        // Values are provided in YAML by index
+        {
+            child_node = update_from_yaml[tiger_block_index];
+        }
+        else if (apply_first_on_all_elements)
+        // Values are NOT provided in YAML by index but -1 is
+        {
+            child_node = tiger_block_first_item_node;
+        }
+        else
+        // Neither index nor -1 are found in YAML  
+        {
+            // Skip the element
+            continue;
+        }
+
         // mode
-        ryml::NodeRef mode_node = tiger_block_node.find_child("mode");
+        ryml::NodeRef mode_node = child_node.find_child("mode");
         if (RYML_NODE_EXISTS_AND_HAS_VAL(mode_node))
         {
             int val;
@@ -807,46 +783,46 @@ int xhptdc8_apply_tiger_block_yaml(const ryml::NodeRef* device_config_node,
             case XHPTDC8_TIGER_OUTPUT:
             case XHPTDC8_TIGER_BIDI:
             case XHPTDC8_TIGER_BIPOLAR:
-                device_config->tiger_block[0].mode = val;
-                VERBOSE_DEBUG_MSG_YAML_APPLIED_I(tiger_block_node, "mode", val);
+                device_config->tiger_block[tiger_block_index].mode = val;
+                VERBOSE_DEBUG_MSG_YAML_APPLIED_I(child_node, "mode", val);
                 break;
             default:
                 return XHPTDC8_APPLY_YAML_TGRBLCK_INVALID_MODE;
             }
         }
         // negate
-        APPLY_CHILD_BOOL_VALUE(tiger_block_node, "negate",
-            device_config->tiger_block[0].negate, XHPTDC8_APPLY_YAML_TGRBLCK_INVALID_NEGATE);
+        APPLY_CHILD_BOOL_VALUE(child_node, "negate",
+            device_config->tiger_block[tiger_block_index].negate, XHPTDC8_APPLY_YAML_TGRBLCK_INVALID_NEGATE);
 
         // retrigger
-        APPLY_CHILD_BOOL_VALUE(tiger_block_node, "retrigger",
-            device_config->tiger_block[0].retrigger, XHPTDC8_APPLY_YAML_TGRBLCK_INVALID_RETRIG);
+        APPLY_CHILD_BOOL_VALUE(child_node, "retrigger",
+            device_config->tiger_block[tiger_block_index].retrigger, XHPTDC8_APPLY_YAML_TGRBLCK_INVALID_RETRIG);
 
         // Ignore "extend", not implemented
         // start
-        APPLY_CHILD_INTEGER_VALUE(tiger_block_node, "start",
-            ((0 <= val) && (val <= (65536 - 1))), device_config->tiger_block[0].start,
+        APPLY_CHILD_INTEGER_VALUE(child_node, "start",
+            ((0 <= val) && (val <= (65536 - 1))), device_config->tiger_block[tiger_block_index].start,
             XHPTDC8_APPLY_YAML_TGRBLCK_INVALID_START);
 
         // stop
-        ryml::NodeRef stop_node = tiger_block_node.find_child("stop");
+        ryml::NodeRef stop_node = child_node.find_child("stop");
         if (RYML_NODE_EXISTS_AND_HAS_VAL(stop_node))
         {
             int val;
             if (!_node_val_toi_internal(&stop_node, &val))
             {
-                return XHPTDC8_APPLY_YAML_TGRBLCK_INVALID_STOP;
+                return XHPTDC8_APPLY_YAML_GTBLCK_INVALID_STOP;
             }
             if ((0 <= val) && (val <= (65536 - 1)))
             {
-                if (val < device_config->tiger_block[0].start)
+                if (val < device_config->tiger_block[tiger_block_index].start)
                 {
                     return XHPTDC8_APPLY_YAML_TGRBLCK_STOP_B4_START;
                 }
                 else
                 {
-                    device_config->tiger_block[0].stop = val;
-                    VERBOSE_DEBUG_MSG_YAML_APPLIED_I(tiger_block_node, "stop", val);
+                    device_config->tiger_block[tiger_block_index].stop = val;
+                    VERBOSE_DEBUG_MSG_YAML_APPLIED_I(child_node, "stop", val);
                 }
             }
             else
@@ -855,11 +831,11 @@ int xhptdc8_apply_tiger_block_yaml(const ryml::NodeRef* device_config_node,
             }
         }
         // sources
-        APPLY_CHILD_INTEGER_VALUE(tiger_block_node, "sources", val > 0,
-            device_config->tiger_block[0].sources,
+        APPLY_CHILD_INTEGER_VALUE(child_node, "sources", val > 0,
+            device_config->tiger_block[tiger_block_index].sources,
             XHPTDC8_APPLY_YAML_TGRBLCK_INVALID_SOURCES);
     }
-    return tiger_block_children_count;
+    return apply_first_on_all_elements ? XHPTDC8_TIGER_COUNT : tiger_block_children_count;
 }
 
 /*
@@ -1027,7 +1003,7 @@ int xhptdc8_apply_device_config_yaml(const ryml::NodeRef* device_config_node,
 */
 int xhptdc8_apply_yaml(xhptdc8_manager_configuration* manager_config, const char* yaml_string)
 {
-    int configs_count = 0;
+    int device_config_children_count = 0;
 
     // Validate inputs
     if (nullptr == manager_config)
@@ -1050,46 +1026,67 @@ int xhptdc8_apply_yaml(xhptdc8_manager_configuration* manager_config, const char
     }
 
     // Loop on the device configurations and apply the passed data
-    configs_count = xhptdc8_yaml_get_configs_count(&config_mngr_node, &device_configs_node);
-    if (configs_count < 0)
+    device_config_children_count = xhptdc8_yaml_get_configs_count(&config_mngr_node, &device_configs_node);
+    if (device_config_children_count < 0)
     // Error 
     {
-        return configs_count;
+        return device_config_children_count;
     }
-    // Check "-1" in the first item, apply on all
+
+    // Check if -1 in the first item, to apply on all if not provided
     crono_bool_t apply_first_on_all_elements = false;
     ryml::NodeRef device_configs_first_item_node = device_configs_node.child(0);
-    int device_configs_children_count;
-    int device_config_index_in_cfg = _get_node_key_name_toi_internal(&device_configs_first_item_node);
-    if (-1 == device_config_index_in_cfg)
+    int first_device_config_index_in_cfg = _get_node_key_name_toi_internal(&device_configs_first_item_node);
+    if (-1 == first_device_config_index_in_cfg)
     {
         apply_first_on_all_elements = true;
-        device_configs_children_count = XHPTDC8_MANAGER_DEVICES_MAX;
-
-        VERBOSE_DEBUG_MSG("Applying -1 element on all <%s> elements, ignoring all the rest if found\n",
+        VERBOSE_DEBUG_MSG("Applying -1 element on all <%s> elements, overwritten by element if found in YAML\n",
             YAML_XHPTDC8_MANAGER_CONFIG_NAME);
     }
+
+    ryml::NodeRef child_node;
+
+    // Get elements have values in YAML
+    ryml::NodeRef update_from_yaml[XHPTDC8_MANAGER_DEVICES_MAX];
+    for (int device_config_index = 0, device_config_index_in_cfg;
+        device_config_index < device_config_children_count; device_config_index++)
+    {
+        if ((0 == device_config_index) && apply_first_on_all_elements)
+            // First element in YAML is -1
+        {
+            continue; // Skip it
+        }
+        child_node = device_configs_node.child(device_config_index);
+        device_config_index_in_cfg = _get_node_key_name_toi_internal(&child_node);
+
+        VALIDATE_ARRAY_INDEX(device_config_index_in_cfg, XHPTDC8_MANAGER_DEVICES_MAX,
+            XHPTDC8_APPLY_YAML_ERR_EMPTY_CONF_MNGR, XHPTDC8_APPLY_YAML_ERR_CONFS_EXCEED_MAX);
+
+        update_from_yaml[device_config_index_in_cfg] = child_node;
+    }
+
     // Apply values 
     // Loop on the YAML configurations
-    ryml::NodeRef device_config_node;
-    int device_index_in_cfg;
-    for (int config_index = 0; config_index < configs_count; config_index++)
+    for (int device_config_index = 0; device_config_index < XHPTDC8_MANAGER_DEVICES_MAX; device_config_index++)
     {
-        if (apply_first_on_all_elements)
+        if (RYML_NODE_EXISTS(update_from_yaml[device_config_index]))
+            // Values are provided in YAML by index
         {
-            device_config_node = device_configs_first_item_node;
-            device_index_in_cfg = config_index;
+            child_node = update_from_yaml[device_config_index];
+        }
+        else if (apply_first_on_all_elements)
+            // Values are NOT provided in YAML by index but -1 is
+        {
+            child_node = device_configs_first_item_node;
         }
         else
+            // Neither index nor -1 are found in YAML  
         {
-            device_config_node = device_configs_node.child(config_index);
-            device_index_in_cfg = _get_node_key_name_toi_internal(&device_config_node);
-
-            VALIDATE_ARRAY_INDEX(device_index_in_cfg, XHPTDC8_MANAGER_DEVICES_MAX,
-                XHPTDC8_APPLY_YAML_ERR_EMPTY_CONF_MNGR, XHPTDC8_APPLY_YAML_ERR_CONFS_EXCEED_MAX);
+            // Skip the element
+            continue;
         }
-        int result = xhptdc8_apply_device_config_yaml(&device_config_node,
-                &(manager_config->device_configs[device_index_in_cfg]));
+        int result = xhptdc8_apply_device_config_yaml(&child_node,
+                &(manager_config->device_configs[device_config_index]));
         if (result < 0)
         {
             return result;
@@ -1102,5 +1099,5 @@ int xhptdc8_apply_yaml(xhptdc8_manager_configuration* manager_config, const char
         return result;
     }
 
-    return configs_count;
+    return apply_first_on_all_elements ? XHPTDC8_MANAGER_DEVICES_MAX : device_config_children_count;
 }
