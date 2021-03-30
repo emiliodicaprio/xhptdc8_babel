@@ -6,7 +6,7 @@ name: Util Library MSBuild
 on: 
   push:
     paths:
-    - 'util/util_msvscpp/util_msvscpp/**'
+    - 'util/util_msvscpp/**'
     - 'lib/include/**'
     
 env:
