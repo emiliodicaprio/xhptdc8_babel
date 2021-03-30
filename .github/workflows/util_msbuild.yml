@@ -16,9 +16,11 @@ env:
   BUILD_CONFIGURATION: Release
   SOLUTION_FILE_PATH: .\util\util_msvscpp\util_msvscpp # The util library only
   X86_OUTPUT_DIR: .\util\util_msvscpp\Release\ 
-  X86_REPO_LIB_PTH: .\util\lib\x86\
+  X86_REPO_LIB_PTH: .\lib\x86\
+  X86_DUMMY_REPO_LIB_PTH: .\lib\x86dummy\
   X64_OUTPUT_DIR: .\util\util_msvscpp\x64\Release\
-  X64_REPO_LIB_PTH: .\util\lib\x64\
+  X64_REPO_LIB_PTH: .\lib\x64\
+  X64_DUMMY_REPO_LIB_PTH: .\lib\x64dummy\
   X86_DLL_NAME: xhptdc8_util.dll
   X86_LIB_NAME: xhptdc8_util.lib 
   X64_DLL_NAME: xhptdc8_util.dll
@@ -31,10 +33,10 @@ jobs:
        run:
          shell: powershell
     env: 
-          X86_REPO_LIB_PTH_COMMIT: ./lib/x86/
-          X86_DUMMY_REPO_LIB_PTH_COMMIT: ./lib/x86dummy
-          X64_REPO_LIB_PTH_COMMIT: ./lib/x64/
-          X64_DUMMY_REPO_LIB_PTH_COMMIT: ./lib/x64dummy
+          X86_REPO_LIB_PTH_COMMIT: ./lib/x86/             # Equal to X86_REPO_LIB_PTH, with '/' instead of '\'
+          X86_DUMMY_REPO_LIB_PTH_COMMIT: ./lib/x86dummy/  # Equal to X86_DUMMY_REPO_LIB_PTH, with '/' instead of '\'
+          X64_REPO_LIB_PTH_COMMIT: ./lib/x64/             # Equal to X64_REPO_LIB_PTH, with '/' instead of '\'
+          X64_DUMMY_REPO_LIB_PTH_COMMIT: ./lib/x64dummy/  # Equal to X64_DUMMY_REPO_LIB_PTH, with '/' instead of '\'
           COMMIT_MSG: 'Internal build due to Util code change' 
 
     steps:
@@ -52,34 +54,38 @@ jobs:
       # See https://docs.microsoft.com/visualstudio/msbuild/msbuild-command-line-reference
       run: |
         msbuild ${{env.SOLUTION_FILE_PATH}} /m /property:Configuration=Release /property:Platform=${{env.BUILD_PLATFORM}}
+        Copy-Item ${{env.X86_OUTPUT_DIR}}${{env.X86_DLL_NAME}} -Destination ${{env.X86_REPO_LIB_PTH}}
+        Copy-Item ${{env.X86_OUTPUT_DIR}}${{env.X86_LIB_NAME}} -Destination ${{env.X86_REPO_LIB_PTH}}
+        Copy-Item ${{env.X86_OUTPUT_DIR}}${{env.X86_DLL_NAME}} -Destination ${{env.X86_DUMMY_REPO_LIB_PTH}}
+        Copy-Item ${{env.X86_OUTPUT_DIR}}${{env.X86_LIB_NAME}} -Destination ${{env.X86_DUMMY_REPO_LIB_PTH}}
         
     - name: Commit x86 DLL
       uses: EndBug/add-and-commit@v7.0.0
       with:
           author_name: Internal Workflow Action
           message: ${{env.COMMIT_MSG}}
-          add: ${{env.X86_REPO_LIB_PTH_COMMIT}}${{env.X86_DLL_NAME}} --force
+          add: ${{env.X86_REPO_LIB_PTH_COMMIT}}${{env.X86_DLL_NAME}}
 
     - name: Commit x86 DLL to Dummy Folder
       uses: EndBug/add-and-commit@v7.0.0
       with:
           author_name: Internal Workflow Action
           message: ${{env.COMMIT_MSG}}
-          add: ${{env.X86_DUMMY_REPO_LIB_PTH_COMMIT}}${{env.X86_DLL_NAME}} --force
+          add: ${{env.X86_DUMMY_REPO_LIB_PTH_COMMIT}}${{env.X86_DLL_NAME}}
           
     - name: Commit x86 Lib
       uses: EndBug/add-and-commit@v7.0.0
       with:
           author_name: Internal Workflow Action
           message: ${{env.COMMIT_MSG}}
-          add: ${{env.X86_REPO_LIB_PTH_COMMIT}}${{env.X86_LIB_NAME}} --force
+          add: ${{env.X86_REPO_LIB_PTH_COMMIT}}${{env.X86_LIB_NAME}}
 
     - name: Commit x86 Lib to Dummy Folder
       uses: EndBug/add-and-commit@v7.0.0
       with:
           author_name: Internal Workflow Action
           message: ${{env.COMMIT_MSG}}
-          add: ${{env.X64_DUMMY_REPO_LIB_PTH_COMMIT}}${{env.X86_LIB_NAME}} --force
+          add: ${{env.X86_DUMMY_REPO_LIB_PTH_COMMIT}}${{env.X86_LIB_NAME}}
 
     - name: Build Release x64
       env:
@@ -87,6 +93,10 @@ jobs:
       working-directory: ${{env.GITHUB_WORKSPACE}}
       run: |
         msbuild ${{env.SOLUTION_FILE_PATH}} /m /property:Configuration=Release /property:Platform=${{env.BUILD_PLATFORM}}
+        Copy-Item ${{env.X64_OUTPUT_DIR}}${{env.X64_DLL_NAME}} -Destination ${{env.X64_REPO_LIB_PTH}}
+        Copy-Item ${{env.X64_OUTPUT_DIR}}${{env.X64_LIB_NAME}} -Destination ${{env.X64_REPO_LIB_PTH}}
+        Copy-Item ${{env.X64_OUTPUT_DIR}}${{env.X64_DLL_NAME}} -Destination ${{env.X64_DUMMY_REPO_LIB_PTH}}
+        Copy-Item ${{env.X64_OUTPUT_DIR}}${{env.X64_LIB_NAME}} -Destination ${{env.X64_DUMMY_REPO_LIB_PTH}}
   
     - name: Commit x64 DLL
       uses: EndBug/add-and-commit@v7.0.0
@@ -100,18 +110,18 @@ jobs:
       with:
           author_name: Internal Workflow Action
           message: ${{env.COMMIT_MSG}}
-          add: ${{env.X64_DUMMY_REPO_LIB_PTH_COMMIT}}${{env.X64_DLL_NAME}} --force
+          add: ${{env.X64_DUMMY_REPO_LIB_PTH_COMMIT}}${{env.X64_DLL_NAME}}
           
     - name: Commit x64 Lib
       uses: EndBug/add-and-commit@v7.0.0
       with:
           author_name: Internal Workflow Action
           message: ${{env.COMMIT_MSG}}
-          add: ${{env.X64_REPO_LIB_PTH_COMMIT}}${{env.X64_LIB_NAME}} --force
+          add: ${{env.X64_REPO_LIB_PTH_COMMIT}}${{env.X64_LIB_NAME}}
 
     - name: Commit x64 Lib to Dummy Folder
       uses: EndBug/add-and-commit@v7.0.0
       with:
           author_name: Internal Workflow Action
           message: ${{env.COMMIT_MSG}}
-          add: ${{env.X64_DUMMY_REPO_LIB_PTH_COMMIT}}${{env.X64_LIB_NAME}} --force
+          add: ${{env.X64_DUMMY_REPO_LIB_PTH_COMMIT}}${{env.X64_LIB_NAME}}
