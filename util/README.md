@@ -14,10 +14,10 @@ The Solution and Project are created using Microsoft Visual Studio 2019
 
 | Configuration | Environment   | Output Directory | Library Name    |
 | ------------- |-------------  |----------------- | --------------- |
-| Debug         | x64           | ..\\..\\lib\\x64    | xhptdc8_util_64 |  
-| Release       | x64           | ..\\..\\lib\\x64    | xhptdc8_util_64 |  
-| Debug         | Win32         | ..\\..\\lib\\x86    | xhptdc8_util    |  
-| Release       | Win32         | ..\\..\\lib\\x86    | xhptdc8_util    |  
+| Debug         | x64           | .\\lib\\x64    | xhptdc8_util_64 |  
+| Release       | x64           | .\\lib\\x64    | xhptdc8_util_64 |  
+| Debug         | Win32         | .\\lib\\x86    | xhptdc8_util    |  
+| Release       | Win32         | .\\lib\\x86    | xhptdc8_util    |  
 * You can change the output directory if you want to keep both the release and debug versions of the DLL concurrently
 
 ### External Libraries
@@ -41,8 +41,8 @@ Nothing special, just:
 
 ### Compile & Link Settings
 In order to call functions from the utility library, you need to do the following:
-1. Include `util/include/xhptdc8_util.h`
-2. Link to the corresponsing library version on `util/lib/x86` or `util/lib/x64`
+1. Include `/lib/include/xhptdc8_util.h`
+2. Link to the corresponsing library version on `/lib/x86` or `/lib/x64`
 
 ### xhptdc8_apply_yaml 
 The purpose of this repository is to make using the [xHPTDC8 time-to-digital converter](https://www.cronologic.de/products/tdcs/xhptdc8-pcie) simpler to use for end users.
