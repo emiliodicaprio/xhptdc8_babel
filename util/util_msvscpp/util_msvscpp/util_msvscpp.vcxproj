@@ -85,13 +85,13 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <TargetName>xhptdc8_util</TargetName>
+    <TargetName>xhptdc8_util_64</TargetName>
     <IncludePath>..\..\include;..\..\..\lib\include;.\ryml_src;.\util_msvscpp\;$(IncludePath)</IncludePath>
     <OutDir>..\..\lib\x64\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <TargetName>xhptdc8_util</TargetName>
+    <TargetName>xhptdc8_util_64</TargetName>
     <IncludePath>..\..\include;..\..\..\lib\include;.\ryml_src;.\util_msvscpp\;$(IncludePath)</IncludePath>
     <OutDir>..\..\lib\x64\</OutDir>
   </PropertyGroup>
