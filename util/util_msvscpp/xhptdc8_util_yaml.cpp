@@ -203,12 +203,12 @@ int xhptdc8_yaml_get_configs_count(const ryml::NodeRef* config_mngr_node, ryml::
     (*device_configs_node) = (*config_mngr_node).find_child(YAML_XHPTDC8_DEVICE_CONFIGS_NAME);
     if ( !RYML_NODE_EXISTS(*device_configs_node))
     {
-        return XHPTDC8_APPLY_YAML_ERR_NO_DEV_CONFS;
+        return 0; // Allow for not providing device_configs in the yaml 
     }
     int configs_count = device_configs_node->num_children();
     if (0 == configs_count)
     {
-        return XHPTDC8_APPLY_YAML_ERR_EMPTY_DEV_CONFS;
+        return 0; // Allow for not providing device_configs in the yaml 
     }
     if (configs_count > XHPTDC8_MANAGER_DEVICES_MAX)
     {
@@ -1035,63 +1035,66 @@ int xhptdc8_apply_yaml(xhptdc8_manager_configuration* manager_config, const char
         return device_config_children_count;
     }
 
-    // Check if -1 in the first item, to apply on all if not provided
     crono_bool_t apply_first_on_all_elements = false;
-    ryml::NodeRef device_configs_first_item_node = device_configs_node.child(0);
-    int first_device_config_index_in_cfg = _get_node_key_name_toi_internal(&device_configs_first_item_node);
-    if (-1 == first_device_config_index_in_cfg)
+    if (device_config_children_count > 0)
     {
-        apply_first_on_all_elements = true;
-        VERBOSE_DEBUG_MSG("Applying -1 element on all <%s> elements, overwritten by element if found in YAML\n",
-            YAML_XHPTDC8_MANAGER_CONFIG_NAME);
-    }
-
-    ryml::NodeRef child_node;
-
-    // Get elements have values in YAML
-    ryml::NodeRef update_from_yaml[XHPTDC8_MANAGER_DEVICES_MAX];
-    for (int device_config_index = 0, device_config_index_in_cfg;
-        device_config_index < device_config_children_count; device_config_index++)
-    {
-        if ((0 == device_config_index) && apply_first_on_all_elements)
-            // First element in YAML is -1
+        // Check if -1 in the first item, to apply on all if not provided
+        ryml::NodeRef device_configs_first_item_node = device_configs_node.child(0);
+        int first_device_config_index_in_cfg = _get_node_key_name_toi_internal(&device_configs_first_item_node);
+        if (-1 == first_device_config_index_in_cfg)
         {
-            continue; // Skip it
+            apply_first_on_all_elements = true;
+            VERBOSE_DEBUG_MSG("Applying -1 element on all <%s> elements, overwritten by element if found in YAML\n",
+                YAML_XHPTDC8_MANAGER_CONFIG_NAME);
         }
-        child_node = device_configs_node.child(device_config_index);
-        device_config_index_in_cfg = _get_node_key_name_toi_internal(&child_node);
 
-        VALIDATE_ARRAY_INDEX(device_config_index_in_cfg, XHPTDC8_MANAGER_DEVICES_MAX,
-            XHPTDC8_APPLY_YAML_INVALID_CONFS_STRUTC, XHPTDC8_APPLY_YAML_ERR_CONFS_EXCEED_MAX);
+        ryml::NodeRef child_node;
 
-        update_from_yaml[device_config_index_in_cfg] = child_node;
-    }
+        // Get elements have values in YAML
+        ryml::NodeRef update_from_yaml[XHPTDC8_MANAGER_DEVICES_MAX];
+        for (int device_config_index = 0, device_config_index_in_cfg;
+            device_config_index < device_config_children_count; device_config_index++)
+        {
+            if ((0 == device_config_index) && apply_first_on_all_elements)
+                // First element in YAML is -1
+            {
+                continue; // Skip it
+            }
+            child_node = device_configs_node.child(device_config_index);
+            device_config_index_in_cfg = _get_node_key_name_toi_internal(&child_node);
 
-    // Apply values 
-    // Loop on the YAML configurations
-    for (int device_config_index = 0; device_config_index < XHPTDC8_MANAGER_DEVICES_MAX; device_config_index++)
-    {
-        if (RYML_NODE_EXISTS(update_from_yaml[device_config_index]))
-        // Values are provided in YAML by index
-        {
-            child_node = update_from_yaml[device_config_index];
+            VALIDATE_ARRAY_INDEX(device_config_index_in_cfg, XHPTDC8_MANAGER_DEVICES_MAX,
+                XHPTDC8_APPLY_YAML_INVALID_CONFS_STRUTC, XHPTDC8_APPLY_YAML_ERR_CONFS_EXCEED_MAX);
+
+            update_from_yaml[device_config_index_in_cfg] = child_node;
         }
-        else if (apply_first_on_all_elements)
-        // Values are NOT provided in YAML by index but -1 is
+
+        // Apply values 
+        // Loop on the YAML configurations
+        for (int device_config_index = 0; device_config_index < XHPTDC8_MANAGER_DEVICES_MAX; device_config_index++)
         {
-            child_node = device_configs_first_item_node;
-        }
-        else
-        // Neither index nor -1 are found in YAML  
-        {
-            // Skip the element
-            continue;
-        }
-        int result = xhptdc8_apply_device_config_yaml(&child_node,
+            if (RYML_NODE_EXISTS(update_from_yaml[device_config_index]))
+                // Values are provided in YAML by index
+            {
+                child_node = update_from_yaml[device_config_index];
+            }
+            else if (apply_first_on_all_elements)
+                // Values are NOT provided in YAML by index but -1 is
+            {
+                child_node = device_configs_first_item_node;
+            }
+            else
+                // Neither index nor -1 are found in YAML  
+            {
+                // Skip the element
+                continue;
+            }
+            int result = xhptdc8_apply_device_config_yaml(&child_node,
                 &(manager_config->device_configs[device_config_index]));
-        if (result < 0)
-        {
-            return result;
+            if (result < 0)
+            {
+                return result;
+            }
         }
     }
     int result = xhptdc8_apply_grouping_yaml(&config_mngr_node, manager_config);

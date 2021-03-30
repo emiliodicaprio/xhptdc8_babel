@@ -307,7 +307,7 @@ namespace apply_yaml
 			};
 			int apply_yaml_result = run_xhptdc8_apply_yaml(yaml_string);
 			Assert::AreEqual(apply_yaml_result,
-				XHPTDC8_APPLY_YAML_ERR_NO_DEV_CONFS);
+				0);	// Nothing affected
 		}
 		TEST_METHOD(device_configs_is_empty)
 		{
@@ -318,9 +318,9 @@ namespace apply_yaml
 			};
 			int apply_yaml_result = run_xhptdc8_apply_yaml(yaml_string);
 			Assert::AreEqual(apply_yaml_result,
-				XHPTDC8_APPLY_YAML_ERR_EMPTY_DEV_CONFS);
+				0);	// Nothing affected
 		}
-		TEST_METHOD(device_configs_count_exceed_max)
+		TEST_METHOD(device_configs_count_exceeds_max)
 		{
 			std::string yaml_string =
 			{
@@ -358,7 +358,7 @@ namespace apply_yaml
 	TEST_CLASS(trigger_threshold_error_codes)
 	{
 	public:
-		TEST_METHOD(count_exceed_max)
+		TEST_METHOD(count_exceeds_max)
 		{
 			std::string yaml_string =
 			{
@@ -479,12 +479,51 @@ namespace apply_yaml
 			Assert::AreEqual(apply_yaml_result,
 				XHPTDC8_APPLY_YAML_TGRBLCK_INVALID_MODE);
 		}
+		TEST_METHOD(count_exceeds_max)
+		{
+			std::string yaml_string =
+			{
+				"manager_config: \n"
+				" device_configs: \n"
+				"  0: \n"
+				"   tiger_block : \n"
+				"    0: \n"
+				"    1: \n"
+				"    2: \n"
+				"    3: \n"
+				"    4: \n"
+				"    5: \n"
+				"    6: \n"
+				"    7: \n"
+				"    8: \n"
+				"    9: \n"
+			};
+			int apply_yaml_result = run_xhptdc8_apply_yaml(yaml_string);
+			Assert::AreEqual(apply_yaml_result,
+				XHPTDC8_APPLY_YAML_ERR_TGRBLCKS_EXCEED_MAX);
+		}
+		TEST_METHOD(is_not_array_map)
+		{
+			std::string yaml_string =
+			{
+				"manager_config: \n"
+				" device_configs: \n"
+				"  0: \n"
+				"   tiger_block : \n"
+				"    - \n"
+				"     falling : false \n"
+				"     rising : true \n"
+			};
+			int apply_yaml_result = run_xhptdc8_apply_yaml(yaml_string);
+			Assert::AreEqual(apply_yaml_result,
+				XHPTDC8_APPLY_YAML_TGRBLCK_INVALID_STRUCT);
+		}
 	};
 
 	TEST_CLASS(trigger_error_codes)
 	{
 	public:
-		TEST_METHOD(count_exceed_max)
+		TEST_METHOD(count_exceeds_max)
 		{
 			std::string yaml_string =
 			{
@@ -534,7 +573,7 @@ namespace apply_yaml
 	TEST_CLASS(gating_block_error_codes)
 	{
 	public:
-		TEST_METHOD(count_exceed_max)
+		TEST_METHOD(count_exceeds_max)
 		{
 			std::string yaml_string =
 			{
@@ -575,7 +614,7 @@ namespace apply_yaml
 	TEST_CLASS(channel_codes)
 	{
 	public:
-		TEST_METHOD(count_exceed_max)
+		TEST_METHOD(count_exceeds_max)
 		{
 			std::string yaml_string =
 			{
@@ -619,6 +658,70 @@ namespace apply_yaml
 			int apply_yaml_result = run_xhptdc8_apply_yaml(yaml_string);
 			Assert::AreEqual(apply_yaml_result,
 				XHPTDC8_APPLY_YAML_INVALID_CHANNEL_STRUCT);
+		}
+	};
+	TEST_CLASS(grouping)
+	{
+	public:
+		TEST_METHOD(trigger_channel_is_out_of_range)
+		{
+			std::string yaml_string =
+			{
+				"manager_config: \n"
+				" grouping : \n"
+				"  trigger_channel : 12 \n"
+			};
+			int apply_yaml_result = run_xhptdc8_apply_yaml(yaml_string);
+			Assert::AreEqual(apply_yaml_result,
+				XHPTDC8_APPLY_YAML_INVALID_GROUPING_TRIGCH);
+		}
+		TEST_METHOD(zero_channel__1_is_valid)
+		{
+			std::string yaml_string =
+			{
+				"manager_config: \n"
+				" grouping : \n"
+				"  zero_channel : -1 \n"
+			};
+			int apply_yaml_result = run_xhptdc8_apply_yaml(yaml_string);
+			Assert::AreEqual(apply_yaml_result,
+				0); // Number of device configs updated
+		}
+		TEST_METHOD(zero_channel__1_is_out_of_range)
+		{
+			std::string yaml_string =
+			{
+				"manager_config: \n"
+				" grouping : \n"
+				"  zero_channel : 9 \n"
+			};
+			int apply_yaml_result = run_xhptdc8_apply_yaml(yaml_string);
+			Assert::AreEqual(apply_yaml_result,
+				XHPTDC8_APPLY_YAML_INVALID_GROUPING_ZEROCH);
+		}
+		TEST_METHOD(zero_channel_offset_is_invalid)
+		{
+			std::string yaml_string =
+			{
+				"manager_config: \n"
+				" grouping : \n"
+				"  zero_channel_offset : -10 \n"
+			};
+			int apply_yaml_result = run_xhptdc8_apply_yaml(yaml_string);
+			Assert::AreEqual(apply_yaml_result,
+				XHPTDC8_APPLY_YAML_INVALID_GROUPING_ZEROCHOFF);
+		}
+		TEST_METHOD(veto_mode_is_invalid)
+		{
+			std::string yaml_string =
+			{
+				"manager_config: \n"
+				" grouping : \n"
+				"  veto_mode : 3 \n"
+			};
+			int apply_yaml_result = run_xhptdc8_apply_yaml(yaml_string);
+			Assert::AreEqual(apply_yaml_result,
+				XHPTDC8_APPLY_YAML_INVALID_GROUPING_VETOMD);
 		}
 	};
 }
