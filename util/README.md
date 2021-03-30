@@ -115,7 +115,7 @@ manager_config:
    auto_trigger_period : 50
 ```
 
-If both `-1` and other values are specified, the `-1` will not apply (partially, nor full) on the other values.</br>
+If both `-1` and other values are specified, the `-1` will not apply (neither partially nor fully) on the other values.</br>
 _For example_: in the following YAML, trigger of index 0 will have `rising` as true, however, it's value `falling` will be left AS IS and not affected by `falling : false` of element -1. 
 ```YAML
 manager_config: 
@@ -170,7 +170,7 @@ manager_config:
      mode : 4 
 ```
 
-Values of parameters that are _not implemented_, will be ignored.
+Values of parameters that are _not implemented_, will be ignored.</br>
 _For example_: in the following YAML, `extend` value will be ignored.
 ```YAML
 manager_config: 
