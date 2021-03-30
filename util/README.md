@@ -71,7 +71,7 @@ int xhptdc8_apply_yaml(xhptdc8_manager_configuration* cfg, const char* yaml_stri
 ##### xHPTDC8-Specific
 `manager_config` Arrays shall be implemented as maps not as sequences. The reason is that it shall be possible to assign only part of the array, which is not possible for sequences.
 
-Array index starts with 0 (or -1), and should be less than the maximum array size defined in [xHPTDC8_interface.h](./lib/include/xHPTDC8_interface.h).</br>
+Array index starts with 0 (or -1), and should be less than the maximum array size defined in [xHPTDC8_interface.h](../lib/include/xHPTDC8_interface.h).</br>
 _For example_: `trigger` array could have trigger index starting -1 to 15 (`XHPTDC8_TRIGGER_COUNT` - 1)
 ```YAML
 manager_config: 
@@ -159,7 +159,7 @@ manager_config:
     2: *rising_trigger
 ```
 
-Values that do not match both the element data type (defined in [xHPTDC8_interface.h](./lib/include/xHPTDC8_interface.h)) and the value reange (defined in the User Guide) will generate error and stop processing.</br>
+Values that do not match both the element data type (defined in [xHPTDC8_interface.h](../lib/include/xHPTDC8_interface.h)) and the value reange (defined in the User Guide) will generate error and stop processing.</br>
 _For example_: in the following YAML, an error will be generated because of the value `mode` of `tiger_block`, as it accepts only values [0, 1, 2, 3].
 ```YAML
 manager_config: 
