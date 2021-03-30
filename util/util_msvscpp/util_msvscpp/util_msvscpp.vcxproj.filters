@@ -129,10 +129,10 @@
     <ClInclude Include="ryml_src\c4\windows_push.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\xhptdc8_util.h">
+    <ClInclude Include="..\xhptdc8_util_yaml.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\xhptdc8_util_yaml.h">
+    <ClInclude Include="..\..\..\lib\include\xhptdc8_util.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
