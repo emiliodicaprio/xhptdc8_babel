@@ -184,6 +184,14 @@ manager_config:
 
 Boolean values are either `true` or `false` (in small letters), any other value will be considered an error (e.g. "0", "1", "True", "TRUE", "False", "FALSE"). 
 
+It's allowed to have `grouping` _only_ without having `device_configs` in the YAML string.</br>
+_For example_: the following YAML is valid.
+```YAML
+manager_config: 
+ grouping: 
+  enabled : true
+```
+
 
 #### Samples
 ##### Simple Sample YAML:
