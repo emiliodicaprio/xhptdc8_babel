@@ -83,8 +83,8 @@ manager_config:
      rising : true 
 ```
 
-When an element is repeated, then the last occurance value will apply.</br>
-_For example_: in the follwoing YAML, `rising` will be applied as _false_ 
+When an element is repeated, then the _first_ occurance value will apply, and the rest will be ignored.</br>
+_For example_: in the follwoing YAML, `rising` will be applied as _true_ 
 ```YAML
 manager_config: 
  device_configs: 
@@ -170,6 +170,17 @@ manager_config:
      mode : 4 
 ```
 
+Values of parameters that are _not implemented_, will be ignored.
+_For example_: in the following YAML, `extend` value will be ignored.
+```YAML
+manager_config: 
+ device_configs: 
+  0: 
+   tiger_block : 
+    1:
+     mode : 1 
+     extend : true 
+```
 
 #### Samples
 ##### Simple Sample YAML:
