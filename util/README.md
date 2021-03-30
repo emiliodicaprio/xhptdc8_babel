@@ -182,6 +182,9 @@ manager_config:
      extend : true 
 ```
 
+Boolean values are either `true` or `false` (in small letters), any other value will be considered an error (e.g. "0", "1", "True", "TRUE", "False", "FALSE"). 
+
+
 #### Samples
 ##### Simple Sample YAML:
 ```YAML
