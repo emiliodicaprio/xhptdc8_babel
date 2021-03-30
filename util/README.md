@@ -64,7 +64,115 @@ This API is of the following signature:
 int xhptdc8_apply_yaml(xhptdc8_manager_configuration* cfg, const char* yaml_string);
 ```
 
-#### Simple Sample YAML:
+#### Specifications
+##### General 
+- YAML String should comply with the standard YAML format
+
+##### xHPTDC8-Specific
+`manager_config` Arrays shall be implemented as maps not as sequences. The reason is that it shall be possible to assign only part of the array, which is not possible for sequences.
+
+Array index starts with 0 (or -1), and should be less than the maximum array size defined in [xHPTDC8_interface.h](./lib/include/xHPTDC8_interface.h).</br>
+_For example_: `trigger` array could have trigger index starting -1 to 15 (`XHPTDC8_TRIGGER_COUNT` - 1)
+```YAML
+manager_config: 
+ device_configs: 
+  0: 
+   trigger : 
+    0: 
+     falling : false 
+     rising : true 
+```
+
+When an element is repeated, then the last occurance value will apply.</br>
+_For example_: in the follwoing YAML, `rising` will be applied as _false_ 
+```YAML
+manager_config: 
+ device_configs: 
+  0: 
+   trigger : 
+    0: 
+     rising : true 
+     rising : false 
+```
+
+If the key (index) of YAML array element is `-1`, and no other value is presented, then the `-1` value is applied to all array elements.</br> 
+_For example_: in the following YAML, `auto_trigger_period` will be set to 20 in _all the devices_.
+```YAML
+manager_config:
+ device_configs:
+  -1:
+   auto_trigger_period : 20
+```
+
+If both `-1` and other values are specified, the `-1` shall be applied first, then the other values.</br>
+_For example_: in the following YAML, all devices will have `auto_trigger_period` set to 20, except the device of index 5 which will have its `auto_trigger_period` set to 50.
+```YAML
+manager_config:
+ device_configs:
+  -1:
+   auto_trigger_period : 20
+  5:
+   auto_trigger_period : 50
+```
+
+If both `-1` and other values are specified, the `-1` will not apply (partially, nor full) on the other values.</br>
+_For example_: in the following YAML, trigger of index 0 will have `rising` as true, however, it's value `falling` will be left AS IS and not affected by `falling : false` of element -1. 
+```YAML
+manager_config: 
+ device_configs: 
+  0: 
+   trigger : 
+    -1: 
+     rising : false 
+     falling : false 
+    0:
+     rising : true 
+```
+
+When providing a key index of `-1`, it MUST be the first element in the array.</br>
+_For example_: the following YAML generates error, as element -1 is mentioned but doesn't come first.
+```YAML
+manager_config:
+ device_configs:
+  0:
+   auto_trigger_period : 50
+  -1:
+   auto_trigger_period : 20
+```
+
+Anchors and Aliases are supported.</br>
+_For example_: in the following YAML, _all_ devices configurations will have the trigger of index 2 (the third) with values `rising:  true` and `falling: false`, while all other triggers will have `rising:  false` and `falling: true`.
+```YAML
+rising_trigger: &rising_trigger
+ rising:  true
+ falling: false
+
+falling_trigger: &falling_trigger
+ rising:  false
+ falling: true
+
+manager_config:
+ device_configs:
+  -1:
+   trigger:
+    -1: *falling_trigger
+    2: *rising_trigger
+```
+
+Values that do not match both the element data type (defined in [xHPTDC8_interface.h](./lib/include/xHPTDC8_interface.h)) and the value reange (defined in the User Guide) will generate error and stop processing.</br>
+_For example_: in the following YAML, an error will be generated because of the value `mode` of `tiger_block`, as it accepts only values [0, 1, 2, 3].
+```YAML
+manager_config: 
+ device_configs: 
+  0: 
+   tiger_block : 
+    1:
+     mode : 4 
+```
+
+
+#### Samples
+##### Simple Sample YAML:
 ```YAML
 manager_config: 
  device_configs: 
@@ -111,12 +219,12 @@ Applied yaml on node child ([0] rising: false) bool value
 Applied yaml on node child ([grouping] enabled: true) bool value
 ```
 
-#### Assigning the values to multiple substructures
+##### Assigning the values to multiple substructures
 YAML allows to reuse definitions from one place of the structure multiple times without writing them all over again.
 This can be useful to set multiple boards to the same setting or multiple channels of one board.
 This [this website](http://blogs.perl.org/users/tinita/2019/05/reusing-data-with-yaml-anchors-aliases-and-merge-keys.html) for a very short description how this works.
 
-#### Sample YAML with features
+##### Sample YAML with features
 This sample shows how to use Anchors and Aliases, as well as how it is possible to just modify an element in the middle of the array.
 ```YAML
 threshold : &COMMON_THRESHOLD "120" # Anchor
@@ -160,7 +268,7 @@ Applied yaml on node child ([1] enable: true) bool value
 Applied yaml on node child ([1] rising: false) bool value
 ```
 
-#### Index -1 to Apply on All
+##### Index -1 to Apply on All
 The following example will set all 16 triggers of the 4th device (index = 3) to a false falling and true rising:
 
 ```YAML
@@ -213,7 +321,7 @@ Applied yaml on node child ([-1] falling: false) bool value
 Applied yaml on node child ([-1] rising: true) bool value
 ``` 
 
-#### All Elements YAML
+##### All Elements YAML
 Here is the complete elements of the manager configuration sturcture, including sample values; you can copy your YAML elements from the YAML below, just keep the spaces before the elements, and refer to both the user guide and the [xHPTDC8_interface.h](/lib/include/xHPTDC8_interface.h "xHPTDC8_interface.h") xhptdc8_interface.h for the members specifications:
 
 ```YAML
