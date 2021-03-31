@@ -436,16 +436,16 @@ Nothing special, just:
 2. Select the needed _Configuration_ and _Environment_ to build.
 3. Hit _Build util_, and check the .lib & .dll files in the corresponsing directory as per the table above.
 
-## Running the Test
+## Running the test
 Nothing special, just select the underlying test, and hit run 
 
-## Test Cases Structure & Design
-As per `namespace apply_yaml`:
-* A file (or more) is created for every util API.
-* Test Cases are divided into groups (Classes):
-- Happy Scenario 
-- Special Scenario: 
-- Functionality Scenario (e.g. tiger_block, channel, etc..).
+## Test Cases structure & design
+Guidleines as per `namespace apply_yaml`:
+- A file (or more) is created for every util API.
+- Test Cases are divided into groups (Classes):
+  - Happy Scenario. 
+  - Special Scenario.
+  - Functionality Scenario (e.g. tiger_block, channel, etc..).
 
 ![Test Cases Tree](https://github.com/cronologic-de/xhptdc8_babel/blob/main/util/docs/yaml_reader/TestCasesTree.JPG)
 
