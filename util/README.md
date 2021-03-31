@@ -447,7 +447,7 @@ As per `namespace apply_yaml`:
 - Special Scenario: 
 - Functionality Scenario (e.g. tiger_block, channel, etc..).
 
-![Test Cases Tree](https://github.com/cronologic-de/xhptdc8_babel/tree/main/util/docs/yaml_reader/TestCasesTree.JPG "Test Cases Tree")
+![Test Cases Tree](https://github.com/cronologic-de/xhptdc8_babel/blob/main/util/docs/yaml_reader/TestCasesTree.JPG)
 
 ___________________________
 
