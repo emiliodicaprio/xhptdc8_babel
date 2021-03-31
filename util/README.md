@@ -14,10 +14,10 @@ The Solution and Project are created using Microsoft Visual Studio 2019
 
 | Configuration | Environment   | Output Directory | Library Name    |
 | ------------- |-------------  |----------------- | --------------- |
-| Debug         | x64           | .\\lib\\x64    | xhptdc8_util_64 |  
-| Release       | x64           | .\\lib\\x64    | xhptdc8_util_64 |  
-| Debug         | Win32         | .\\lib\\x86    | xhptdc8_util    |  
-| Release       | Win32         | .\\lib\\x86    | xhptdc8_util    |  
+| Debug         | x64           | VS Default Project Settings    | xhptdc8_util |  
+| Release       | x64           | VS Default Project Settings    | xhptdc8_util |  
+| Debug         | Win32         | VS Default Project Settings    | xhptdc8_util |  
+| Release       | Win32         | VS Default Project Settings    | xhptdc8_util |  
 * You can change the output directory if you want to keep both the release and debug versions of the DLL concurrently
 
 ### External Libraries
@@ -423,12 +423,12 @@ The Solution and Project are created using Microsoft Visual Studio 2019
 - `util` DLL is added as `Reference`
 - Project Settings -> Include Directories : `..\..\lib\include` is added.
 
-| Configuration | Environment   | Output Directory         | Linker Input    |
-| ------------- |-------------  |-----------------         | --------------- |
-| Debug         | x64           | ..\\..\\lib\\x64dummy    | xhptdc8_util.lib;xhptdc8_driver_64.lib |  
-| Release       | x64           | ..\\..\\lib\\x64dummy    | xhptdc8_util.lib;xhptdc8_driver_64.lib |  
-| Debug         | Win32         | ..\\..\\lib\\x86dummy    | xhptdc8_util.lib;xhptdc8_driver.lib    |  
-| Release       | Win32         | ..\\..\\lib\\x86dummy    | xhptdc8_util.lib;xhptdc8_driver.lib    |  
+| Configuration | Environment   | Output Directory               | Linker Input    |
+| ------------- |-------------  |-----------------               | --------------- |
+| Debug         | x64           | VS Default Project Settings    | xhptdc8_util.lib;xhptdc8_driver_64.lib |  
+| Release       | x64           | VS Default Project Settings    | xhptdc8_util.lib;xhptdc8_driver_64.lib |  
+| Debug         | Win32         | VS Default Project Settings    | xhptdc8_util.lib;xhptdc8_driver.lib    |  
+| Release       | Win32         | VS Default Project Settings    | xhptdc8_util.lib;xhptdc8_driver.lib    |  
 
 ### Building Using MS Visual Studio
 Nothing special, just:
@@ -436,16 +436,16 @@ Nothing special, just:
 2. Select the needed _Configuration_ and _Environment_ to build.
 3. Hit _Build util_, and check the .lib & .dll files in the corresponsing directory as per the table above.
 
-## Running the Test
+## Running the test
 Nothing special, just select the underlying test, and hit run 
 
-## Test Cases Structure & Design
-As per `namespace apply_yaml`:
-* A file (or more) is created for every util API.
-* Test Cases are divided into groups (Classes):
-- Happy Scenario 
-- Special Scenario: 
-- Functionality Scenario (e.g. tiger_block, channel, etc..).
+## Test Cases structure & design
+Guidleines as per `namespace apply_yaml`:
+- A file (or more) is created for every util API.
+- Test Cases are divided into groups (Classes):
+  - Happy Scenario. 
+  - Special Scenario.
+  - Functionality Scenario (e.g. tiger_block, channel, etc..).
 
 ![Test Cases Tree](https://github.com/cronologic-de/xhptdc8_babel/blob/main/util/docs/yaml_reader/TestCasesTree.JPG)
 
