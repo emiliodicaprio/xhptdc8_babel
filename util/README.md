@@ -14,10 +14,10 @@ The Solution and Project are created using Microsoft Visual Studio 2019
 
 | Configuration | Environment   | Output Directory | Library Name    |
 | ------------- |-------------  |----------------- | --------------- |
-| Debug         | x64           | .\\lib\\x64    | xhptdc8_util_64 |  
-| Release       | x64           | .\\lib\\x64    | xhptdc8_util_64 |  
-| Debug         | Win32         | .\\lib\\x86    | xhptdc8_util    |  
-| Release       | Win32         | .\\lib\\x86    | xhptdc8_util    |  
+| Debug         | x64           | VS Default Project Settings    | xhptdc8_util |  
+| Release       | x64           | VS Default Project Settings    | xhptdc8_util |  
+| Debug         | Win32         | VS Default Project Settings    | xhptdc8_util |  
+| Release       | Win32         | VS Default Project Settings    | xhptdc8_util |  
 * You can change the output directory if you want to keep both the release and debug versions of the DLL concurrently
 
 ### External Libraries
@@ -423,12 +423,12 @@ The Solution and Project are created using Microsoft Visual Studio 2019
 - `util` DLL is added as `Reference`
 - Project Settings -> Include Directories : `..\..\lib\include` is added.
 
-| Configuration | Environment   | Output Directory         | Linker Input    |
-| ------------- |-------------  |-----------------         | --------------- |
-| Debug         | x64           | ..\\..\\lib\\x64dummy    | xhptdc8_util.lib;xhptdc8_driver_64.lib |  
-| Release       | x64           | ..\\..\\lib\\x64dummy    | xhptdc8_util.lib;xhptdc8_driver_64.lib |  
-| Debug         | Win32         | ..\\..\\lib\\x86dummy    | xhptdc8_util.lib;xhptdc8_driver.lib    |  
-| Release       | Win32         | ..\\..\\lib\\x86dummy    | xhptdc8_util.lib;xhptdc8_driver.lib    |  
+| Configuration | Environment   | Output Directory               | Linker Input    |
+| ------------- |-------------  |-----------------               | --------------- |
+| Debug         | x64           | VS Default Project Settings    | xhptdc8_util.lib;xhptdc8_driver_64.lib |  
+| Release       | x64           | VS Default Project Settings    | xhptdc8_util.lib;xhptdc8_driver_64.lib |  
+| Debug         | Win32         | VS Default Project Settings    | xhptdc8_util.lib;xhptdc8_driver.lib    |  
+| Release       | Win32         | VS Default Project Settings    | xhptdc8_util.lib;xhptdc8_driver.lib    |  
 
 ### Building Using MS Visual Studio
 Nothing special, just:
