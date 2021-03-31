@@ -77,25 +77,25 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>..\include;..\..\lib\include;$(IncludePath)</IncludePath>
+    <IncludePath>..\..\lib\include;$(IncludePath)</IncludePath>
     <LibraryPath>..\..\lib\x64dummy;$(LibraryPath)</LibraryPath>
     <OutDir>..\..\lib\x64dummy</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>..\include;..\..\lib\include;$(IncludePath)</IncludePath>
+    <IncludePath>..\..\lib\include;$(IncludePath)</IncludePath>
     <LibraryPath>..\..\lib\x86dummy;$(LibraryPath)</LibraryPath>
-    <OutDir>..\..\lib\x86</OutDir>
+    <OutDir>..\..\lib\x86dummy</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>..\include;..\..\lib\include;$(IncludePath)</IncludePath>
+    <IncludePath>..\..\lib\include;$(IncludePath)</IncludePath>
     <LibraryPath>..\..\lib\x86dummy;$(LibraryPath)</LibraryPath>
-    <OutDir>..\..\lib\x86</OutDir>
+    <OutDir>..\..\lib\x86dummy</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>..\include;..\..\lib\include;$(IncludePath)</IncludePath>
+    <IncludePath>..\..\lib\include;$(IncludePath)</IncludePath>
     <LibraryPath>..\..\lib\x64dummy;$(LibraryPath)</LibraryPath>
     <OutDir>..\..\lib\x64dummy</OutDir>
   </PropertyGroup>
@@ -172,6 +172,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="NewFunction.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
