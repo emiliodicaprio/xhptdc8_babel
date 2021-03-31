@@ -394,6 +394,58 @@ namespace apply_yaml
 			Assert::AreEqual(apply_yaml_result,
 				XHPTDC8_APPLY_YAML_INVALID_THRESHOLD_STRUCT);
 		}
+		TEST_METHOD(general_with_2_devices)
+		{
+			std::string yaml_string =
+			{
+				"manager_config: \n"
+				" device_configs: \n"
+				"  0: \n"
+				"   trigger_threshold:\n"
+				"    0: 0.50 \n"
+				"    7: 0.51 \n"
+				"  1: \n"
+				"   trigger_threshold:\n"
+				"    -1: 0.50 \n"
+				"    1: 0.51 \n"
+				"    5: 0.55 \n"
+			};
+			int apply_yaml_result = run_xhptdc8_apply_yaml(yaml_string);
+			Assert::AreEqual(apply_yaml_result,
+				2);
+		}
+		TEST_METHOD(elements_in_the_middle)
+		{
+			std::string yaml_string =
+			{
+				"manager_config: \n"
+				" device_configs: \n"
+				"  3: \n"
+				"   trigger : \n"
+				"    -1: # Set all \n"
+				"     falling : false \n"
+				"     rising : true \n"
+				"   trigger_threshold:\n"
+				"    0: 0.3499 \n"
+				"   adc_channel: \n"
+				"    enable : true \n"
+				"    watchdog_readout : true \n"
+				"    watchdog_interval: 5\n"
+				"    trigger_threshold : 120\n"
+				"  5: \n"
+				"   trigger_threshold : \n"
+				"    1: 0.3499 # Start with the second element, leave the first to default\n"
+				"    2: 0.35 \n"
+				"    3: 0.36666 \n"
+				"   channel : \n"
+				"    -1: # Set all \n"
+				"     enable : true\n"
+				"     rising : false \n"
+			};
+			int apply_yaml_result = run_xhptdc8_apply_yaml(yaml_string);
+			Assert::AreEqual(apply_yaml_result,
+				2);
+		}
 	};
 
 	TEST_CLASS(special_scenario)
@@ -518,6 +570,44 @@ namespace apply_yaml
 			Assert::AreEqual(apply_yaml_result,
 				XHPTDC8_APPLY_YAML_TGRBLCK_INVALID_STRUCT);
 		}
+		TEST_METHOD(general_with_2_devices)
+		{
+			std::string yaml_string =
+			{
+				"manager_config: \n"
+				" device_configs: \n"
+				"  0: \n"
+				"   tiger_block : \n"
+				"    1:\n"
+				"     mode : 1 \n"
+				"     negate : false \n"
+				"     retrigger : true \n"
+				"     extend : true \n"
+				"     start : 10 \n"
+				"     stop : 100 \n"
+				"     sources : 1 \n"
+				"    8:\n"
+				"     mode : 1 \n"
+				"     start : 80 \n"
+				"     stop : 800 \n"
+				"     sources : 8 \n"
+				"  1: \n"
+				"   tiger_block : \n"
+				"    -1:\n"
+				"     mode : 2 \n"
+				"     negate : true \n"
+				"     retrigger : true \n"
+				"     start : 10 \n"
+				"     stop : 100 \n"
+				"    5:\n"
+				"     mode : 2 \n"
+				"     start : 50 \n"
+				"     stop : 500 \n"
+			};
+			int apply_yaml_result = run_xhptdc8_apply_yaml(yaml_string);
+			Assert::AreEqual(apply_yaml_result,
+				2);
+		}
 	};
 
 	TEST_CLASS(trigger)
@@ -569,6 +659,37 @@ namespace apply_yaml
 			Assert::AreEqual(apply_yaml_result,
 				XHPTDC8_APPLY_YAML_INVALID_TRIGGER_STRUCT);
 		}
+		TEST_METHOD(general_with_2_devices)
+		{
+			std::string yaml_string =
+			{
+				"manager_config: \n"
+				" device_configs: \n"
+				"  0: \n"
+				"   trigger : \n"
+				"    0: # Set all \n"
+				"     falling : false \n"
+				"     rising : true \n"
+				"    15: # Set all \n"
+				"     falling : false \n"
+				"     rising : true \n"
+				"  1: \n"
+				"   trigger : \n"
+				"    -1: # Set all \n"
+				"     falling : false \n"
+				"     rising : true \n"
+				"    2: \n"
+				"     falling : false \n"
+				"     rising : true \n"
+				"    5: \n"
+				"     falling : false \n"
+				"     rising : true \n"
+			};
+			int apply_yaml_result = run_xhptdc8_apply_yaml(yaml_string);
+			Assert::AreEqual(apply_yaml_result,
+				2);
+		}
+
 	};
 	TEST_CLASS(gating_block)
 	{
@@ -593,7 +714,7 @@ namespace apply_yaml
 			};
 			int apply_yaml_result = run_xhptdc8_apply_yaml(yaml_string);
 			Assert::AreEqual(apply_yaml_result,
-				XHPTDC8_APPLY_YAML_ERR_GATE_BLOCK_EXCEED_MAX);
+				XHPTDC8_APPLY_YAML_ERR_GTBLCK_EXCEED_MAX);
 		}
 		TEST_METHOD(is_not_array_map)
 		{
@@ -609,6 +730,41 @@ namespace apply_yaml
 			int apply_yaml_result = run_xhptdc8_apply_yaml(yaml_string);
 			Assert::AreEqual(apply_yaml_result,
 				XHPTDC8_APPLY_YAML_GTBLCK_INVALID_STRUCT);
+		}
+		TEST_METHOD(general_with_2_devices)
+		{
+			std::string yaml_string =
+			{
+				"manager_config: \n"
+				" device_configs: \n"
+				"  1: \n"
+				"   gating_block : \n"
+				"    0: \n"
+				"     mode : 1 \n"
+				"     start : 10 \n"
+				"     stop : 100 \n"
+				"     sources : 1 \n"
+				"    7: \n"
+				"     mode : 1 \n"
+				"     start : 70 \n"
+				"     stop : 700 \n"
+				"     sources : 7 \n"
+				"  2: \n"
+				"   gating_block : \n"
+				"    -1: \n"
+				"     mode : 1 \n"
+				"     start : 10 \n"
+				"     stop : 100 \n"
+				"     sources : 1 \n"
+				"    2: \n"
+				"     mode : 1 \n"
+				"     start : 20 \n"
+				"     stop : 200 \n"
+				"     sources : 2 \n"
+			};
+			int apply_yaml_result = run_xhptdc8_apply_yaml(yaml_string);
+			Assert::AreEqual(apply_yaml_result,
+				2);
 		}
 	};
 	TEST_CLASS(channel)
@@ -658,6 +814,33 @@ namespace apply_yaml
 			int apply_yaml_result = run_xhptdc8_apply_yaml(yaml_string);
 			Assert::AreEqual(apply_yaml_result,
 				XHPTDC8_APPLY_YAML_INVALID_CHANNEL_STRUCT);
+		}
+		TEST_METHOD(general_with_2_devices)
+		{
+			std::string yaml_string =
+			{
+				"manager_config: \n"
+				" device_configs: \n"
+				"  1: \n"
+				"   channel : \n"
+				"    0: \n"
+				"     enable : true\n"
+				"     rising : false\n"
+				"    7: \n"
+				"     enable : false\n"
+				"     rising : true \n"
+				"  2: \n"
+				"   channel : \n"
+				"    -1: \n"
+				"     enable : true\n"
+				"     rising : false\n"
+				"    2: \n"
+				"     enable : false\n"
+				"     rising : true \n"
+			};
+			int apply_yaml_result = run_xhptdc8_apply_yaml(yaml_string);
+			Assert::AreEqual(apply_yaml_result,
+				2);
 		}
 	};
 	TEST_CLASS(grouping)

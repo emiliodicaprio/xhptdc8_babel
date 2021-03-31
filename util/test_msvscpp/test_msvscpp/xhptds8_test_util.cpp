@@ -4,165 +4,81 @@
 #include <iostream>
 #include "xhptdc8_util.h"
 #include "xhptdc8_interface.h"
+#include <iostream>
+using namespace std;
 
-void test_apply_yaml(char* src);
+int test_apply_yaml(char* src);
 
-/*
-* String has all keys of the manager_config structure
-*/
-char mngr_all_keys_sample[1213] =
+void display_intro()
 {
-"manager_config: \n"
-" device_configs: \n"
-"  0: \n"
-"   auto_trigger_period : 20 \n"
-"   auto_trigger_random_exponent : 20 \n"
-"   trigger_threshold : \n"
-"    0: 0.3499 \n"
-"    1: 0.35 \n"
-"    2: 0.36666 \n"
-"   trigger : \n"
-"    0: \n"
-"     falling : false \n"
-"     rising : true \n"
-"   gating_block : \n"
-"    0: \n"
-"     mode : 1 \n"
-"     negate : true \n"
-"     retrigger : true \n"
-"     extend : true \n"
-"     start : 10 \n"
-"     stop : 190 \n"
-"     sources : 1 \n"
-"   tiger_block : \n"
-"    0:\n"
-"     mode : 2 \n"
-"     negate : true \n"
-"     retrigger : true \n"
-"     extend : true \n"
-"     start : 20 \n"
-"     stop : 200 \n"
-"     sources : 2 \n"
-"   channel : \n"
-"    0: \n"
-"     enable : true\n"
-"     rising : true \n"
-"   adc_channel : \n"
-"    enable : true \n"
-"    watchdog_readout : true \n"
-"    watchdog_interval : 5 \n"
-"    trigger_threshold : 6 \n"
-"   skip_alignment : true \n"
-"   alignment_source : 1 \n"
-" grouping : \n"
-"  enabled : true \n"
-"  trigger_channel : 3 \n"
-"  zero_channel : 2 \n"
-"  zero_channel_offset : 1 \n"
-"  range_start : 12345 \n"
-"  range_stop : 23456 \n"
-"  trigger_deadtime : 25 \n"
-"  require_window_hit : true \n"
-"  window_start : 10 \n"
-"  window_stop : 20 \n"
-"  veto_mode : 2 \n"
-"  veto_start : 30 \n"
-"  veto_stop : 40 \n"
-"  veto_relative_to_zero : true \n"
-"  overlap : true \n"
-};
-
-char mngr_brief_sample[447] =
+	printf("\n");
+	printf("----------------------------------------------------------------------------- \n");
+	printf("                 xHPTDC8 Utility Testing Application						  \n");
+	printf("----------------------------------------------------------------------------- \n");
+	printf("This program helps testing xHPTDC8 utility functions provided in \"util\" \n");
+	printf("library.\n");
+	printf("\n");
+}
+void display_about()
 {
-"manager_config: \n"
-" device_configs: \n"
-"  0: \n"
-"   auto_trigger_period : 20\n"
-"   trigger : \n"
-"     falling : false \n"
-"     rising : true \n"
-"   trigger_threshold : \n"
-"    0: 0.3499 \n"
-"    1: 0.35 \n"
-"    2: 0.36666 \n"
-"   gating_block : \n"
-"    0: \n"
-"     mode : 1 \n"
-"     negate : true \n"
-"  1: \n"
-"   trigger : \n"
-"    0: \n"
-"     falling : true \n"
-"     rising : false \n"
-"   channel : \n"
-"    0: \n"
-"     enable : true\n"
-"     rising : false \n"
-" grouping : \n"
-"  enabled : true \n"
-};
-
-char collection_sample[1000] =
+	display_intro();
+	printf("Command line flags: \n");
+	printf("\n");
+	printf("-yamlentry : allows the user to enter YAML of device configuration, and calls \n");
+	printf("             the corresponding util API \"xhptdc8_apply_yaml\", then displays \n");
+	printf("             the results. User can then validate the entered YAML syntax and \n");
+	printf("             effect.\n");
+	printf("\n");
+	printf("-help      : displays this help.\n");
+	printf("\n");
+	printf("\n");
+	printf("This is an open source application under Mozilla Public License 2.0\n");
+	printf("It can be downloaded from https://github.com/cronologic-de/xhptdc8_babel\n");
+	//	       =                                                                               =
+	printf("\n");
+}
+int main(int argc,  char* argv[])  
 {
-"threshold : &COMMON_THRESHOLD \"120\" # Anchor\n"
-"trigger_threshold : &CMOS # Another anchor\n"
-" 0: 0.3499 \n"
-"manager_config: \n"
-" device_configs: \n"
-"  0: \n"
-"   trigger : \n"
-"     falling : false \n"
-"     rising : true \n"
-"   trigger_threshold : *CMOS # Alias will be substitudtd by 0.3499\n"
-"   adc_channel: \n"
-"    enable : true \n"
-"    watchdog_readout : true \n"
-"    watchdog_interval: 5 \n"
-"    trigger_threshold : *COMMON_THRESHOLD # Alias will be substituted 120\n"
-"  1: \n"
-"   trigger_threshold : \n"
-"    1: 0.3499 # Start with the second element, leave the first to default\n"
-"    2: 0.35 \n"
-"    3: 0.36666 \n"
-"   channel : \n"
-"    1: # Set the second channel configuration, leave the rest to default values\n"
-"     enable : true\n"
-"     rising : false \n"
-};
+	int count;
 
-char array_variations_sample[1000] =
-{
-"manager_config: \n"
-" device_configs: \n"
-"  3: \n"
-"   trigger : \n"
-"    -1: # Set all \n"
-"     falling : false \n"
-"     rising : true \n"
-"   trigger_threshold:\n"
-"    0: 0.3499 \n"
-"   adc_channel: \n"
-"    enable : true \n"
-"    watchdog_readout : true \n"
-"    watchdog_interval: 5\n"
-"    trigger_threshold : 120\n"
-"  5: \n"
-"   trigger_threshold : \n"
-"    1: 0.3499 # Start with the second element, leave the first to default\n"
-"    2: 0.35 \n"
-"    3: 0.36666 \n"
-"   channel : \n"
-"    -1: # Set all \n"
-"     enable : true\n"
-"     rising : false \n"
-};
+	// Display each command-line argument.
+	for (count = 1; count < argc; count++)
+	{
+		if (!strcmp(argv[count], "-help"))
+		{
+			display_about();
+		}
+		else if (!strcmp(argv[count], "-yamlfile"))
+		// Pass YAML File to parse
+		{
 
-int main()
-{
-	test_apply_yaml(array_variations_sample);
+		}
+		else if (!strcmp(argv[count], "-yamlentry"))
+		{
+			char buff[4096];
+			display_intro();
+			printf("YAML Entry.\n");
+			printf("Please enter yaml of device configuration (4096 character maximum)\n");
+			printf("To submit the string: press [Tab] then [Enter]:\n");
+			scanf_s("%[^\t]", buff, 4096);
+			printf("\nCalling xhptdc8_apply_yaml...\n\n");
+			int result = test_apply_yaml(buff);
+			if (result < 0)
+			{
+				printf("Function returned error code <%d>.\n", result);
+				printf("Please refer to driver utility header file for code values meaning: \n");
+				printf("https://github.com/cronologic-de/xhptdc8_babel/blob/main/lib/include/xhptdc8_util.h \n");
+			}
+		}
+		else
+		{
+			display_about();
+		}
+	}
+	return 0;
 }
 
-void test_apply_yaml(char* src)
+int test_apply_yaml(char* src)
 {
 	xhptdc8_manager hMgr;
 	xhptdc8_manager_init_parameters* params = NULL;
@@ -171,7 +87,12 @@ void test_apply_yaml(char* src)
 	xhptdc8_init(&hMgr, params, &error_code, (const char**)&error_message);
 	xhptdc8_manager_configuration* cfg = new xhptdc8_manager_configuration;
 	xhptdc8_get_default_configuration(hMgr, cfg);
-	xhptdc8_apply_yaml(cfg, src);
-	xhptdc8_configure(hMgr, cfg);
+	int results = xhptdc8_apply_yaml(cfg, src);
+	if (results > 0)
+	{
+		xhptdc8_configure(hMgr, cfg);
+	}
 	delete cfg;
+	return results;
+
 }

@@ -60,7 +60,7 @@ crono_bool_t _is_node_array_map(const ryml::NodeRef* pNode)
     {
         std::string val;
         _get_node_val_internal(&first_child_node, &val);
-        VERBOSE_DEBUG_MSG("Error: node shouldn't have value (%s)", val.c_str());
+        // VERBOSE_DEBUG_MSG("Error: node shouldn't have value (%s)", val.c_str());
         // return false;
         // Not a problem if it has a value, we only care about NOT being sequence
         // Let the code take care of the value, it's needed in threshold
@@ -559,7 +559,7 @@ int xhptdc8_apply_gating_block_yaml(const ryml::NodeRef* device_config_node,
     int gating_block_children_count = 0;
     gating_block_children_count = gating_block_node.num_children();
     VALIDATE_CHILDREN_COUNT(gating_block_children_count, XHPTDC8_GATE_COUNT,
-        XHPTDC8_APPLY_YAML_ERR_GATE_BLOCK_EXCEED_MAX);
+        XHPTDC8_APPLY_YAML_ERR_GTBLCK_EXCEED_MAX);
 
     // Validate node structure as a map
     crono_bool_t is_array_map = _is_node_array_map(&gating_block_node);
@@ -595,7 +595,7 @@ int xhptdc8_apply_gating_block_yaml(const ryml::NodeRef* device_config_node,
         gating_block_index_in_cfg = _get_node_key_name_toi_internal(&child_node);
 
         VALIDATE_ARRAY_INDEX(gating_block_index_in_cfg, XHPTDC8_GATE_COUNT,
-            XHPTDC8_APPLY_YAML_GTBLCK_INVALID_STRUCT, XHPTDC8_APPLY_YAML_ERR_GATE_BLOCK_EXCEED_MAX);
+            XHPTDC8_APPLY_YAML_GTBLCK_INVALID_STRUCT, XHPTDC8_APPLY_YAML_ERR_GTBLCK_EXCEED_MAX);
 
         update_from_yaml[gating_block_index_in_cfg] = child_node;
     }

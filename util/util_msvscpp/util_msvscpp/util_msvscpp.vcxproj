@@ -171,6 +171,7 @@
     <ClInclude Include="..\xhptdc8_util_yaml.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="pch.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="ryml_src\c4\allocator.hpp" />
     <ClInclude Include="ryml_src\c4\base64.hpp" />
     <ClInclude Include="ryml_src\c4\bitmask.hpp" />
@@ -254,6 +255,9 @@
     <ClCompile Include="ryml_src\c4\yml\tree.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="util.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
