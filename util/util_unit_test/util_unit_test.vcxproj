@@ -79,25 +79,25 @@
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>..\..\lib\include;$(IncludePath)</IncludePath>
     <LibraryPath>..\..\lib\x64dummy;$(LibraryPath)</LibraryPath>
-    <OutDir>..\..\lib\x64dummy</OutDir>
+    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>..\..\lib\include;$(IncludePath)</IncludePath>
     <LibraryPath>..\..\lib\x86dummy;$(LibraryPath)</LibraryPath>
-    <OutDir>..\..\lib\x86dummy</OutDir>
+    <OutDir>$(SolutionDir)$(Configuration)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <IncludePath>..\..\lib\include;$(IncludePath)</IncludePath>
     <LibraryPath>..\..\lib\x86dummy;$(LibraryPath)</LibraryPath>
-    <OutDir>..\..\lib\x86dummy</OutDir>
+    <OutDir>$(SolutionDir)$(Configuration)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
     <IncludePath>..\..\lib\include;$(IncludePath)</IncludePath>
     <LibraryPath>..\..\lib\x64dummy;$(LibraryPath)</LibraryPath>
-    <OutDir>..\..\lib\x64dummy</OutDir>
+    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>

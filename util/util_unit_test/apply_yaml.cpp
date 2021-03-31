@@ -275,7 +275,7 @@ namespace apply_yaml
 		}
 	};
 
-	TEST_CLASS(configs_error_codes)
+	TEST_CLASS(configs)
 	{
 	public:
 		TEST_METHOD(config_manager_not_found)
@@ -355,7 +355,7 @@ namespace apply_yaml
 		}
 	};
 
-	TEST_CLASS(trigger_threshold_error_codes)
+	TEST_CLASS(trigger_threshold)
 	{
 	public:
 		TEST_METHOD(count_exceeds_max)
@@ -461,7 +461,7 @@ namespace apply_yaml
 		}
 	};
 
-	TEST_CLASS(tiger_block_error_codes)
+	TEST_CLASS(tiger_block)
 	{
 	public:
 		TEST_METHOD(invalid_mode)
@@ -520,7 +520,7 @@ namespace apply_yaml
 		}
 	};
 
-	TEST_CLASS(trigger_error_codes)
+	TEST_CLASS(trigger)
 	{
 	public:
 		TEST_METHOD(count_exceeds_max)
@@ -570,7 +570,7 @@ namespace apply_yaml
 				XHPTDC8_APPLY_YAML_INVALID_TRIGGER_STRUCT);
 		}
 	};
-	TEST_CLASS(gating_block_error_codes)
+	TEST_CLASS(gating_block)
 	{
 	public:
 		TEST_METHOD(count_exceeds_max)
@@ -611,7 +611,7 @@ namespace apply_yaml
 				XHPTDC8_APPLY_YAML_GTBLCK_INVALID_STRUCT);
 		}
 	};
-	TEST_CLASS(channel_codes)
+	TEST_CLASS(channel)
 	{
 	public:
 		TEST_METHOD(count_exceeds_max)
