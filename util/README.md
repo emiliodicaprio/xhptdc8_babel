@@ -407,6 +407,51 @@ manager_config:
   overlap : true 
 ```
 
+___________________________
+
+
+# util_unit_test Project
+
+## About
+Microsoft Visual Studio C++ Test Project to test the util library functionalities.
+Test Cases are created in the project, and are configured to test the Dummy Library, however, they can be reconfigured to run on the Driver.
+
+## Microsoft Visual Studio Project 
+The Solution and Project are created using Microsoft Visual Studio 2019
+
+### Project Environments and Configurations
+- `util` DLL is added as `Reference`
+- Project Settings -> Include Directories : `..\..\lib\include` is added.
+
+| Configuration | Environment   | Output Directory         | Linker Input    |
+| ------------- |-------------  |-----------------         | --------------- |
+| Debug         | x64           | ..\\..\\lib\\x64dummy    | xhptdc8_util.lib;xhptdc8_driver_64.lib |  
+| Release       | x64           | ..\\..\\lib\\x64dummy    | xhptdc8_util.lib;xhptdc8_driver_64.lib |  
+| Debug         | Win32         | ..\\..\\lib\\x86dummy    | xhptdc8_util.lib;xhptdc8_driver.lib    |  
+| Release       | Win32         | ..\\..\\lib\\x86dummy    | xhptdc8_util.lib;xhptdc8_driver.lib    |  
+
+### Building Using MS Visual Studio
+Nothing special, just:
+1. Using MS Visual Studio compatible version, open the solution file: `/util/util_msvscpp/util_msvscpp.sln`
+2. Select the needed _Configuration_ and _Environment_ to build.
+3. Hit _Build util_, and check the .lib & .dll files in the corresponsing directory as per the table above.
+
+## Running the Test
+Nothing special, just select the underlying test, and hit run 
+
+## Test Cases Structure & Design
+As per `namespace apply_yaml`:
+* A file (or more) is created for every util API.
+* Test Cases are divided into groups (Classes):
+- Happy Scenario 
+- Special Scenario: 
+- Functionality Scenario (e.g. tiger_block, channel, etc..).
+
+![Test Cases Tree](https://github.com/cronologic-de/xhptdc8_babel/tree/main/util/docs/yaml_reader/TestCasesTree.JPG "Test Cases Tree")
+
+___________________________
+
+
 # test_msvscpp Project
 
 ## About
