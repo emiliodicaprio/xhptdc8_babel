@@ -369,7 +369,6 @@ manager_config:
    trigger :
     0:
      rising : true
-     rising : false
 ```
 
 Then, pressing [Tab] then [Enter] using the keyboard, will display the results to be:
@@ -389,7 +388,6 @@ manager_config:
    trigger :
     0:
      rising : true
-     rising : false
 
 
 Calling xhptdc8_apply_yaml...
