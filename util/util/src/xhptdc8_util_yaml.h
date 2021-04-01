@@ -4,7 +4,7 @@
 #include "crono_interface.h"
 #include "xHPTDC8_interface.h"
 #include "xhptdc8_util.h"
-#include "ryml.hpp"
+#include ".\ryml_src\ryml.hpp"
 #include <string>
 
 int _get_node_key_name_internal(const ryml::NodeRef* pNode, std::string* buff);

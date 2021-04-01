@@ -77,26 +77,26 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>..\..\lib\include;$(IncludePath)</IncludePath>
-    <LibraryPath>..\..\lib\x64dummy;$(LibraryPath)</LibraryPath>
+    <IncludePath>..\..\lib\include;..\include;$(IncludePath)</IncludePath>
+    <LibraryPath>..\..\lib\x64dummy;..\lib\x64;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>..\..\lib\include;$(IncludePath)</IncludePath>
-    <LibraryPath>..\..\lib\x86dummy;$(LibraryPath)</LibraryPath>
+    <IncludePath>..\..\lib\include;..\include;$(IncludePath)</IncludePath>
+    <LibraryPath>..\..\lib\x86dummy;..\lib\x86;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)$(Configuration)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>..\..\lib\include;$(IncludePath)</IncludePath>
-    <LibraryPath>..\..\lib\x86dummy;$(LibraryPath)</LibraryPath>
+    <IncludePath>..\..\lib\include;..\include;$(IncludePath)</IncludePath>
+    <LibraryPath>..\..\lib\x86dummy;..\lib\x86;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)$(Configuration)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>..\..\lib\include;$(IncludePath)</IncludePath>
-    <LibraryPath>..\..\lib\x64dummy;$(LibraryPath)</LibraryPath>
+    <IncludePath>..\..\lib\include;..\include;$(IncludePath)</IncludePath>
+    <LibraryPath>..\..\lib\x64dummy;..\lib\x64;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -112,7 +112,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <AdditionalLibraryDirectories>$(VCInstallDir)UnitTest\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>xhptdc8_driver_64.lib;%(AdditionalDependencies);xhptdc8_util.lib</AdditionalDependencies>
+      <AdditionalDependencies>xhptdc8_driver_64.lib;%(AdditionalDependencies);xhptdc8_util_64.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -168,7 +168,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>$(VCInstallDir)UnitTest\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>xhptdc8_driver_64.lib;%(AdditionalDependencies);xhptdc8_util.lib</AdditionalDependencies>
+      <AdditionalDependencies>xhptdc8_driver_64.lib;%(AdditionalDependencies);xhptdc8_util_64.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -183,9 +183,13 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
+    <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\util_msvscpp\util_msvscpp\util_msvscpp.vcxproj">
+    <ResourceCompile Include="util_unit_test.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\util\util_msvscpp\util.vcxproj">
       <Project>{31a8e5ec-b39a-47ea-a602-c9dabb8a1b41}</Project>
     </ProjectReference>
   </ItemGroup>

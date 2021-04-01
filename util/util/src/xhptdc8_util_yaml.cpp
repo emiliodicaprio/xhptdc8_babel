@@ -1,4 +1,4 @@
-#include ".\util_msvscpp\pch.h"
+#include "pch.h"
 #include "xhptdc8_util_yaml.h"
 
 using namespace std;
@@ -943,7 +943,7 @@ int xhptdc8_apply_device_config_yaml(const ryml::NodeRef* device_config_node,
         device_config->auto_trigger_period, XHPTDC8_APPLY_YAML_INVALID_AUTO_TRIG_PRD);
 
     // auto_trigger_random_exponent
-    APPLY_CHILD_INTEGER_VALUE((*device_config_node), "auto_trigger_random_exponent", val > 0,
+    APPLY_CHILD_INTEGER_VALUE((*device_config_node), "auto_trigger_random_exponent", val >= 0,
         device_config->auto_trigger_random_exponent, XHPTDC8_APPLY_YAML_INVALID_AUTO_TRIG_RAND);
 
     int result;

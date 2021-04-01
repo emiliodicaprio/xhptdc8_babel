@@ -75,25 +75,25 @@
     <LinkIncremental>true</LinkIncremental>
     <TargetName>xhptdc8_util</TargetName>
     <IncludePath>..\..\include;..\..\..\lib\include;.\ryml_src;$(IncludePath)</IncludePath>
-    <OutDir>$(SolutionDir)$(Configuration)\</OutDir>
+    <OutDir>..\..\lib\x86</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <TargetName>xhptdc8_util</TargetName>
     <IncludePath>..\..\include;..\..\..\lib\include;.\ryml_src;$(IncludePath)</IncludePath>
-    <OutDir>$(SolutionDir)$(Configuration)\</OutDir>
+    <OutDir>..\..\lib\x86</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <TargetName>xhptdc8_util</TargetName>
-    <IncludePath>..\..\include;..\..\..\lib\include;.\ryml_src;.\util_msvscpp\;$(IncludePath)</IncludePath>
-    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
+    <TargetName>xhptdc8_util_64</TargetName>
+    <IncludePath>..\..\include;..\..\..\lib\include;.\ryml_src;$(IncludePath)</IncludePath>
+    <OutDir>..\..\lib\x64</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <TargetName>xhptdc8_util</TargetName>
-    <IncludePath>..\..\include;..\..\..\lib\include;.\ryml_src;.\util_msvscpp\;$(IncludePath)</IncludePath>
-    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
+    <TargetName>xhptdc8_util_64</TargetName>
+    <IncludePath>..\..\include;..\..\..\lib\include;.\ryml_src;$(IncludePath)</IncludePath>
+    <OutDir>..\..\lib\x64</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -209,55 +209,54 @@
     <ClInclude Include="ryml_src\c4\windows_push.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\xhptdc8_util_yaml.cpp">
+    <ClCompile Include="..\src\dllmain.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="dllmain.cpp" />
-    <ClCompile Include="pch.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="ryml_src\c4\base64.cpp">
+    <ClCompile Include="..\src\pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="ryml_src\c4\char_traits.cpp">
+    <ClCompile Include="..\src\ryml_src\c4\base64.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="ryml_src\c4\error.cpp">
+    <ClCompile Include="..\src\ryml_src\c4\char_traits.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="ryml_src\c4\format.cpp">
+    <ClCompile Include="..\src\ryml_src\c4\error.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="ryml_src\c4\language.cpp">
+    <ClCompile Include="..\src\ryml_src\c4\format.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="ryml_src\c4\memory_resource.cpp">
+    <ClCompile Include="..\src\ryml_src\c4\language.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="ryml_src\c4\memory_util.cpp">
+    <ClCompile Include="..\src\ryml_src\c4\memory_resource.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="ryml_src\c4\time.cpp">
+    <ClCompile Include="..\src\ryml_src\c4\memory_util.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="ryml_src\c4\yml\common.cpp">
+    <ClCompile Include="..\src\ryml_src\c4\time.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="ryml_src\c4\yml\parse.cpp">
+    <ClCompile Include="..\src\ryml_src\c4\yml\common.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="ryml_src\c4\yml\preprocess.cpp">
+    <ClCompile Include="..\src\ryml_src\c4\yml\parse.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="ryml_src\c4\yml\tree.cpp">
+    <ClCompile Include="..\src\ryml_src\c4\yml\preprocess.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\src\ryml_src\c4\yml\tree.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\src\xhptdc8_util_yaml.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="util.rc" />
+    <ResourceCompile Include="..\src\util.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

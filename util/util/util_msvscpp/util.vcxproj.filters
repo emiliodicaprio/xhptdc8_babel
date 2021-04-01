@@ -140,54 +140,54 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="dllmain.cpp">
+    <ClCompile Include="..\src\dllmain.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="pch.cpp">
+    <ClCompile Include="..\src\pch.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ryml_src\c4\yml\common.cpp">
+    <ClCompile Include="..\src\xhptdc8_util_yaml.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ryml_src\c4\yml\parse.cpp">
+    <ClCompile Include="..\src\ryml_src\c4\base64.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ryml_src\c4\yml\preprocess.cpp">
+    <ClCompile Include="..\src\ryml_src\c4\char_traits.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ryml_src\c4\yml\tree.cpp">
+    <ClCompile Include="..\src\ryml_src\c4\format.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ryml_src\c4\base64.cpp">
+    <ClCompile Include="..\src\ryml_src\c4\language.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ryml_src\c4\char_traits.cpp">
+    <ClCompile Include="..\src\ryml_src\c4\memory_resource.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ryml_src\c4\error.cpp">
+    <ClCompile Include="..\src\ryml_src\c4\memory_util.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ryml_src\c4\format.cpp">
+    <ClCompile Include="..\src\ryml_src\c4\yml\common.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ryml_src\c4\language.cpp">
+    <ClCompile Include="..\src\ryml_src\c4\yml\parse.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ryml_src\c4\memory_resource.cpp">
+    <ClCompile Include="..\src\ryml_src\c4\yml\preprocess.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ryml_src\c4\memory_util.cpp">
+    <ClCompile Include="..\src\ryml_src\c4\yml\tree.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ryml_src\c4\time.cpp">
+    <ClCompile Include="..\src\ryml_src\c4\time.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\xhptdc8_util_yaml.cpp">
+    <ClCompile Include="..\src\ryml_src\c4\error.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="util.rc">
+    <ResourceCompile Include="..\src\util.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>
   </ItemGroup>
