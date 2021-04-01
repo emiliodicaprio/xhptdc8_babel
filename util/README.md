@@ -340,7 +340,7 @@ Nothing special, just:
 3. Hit _Build util_, and check the .lib & .dll files in the corresponsing directory as per the table above.
 
 ### Running the Application
-* Make sure you have both `xhptdc8_util.dll` and `xhptdc8_driver corresponding DLL' to the application directory.
+* Make sure you have both `xhptdc8_util.dll` and `xhptdc8_driver` _corresponding DLL _ to the application directory.
 
 #### YAML Entry Testing
 Selecting the flag `-yamlentry` when running the application, as following:
