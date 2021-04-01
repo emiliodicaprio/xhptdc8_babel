@@ -25,7 +25,7 @@ env:
   X86_OUTPUT_DIR: .\util\bin\x86\
   X64_OUTPUT_DIR: .\util\bin\x64\
   X86_EXE_NAME: xhptdc8_util_test.exe
-  X64_EXE_NAME: xhptdc8_util_test_64.dll
+  X64_EXE_NAME: xhptdc8_util_test_64.exe
   
 jobs:
   build:
