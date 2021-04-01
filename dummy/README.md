@@ -42,7 +42,7 @@ The driver keeps track of how many milliseconds habe been passed since the last 
 The call returns `N=min(ms_since_last_call * 2, buffer_size)`.
 
 The buffer is filled with 'N' entries with the following data:
-````C++
+```C++
 num_calls = // the number of times *_read() has been called since *_start_capture()
 normal =    //random number with mean = 5000 and standard deviation = 30
 buffer[i+0].time = (ms_since_last_call + i) * 1000000000;
@@ -55,4 +55,55 @@ buffer[i+0].bin = 0
 buffer[i+1].bin = 0
 ```
 
+# Build Dummy DLL
+
+## Introduction
+Building the Dummy DLL code to get xHPTDC8_dummy.dll and xHPTDC8_dummy.lib for both x64 and x86 outputs of 
+
+## Build Using MSBuild 
+
+### Prerequisites
+The following are prerequisite for the Windows environment for the script to run successfully:
+1. MSBuild is installed 
+2. PowerShell is up and running 
+3. User has administrator privilege 
+4. Probably, the PowerShell Execution Policy should allow running scripts, you might need to do something like _Set-ExecutionPolicy unrestricted -scope currentuser_  
+
+### Steps 
+1. Run PowerShell as an administrator 
+2. Locate the directory where "build_ms.ps1" script is located, should be under _your repository_\xhptdc8_babel\dummy
+3. Run the script
+
+### Generated Libraries Location
+When generated successfully, the dummy libraries will be found as following:
+| File | Build | Location |
+| ---- | ----- | -------- |
+| xhptdc8_driver.dll | x86 MSBuild | _your repository_\xhptdc8_babel\dummy\msvscpp\msvscpp\Release |
+| xhptdc8_driver.dll | x86 Output  | _your repository_\xhptdc8_babel\lib\x86dummy |
+| xhptdc8_driver.lib | x86 MSBuild | _your repository_\xhptdc8_babel\dummy\msvscpp\msvscpp\Release |
+| xhptdc8_driver.lib | x86 Output  | _your repository_\xhptdc8_babel\lib\x86dummy |
+| xhptdc8_driver_64.dll | x64 MSBuild | _your repository_\xhptdc8_babel\dummy\msvscpp\msvscpp\x64\Release |
+| xhptdc8_driver_64.dll | x64 Output  | _your repository_xhptdc8_babel\lib\x64dummy |
+| xhptdc8_driver_64.lib | x64 MSBuild | _your repository_\xhptdc8_babel\dummy\msvscpp\msvscpp\x64\Release |
+| xhptdc8_driver_64.lib | x64 Output  | _your repository_\xhptdc8_babel\lib\x64dummy |
+
+## Build Using Microsoft Visual Studio
+
+### Prerequisites
+1. Microsoft Visual Studio 2019 or later is installed
+
+### Steps 
+1. Locate the directory where "xhptdc8_dummy.sln" solution file is located, should be under _your repository_\xhptdc8_babel\dummy\msvscpp
+2. Open the solution file using MS Visual Studio
+3. From MS Visual Studio, select configuration "Release" and platform "x86", then build the solution. 
+4. From MS Visual Studio, select configuration "Release" and platform "x64", then build the solution. 
+
+### Generated Libraries Location
+When generated successfully, the dummy libraries will be found as following:
+| File | Build | Location |
+| ---- | ----- | -------- |
+| xhptdc8_driver.dll | x86 | _your repository_\xhptdc8_babel\dummy\msvscpp\msvscpp\Release |
+| xhptdc8_driver.lib | x86 | _your repository_\xhptdc8_babel\dummy\msvscpp\msvscpp\Release |
+| xhptdc8_driver_64.dll | x64 | _your repository_\xhptdc8_babel\dummy\msvscpp\msvscpp\x64\Release |
+| xhptdc8_driver_64.lib | x64 | _your repository_\xhptdc8_babel\dummy\msvscpp\msvscpp\x64\Release |
 
