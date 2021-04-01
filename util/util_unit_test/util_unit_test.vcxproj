@@ -189,7 +189,7 @@
     <ResourceCompile Include="util_unit_test.rc" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\util\util_msvscpp\util.vcxproj">
+    <ProjectReference Include="..\util\msvscpp\util.vcxproj">
       <Project>{31a8e5ec-b39a-47ea-a602-c9dabb8a1b41}</Project>
     </ProjectReference>
   </ItemGroup>
