@@ -343,7 +343,12 @@ Nothing special, just:
 * Make sure you have both `xhptdc8_util.dll` and `xhptdc8_driver corresponding DLL' to the application directory.
 
 #### YAML Entry Testing
-Selecting the flag `-yamlentry` when running the application, will display the following:
+Selecting the flag `-yamlentry` when running the application, as following:
+```
+xhptdc8_util_test.exe -yamlentry
+```
+Will display the following message:
+
 ```
 -----------------------------------------------------------------------------
                  xHPTDC8 Utility Testing Application
@@ -355,7 +360,8 @@ YAML Entry.
 Please enter yaml of device configuration (4096 character maximum)
 To submit the string: press [Tab] then [Enter]:
 ```
-Entring the following:
+
+Entring the following YAML example:
 ```YAML
 manager_config:
  device_configs:
@@ -365,6 +371,7 @@ manager_config:
      rising : true
      rising : false
 ```
+
 Then, pressing [Tab] then [Enter] using the keyboard, will display the results to be:
 ```
 -----------------------------------------------------------------------------
