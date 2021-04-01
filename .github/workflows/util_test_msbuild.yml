@@ -22,8 +22,10 @@ env:
   # https://docs.github.com/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
   BUILD_CONFIGURATION: Release
   SOLUTION_FILE_PATH: .\util\util_test\msvscpp # The util library only
-  X86_OUTPUT_DIR: .\util\bin\x86\
-  X64_OUTPUT_DIR: .\util\bin\x64\
+  X86_OUTPUT_DIR: .\util\util_test\msvscpp\Release\
+  X86_REPO_EXE_PATH: .\util\bin\x86\
+  X64_OUTPUT_DIR: .\util\util_test\msvscpp\x64\Release\
+  X64_REPO_EXE_PATH: .\util\bin\x64\
   X86_EXE_NAME: xhptdc8_util_test.exe
   X64_EXE_NAME: xhptdc8_util_test_64.exe
   
@@ -53,6 +55,7 @@ jobs:
       # See https://docs.microsoft.com/visualstudio/msbuild/msbuild-command-line-reference
       run: |
         msbuild ${{env.SOLUTION_FILE_PATH}} /m /property:Configuration=Release /property:Platform=${{env.BUILD_PLATFORM}}
+        Copy-Item ${{env.X86_OUTPUT_DIR}}${{env.X86_EXE_NAME}} -Destination ${{env.X86_REPO_EXE_PATH}}
         
     - name: Commit x86 EXE
       uses: EndBug/add-and-commit@v7.0.0
@@ -67,6 +70,7 @@ jobs:
       working-directory: ${{env.GITHUB_WORKSPACE}}
       run: |
         msbuild ${{env.SOLUTION_FILE_PATH}} /m /property:Configuration=Release /property:Platform=${{env.BUILD_PLATFORM}}
+        Copy-Item ${{env.X64_OUTPUT_DIR}}${{env.X64_EXE_NAME}} -Destination ${{env.X64_REPO_EXE_PATH}}
   
     - name: Commit x64 EXE
       uses: EndBug/add-and-commit@v7.0.0
