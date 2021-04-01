@@ -7,6 +7,7 @@ on:
   push:
     paths:
     - 'dummy/**'
+    - 'lib/include/**'
 env:
   # Configuration type to build.
   # You can convert this to a build matrix if you need coverage of multiple configuration types.
