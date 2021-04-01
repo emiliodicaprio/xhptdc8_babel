@@ -304,14 +304,88 @@ Guidleines as per `namespace apply_yaml`:
 ___________________________
 
 
-# test_msvscpp Project
+# util_test_msvscpp Project
 
 ## About
 Windows Console Application that is used to provide sample code and data for calling the Utility DLL Functions
 
+```
+-----------------------------------------------------------------------------
+                 xHPTDC8 Utility Testing Application
+-----------------------------------------------------------------------------
+This program helps testing xHPTDC8 utility functions provided in "util"
+library.
+
+Command line flags:
+
+-yamlentry : allows the user to enter YAML of device configuration, and calls
+             the corresponding util API "xhptdc8_apply_yaml", then displays
+             the results. User can then validate the entered YAML syntax and
+             effect.
+
+-help      : displays this help.
+
+
+This is an open source application under Mozilla Public License 2.0
+It can be downloaded from https://github.com/cronologic-de/xhptdc8_babel
+```
 ## Microsoft Visual Studio Project 
 The Solution and Project are created using Microsoft Visual Studio 2019
 
 ### Project Environments and Configurations
 ### Building Using MS Visual Studio
+Nothing special, just:
+1. Using MS Visual Studio compatible version, open the solution file: `/util/util_msvscpp/util_msvscpp.sln`
+2. Select the needed _Configuration_ and _Environment_ to build.
+3. Hit _Build util_, and check the .lib & .dll files in the corresponsing directory as per the table above.
+
 ### Running the Application
+* Make sure you have both `xhptdc8_util.dll` and `xhptdc8_driver corresponding DLL' to the application directory.
+
+#### YAML Entry Testing
+Selecting the flag `-yamlentry` when running the application, will display the following:
+```
+-----------------------------------------------------------------------------
+                 xHPTDC8 Utility Testing Application
+-----------------------------------------------------------------------------
+This program helps testing xHPTDC8 utility functions provided in "util"
+library.
+
+YAML Entry.
+Please enter yaml of device configuration (4096 character maximum)
+To submit the string: press [Tab] then [Enter]:
+```
+Entring the following:
+```YAML
+manager_config:
+ device_configs:
+  0:
+   trigger :
+    0:
+     rising : true
+     rising : false
+```
+Then, pressing [Tab] then [Enter] using the keyboard, will display the results to be:
+```
+-----------------------------------------------------------------------------
+                 xHPTDC8 Utility Testing Application
+-----------------------------------------------------------------------------
+This program helps testing xHPTDC8 utility functions provided in "util"
+library.
+
+YAML Entry.
+Please enter yaml of device configuration (4096 character maximum)
+To submit the string: press [Tab] then [Enter]:
+manager_config:
+ device_configs:
+  0:
+   trigger :
+    0:
+     rising : true
+     rising : false
+
+
+Calling xhptdc8_apply_yaml...
+
+Applied yaml node ([0]) on conifguation (rising) boolean value (true)
+```
