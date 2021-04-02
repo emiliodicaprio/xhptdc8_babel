@@ -67,13 +67,13 @@ BEGIN
     BEGIN
         BLOCK "040904b0"
         BEGIN
-            VALUE "CompanyName", "cronologic"
+            VALUE "CompanyName", "Cronologic GmbH & Co. KG"
             VALUE "FileDescription", "Dummy Library for xhptdc8 Driver"
             VALUE "FileVersion", "1.0.0.1"
             VALUE "InternalName", "xhptdc8_dummy.dll"
             VALUE "LegalCopyright", "Copyright (C) 2021"
             VALUE "OriginalFilename", "xhptdc8_dummy.dll"
-            VALUE "ProductName", "Dummy Library for xhptdc8 Driver"
+            VALUE "ProductName", "xHPTDC8"
             VALUE "ProductVersion", "1.0.0.1"
         END
     END
