@@ -285,7 +285,7 @@ Test Cases are created in the project, and are configured to test the Dummy Libr
 
 ## Microsoft Visual Studio Project 
 The Solution and Project are created using Microsoft Visual Studio 2019. </br>
-The project structure follows [our standard project folder structure](https://github.com/cronologic-de/xhptdc8_babel/wiki/project_folder_structure).
+The project structure follows [our standard project folder structure](https://github.com/cronologic-de/xhptdc8_babel/wiki/project_folder_structure). Since it's a native VS Testing Project and has no source code, so it has no sub-folders "src" & "msvscpp".
 
 ### Project Environments and Configurations
 - `util` DLL is added as `Reference`
