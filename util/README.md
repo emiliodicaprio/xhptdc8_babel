@@ -13,12 +13,12 @@ The project structure follows [our standard project folder structure](https://gi
 - Project Settings -> Preprocessor Definitions: `XHPTDC8_UTIL_EXPORTS` is defined.
 - Project Settings -> Preprocessor Definitions: `XHPTDC8_VERBOSE_DEBUG` is defined for _Debug Configurations_ only.
 
-| Configuration | Environment   | Output Directory on Local Machine | Output Directory on github                      | Library Name    |
-| ------------- |-------------  |-----------------                  | -----------------------------------------       | --------------  |
-| Debug         | x64           | ..\\..\\..\\lib\\x64dummy\        | ..\\..\\..\\lib\x64dummy\; ..\\..\\..\\lib\x64\ | xhptdc8_util_64.dll |  
-| Release       | x64           | ..\\..\\..\\lib\\x64dummy\        | ..\\..\\..\\lib\x64dummy\; ..\\..\\..\\lib\x64\ | xhptdc8_util_64.dll |  
-| Debug         | Win32         | ..\\..\\..\\lib\\x86dummy\        | ..\\..\\..\\lib\x86dummy\; ..\\..\\..\\lib\x86\ | xhptdc8_util.dll    |  
-| Release       | Win32         | ..\\..\\..\\lib\\x86dummy\        | ..\\..\\..\\lib\x86dummy\; ..\\..\\..\\lib\x86\ | xhptdc8_util.dll    |  
+| Config. | Env.  | Output Directory on Local  | Output Directory on github                      | Library Name    |
+| ------- |------ |-----------------           | -----------------------------------------       | --------------  |
+| Debug   | x64   | ..\\..\\..\\lib\\x64dummy\ | ..\\..\\..\\lib\x64dummy\; ..\\..\\..\\lib\x64\ | xhptdc8_util_64.dll |  
+| Release | x64   | ..\\..\\..\\lib\\x64dummy\ | ..\\..\\..\\lib\x64dummy\; ..\\..\\..\\lib\x64\ | xhptdc8_util_64.dll |  
+| Debug   | Win32 | ..\\..\\..\\lib\\x86dummy\ | ..\\..\\..\\lib\x86dummy\; ..\\..\\..\\lib\x86\ | xhptdc8_util.dll    |  
+| Release | Win32 | ..\\..\\..\\lib\\x86dummy\ | ..\\..\\..\\lib\x86dummy\; ..\\..\\..\\lib\x86\ | xhptdc8_util.dll    |  
 * You can change the output directory if you want to keep both the release and debug versions of the DLL concurrently
 
 ### External Libraries
@@ -290,12 +290,12 @@ The Solution and Project are created using Microsoft Visual Studio 2019
 - `util` DLL is added as `Reference`
 - Project Settings -> Include Directories : `..\..\lib\include` is added.
 
-| Configuration | Environment   | Output Directory               | Linker Input    |
-| ------------- |-------------  |-----------------               | --------------- |
-| Debug         | x64           | VS Default Project Settings    | xhptdc8_util.lib;xhptdc8_driver_64.lib |  
-| Release       | x64           | VS Default Project Settings    | xhptdc8_util.lib;xhptdc8_driver_64.lib |  
-| Debug         | Win32         | VS Default Project Settings    | xhptdc8_util.lib;xhptdc8_driver.lib    |  
-| Release       | Win32         | VS Default Project Settings    | xhptdc8_util.lib;xhptdc8_driver.lib    |  
+| Config. | Env.  | Output Directory            | Linker Input    |
+| ------- |-----  |-----------------            | --------------- |
+| Debug   | x64   | VS Default Project Settings | xhptdc8_util.lib;xhptdc8_driver_64.lib |  
+| Release | x64   | VS Default Project Settings | xhptdc8_util.lib;xhptdc8_driver_64.lib |  
+| Debug   | Win32 | VS Default Project Settings | xhptdc8_util.lib;xhptdc8_driver.lib    |  
+| Release | Win32 | VS Default Project Settings | xhptdc8_util.lib;xhptdc8_driver.lib    |  
 
 ### Building Using MS Visual Studio
 Nothing special, just:
@@ -359,12 +359,12 @@ The Solution and Project are created using Microsoft Visual Studio 2019
 - Project Settings -> Include Directories : `..\..\..\lib\include;..\..\include;` is added.
 - `Output Directory` is left as the Visual Studio _Default_ Project Settings
 
-| Configuration | Environment   | Library Directory                    | Linker Input                           | Target Name              |
-| ------------- |-------------  | ------------------------------------ | -------------------------------------- | ------------------------ |
-| Debug         | x64           | ..\..\..\lib\x64dummy;..\..\lib\x64; | xhptdc8_util.lib;xhptdc8_driver_64.lib | xhptdc8_util_test_64.exe | 
-| Release       | x64           | ..\..\..\lib\x64dummy;..\..\lib\x64; | xhptdc8_util.lib;xhptdc8_driver_64.lib | xhptdc8_util_test_64.exe | 
-| Debug         | Win32         | ..\..\..\lib\x86dummy;..\..\lib\x86; | xhptdc8_util.lib;xhptdc8_driver.lib    | xhptdc8_util_test.exe    | 
-| Release       | Win32         | ..\..\..\lib\x86dummy;..\..\lib\x86; | xhptdc8_util.lib;xhptdc8_driver.lib    | xhptdc8_util_test.exe    | 
+| Config. | Env.   | Library Directory                       | Linker Input                           | Target Name              |
+| ------- |------  | --------------------------------------- | -------------------------------------- | ------------------------ |
+| Debug   | x64    | ..\\..\\..\lib\x64dummy;..\\..\lib\x64; | xhptdc8_util.lib;xhptdc8_driver_64.lib | xhptdc8_util_test_64.exe | 
+| Release | x64    | ..\\..\\..\lib\x64dummy;..\\..\lib\x64; | xhptdc8_util.lib;xhptdc8_driver_64.lib | xhptdc8_util_test_64.exe | 
+| Debug   | Win32  | ..\\..\\..\lib\x86dummy;..\\..\lib\x86; | xhptdc8_util.lib;xhptdc8_driver.lib    | xhptdc8_util_test.exe    | 
+| Release | Win32  | ..\\..\\..\lib\x86dummy;..\\..\lib\x86; | xhptdc8_util.lib;xhptdc8_driver.lib    | xhptdc8_util_test.exe    | 
 
 ### Building Using MS Visual Studio
 Project can be built using the following MSVS files:
@@ -376,6 +376,13 @@ Nothing special, just:
 1. Using MS Visual Studio compatible version, open the solution file: `/util/util_msvscpp/util_msvscpp.sln`
 2. Select the needed _Configuration_ and _Environment_ to build.
 3. Hit _Build util_, and check the .lib & .dll files are found in the corresponsing directory as per the table above.
+
+### github Building Action
+github [Building Action: Util Test MSBuild](https://github.com/cronologic-de/xhptdc8_babel/blob/main/.github/workflows/util_test_msbuild.yml) is created to build `util_test` project as following:
+1. Using MSBuild.
+2. It builds the code automatically with relevant code update.
+3. It builds the `Release` configuration of both `x86` and `x64` environments.
+4. It copies and checkin the output EXE files to './util/bin/x86' or './util/bin/x64' corresponding directory.
 
 ### Running the Application
 * Make sure you have both `xhptdc8_util.dll/xhptdc8_util_64.dll` and `xhptdc8_driver.dll/xhptdc8_driver_64.dll` _corresponding Platform DLL_ in the application output directory.
