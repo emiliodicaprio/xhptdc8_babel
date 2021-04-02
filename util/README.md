@@ -5,19 +5,20 @@
 Windows DLL that provides utility functionalities for xHPTDC8 Driver
 
 ## Microsoft Visual Studio Project 
-The Solution and Project are created using Microsoft Visual Studio 2019
+The Solution and Project are created using Microsoft Visual Studio 2019.</br>
+The project structure follows [our standard project folder structure](https://github.com/cronologic-de/xhptdc8_babel/wiki/project_folder_structure)
 
 ### Project Environments and Configurations
 - Project Settings -> Include Directories : `..\..\include;..\..\..\lib\include;.\ryml_src;` is added.
 - Project Settings -> Preprocessor Definitions: `XHPTDC8_UTIL_EXPORTS` is defined.
 - Project Settings -> Preprocessor Definitions: `XHPTDC8_VERBOSE_DEBUG` is defined for _Debug Configurations_ only.
 
-| Configuration | Environment   | Output Directory on Local Machine | Output Directory on github                | Library Name    |
-| ------------- |-------------  |-----------------                  | ----------------------------------------- | --------------  |
-| Debug         | x64           | ..\..\..\lib\x64dummy\            | ..\..\..\lib\x64dummy\; ..\..\..\lib\x64\ | xhptdc8_util    |  
-| Release       | x64           | ..\..\..\lib\x64dummy\            | ..\..\..\lib\x64dummy\; ..\..\..\lib\x64\ | xhptdc8_util_64 |  
-| Debug         | Win32         | ..\..\..\lib\x86dummy\            | ..\..\..\lib\x86dummy\; ..\..\..\lib\x86\ | xhptdc8_util    |  
-| Release       | Win32         | ..\..\..\lib\x86dummy\            | ..\..\..\lib\x86dummy\; ..\..\..\lib\x86\ | xhptdc8_util_64 |  
+| Configuration | Environment   | Output Directory on Local Machine | Output Directory on github                      | Library Name    |
+| ------------- |-------------  |-----------------                  | -----------------------------------------       | --------------  |
+| Debug         | x64           | ..\\..\\..\\lib\\x64dummy\        | ..\\..\\..\\lib\x64dummy\; ..\\..\\..\\lib\x64\ | xhptdc8_util    |  
+| Release       | x64           | ..\\..\\..\\lib\\x64dummy\        | ..\\..\\..\\lib\x64dummy\; ..\\..\\..\\lib\x64\ | xhptdc8_util_64 |  
+| Debug         | Win32         | ..\\..\\..\\lib\\x86dummy\        | ..\\..\\..\\lib\x86dummy\; ..\\..\\..\\lib\x86\ | xhptdc8_util    |  
+| Release       | Win32         | ..\\..\\..\\lib\\x86dummy\        | ..\\..\\..\\lib\x86dummy\; ..\\..\\..\\lib\x86\ | xhptdc8_util_64 |  
 * You can change the output directory if you want to keep both the release and debug versions of the DLL concurrently
 
 ### External Libraries
@@ -37,8 +38,10 @@ Project can be built using the following MSVS files:
 2. [Solution File: util.sln](./util/msvscpp/util.sln)
 3. [xhptdc8_util_projects Solution File: xhptdc8_util_projects.sln](./msvscpp/xhptdc8_util_projects.sln)
 
+Building the library locally is directing the output to the `dummy` corresponding output folder, as it's expected to be tested first using the `Dummy Library`. However, you can set the output directory to any other one from the project settings.
+
 Nothing special, just:
-1. Using MS Visual Studio compatible version, open the solution file: `/util/util_msvscpp/util_msvscpp.sln`
+1. Using MS Visual Studio compatible version, open one of the project or solution files mentioned above.
 2. Select the needed _Configuration_ and _Environment_ to build.
 3. Hit _Build util_, and check the .lib & .dll files in the corresponsing directory as per the table above.
 
