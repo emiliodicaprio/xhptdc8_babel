@@ -326,7 +326,7 @@ Guidleines as per `namespace apply_yaml`:
 
 ___________________________
 
-# util_test_msvscpp Project
+# util_test Project
 
 ## About
 Windows Console Application that is used to provide sample code and data for calling the Utility DLL Functions
