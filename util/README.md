@@ -1,5 +1,5 @@
 
-# util_msvscpp Project
+# util Project
 
 ## About
 Windows DLL that provides utility functionalities for xHPTDC8 Driver
@@ -12,12 +12,12 @@ The Solution and Project are created using Microsoft Visual Studio 2019
 - Project Settings -> Preprocessor Definitions: `XHPTDC8_UTIL_EXPORTS` is defined.
 - Project Settings -> Preprocessor Definitions: `XHPTDC8_VERBOSE_DEBUG` is defined for _Debug Configurations_ only.
 
-| Configuration | Environment   | Output Directory | Library Name    |
-| ------------- |-------------  |----------------- | --------------- |
-| Debug         | x64           | VS Default Project Settings    | xhptdc8_util |  
-| Release       | x64           | VS Default Project Settings    | xhptdc8_util |  
-| Debug         | Win32         | VS Default Project Settings    | xhptdc8_util |  
-| Release       | Win32         | VS Default Project Settings    | xhptdc8_util |  
+| Configuration | Environment   | Output Directory on Local Machine | Output Directory on github                | Library Name    |
+| ------------- |-------------  |-----------------                  | ----------------------------------------- | --------------  |
+| Debug         | x64           | ..\..\..\lib\x64dummy\            | ..\..\..\lib\x64dummy\; ..\..\..\lib\x64\ | xhptdc8_util    |  
+| Release       | x64           | ..\..\..\lib\x64dummy\            | ..\..\..\lib\x64dummy\; ..\..\..\lib\x64\ | xhptdc8_util_64 |  
+| Debug         | Win32         | ..\..\..\lib\x86dummy\            | ..\..\..\lib\x86dummy\; ..\..\..\lib\x86\ | xhptdc8_util    |  
+| Release       | Win32         | ..\..\..\lib\x86dummy\            | ..\..\..\lib\x86dummy\; ..\..\..\lib\x86\ | xhptdc8_util_64 |  
 * You can change the output directory if you want to keep both the release and debug versions of the DLL concurrently
 
 ### External Libraries
@@ -32,10 +32,22 @@ With the following actions:
 - External project files are set to **Precompiled Header**: _Not Using Precompiled Headers_
 
 ### Building Using MS Visual Studio
+Project can be built using the following MSVS files:
+1. [Project File: util.vcxproj](./util/msvscpp/util.vcxproj)
+2. [Solution File: util.sln](./util/msvscpp/util.sln)
+3. [xhptdc8_util_projects Solution File: xhptdc8_util_projects.sln](./msvscpp/xhptdc8_util_projects.sln)
+
 Nothing special, just:
 1. Using MS Visual Studio compatible version, open the solution file: `/util/util_msvscpp/util_msvscpp.sln`
 2. Select the needed _Configuration_ and _Environment_ to build.
 3. Hit _Build util_, and check the .lib & .dll files in the corresponsing directory as per the table above.
+
+### github Building Action
+github [Building Action: Util Library MSBuild](https://github.com/cronologic-de/xhptdc8_babel/blob/main/.github/workflows/util_msbuild.yml) is created to build `util` project as following:
+1. Using MSBuild.
+2. It builds the code automatically with relevant code update.
+3. It builds the `Release` configuration of both `x86` and `x64` environments.
+4. It copies and checkin the output DLL and LIB files to _folder Output Directory on github_ mentioned in section _Project Environments and Configurations_.
 
 ## Using the Utility Library
 
