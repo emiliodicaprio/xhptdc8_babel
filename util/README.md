@@ -1,23 +1,24 @@
 
-# util_msvscpp Project
+# util Project
 
 ## About
 Windows DLL that provides utility functionalities for xHPTDC8 Driver
 
 ## Microsoft Visual Studio Project 
-The Solution and Project are created using Microsoft Visual Studio 2019
+The Solution and Project are created using Microsoft Visual Studio 2019.</br>
+The project structure follows [our standard project folder structure](https://github.com/cronologic-de/xhptdc8_babel/wiki/project_folder_structure)
 
 ### Project Environments and Configurations
 - Project Settings -> Include Directories : `..\..\include;..\..\..\lib\include;.\ryml_src;` is added.
 - Project Settings -> Preprocessor Definitions: `XHPTDC8_UTIL_EXPORTS` is defined.
 - Project Settings -> Preprocessor Definitions: `XHPTDC8_VERBOSE_DEBUG` is defined for _Debug Configurations_ only.
 
-| Configuration | Environment   | Output Directory | Library Name    |
-| ------------- |-------------  |----------------- | --------------- |
-| Debug         | x64           | VS Default Project Settings    | xhptdc8_util |  
-| Release       | x64           | VS Default Project Settings    | xhptdc8_util |  
-| Debug         | Win32         | VS Default Project Settings    | xhptdc8_util |  
-| Release       | Win32         | VS Default Project Settings    | xhptdc8_util |  
+| Config. | Env.  | Output Directory on Local  | Output Directory on github                      | Library Name    |
+| ------- |------ |-----------------           | -----------------------------------------       | --------------  |
+| Debug   | x64   | ..\\..\\..\\lib\\x64dummy\ | ..\\..\\..\\lib\x64dummy\; ..\\..\\..\\lib\x64\ | xhptdc8_util_64.dll |  
+| Release | x64   | ..\\..\\..\\lib\\x64dummy\ | ..\\..\\..\\lib\x64dummy\; ..\\..\\..\\lib\x64\ | xhptdc8_util_64.dll |  
+| Debug   | Win32 | ..\\..\\..\\lib\\x86dummy\ | ..\\..\\..\\lib\x86dummy\; ..\\..\\..\\lib\x86\ | xhptdc8_util.dll    |  
+| Release | Win32 | ..\\..\\..\\lib\\x86dummy\ | ..\\..\\..\\lib\x86dummy\; ..\\..\\..\\lib\x86\ | xhptdc8_util.dll    |  
 * You can change the output directory if you want to keep both the release and debug versions of the DLL concurrently
 
 ### External Libraries
@@ -32,10 +33,24 @@ With the following actions:
 - External project files are set to **Precompiled Header**: _Not Using Precompiled Headers_
 
 ### Building Using MS Visual Studio
+Project can be built using the following MSVS files:
+1. [Project File: util.vcxproj](./util/msvscpp/util.vcxproj)
+2. [Solution File: util.sln](./util/msvscpp/util.sln)
+3. [xhptdc8_util_projects Solution File: xhptdc8_util_projects.sln](./msvscpp/xhptdc8_util_projects.sln)
+
+Building the library locally is directing the output to the `dummy` corresponding output folder, as it's expected to be tested first using the `Dummy Library`. However, you can set the output directory to any other one from the project settings.
+
 Nothing special, just:
-1. Using MS Visual Studio compatible version, open the solution file: `/util/util_msvscpp/util_msvscpp.sln`
+1. Using MS Visual Studio compatible version, open one of the project or solution files mentioned above.
 2. Select the needed _Configuration_ and _Environment_ to build.
 3. Hit _Build util_, and check the .lib & .dll files in the corresponsing directory as per the table above.
+
+### github Building Action
+github [Building Action: Util Library MSBuild](https://github.com/cronologic-de/xhptdc8_babel/blob/main/.github/workflows/util_msbuild.yml) is created to build `util` project as following:
+1. Using MSBuild.
+2. It builds the code automatically with relevant code update.
+3. It builds the `Release` configuration of both `x86` and `x64` environments.
+4. It copies and checkin the output DLL and LIB files to _folder Output Directory on github_ mentioned in section _Project Environments and Configurations_.
 
 ## Using the Utility Library
 
@@ -275,20 +290,28 @@ The Solution and Project are created using Microsoft Visual Studio 2019
 - `util` DLL is added as `Reference`
 - Project Settings -> Include Directories : `..\..\lib\include` is added.
 
-| Configuration | Environment   | Output Directory               | Linker Input    |
-| ------------- |-------------  |-----------------               | --------------- |
-| Debug         | x64           | VS Default Project Settings    | xhptdc8_util.lib;xhptdc8_driver_64.lib |  
-| Release       | x64           | VS Default Project Settings    | xhptdc8_util.lib;xhptdc8_driver_64.lib |  
-| Debug         | Win32         | VS Default Project Settings    | xhptdc8_util.lib;xhptdc8_driver.lib    |  
-| Release       | Win32         | VS Default Project Settings    | xhptdc8_util.lib;xhptdc8_driver.lib    |  
+| Config. | Env.  | Output Directory            | Linker Input    |
+| ------- |-----  |-----------------            | --------------- |
+| Debug   | x64   | VS Default Project Settings | xhptdc8_util.lib;xhptdc8_driver_64.lib |  
+| Release | x64   | VS Default Project Settings | xhptdc8_util.lib;xhptdc8_driver_64.lib |  
+| Debug   | Win32 | VS Default Project Settings | xhptdc8_util.lib;xhptdc8_driver.lib    |  
+| Release | Win32 | VS Default Project Settings | xhptdc8_util.lib;xhptdc8_driver.lib    |  
 
 ### Building Using MS Visual Studio
 Nothing special, just:
 1. Using MS Visual Studio compatible version, open the solution file: `/util/util_msvscpp/util_msvscpp.sln`
 2. Select the needed _Configuration_ and _Environment_ to build.
-3. Hit _Build util_, and check the .lib & .dll files in the corresponsing directory as per the table above.
+3. Hit _Build util_, and check the .lib files are found in the corresponsing directory as per the table above.
 
 ## Running the test
+### Prereuiqistes
+The following files are needed to be copied to the build _output directory_, carefully select the DLL related to the same platform you are building `util_test` for:
+1. xhptdc8_util.lib/xhptdc8_util_64.lib
+2. xhptdc8_util.dll/xhptdc8_util_64.dll
+3. xhptdc8_driver.lib/xhptdc8_driver_64.lib
+4. xhptdc8_driver.dll/xhptdc8_driver_64.dll
+
+### Run
 Nothing special, just select the underlying test, and hit run 
 
 ## Test Cases structure & design
@@ -333,14 +356,36 @@ It can be downloaded from https://github.com/cronologic-de/xhptdc8_babel
 The Solution and Project are created using Microsoft Visual Studio 2019
 
 ### Project Environments and Configurations
+- Project Settings -> Include Directories : `..\..\..\lib\include;..\..\include;` is added.
+- `Output Directory` is left as the Visual Studio _Default_ Project Settings
+
+| Config. | Env.   | Library Directory                       | Linker Input                           | Target Name              |
+| ------- |------  | --------------------------------------- | -------------------------------------- | ------------------------ |
+| Debug   | x64    | ..\\..\\..\lib\x64dummy;..\\..\lib\x64; | xhptdc8_util.lib;xhptdc8_driver_64.lib | xhptdc8_util_test_64.exe | 
+| Release | x64    | ..\\..\\..\lib\x64dummy;..\\..\lib\x64; | xhptdc8_util.lib;xhptdc8_driver_64.lib | xhptdc8_util_test_64.exe | 
+| Debug   | Win32  | ..\\..\\..\lib\x86dummy;..\\..\lib\x86; | xhptdc8_util.lib;xhptdc8_driver.lib    | xhptdc8_util_test.exe    | 
+| Release | Win32  | ..\\..\\..\lib\x86dummy;..\\..\lib\x86; | xhptdc8_util.lib;xhptdc8_driver.lib    | xhptdc8_util_test.exe    | 
+
 ### Building Using MS Visual Studio
+Project can be built using the following MSVS files:
+1. [Project File: util_test.vcxproj](./util_test/msvscpp/util_test.vcxproj)
+2. [Solution File: util_test.sln](./util_test/msvscpp/util_test.sln)
+3. [xhptdc8_util_projects Solution File: xhptdc8_util_projects.sln](./msvscpp/xhptdc8_util_projects.sln)
+
 Nothing special, just:
 1. Using MS Visual Studio compatible version, open the solution file: `/util/util_msvscpp/util_msvscpp.sln`
 2. Select the needed _Configuration_ and _Environment_ to build.
-3. Hit _Build util_, and check the .lib & .dll files in the corresponsing directory as per the table above.
+3. Hit _Build util_, and check the .lib & .dll files are found in the corresponsing directory as per the table above.
+
+### github Building Action
+github [Building Action: Util Test MSBuild](https://github.com/cronologic-de/xhptdc8_babel/blob/main/.github/workflows/util_test_msbuild.yml) is created to build `util_test` project as following:
+1. Using MSBuild.
+2. It builds the code automatically with relevant code update.
+3. It builds the `Release` configuration of both `x86` and `x64` environments.
+4. It copies and checkin the output EXE files to './util/bin/x86' or './util/bin/x64' corresponding directory.
 
 ### Running the Application
-* Make sure you have both `xhptdc8_util.dll` and `xhptdc8_driver` _corresponding DLL _ to the application directory.
+* Make sure you have both `xhptdc8_util.dll/xhptdc8_util_64.dll` and `xhptdc8_driver.dll/xhptdc8_driver_64.dll` _corresponding Platform DLL_ in the application output directory.
 
 #### YAML Entry Testing
 Selecting the flag `-yamlentry` when running the application, as following:
