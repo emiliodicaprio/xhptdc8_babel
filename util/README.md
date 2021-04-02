@@ -6,7 +6,7 @@ Windows DLL that provides utility functionalities for xHPTDC8 Driver
 
 ## Microsoft Visual Studio Project 
 The Solution and Project are created using Microsoft Visual Studio 2019.</br>
-The project structure follows [our standard project folder structure](https://github.com/cronologic-de/xhptdc8_babel/wiki/project_folder_structure)
+The project structure follows [our standard project folder structure](https://github.com/cronologic-de/xhptdc8_babel/wiki/project_folder_structure).
 
 ### Project Environments and Configurations
 - Project Settings -> Include Directories : `..\..\include;..\..\..\lib\include;.\ryml_src;` is added.
@@ -284,18 +284,20 @@ Microsoft Visual Studio C++ Test Project to test the util library functionalitie
 Test Cases are created in the project, and are configured to test the Dummy Library, however, they can be reconfigured to run on the Driver.
 
 ## Microsoft Visual Studio Project 
-The Solution and Project are created using Microsoft Visual Studio 2019
+The Solution and Project are created using Microsoft Visual Studio 2019. </br>
+The project structure follows [our standard project folder structure](https://github.com/cronologic-de/xhptdc8_babel/wiki/project_folder_structure).
 
 ### Project Environments and Configurations
 - `util` DLL is added as `Reference`
 - Project Settings -> Include Directories : `..\..\lib\include` is added.
+- `Output Directory` is left as the Visual Studio _Default_ Project Settings.
 
-| Config. | Env.  | Output Directory            | Linker Input    |
-| ------- |-----  |-----------------            | --------------- |
-| Debug   | x64   | VS Default Project Settings | xhptdc8_util.lib;xhptdc8_driver_64.lib |  
-| Release | x64   | VS Default Project Settings | xhptdc8_util.lib;xhptdc8_driver_64.lib |  
-| Debug   | Win32 | VS Default Project Settings | xhptdc8_util.lib;xhptdc8_driver.lib    |  
-| Release | Win32 | VS Default Project Settings | xhptdc8_util.lib;xhptdc8_driver.lib    |  
+| Config. | Env.  | Library Directory                       | Linker Input    |
+| ------- |-----  |-----------------                        | --------------- |
+| Debug   | x64   | ..\\..\\..\lib\x64dummy;..\\..\lib\x64; | xhptdc8_util.lib;xhptdc8_driver_64.lib |  
+| Release | x64   | ..\\..\\..\lib\x64dummy;..\\..\lib\x64; | xhptdc8_util.lib;xhptdc8_driver_64.lib |  
+| Debug   | Win32 | ..\\..\\..\lib\x86dummy;..\\..\lib\x86; | xhptdc8_util.lib;xhptdc8_driver.lib    |  
+| Release | Win32 | ..\\..\\..\lib\x86dummy;..\\..\lib\x86; | xhptdc8_util.lib;xhptdc8_driver.lib    |  
 
 ### Building Using MS Visual Studio
 Nothing special, just:
@@ -306,10 +308,8 @@ Nothing special, just:
 ## Running the test
 ### Prereuiqistes
 The following files are needed to be copied to the build _output directory_, carefully select the DLL related to the same platform you are building `util_test` for:
-1. xhptdc8_util.lib/xhptdc8_util_64.lib
-2. xhptdc8_util.dll/xhptdc8_util_64.dll
-3. xhptdc8_driver.lib/xhptdc8_driver_64.lib
-4. xhptdc8_driver.dll/xhptdc8_driver_64.dll
+1. xhptdc8_util.dll/xhptdc8_util_64.dll
+2. xhptdc8_driver.dll/xhptdc8_driver_64.dll
 
 ### Run
 Nothing special, just select the underlying test, and hit run 
@@ -325,7 +325,6 @@ Guidleines as per `namespace apply_yaml`:
 ![Test Cases Tree](https://github.com/cronologic-de/xhptdc8_babel/blob/main/util/docs/yaml_reader/TestCasesTree.JPG)
 
 ___________________________
-
 
 # util_test_msvscpp Project
 
@@ -353,11 +352,12 @@ This is an open source application under Mozilla Public License 2.0
 It can be downloaded from https://github.com/cronologic-de/xhptdc8_babel
 ```
 ## Microsoft Visual Studio Project 
-The Solution and Project are created using Microsoft Visual Studio 2019
+The Solution and Project are created using Microsoft Visual Studio 2019. </br>
+The project structure follows [our standard project folder structure](https://github.com/cronologic-de/xhptdc8_babel/wiki/project_folder_structure).
 
 ### Project Environments and Configurations
 - Project Settings -> Include Directories : `..\..\..\lib\include;..\..\include;` is added.
-- `Output Directory` is left as the Visual Studio _Default_ Project Settings
+- `Output Directory` is left as the Visual Studio _Default_ Project Settings.
 
 | Config. | Env.   | Library Directory                       | Linker Input                           | Target Name              |
 | ------- |------  | --------------------------------------- | -------------------------------------- | ------------------------ |
