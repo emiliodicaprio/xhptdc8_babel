@@ -78,8 +78,7 @@ extern "C" int xhptdc8_close(xhptdc8_manager hMgr)
 
 /*
 * Sets up the standard parameters.Gets a set of default parameters for xhptdc8_init().This must
-* cronologic GmbH& Co.KG 12 xHPTDC8 User Guide 1.8.0_draft_5 always be used 
-* to initialize the xhptdc8_init_parameter() structure.
+* always be used to initialize the xhptdc8_init_parameter() structure.
 */
 extern "C" int xhptdc8_get_default_init_parameters(xhptdc8_manager_init_parameters* init)
 {
