@@ -107,3 +107,9 @@ When generated successfully, the dummy libraries will be found as following:
 | xhptdc8_driver_64.dll | x64 | _your repository_\xhptdc8_babel\dummy\msvscpp\msvscpp\x64\Release |
 | xhptdc8_driver_64.lib | x64 | _your repository_\xhptdc8_babel\dummy\msvscpp\msvscpp\x64\Release |
 
+## github Building Action
+github Building Action: [Dummy Library MSBuild](https://github.com/cronologic-de/xhptdc8_babel/actions/workflows/dummy_msbuild.yml) is created to build dummy project as following:
+- Using MSBuild.
+- It builds the code automatically with relevant code update.
+- It builds the Release configuration of both x86 and x64 environments.
+- It copies and checkin the output x86 DLL and LIB files to `.\lib\x86dummy` and x64 DLL and LIB files to `.\lib\x64dummy`.
