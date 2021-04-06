@@ -110,7 +110,7 @@ void print_hit(TDCHit* hit) {
 	printf("\n");
 }
 
-// call read_hits() once per millisecond until there is some data or maximum waittime is reached
+// call read_hits() once per millisecond until there is some data or max count of trys
 int poll_for_hits(xhptdc8_manager xhptdc8_man, TDCHit* hit_buffer, size_t events_per_read) {
 	int trys_to_read_hits = 0;
 	while (trys_to_read_hits < MAX_TRYS_TO_READ_HITS) {
