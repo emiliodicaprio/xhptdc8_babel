@@ -39,7 +39,7 @@ int get_device_count(xhptdc8_manager xhptdc8_man) {
 int configure_xhptdc8(xhptdc8_manager xhptdc8_man, int device_count) {
 	xhptdc8_manager_configuration* mgr_cfg = new xhptdc8_manager_configuration;
 	xhptdc8_get_default_configuration(xhptdc8_man, mgr_cfg);
-	int offset = 50;
+	int general_offset = 50, epsilon = 4;
 
 	// configure all devices with an identical configuration
 	for (int device_index = 0; device_index < device_count; device_index++) {
@@ -61,6 +61,7 @@ int configure_xhptdc8(xhptdc8_manager xhptdc8_man, int device_count) {
 		// set all TiGers to create a short pulse for every auto trigger 
 		for (int block_index = 0; block_index < XHPTDC8_TDC_CHANNEL_COUNT; block_index++)
 		{
+			int channel_offset = block_index * 2;
 			mgr_cfg->device_configs[device_index].tiger_block[block_index].extend = false;
 			mgr_cfg->device_configs[device_index].tiger_block[block_index].negate = false;
 			mgr_cfg->device_configs[device_index].tiger_block[block_index].retrigger = false;
@@ -69,15 +70,15 @@ int configure_xhptdc8(xhptdc8_manager xhptdc8_man, int device_count) {
 			mgr_cfg->device_configs[device_index].tiger_block[block_index].mode = XHPTDC8_TIGER_BIPOLAR;
 
 			// every channel pulses a little later than the previous channel, for one clock cycle
-			mgr_cfg->device_configs[device_index].tiger_block[block_index].start = offset +  block_index * 2;
-			mgr_cfg->device_configs[device_index].tiger_block[block_index].stop = offset + block_index * 2 + 1;
+			mgr_cfg->device_configs[device_index].tiger_block[block_index].start = general_offset +  channel_offset;
+			mgr_cfg->device_configs[device_index].tiger_block[block_index].stop = general_offset + channel_offset + 1;
 
 			// block trigger that is outside start-stop range
 			mgr_cfg->device_configs[device_index].gating_block[block_index].negate = false;
 			mgr_cfg->device_configs[device_index].gating_block[block_index].sources = XHPTDC8_TRIGGER_SOURCE_AUTO;
 			mgr_cfg->device_configs[device_index].gating_block[block_index].mode = XHPTDC8_GATE_ON;
-			mgr_cfg->device_configs[device_index].gating_block[block_index].start = offset + (block_index* 2) - 4;
-			mgr_cfg->device_configs[device_index].gating_block[block_index].stop = offset + (block_index * 2) + 5;
+			mgr_cfg->device_configs[device_index].gating_block[block_index].start = general_offset + channel_offset - epsilon;
+			mgr_cfg->device_configs[device_index].gating_block[block_index].stop = general_offset + channel_offset + epsilon + 1;
 		}
 	}
 	return xhptdc8_configure(xhptdc8_man, mgr_cfg);
