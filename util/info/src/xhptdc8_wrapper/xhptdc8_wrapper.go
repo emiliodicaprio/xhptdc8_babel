@@ -7,6 +7,8 @@ import (
 	"unsafe"
 )
 
+type Crono_bool_t uint8
+
 //_____________________________________________________________________________
 // Global Variables
 //
@@ -14,6 +16,23 @@ const (
 	XHPTDC8_OK              = 0
 	XHPTDC8_DRIVER_DLL_NAME = "xhptdc8_driver_64.dll"
 )
+
+func Xhptdc8_get_info_by_index(api_name string, hMgr uintptr, device_index int, info_struct uintptr) (error_code uintptr, sys_err error) {
+
+	// Load the driver
+	var xhptdc8_driver = syscall.MustLoadDLL(XHPTDC8_DRIVER_DLL_NAME)
+	defer xhptdc8_driver.Release()
+
+	// Load and call the function
+	xhptdc8_func := xhptdc8_driver.MustFindProc(api_name)
+
+	error_code, _, sys_err = xhptdc8_func.Call(
+		uintptr(hMgr),
+		uintptr(device_index),
+		uintptr(info_struct))
+
+	return error_code, sys_err
+}
 
 //_____________________________________________________________________________
 // xhptdc8_manager_init_parameters
@@ -26,9 +45,9 @@ type Xhptdc8_manager_init_parameters struct {
 	Variant            int
 	Device_type        int
 	Dma_read_delay     int
-	Multiboard         uint8
-	Use_ext_clock      uint8
-	Ignore_calibration uint8
+	Multiboard         Crono_bool_t
+	Use_ext_clock      Crono_bool_t
+	Ignore_calibration Crono_bool_t
 }
 
 // DLL Function: extern "C" int xhptdc8_get_default_init_parameters(xhptdc8_manager_init_parameters* init)
@@ -127,24 +146,8 @@ type Xhptdc8_static_info struct {
 
 // extern "C" int xhptdc8_get_static_info(xhptdc8_manager hMgr, int index,
 //	xhptdc8_static_info* info)
-func Xhptdc8_get_static_info(hMgr uintptr, device_index int, info *Xhptdc8_static_info) (error_code uintptr, sys_err error) {
-
-	// Initializations
-	const API_NAME = "xhptdc8_get_static_info"
-
-	// Load the driver
-	var xhptdc8_driver = syscall.MustLoadDLL(XHPTDC8_DRIVER_DLL_NAME)
-	defer xhptdc8_driver.Release()
-
-	// Load and call the function
-	xhptdc8_func := xhptdc8_driver.MustFindProc(API_NAME)
-
-	error_code, _, sys_err = xhptdc8_func.Call(
-		uintptr(hMgr),
-		uintptr(device_index),
-		uintptr(unsafe.Pointer(info)))
-
-	return error_code, sys_err
+func Xhptdc8_get_static_info(hMgr uintptr, device_index int, static_info *Xhptdc8_static_info) (error_code uintptr, sys_err error) {
+	return Xhptdc8_get_info_by_index("xhptdc8_get_static_info", hMgr, device_index, uintptr(unsafe.Pointer(static_info)))
 }
 
 //_____________________________________________________________________________
@@ -160,24 +163,8 @@ type Xhptdc8_temperature_info struct {
 
 // extern "C" int xhptdc8_get_temperature_info(xhptdc8_manager hMgr, int index,
 // 		xhptdc8_temperature_info* info)
-func Xhptdc8_get_temperature_info(hMgr uintptr, device_index int, temp *Xhptdc8_temperature_info) (error_code uintptr, sys_err error) {
-
-	// Initializations
-	const API_NAME = "xhptdc8_get_temperature_info"
-
-	// Load the driver
-	var xhptdc8_driver = syscall.MustLoadDLL(XHPTDC8_DRIVER_DLL_NAME)
-	defer xhptdc8_driver.Release()
-
-	// Load and call the function
-	xhptdc8_func := xhptdc8_driver.MustFindProc(API_NAME)
-
-	error_code, _, sys_err = xhptdc8_func.Call(
-		uintptr(hMgr),
-		uintptr(device_index),
-		uintptr(unsafe.Pointer(temp)))
-
-	return error_code, sys_err
+func Xhptdc8_get_temperature_info(hMgr uintptr, device_index int, temp_info *Xhptdc8_temperature_info) (error_code uintptr, sys_err error) {
+	return Xhptdc8_get_info_by_index("xhptdc8_get_temperature_info", hMgr, device_index, uintptr(unsafe.Pointer(temp_info)))
 }
 
 //_____________________________________________________________________________
@@ -196,22 +183,42 @@ type Xhptdc8_fast_info struct {
 }
 
 // XHPTDC8_API int xhptdc8_get_fast_info(xhptdc8_manager hMgr, int index, xhptdc8_fast_info * info);
-func Xhptdc8_get_fast_info(hMgr uintptr, device_index int, fasr_info *Xhptdc8_fast_info) (error_code uintptr, sys_err error) {
+func Xhptdc8_get_fast_info(hMgr uintptr, device_index int, fast_info *Xhptdc8_fast_info) (error_code uintptr, sys_err error) {
+	return Xhptdc8_get_info_by_index("xhptdc8_get_fast_info", hMgr, device_index, uintptr(unsafe.Pointer(fast_info)))
+}
 
-	// Initializations
-	const API_NAME = "xhptdc8_get_fast_info"
+//_____________________________________________________________________________
+// xhptdc8_get_param_info
+// xhptdc8_param_info
 
-	// Load the driver
-	var xhptdc8_driver = syscall.MustLoadDLL(XHPTDC8_DRIVER_DLL_NAME)
-	defer xhptdc8_driver.Release()
+type Xhptdc8_param_info struct {
+	Size         int
+	Version      int
+	Binsize      float64 // Double
+	Channels     int
+	Channel_mask int
+	Total_buffer int64
+}
 
-	// Load and call the function
-	xhptdc8_func := xhptdc8_driver.MustFindProc(API_NAME)
+// extern "C" int xhptdc8_get_param_info(xhptdc8_manager hMgr, int index, xhptdc8_param_info* info)
+func Xhptdc8_get_param_info(hMgr uintptr, device_index int, param_info *Xhptdc8_param_info) (error_code uintptr, sys_err error) {
+	return Xhptdc8_get_info_by_index("xhptdc8_get_param_info", hMgr, device_index, uintptr(unsafe.Pointer(param_info)))
+}
 
-	error_code, _, sys_err = xhptdc8_func.Call(
-		uintptr(hMgr),
-		uintptr(device_index),
-		uintptr(unsafe.Pointer(fasr_info)))
+//_____________________________________________________________________________
+// xhptdc8_get_clock_info
+// xhptdc8_clock_info
 
-	return error_code, sys_err
+type Xhptdc8_clock_info struct {
+	Size          int
+	Version       int
+	Cdce_locked   Crono_bool_t
+	Cdce_version  int
+	Use_ext_clock Crono_bool_t
+	Fpga_locked   Crono_bool_t
+}
+
+// XHPTDC8_API int xhptdc8_get_clock_info(xhptdc8_manager hMgr, int index, xhptdc8_clock_info* info);
+func Xhptdc8_get_clock_info(hMgr uintptr, device_index int, clock_info *Xhptdc8_clock_info) (error_code uintptr, sys_err error) {
+	return Xhptdc8_get_info_by_index("xhptdc8_get_clock_info", hMgr, device_index, uintptr(unsafe.Pointer(clock_info)))
 }

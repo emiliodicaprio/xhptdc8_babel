@@ -6,15 +6,18 @@ import (
 	WRAPPER "xhptdc8_info/xhptdc8_wrapper"
 )
 
+//_____________________________________________________________________________
+// xhptdc8_manager_init_parameters
+
 type Xhptdc8_manager_init_parameters_brief struct {
 	Version            int   `json:"-"`
 	Buffer_size        int64 `json:"-"`
 	Variant            int
 	Device_type        int
 	Dma_read_delay     int
-	Multiboard         uint8
-	Use_ext_clock      uint8
-	Ignore_calibration uint8
+	Multiboard         WRAPPER.Crono_bool_t
+	Use_ext_clock      WRAPPER.Crono_bool_t
+	Ignore_calibration WRAPPER.Crono_bool_t
 }
 
 func Display_default_init_parameters(display_brief bool) (error_code uintptr, sys_err error) {
@@ -33,6 +36,9 @@ func Display_default_init_parameters(display_brief bool) (error_code uintptr, sy
 	}
 	return error_code, sys_err
 }
+
+//_____________________________________________________________________________
+// xhptdc8_static_info
 
 type Xhptdc8_static_info_brief struct {
 	Size                  int `json:"-"`
@@ -69,6 +75,9 @@ func Display_static_info(hMgr uintptr, device_index int, display_brief bool) (er
 	return error_code, sys_err
 }
 
+//_____________________________________________________________________________
+// xhptdc8_temperature_info_brief
+
 type Xhptdc8_temperature_info_brief struct {
 	Size    int `json:"-"`
 	Version int `json:"-"`
@@ -93,6 +102,9 @@ func Display_temperature_info(hMgr uintptr, device_index int, display_brief bool
 	return error_code, sys_err
 }
 
+//_____________________________________________________________________________
+// xhptdc8_get_fast_info
+
 type Xhptdc8_fast_info_brief struct {
 	Size             int `json:"-"`
 	Version          int `json:"-"`
@@ -116,6 +128,64 @@ func Display_fast_info(hMgr uintptr, device_index int, display_brief bool) (erro
 			formatted_struct, _ = json.MarshalIndent(info, "", "  ")
 		}
 		fmt.Println("Fast Information 'xhptdc8_fast_info'")
+		fmt.Println(string(formatted_struct))
+	}
+	return error_code, sys_err
+}
+
+//_____________________________________________________________________________
+// xhptdc8_param_info
+
+type Xhptdc8_param_info_brief struct {
+	Size         int     `json:"-"`
+	Version      int     `json:"-"`
+	Binsize      float64 // Double
+	Channels     int
+	Channel_mask int
+	Total_buffer int64
+}
+
+func Display_param_info(hMgr uintptr, device_index int, display_brief bool) (error_code uintptr, sys_err error) {
+	var info WRAPPER.Xhptdc8_param_info
+	error_code, sys_err = WRAPPER.Xhptdc8_get_param_info(hMgr, device_index, &info)
+	if error_code == WRAPPER.XHPTDC8_OK {
+		var formatted_struct []byte
+		if display_brief {
+			info_brief := (*Xhptdc8_param_info_brief)(&info)
+			formatted_struct, _ = json.MarshalIndent(info_brief, "", "  ")
+		} else {
+			formatted_struct, _ = json.MarshalIndent(info, "", "  ")
+		}
+		fmt.Println("Param Information 'Xhptdc8_param_info'")
+		fmt.Println(string(formatted_struct))
+	}
+	return error_code, sys_err
+}
+
+//_____________________________________________________________________________
+// xhptdc8_param_info
+
+type Xhptdc8_clock_info_brief struct {
+	Size          int `json:"-"`
+	Version       int `json:"-"`
+	Cdce_locked   WRAPPER.Crono_bool_t
+	Cdce_version  int
+	Use_ext_clock WRAPPER.Crono_bool_t
+	Fpga_locked   WRAPPER.Crono_bool_t
+}
+
+func Display_clock_info(hMgr uintptr, device_index int, display_brief bool) (error_code uintptr, sys_err error) {
+	var info WRAPPER.Xhptdc8_clock_info
+	error_code, sys_err = WRAPPER.Xhptdc8_get_clock_info(hMgr, device_index, &info)
+	if error_code == WRAPPER.XHPTDC8_OK {
+		var formatted_struct []byte
+		if display_brief {
+			info_brief := (*Xhptdc8_clock_info_brief)(&info)
+			formatted_struct, _ = json.MarshalIndent(info_brief, "", "  ")
+		} else {
+			formatted_struct, _ = json.MarshalIndent(info, "", "  ")
+		}
+		fmt.Println("Clock Information 'xhptdc8_param_info'")
 		fmt.Println(string(formatted_struct))
 	}
 	return error_code, sys_err
