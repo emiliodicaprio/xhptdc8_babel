@@ -10,11 +10,11 @@ import (
 // xhptdc8_manager_init_parameters
 
 type Xhptdc8_manager_init_parameters_brief struct {
-	Version            int   `json:"-"`
-	Buffer_size        int64 `json:"-"`
-	Variant            int
-	Device_type        int
-	Dma_read_delay     int
+	Version            WRAPPER.Crono_int_t `json:"-"`
+	Buffer_size        int64               `json:"-"`
+	Variant            WRAPPER.Crono_int_t
+	Device_type        WRAPPER.Crono_int_t
+	Dma_read_delay     WRAPPER.Crono_int_t
 	Multiboard         WRAPPER.Crono_bool_t
 	Use_ext_clock      WRAPPER.Crono_bool_t
 	Ignore_calibration WRAPPER.Crono_bool_t
@@ -41,21 +41,21 @@ func Display_default_init_parameters(display_brief bool) (error_code uintptr, sy
 // xhptdc8_static_info
 
 type Xhptdc8_static_info_brief struct {
-	Size                  int `json:"-"`
-	Version               int `json:"-"`
-	Board_id              int
-	Driver_revision       int
-	Driver_build_revision int
-	Firmware_revision     int
-	Board_revision        int
-	Board_configuration   int
-	Subversion_revision   int
-	Chip_id               [2]int
-	Board_serial          int
-	Flash_serial_high     uint
-	Flash_serial_low      uint
+	Size                  WRAPPER.Crono_int_t `json:"-"`
+	Version               WRAPPER.Crono_int_t `json:"-"`
+	Board_id              WRAPPER.Crono_int_t
+	Driver_revision       WRAPPER.Crono_int_t
+	Driver_build_revision WRAPPER.Crono_int_t
+	Firmware_revision     WRAPPER.Crono_int_t
+	Board_revision        WRAPPER.Crono_int_t
+	Board_configuration   WRAPPER.Crono_int_t
+	Subversion_revision   WRAPPER.Crono_int_t
+	Chip_id               [2]WRAPPER.Crono_int_t
+	Board_serial          WRAPPER.Crono_int_t
+	Flash_serial_high     WRAPPER.Crono_uint_t
+	Flash_serial_low      WRAPPER.Crono_uint_t
 	Flash_valid           byte
-	Calibration_date      [20]byte
+	Calibration_date      string
 }
 
 func Display_static_info(hMgr uintptr, device_index int, display_brief bool) (error_code uintptr, sys_err error) {
@@ -79,10 +79,10 @@ func Display_static_info(hMgr uintptr, device_index int, display_brief bool) (er
 // xhptdc8_temperature_info_brief
 
 type Xhptdc8_temperature_info_brief struct {
-	Size    int `json:"-"`
-	Version int `json:"-"`
-	Tdc     [2]float32
-	Fpga    int
+	Size    WRAPPER.Crono_int_t `json:"-"`
+	Version WRAPPER.Crono_int_t `json:"-"`
+	Tdc     [2]WRAPPER.Crono_float_t
+	Fpga    WRAPPER.Crono_int_t
 }
 
 func Display_temperature_info(hMgr uintptr, device_index int, display_brief bool) (error_code uintptr, sys_err error) {
@@ -106,14 +106,14 @@ func Display_temperature_info(hMgr uintptr, device_index int, display_brief bool
 // xhptdc8_get_fast_info
 
 type Xhptdc8_fast_info_brief struct {
-	Size             int `json:"-"`
-	Version          int `json:"-"`
-	Fpga_rpm         int
-	Alerts           int
-	Pcie_pwr_mgmt    int
-	Pcie_link_width  int
-	Pcie_max_payload int
-	State            int
+	Size             WRAPPER.Crono_int_t `json:"-"`
+	Version          WRAPPER.Crono_int_t `json:"-"`
+	Fpga_rpm         WRAPPER.Crono_int_t
+	Alerts           WRAPPER.Crono_int_t
+	Pcie_pwr_mgmt    WRAPPER.Crono_int_t
+	Pcie_link_width  WRAPPER.Crono_int_t
+	Pcie_max_payload WRAPPER.Crono_int_t
+	State            WRAPPER.Crono_int_t
 }
 
 func Display_fast_info(hMgr uintptr, device_index int, display_brief bool) (error_code uintptr, sys_err error) {
@@ -137,11 +137,11 @@ func Display_fast_info(hMgr uintptr, device_index int, display_brief bool) (erro
 // xhptdc8_param_info
 
 type Xhptdc8_param_info_brief struct {
-	Size         int     `json:"-"`
-	Version      int     `json:"-"`
-	Binsize      float64 // Double
-	Channels     int
-	Channel_mask int
+	Size         WRAPPER.Crono_int_t `json:"-"`
+	Version      WRAPPER.Crono_int_t `json:"-"`
+	Binsize      WRAPPER.Crono_double_t
+	Channels     WRAPPER.Crono_int_t
+	Channel_mask WRAPPER.Crono_int_t
 	Total_buffer int64
 }
 
@@ -166,10 +166,10 @@ func Display_param_info(hMgr uintptr, device_index int, display_brief bool) (err
 // xhptdc8_param_info
 
 type Xhptdc8_clock_info_brief struct {
-	Size          int `json:"-"`
-	Version       int `json:"-"`
+	Size          WRAPPER.Crono_int_t `json:"-"`
+	Version       WRAPPER.Crono_int_t `json:"-"`
 	Cdce_locked   WRAPPER.Crono_bool_t
-	Cdce_version  int
+	Cdce_version  WRAPPER.Crono_int_t
 	Use_ext_clock WRAPPER.Crono_bool_t
 	Fpga_locked   WRAPPER.Crono_bool_t
 }
