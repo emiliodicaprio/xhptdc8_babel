@@ -288,7 +288,7 @@ extern "C" int xhptdc8_get_static_info(xhptdc8_manager hMgr, int index,
 	if (nullptr == info)
 		return XHPTDC8_INVALID_ARGUMENTS;
 
-	info = &((xhptdc8_dummy_manager*)(hMgr))->staticInfo;
+	*info = ((xhptdc8_dummy_manager*)(hMgr))->staticInfo;
 
 	return XHPTDC8_OK;
 }
