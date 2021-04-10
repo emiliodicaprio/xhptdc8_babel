@@ -7,7 +7,7 @@ using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace apply_yaml
 {
-#define hMgr_BLOCK \
+#define hMgr_INIT_BLOCK \
 	xhptdc8_manager hMgr;	\
 	xhptdc8_manager_init_parameters* params = NULL;	\
 	int error_code;	\
@@ -16,11 +16,15 @@ namespace apply_yaml
 	xhptdc8_manager_configuration* cfg = new xhptdc8_manager_configuration;	\
 	xhptdc8_get_default_configuration(hMgr, cfg);	\
 
+#define hMgr_CLEANUP_BLOCK \
+		xhptdc8_close(hMgr);
+
 	int run_xhptdc8_apply_yaml(std::string yaml_string)
 	{
-		hMgr_BLOCK;
+		hMgr_INIT_BLOCK;
 		int apply_yaml_result = xhptdc8_apply_yaml(cfg, yaml_string.c_str());
 		delete cfg;
+		hMgr_CLEANUP_BLOCK;
 		return apply_yaml_result;
 	}
 
@@ -478,11 +482,11 @@ namespace apply_yaml
 				"     rising : true \n"
 				"     rising : false\n"
 			};
-			hMgr_BLOCK;
+			hMgr_INIT_BLOCK;
 			int apply_yaml_result = xhptdc8_apply_yaml(cfg, yaml_string.c_str());
 			crono_bool_t rising_val = cfg[0].device_configs[0].trigger[0].rising;
 			delete cfg;
-
+			hMgr_CLEANUP_BLOCK;
 			Assert::AreEqual(apply_yaml_result, 1);
 			Assert::AreEqual(rising_val, (unsigned char)1);
 		}
@@ -500,13 +504,13 @@ namespace apply_yaml
 				"    0 : \n"
 				"     rising : true\n"
 			};
-			hMgr_BLOCK;
+			hMgr_INIT_BLOCK;
 			cfg[0].device_configs[0].trigger[0].falling = 1;	// Make sure it's initialized to 'true' 
 			int apply_yaml_result = xhptdc8_apply_yaml(cfg, yaml_string.c_str());
 			crono_bool_t rising_val = cfg[0].device_configs[0].trigger[0].rising;
 			crono_bool_t falling_val = cfg[0].device_configs[0].trigger[0].falling;
 			delete cfg;
-
+			hMgr_CLEANUP_BLOCK;
 			Assert::AreEqual(apply_yaml_result, 1);
 			Assert::AreEqual(rising_val, (unsigned char)1);
 			Assert::AreEqual(falling_val, (unsigned char)1);
