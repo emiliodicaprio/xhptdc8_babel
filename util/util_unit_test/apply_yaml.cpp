@@ -12,7 +12,7 @@ namespace apply_yaml
 	xhptdc8_manager_init_parameters* params = NULL;	\
 	int error_code;	\
 	char* error_message = NULL;	\
-	xhptdc8_init(&hMgr, params, &error_code, (const char**)&error_message);	\
+	hMgr = xhptdc8_init(params, &error_code, (const char**)&error_message);	\
 	xhptdc8_manager_configuration* cfg = new xhptdc8_manager_configuration;	\
 	xhptdc8_get_default_configuration(hMgr, cfg);	\
 

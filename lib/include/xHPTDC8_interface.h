@@ -137,6 +137,8 @@
 #define XHPTDC8_DEVICE_STATE_PAUSED			CRONO_DEVICE_STATE_PAUSED
 #define XHPTDC8_DEVICE_STATE_CLOSED			CRONO_DEVICE_STATE_CLOSED
 
+// Size of are of device flash reserved for user data. 64 KiByte 
+#define XHPTDC8_USER_FLASH_SIZE 0x10000
 
 #ifdef __cplusplus
 extern "C" {
@@ -232,7 +234,7 @@ extern "C" {
 		long long time;
 
 		/*
-		For the forst in the system this 0 to 7 for the TDC channels A to H. 8 or 9 for ADC data.
+		For the first board in the system this 0 to 7 for the TDC channels A to H. 8 or 9 for ADC data.
 		Data from channels 8 and 9 should usually be treated as data from the same channel. 
 		For the other boards the channel number is incremented by board_id. 10
 		*/
@@ -1013,9 +1015,8 @@ extern "C" {
 		int auto_trigger_random_exponent;
 
 		/**
-		Set the threshold voltage for the input channels A . . .H and TRG.
+		Set the threshold voltage for the input channels A . . .H.
 		threshold[0 - 7] : threshold for channels A...H.
-		threshold[8] : threshold for channel TRG.
 		Supported range is -1.32V to +1.18V. This should be close to 50% of the height of the input pulse.
 		The inputs are AC coupled.
 		Examples for various signaling standards are defined as XHPTDC8_INPUT_BASELINE and XHPTDC8_THRESHOLD_P*.
@@ -1049,7 +1050,8 @@ extern "C" {
 
 		/*
 		Configure TDC alignemet
-		If set to 'true', skip TDC calibration. If set to 'false', do TDC calibration (default).
+		If set to 'true', the phase of the two TDC chips is not realigned when capturing is restartet.
+		If set to 'false', it will be realignemet (default).
 		Value is either 'true' or 'false'.
 		*/
 		crono_bool_t skip_alignment;
@@ -1096,7 +1098,7 @@ extern "C" {
 		/**
 		Reserved for future use.
 		*/
-		void* bin_to_ps;
+		long long(*bin_to_ps)(long long);
 
 	} xhptdc8_manager_configuration;
 
@@ -1155,15 +1157,16 @@ extern "C" {
 	/***
 	* Opens and initializes the xHPTDC8 board with the index given in init->card_index.
 	* 
-	* @param hMgr[in]. It must be initialized using xhptdc8_init().
 	* @param init[in]. A structure of type xhptdc8_init_parameters that must be completely initialized.
 	* @param error_code[out]. shall point to an integer where the driver can write the the error code. 
 	* In case of success, it is assigned the value {0}, otherwise, it is assigned the relevant error code.
 	* @param error_message[out]. must point to a pointer to char. The driver will allocate a buffer for zero terminated
 	* error message and store the address of the buffer in the location provided by the user In case of error, 
 	* it is assigned the error message.
+	* 
+	* @returns The initialized manager
 	*/
-	XHPTDC8_API void xhptdc8_init(xhptdc8_manager *p_hMgr, xhptdc8_manager_init_parameters *params, int *error_code, const char** error_message);
+	XHPTDC8_API xhptdc8_manager xhptdc8_init(xhptdc8_manager_init_parameters* params, int* error_code, const char** error_message);
 
 	/**
 	* Returns the driver version, same format as xhptdc8_static_info.driver_revision. This function does
@@ -1182,6 +1185,33 @@ extern "C" {
 	* @papram state[in] 
 	*/
 	XHPTDC8_API const char* xhptdc8_device_state_to_str(int state);
+
+	/**
+	* Read from area of device flash reserved for user data.
+	* Caller must provide buffer of given size.
+	* 
+	* @param hMgr[in]. It must be initialized using xhptdc8_init().
+	* @param index[in]. The index of the device.
+	* @param flash_data[out]. Buffer provided by the caller of given size.
+	* @param size[in]. Size of the buffer.
+	*
+	* @returns XHPTDC8_OK in case of success, or error code in case of error.
+	*/
+	XHPTDC8_API int xhptdc8_read_user_flash(xhptdc8_manager hMgr, int index, unsigned char* flash_data, size_t size);
+
+	/**
+	* Write to area of device flash reserved for user data
+	* Caller must provide buffer of given size
+	* 
+	* @param hMgr[in]. It must be initialized using xhptdc8_init().
+	* @param index[in]. The index of the device.
+	* @param flash_data[out]. Buffer provided by the caller of given size.
+	* @param size[in]. Size of the buffer.
+	*
+	* @returns XHPTDC8_OK in case of success, or error code in case of error.
+	*/
+	XHPTDC8_API int xhptdc8_write_user_flash(xhptdc8_manager hMgr, int index, unsigned char* flash_data, size_t size);
+
 
 #ifdef __cplusplus
 }

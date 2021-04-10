@@ -114,11 +114,11 @@ extern "C" int xhptdc8_get_default_init_parameters(xhptdc8_manager_init_paramete
 */										 
 const static size_t MaxErrorMessageSize = 10000;
 static char lastErrorMessage[MaxErrorMessageSize];
-extern "C" void xhptdc8_init(xhptdc8_manager* p_hMgr,
+extern "C" xhptdc8_manager xhptdc8_init(
 	xhptdc8_manager_init_parameters* params, int* error_code, const char** error_message)
 {
 	lastErrorMessage[0] = 0;
-	*p_hMgr = NULL;
+	xhptdc8_manager hMgr = NULL;
 
 	if (nullptr != error_message)
 	{
@@ -128,20 +128,20 @@ extern "C" void xhptdc8_init(xhptdc8_manager* p_hMgr,
 	{
 		*error_code = XHPTDC8_INVALID_ARGUMENTS;
 		snprintf(lastErrorMessage, MaxErrorMessageSize, ERR_MSG_INIT_FAILED_FMT, ERR_MSG_INVALID_ARGS);
-		return;
+		return NULL;
 	}
 	if (nullptr == params)
 	{
 		*error_code = XHPTDC8_INVALID_ARGUMENTS;
 		snprintf(lastErrorMessage, MaxErrorMessageSize, ERR_MSG_INIT_FAILED_FMT, ERR_MSG_INVALID_ARGS);
-		return ;
+		return NULL;
 	}
 
 	xhptdc8_dummy_manager* xhptdc8Manager = new xhptdc8_dummy_manager;
 	if (nullptr == xhptdc8Manager)
 	{
 		snprintf(lastErrorMessage, MaxErrorMessageSize, ERR_MSG_INIT_FAILED_FMT, ERR_MSG_MEMORY_ALLOC);
-		return;
+		return NULL;
 	}
 	memset(xhptdc8Manager, 0, sizeof(xhptdc8_dummy_manager));
 	
@@ -152,7 +152,8 @@ extern "C" void xhptdc8_init(xhptdc8_manager* p_hMgr,
 	if (XHPTDC8_OK == (*error_code))
 	{
 		xhptdc8Manager->state = ManagerState::INITIALIZED;
-		*p_hMgr = (xhptdc8_manager*)xhptdc8Manager;
+		hMgr = (xhptdc8_manager*)xhptdc8Manager;
+		return hMgr;
 	}
 }
 
@@ -857,4 +858,49 @@ void _set_last_error_internal(xhptdc8_manager hMgr, const char * format, ...)
 	va_start(arglist, format);
 	vsnprintf(mngr->last_error_message, mngr->MaxErrorMessageSize, format, arglist);
 	va_end(arglist);
+}
+
+int xhptdc8_read_user_flash(xhptdc8_manager hMgr, int index, unsigned char* flash_data, size_t size)
+{
+	if (!xhptdc8_is_valid_device_index(hMgr, index))
+		return XHPTDC8_INVALID_ARGUMENTS;
+
+	if (nullptr == flash_data)
+		return XHPTDC8_INVALID_ARGUMENTS;
+
+	if (size <= 0 )
+		return XHPTDC8_INVALID_ARGUMENTS;
+
+	xhptdc8_dummy_manager* mngr = (xhptdc8_dummy_manager*)(hMgr);
+	if (NULL != mngr->user_flash) {
+		memcpy(flash_data, mngr->user_flash, 
+			mngr->user_flash_size > size ? size : mngr->user_flash_size);
+		if (mngr->user_flash_size < size)
+			size = mngr->user_flash_size;
+	}
+
+	return XHPTDC8_OK;
+}
+
+int xhptdc8_write_user_flash(xhptdc8_manager hMgr, int index, unsigned char* flash_data, size_t size)
+{
+	if (!xhptdc8_is_valid_device_index(hMgr, index))
+		return XHPTDC8_INVALID_ARGUMENTS;
+
+	if (nullptr == flash_data)
+		return XHPTDC8_INVALID_ARGUMENTS;
+
+	if (size <= 0)
+		return XHPTDC8_INVALID_ARGUMENTS;
+
+	xhptdc8_dummy_manager* mngr = (xhptdc8_dummy_manager*)(hMgr);
+	if (NULL != mngr->user_flash) {
+		delete mngr->user_flash;
+		mngr->user_flash = NULL;
+	}
+	mngr->user_flash = new unsigned char[size];
+	memcpy(mngr->user_flash, flash_data, size);
+	mngr->user_flash_size = size;
+
+	return XHPTDC8_OK;
 }
