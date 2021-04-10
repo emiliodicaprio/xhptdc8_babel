@@ -49,7 +49,7 @@ extern "C" int xhptdc8_count_devices(int* error_code, const char** error_message
 
 	*error_code = 0;
 	*error_message = (char*)MSG_OK; 
-	return 1;	// One Device is supported
+	return DUMMY_DEVICES_COUNT;	// One Device is supported
 }
 
 //_____________________________________________________________________________
@@ -839,7 +839,7 @@ crono_bool_t _xhptdc8_is_valid_device_index_inernal(xhptdc8_manager hMgr, int in
 	if (!xhptdc8_is_valid_manager(hMgr))
 		return false;
 
-	if (0 != index )
+	if ((index < 0) || (index >= DUMMY_DEVICES_COUNT))
 	{
 		// No need to set the last error message, as XHPTDC8_INVALID_ARGUMENTS 
 		// should be returned by the caller

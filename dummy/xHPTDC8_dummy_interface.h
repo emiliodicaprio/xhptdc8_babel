@@ -13,6 +13,8 @@
 #define XHPTDC8_VETO_INSIDE		1
 #define XHPTDC8_VETO_OUTSIDE	2
 
+#define DUMMY_DEVICES_COUNT		1
+
 #ifdef __cplusplus
 extern "C" {
 #endif
