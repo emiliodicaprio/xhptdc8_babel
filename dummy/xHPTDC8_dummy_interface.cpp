@@ -153,8 +153,8 @@ extern "C" xhptdc8_manager xhptdc8_init(
 	{
 		xhptdc8Manager->state = ManagerState::INITIALIZED;
 		hMgr = (xhptdc8_manager*)xhptdc8Manager;
-		return hMgr;
 	}
+	return hMgr;
 }
 
 /*
