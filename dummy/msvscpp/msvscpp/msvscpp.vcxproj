@@ -82,6 +82,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <TargetName>xhptdc8_driver_64</TargetName>
+    <OutDir>C:\Users\basse\source\repos\xhptdc8_babel\util\info\src</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>

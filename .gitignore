@@ -338,3 +338,7 @@ ASALocalRun/
 
 # BeatPulse healthcheck temp database
 healthchecksdb
+util/info/src/xhptdc8_driver_64.exp
+*.lib
+*.dll
+*.lib

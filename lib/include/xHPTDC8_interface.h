@@ -1024,7 +1024,8 @@ extern "C" {
 		double trigger_threshold[XHPTDC8_TDC_CHANNEL_COUNT];
 
 		/**
-		configuration the polarity of the external trigger sources.
+		Configuration the polarity of the external trigger sources.
+		These are used as inputs for the TiGer blocks and as inputs to the time measurement unit.
 		*/
 		xhptdc8_trigger trigger[XHPTDC8_TRIGGER_COUNT];
 
@@ -1034,17 +1035,17 @@ extern "C" {
 		xhptdc8_tiger_block gating_block[XHPTDC8_GATE_COUNT];
 
 		/**
-		Configuration of the timing generator blocks.
+		Configuration of the timing generator blocks (TiGer).
 		*/
 		xhptdc8_tiger_block tiger_block[XHPTDC8_TIGER_COUNT];
 
 		/**
-		configuration the TDC channels.
+		Configuration of the TDC channels.
 		*/
 		xhptdc8_channel channel[XHPTDC8_TDC_CHANNEL_COUNT];
 
 		/**
-		configuration ADC channel.
+		Configuration of the ADC channel.
 		*/
 		xhptdc8_adc_channel adc_channel;
 
