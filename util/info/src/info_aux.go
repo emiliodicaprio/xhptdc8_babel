@@ -91,7 +91,7 @@ func display_help() {
 	msg := `
 About the application
 Command:
-  xhptdc8_info.exe [Flags]
+  xhptdc8_info.exe [TDC] [Flags]
 Usage: 
   [TDC]   is either an integer as the index of the TDC, or a serial number of the TDC
   [Flags] Can be one or more of the following flags:
@@ -191,8 +191,7 @@ func display_info() {
 		}
 		if *g_CmdLine_Flags.show_temp_info {
 			INFODSP.Display_temperature_info(g_Selected_Device_Index, *g_CmdLine_Flags.show_version_and_size)
-		}
-		if *g_CmdLine_Flags.show_temperature_info {
+		} else if *g_CmdLine_Flags.show_temperature_info {
 			INFODSP.Display_temperature_info(g_Selected_Device_Index, *g_CmdLine_Flags.show_version_and_size)
 		}
 		if !*(g_CmdLine_Flags.show_static_info) &&
