@@ -89,9 +89,8 @@ func Xhptdc8_get_default_init_parameters(init *Xhptdc8_manager_init_parameters) 
 	return error_code, sys_err
 }
 
-// XHPTDC8_API void xhptdc8_init(xhptdc8_manager *p_hMgr,
-//	 	xhptdc8_manager_init_parameters *params, int *error_code, const char** error_message);
-func Xhptdc8_init(p_hMgr *uintptr, params *Xhptdc8_manager_init_parameters, error_code *int, error_message *string) (sys_err error) {
+// XHPTDC8_API xhptdc8_manager hMgr xhptdc8_init(xhptdc8_manager_init_parameters *params, int *error_code, const char** error_message);
+func Xhptdc8_init(params *Xhptdc8_manager_init_parameters, error_code *int, error_message *string) (hMgr uintptr, sys_err error) {
 
 	// Initializations
 	const API_NAME = "xhptdc8_init"
@@ -106,24 +105,13 @@ func Xhptdc8_init(p_hMgr *uintptr, params *Xhptdc8_manager_init_parameters, erro
 	error_messagByte := '1' // Just any intialization
 	error_messageByteP := &error_messagByte
 
-	dummyVal := '1' // Just any intialization
-	*p_hMgr = (uintptr)(unsafe.Pointer(&dummyVal))
-
-	xhptdc8_func.Call(
-		uintptr(unsafe.Pointer(p_hMgr)),
+	hMgr, _, sys_err = xhptdc8_func.Call(
 		uintptr(unsafe.Pointer(params)),
 		uintptr(unsafe.Pointer(error_code)),
 		uintptr(unsafe.Pointer(&error_messageByteP)))
 
-	resultStrInBytes := *(*[1024]byte)(unsafe.Pointer(error_messageByteP))
-	(*error_message) = ""
-	for strIndex := 0; strIndex < 1024; strIndex++ {
-		if resultStrInBytes[strIndex] == 0 {
-			break
-		}
-		(*error_message) += string(resultStrInBytes[strIndex])
-	}
-	return syscall.GetLastError()
+	convert_byte_ptr_to_string(error_messageByteP, error_message)
+	return hMgr, syscall.GetLastError()
 }
 
 //_____________________________________________________________________________
@@ -141,11 +129,11 @@ type Xhptdc8_static_info struct {
 	Board_configuration   Crono_int_t
 	Subversion_revision   Crono_int_t
 	Chip_id               [2]Crono_int_t
-	Board_serial          Crono_int_t
+	Board_serial          Crono_float_t // Converted to float from 8.24
 	Flash_serial_high     Crono_uint_t
 	Flash_serial_low      Crono_uint_t
 	Flash_valid           byte
-	Calibration_date      string
+	Calibration_date      string // Converted to string from []byte
 }
 
 type Xhptdc8_static_info_C struct {
@@ -174,7 +162,7 @@ func Xhptdc8_get_static_info(hMgr uintptr, device_index int, static_info *Xhptdc
 		static_info.Board_configuration = static_info_C.Board_configuration
 		static_info.Board_id = static_info_C.Board_id
 		static_info.Board_revision = static_info_C.Board_revision
-		static_info.Board_serial = static_info_C.Board_serial
+		static_info.Board_serial = (Crono_float_t)(fixed824_to_float(static_info_C.Board_serial))
 		convert_byte_array_to_string(static_info_C.Calibration_date[:], &static_info.Calibration_date) // Conversion
 		static_info.Chip_id = static_info_C.Chip_id
 		static_info.Driver_build_revision = static_info_C.Driver_build_revision
@@ -261,4 +249,55 @@ type Xhptdc8_clock_info struct {
 // XHPTDC8_API int xhptdc8_get_clock_info(xhptdc8_manager hMgr, int index, xhptdc8_clock_info* info);
 func Xhptdc8_get_clock_info(hMgr uintptr, device_index int, clock_info *Xhptdc8_clock_info) (error_code uintptr, sys_err error) {
 	return xhptdc8_get_info_by_index("xhptdc8_get_clock_info", hMgr, device_index, uintptr(unsafe.Pointer(clock_info)))
+}
+
+//_____________________________________________________________________________
+// xhptdc8_count_devices
+
+// extern "C" int xhptdc8_count_devices(int* error_code, const char** error_message)
+func Xhptdc8_count_devices(error_code *int, error_message *string) (devices_count uintptr, sys_err error) {
+
+	// Initializations
+	const API_NAME = "xhptdc8_count_devices"
+
+	// Load the driver
+	var xhptdc8_driver = syscall.MustLoadDLL(XHPTDC8_DRIVER_DLL_NAME)
+	defer xhptdc8_driver.Release()
+
+	// Load and call the function
+	xhptdc8_func := xhptdc8_driver.MustFindProc(API_NAME)
+
+	error_messagByte := '1' // Just any intialization
+	error_messageByteP := &error_messagByte
+
+	devices_count, _, sys_err = xhptdc8_func.Call(
+		uintptr(unsafe.Pointer(error_code)),
+		uintptr(unsafe.Pointer(&error_messageByteP)))
+
+	if devices_count >= 1 {
+		convert_byte_ptr_to_string(error_messageByteP, error_message)
+	}
+	return devices_count, sys_err
+}
+
+//_____________________________________________________________________________
+// xhptdc8_close
+
+// extern "C" XHPTDC8_API int xhptdc8_close(xhptdc8_manager hMgr);
+func Xhptdc8_close(hMgr uintptr) (err_code uintptr, sys_err error) {
+
+	// Initializations
+	const API_NAME = "xhptdc8_close"
+
+	// Load the driver
+	var xhptdc8_driver = syscall.MustLoadDLL(XHPTDC8_DRIVER_DLL_NAME)
+	defer xhptdc8_driver.Release()
+
+	// Load and call the function
+	xhptdc8_func := xhptdc8_driver.MustFindProc(API_NAME)
+
+	err_code, _, sys_err = xhptdc8_func.Call(
+		uintptr(hMgr))
+
+	return err_code, sys_err
 }
