@@ -48,16 +48,16 @@ type Xhptdc8_manager_init_parameters_brief struct {
 Prerequisites:
   init_golobals() is called, and g_hMgr is valid
 */
-func Display_default_init_parameters(display_brief bool) (error_code uintptr, sys_err error) {
+func Display_default_init_parameters(show_details bool) (error_code uintptr, sys_err error) {
 	var init WRAPPER.Xhptdc8_manager_init_parameters
 	error_code, sys_err = WRAPPER.Xhptdc8_get_default_init_parameters(&init)
 	if error_code == WRAPPER.XHPTDC8_OK {
 		var formatted_struct []byte
-		if display_brief {
+		if show_details {
+			formatted_struct, _ = json.MarshalIndent(init, "", "  ")
+		} else {
 			init_brief := (*Xhptdc8_manager_init_parameters_brief)(&init)
 			formatted_struct, _ = json.MarshalIndent(init_brief, "", "  ")
-		} else {
-			formatted_struct, _ = json.MarshalIndent(init, "", "  ")
 		}
 		fmt.Println("Default Initialization Parameters 'xhptdc8_manager_init_parameters'")
 		fmt.Println(string(formatted_struct))
@@ -90,18 +90,18 @@ type Xhptdc8_static_info_brief struct {
 Prerequisites:
   init_golobals() is called, and g_hMgr is valid
 */
-func Display_static_info(device_index int, display_brief bool) (error_code uintptr, sys_err error) {
+func Display_static_info(device_index int, show_details bool) (error_code uintptr, sys_err error) {
 	var info WRAPPER.Xhptdc8_static_info
 	error_code, sys_err = WRAPPER.Xhptdc8_get_static_info(g_hMgr, device_index, &info)
 	if error_code == WRAPPER.XHPTDC8_OK {
 		var formatted_struct []byte
-		if display_brief {
+		if show_details {
+			formatted_struct, _ = json.MarshalIndent(info, "", "  ")
+		} else {
 			info_brief := (*Xhptdc8_static_info_brief)(&info)
 			formatted_struct, _ = json.MarshalIndent(info_brief, "", "  ")
-		} else {
-			formatted_struct, _ = json.MarshalIndent(info, "", "  ")
 		}
-		fmt.Println("static_info of xHPTDC8 serial", Get_device_serial(device_index), "at index", device_index)
+		fmt.Println("static_info of xHPTDC8 serial", Get_device_serial(device_index), "at index", device_index, ":")
 		fmt.Println(string(formatted_struct))
 	}
 	return error_code, sys_err
@@ -121,18 +121,18 @@ type Xhptdc8_temperature_info_brief struct {
 Prerequisites:
   init_golobals() is called, and g_hMgr is valid
 */
-func Display_temperature_info(device_index int, display_brief bool) (error_code uintptr, sys_err error) {
+func Display_temperature_info(device_index int, show_details bool) (error_code uintptr, sys_err error) {
 	var info WRAPPER.Xhptdc8_temperature_info
 	error_code, sys_err = WRAPPER.Xhptdc8_get_temperature_info(g_hMgr, device_index, &info)
 	if error_code == WRAPPER.XHPTDC8_OK {
 		var formatted_struct []byte
-		if display_brief {
+		if show_details {
+			formatted_struct, _ = json.MarshalIndent(info, "", "  ")
+		} else {
 			info_brief := (*Xhptdc8_temperature_info_brief)(&info)
 			formatted_struct, _ = json.MarshalIndent(info_brief, "", "  ")
-		} else {
-			formatted_struct, _ = json.MarshalIndent(info, "", "  ")
 		}
-		fmt.Println("temperature_info of xHPTDC8 serial", Get_device_serial(device_index), "at index", device_index)
+		fmt.Println("temperature_info of xHPTDC8 serial", Get_device_serial(device_index), "at index", device_index, ":")
 		fmt.Println(string(formatted_struct))
 	}
 	return error_code, sys_err
@@ -156,18 +156,18 @@ type Xhptdc8_fast_info_brief struct {
 Prerequisites:
   init_golobals() is called, and g_hMgr is valid
 */
-func Display_fast_info(device_index int, display_brief bool) (error_code uintptr, sys_err error) {
+func Display_fast_info(device_index int, show_details bool) (error_code uintptr, sys_err error) {
 	var info WRAPPER.Xhptdc8_fast_info
 	error_code, sys_err = WRAPPER.Xhptdc8_get_fast_info(g_hMgr, device_index, &info)
 	if error_code == WRAPPER.XHPTDC8_OK {
 		var formatted_struct []byte
-		if display_brief {
+		if show_details {
+			formatted_struct, _ = json.MarshalIndent(info, "", "  ")
+		} else {
 			info_brief := (*Xhptdc8_fast_info_brief)(&info)
 			formatted_struct, _ = json.MarshalIndent(info_brief, "", "  ")
-		} else {
-			formatted_struct, _ = json.MarshalIndent(info, "", "  ")
 		}
-		fmt.Println("fast_info of xHPTDC8 serial", Get_device_serial(device_index), "at index", device_index)
+		fmt.Println("fast_info of xHPTDC8 serial", Get_device_serial(device_index), "at index", device_index, ":")
 		fmt.Println(string(formatted_struct))
 	}
 	return error_code, sys_err
@@ -189,18 +189,18 @@ type Xhptdc8_param_info_brief struct {
 Prerequisites:
   init_golobals() is called, and g_hMgr is valid
 */
-func Display_param_info(device_index int, display_brief bool) (error_code uintptr, sys_err error) {
+func Display_param_info(device_index int, show_details bool) (error_code uintptr, sys_err error) {
 	var info WRAPPER.Xhptdc8_param_info
 	error_code, sys_err = WRAPPER.Xhptdc8_get_param_info(g_hMgr, device_index, &info)
 	if error_code == WRAPPER.XHPTDC8_OK {
 		var formatted_struct []byte
-		if display_brief {
+		if show_details {
+			formatted_struct, _ = json.MarshalIndent(info, "", "  ")
+		} else {
 			info_brief := (*Xhptdc8_param_info_brief)(&info)
 			formatted_struct, _ = json.MarshalIndent(info_brief, "", "  ")
-		} else {
-			formatted_struct, _ = json.MarshalIndent(info, "", "  ")
 		}
-		fmt.Println("param_info of xHPTDC8 serial", Get_device_serial(device_index), "at index", device_index)
+		fmt.Println("param_info of xHPTDC8 serial", Get_device_serial(device_index), "at index", device_index, ":")
 		fmt.Println(string(formatted_struct))
 	}
 	return error_code, sys_err
@@ -222,18 +222,18 @@ type Xhptdc8_clock_info_brief struct {
 Prerequisites:
   init_golobals() is called, and g_hMgr is valid
 */
-func Display_clock_info(device_index int, display_brief bool) (error_code uintptr, sys_err error) {
+func Display_clock_info(device_index int, show_details bool) (error_code uintptr, sys_err error) {
 	var info WRAPPER.Xhptdc8_clock_info
 	error_code, sys_err = WRAPPER.Xhptdc8_get_clock_info(g_hMgr, device_index, &info)
 	if error_code == WRAPPER.XHPTDC8_OK {
 		var formatted_struct []byte
-		if display_brief {
+		if show_details {
+			formatted_struct, _ = json.MarshalIndent(info, "", "  ")
+		} else {
 			info_brief := (*Xhptdc8_clock_info_brief)(&info)
 			formatted_struct, _ = json.MarshalIndent(info_brief, "", "  ")
-		} else {
-			formatted_struct, _ = json.MarshalIndent(info, "", "  ")
 		}
-		fmt.Println("clock_info of xHPTDC8 serial", Get_device_serial(device_index), "at index", device_index)
+		fmt.Println("clock_info of xHPTDC8 serial", Get_device_serial(device_index), "at index", device_index, ":")
 		fmt.Println(string(formatted_struct))
 	}
 	return error_code, sys_err

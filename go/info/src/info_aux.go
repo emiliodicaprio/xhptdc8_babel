@@ -106,6 +106,7 @@ Usage:
           -clock        show clock_info
           -all          show all infos structures
           -h            show this help
+          -d            output requested data in JSON only with no headers
 
 `
 	fmt.Println(msg)
@@ -126,7 +127,7 @@ func process_command_line() (err_code int) {
 	g_CmdLine_Flags.show_param_info = flag.Bool("param", false, "show param_info")
 	g_CmdLine_Flags.show_clock_info = flag.Bool("clock", false, "show clock_info")
 	g_CmdLine_Flags.show_all_info = flag.Bool("all", false, "show all infos structures")
-	g_CmdLine_Flags.output_json_only = flag.Bool("d", false, "output requested data in JSON only")
+	g_CmdLine_Flags.output_json_only = flag.Bool("d", false, "output requested data in JSON only with no headers")
 	flag.Parse()
 
 	if *(g_CmdLine_Flags.tdc) != "" {
