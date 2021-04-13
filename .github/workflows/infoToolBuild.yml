@@ -11,7 +11,11 @@ on:
     
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
-  
+
+env: 
+  SOLUTION_FILE_PATH: .\go\info\src-cgo\
+  COMMIT_MSG: 'Internal build due to Util code change' 
+
 jobs:
   build:
     runs-on: windows-latest
@@ -20,8 +24,6 @@ jobs:
          shell: powershell
          
     env: 
-          SOLUTION_FILE_PATH: .\go\info\src-cgo\
-          COMMIT_MSG: 'Internal build due to Util code change' 
           X64_EXE_NAME: xhptdc8_info_64.exe
           X64_EXE_REPO_PATH: .\go\bin\x64\
           
@@ -34,6 +36,10 @@ jobs:
     - name: Checkout Code
       uses: actions/checkout@v2
       
+    - name: Test Run
+      run: |
+        go run .\go\info\src-cgo\xhptdc8_info.go .\go\info\src-cgo\info_aux.go
+        
     - name: Build 64 
       run: |
         go build -o ${{env.SOLUTION_FILE_PATH}${{env.X64_EXE_NAME}} ${{env.SOLUTION_FILE_PATH}xhptdc8_info.go ${{env.SOLUTION_FILE_PATH}info_aux.go
