@@ -133,38 +133,39 @@ func process_command_line() (err_code int) {
 	//*g_CmdLine_Flags.tdc = "0"
 	//*g_CmdLine_Flags.show_temp_info = true
 
-	if *(g_CmdLine_Flags.tdc) != "" {
-		tdc_arg := *(g_CmdLine_Flags.tdc)
-		if tdc_arg_f, err := strconv.ParseFloat(tdc_arg, 32); err == nil {
-			if strings.Contains(tdc_arg, ".") {
-				// Serial Number
-				g_Selected_Device_Index = -1
-				for device_index := 0; device_index < g_Devices_Count; device_index++ {
-					if g_Devices_Serials[device_index].Serial == float32(tdc_arg_f) {
-						g_Selected_Device_Index = device_index
-					}
-				}
-				if g_Selected_Device_Index == -1 {
-					fmt.Println("Error: Serial number entered <", tdc_arg, ">", "is not found.")
-					return -1
-				}
-				// fmt.Println("Board serial selected is: <", tdc_arg, "> of index <", g_Selected_Device_Index, ">")
-			} else {
-				// Indix is entered as the first argument
-				if int(tdc_arg_f) > g_Devices_Count || int(tdc_arg_f) < 0 {
-					fmt.Println("Error: Board index entered <", tdc_arg, "> is out of bound.")
-					return -1
-				}
-				g_Selected_Device_Index = int(tdc_arg_f)
-				// fmt.Println("Board index selected is: <", g_Selected_Device_Index, ">")
-			}
-		} else {
-			fmt.Println("Error: Invalid first argument <", tdc_arg, ">.")
-		}
-	} else {
+	if *(g_CmdLine_Flags.tdc) == "" {
 		// No command line arguments
 		fmt.Println("Info: No device selected.")
 		return 0
+	}
+	tdc_arg := *(g_CmdLine_Flags.tdc)
+	var tdc_arg_f float64
+	var err error
+	if tdc_arg_f, err = strconv.ParseFloat(tdc_arg, 32); err != nil {
+		fmt.Println("Error: Invalid first argument <", tdc_arg, ">, Error: ", err)
+		return -1
+	}
+	if strings.Contains(tdc_arg, ".") {
+		// Serial Number is entered
+		g_Selected_Device_Index = -1
+		for device_index := 0; device_index < g_Devices_Count; device_index++ {
+			if g_Devices_Serials[device_index].Serial == float32(tdc_arg_f) {
+				g_Selected_Device_Index = device_index
+			}
+		}
+		if g_Selected_Device_Index == -1 {
+			fmt.Println("Error: Serial number entered <", tdc_arg, ">", "is not found.")
+			return -1
+		}
+		// fmt.Println("Board serial selected is: <", tdc_arg, "> of index <", g_Selected_Device_Index, ">")
+	} else {
+		// Indix is entered as a number
+		if int(tdc_arg_f) > g_Devices_Count || int(tdc_arg_f) < 0 {
+			fmt.Println("Error: Board index entered <", tdc_arg, "> is out of bound.")
+			return -1
+		}
+		g_Selected_Device_Index = int(tdc_arg_f)
+		// fmt.Println("Board index selected is: <", g_Selected_Device_Index, ">")
 	}
 	return 1
 }
@@ -174,41 +175,42 @@ Prerequisites:
   init_golobals() is called
 */
 func display_info() {
-	if *(g_CmdLine_Flags.tdc) != "" {
-		if *g_CmdLine_Flags.show_all_info {
-			*g_CmdLine_Flags.show_static_info = true
-			*g_CmdLine_Flags.show_temp_info = true
-			*g_CmdLine_Flags.show_temperature_info = true
-			*g_CmdLine_Flags.show_fast_info = true
-			*g_CmdLine_Flags.show_param_info = true
-			*g_CmdLine_Flags.show_clock_info = true
-		}
-		if *g_CmdLine_Flags.show_clock_info {
-			INFODSP.Display_clock_info(g_Selected_Device_Index, *g_CmdLine_Flags.show_version_and_size, *g_CmdLine_Flags.output_json_only)
-		}
-		if *g_CmdLine_Flags.show_fast_info {
-			INFODSP.Display_fast_info(g_Selected_Device_Index, *g_CmdLine_Flags.show_version_and_size, *g_CmdLine_Flags.output_json_only)
-		}
-		if *g_CmdLine_Flags.show_param_info {
-			INFODSP.Display_param_info(g_Selected_Device_Index, *g_CmdLine_Flags.show_version_and_size, *g_CmdLine_Flags.output_json_only)
-		}
-		if *g_CmdLine_Flags.show_static_info {
-			INFODSP.Display_static_info(g_Selected_Device_Index, *g_CmdLine_Flags.show_version_and_size, *g_CmdLine_Flags.output_json_only)
-		}
-		if *g_CmdLine_Flags.show_temp_info {
-			INFODSP.Display_temperature_info(g_Selected_Device_Index, *g_CmdLine_Flags.show_version_and_size, *g_CmdLine_Flags.output_json_only)
-		} else if *g_CmdLine_Flags.show_temperature_info {
-			INFODSP.Display_temperature_info(g_Selected_Device_Index, *g_CmdLine_Flags.show_version_and_size, *g_CmdLine_Flags.output_json_only)
-		}
-		if !*(g_CmdLine_Flags.show_static_info) &&
-			!*(g_CmdLine_Flags.show_temp_info) &&
-			!*(g_CmdLine_Flags.show_temperature_info) &&
-			!*(g_CmdLine_Flags.show_fast_info) &&
-			!*(g_CmdLine_Flags.show_param_info) &&
-			!*(g_CmdLine_Flags.show_clock_info) {
+	if *(g_CmdLine_Flags.tdc) == "" {
+		return
+	}
+	if *g_CmdLine_Flags.show_all_info {
+		*g_CmdLine_Flags.show_static_info = true
+		*g_CmdLine_Flags.show_temp_info = true
+		*g_CmdLine_Flags.show_temperature_info = true
+		*g_CmdLine_Flags.show_fast_info = true
+		*g_CmdLine_Flags.show_param_info = true
+		*g_CmdLine_Flags.show_clock_info = true
+	}
+	if *g_CmdLine_Flags.show_clock_info {
+		INFODSP.Display_clock_info(g_Selected_Device_Index, *g_CmdLine_Flags.show_version_and_size, *g_CmdLine_Flags.output_json_only)
+	}
+	if *g_CmdLine_Flags.show_fast_info {
+		INFODSP.Display_fast_info(g_Selected_Device_Index, *g_CmdLine_Flags.show_version_and_size, *g_CmdLine_Flags.output_json_only)
+	}
+	if *g_CmdLine_Flags.show_param_info {
+		INFODSP.Display_param_info(g_Selected_Device_Index, *g_CmdLine_Flags.show_version_and_size, *g_CmdLine_Flags.output_json_only)
+	}
+	if *g_CmdLine_Flags.show_static_info {
+		INFODSP.Display_static_info(g_Selected_Device_Index, *g_CmdLine_Flags.show_version_and_size, *g_CmdLine_Flags.output_json_only)
+	}
+	if *g_CmdLine_Flags.show_temp_info {
+		INFODSP.Display_temperature_info(g_Selected_Device_Index, *g_CmdLine_Flags.show_version_and_size, *g_CmdLine_Flags.output_json_only)
+	} else if *g_CmdLine_Flags.show_temperature_info {
+		INFODSP.Display_temperature_info(g_Selected_Device_Index, *g_CmdLine_Flags.show_version_and_size, *g_CmdLine_Flags.output_json_only)
+	}
+	if !*(g_CmdLine_Flags.show_static_info) &&
+		!*(g_CmdLine_Flags.show_temp_info) &&
+		!*(g_CmdLine_Flags.show_temperature_info) &&
+		!*(g_CmdLine_Flags.show_fast_info) &&
+		!*(g_CmdLine_Flags.show_param_info) &&
+		!*(g_CmdLine_Flags.show_clock_info) {
 
-			INFODSP.Display_static_info(g_Selected_Device_Index, *g_CmdLine_Flags.show_version_and_size, *g_CmdLine_Flags.output_json_only)
-		}
+		INFODSP.Display_static_info(g_Selected_Device_Index, *g_CmdLine_Flags.show_version_and_size, *g_CmdLine_Flags.output_json_only)
 	}
 }
 

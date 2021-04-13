@@ -1,3 +1,7 @@
+/**
+Utility functions used by xhptdc8_display_info package
+*/
+
 package xhptdc8_info_display
 
 import "unsafe"

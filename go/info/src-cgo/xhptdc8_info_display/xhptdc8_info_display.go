@@ -1,8 +1,12 @@
+/**
+Functions that wrap and call the xhptdc8_driver APIs
+*/
+
 package xhptdc8_info_display
 
 /*
 	#cgo CFLAGS:  -Wall -g -I../../../../lib/include/
-	#cgo LDFLAGS: -static -L./ -l:../xhptdc8_driver_64.lib
+	#cgo LDFLAGS: -static -L./ -l:../../../../lib/x64dummy/xhptdc8_driver_64.lib
 	#include "xhptdc8_interface.h"
 */
 import "C"
