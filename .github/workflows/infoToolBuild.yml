@@ -1,0 +1,47 @@
+name: Info Tool Build
+
+# Controls when the action will run. 
+on:
+  # Triggers the workflow on push or pull request events but only for the main branch
+  push:
+    branches: [ main ]
+    paths:
+      - 'info/go/info/src-cgo/**'
+      - 'lib/include/**'
+    
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+env:
+  SOLUTION_FILE_PATH: .\go\info\src-cgo\
+  COMMIT_MSG: 'Internal build due to Util code change' 
+  
+jobs:
+  build:
+    runs-on: windows-latest
+    defaults:
+       run:
+         shell: powershell
+    env: 
+          X64_EXE_NAME: xhptdc8_info_64.exe
+          X64_EXE_REPO_PATH: .\go\bin\x64\
+          
+    steps:
+    - name: Install Go
+      uses: actions/setup-go@v2
+      with:
+        go-version: '1.16.x' # The Go version to download (if necessary) and use.
+
+    - name: Checkout Code
+      uses: actions/checkout@v2
+      
+    - name: Build 64 
+      run: |
+        go build -o ${{env.SOLUTION_FILE_PATH}${{env.X64_EXE_NAME}} ${{env.SOLUTION_FILE_PATH}xhptdc8_info.go ${{env.SOLUTION_FILE_PATH}info_aux.go
+        Copy-Item ${{env.SOLUTION_FILE_PATH}${{env.X64_EXE_NAME}} -Destination ${{env.X64_EXE_REPO_PATH}}
+        
+    - name: Commit x64 EXE
+      uses: EndBug/add-and-commit@v7.0.0
+      with:
+          author_name: Internal Workflow Action
+          message: ${{env.COMMIT_MSG}}
+          add: ${{env.X64_EXE_REPO_PATH}}${{env.X64_EXE_NAME}} --force
