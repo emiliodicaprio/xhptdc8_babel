@@ -11,9 +11,6 @@ on:
     
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
-env:
-  SOLUTION_FILE_PATH: .\go\info\src-cgo\
-  COMMIT_MSG: 'Internal build due to Util code change' 
   
 jobs:
   build:
@@ -21,7 +18,10 @@ jobs:
     defaults:
        run:
          shell: powershell
+         
     env: 
+          SOLUTION_FILE_PATH: .\go\info\src-cgo\
+          COMMIT_MSG: 'Internal build due to Util code change' 
           X64_EXE_NAME: xhptdc8_info_64.exe
           X64_EXE_REPO_PATH: .\go\bin\x64\
           
