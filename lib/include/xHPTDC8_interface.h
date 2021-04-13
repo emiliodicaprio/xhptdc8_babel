@@ -159,6 +159,7 @@ extern "C" {
 
 	// Handle to manager information struct
 	typedef void* xhptdc8_manager;
+	xhptdc8_manager INVALID_HMGR = NULL;
 
 	/**
 	struct for the initialization of the xTDC8Manager. 
@@ -706,7 +707,7 @@ extern "C" {
 	* @param hMgr[in]. It must be initialized using xhptdc8_init().
 	* @param index[in]. The index of the device.
 	*/
-	XHPTDC8_API const char* xhptdc8_get_last_error_message(xhptdc8_manager hMgr, int index = -1);
+	XHPTDC8_API const char* xhptdc8_get_last_error_message(xhptdc8_manager hMgr, int index/* = -1*/);
 	
 	/**
 	* Returns the type of the device as CRONO_DEVICE_XHPTDC8.

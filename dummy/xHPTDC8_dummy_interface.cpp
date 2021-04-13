@@ -171,8 +171,8 @@ int init_static_info_internal(xhptdc8_static_info* info)
 	info->board_revision = 0;
 	info->board_configuration = 0;
 	info->subversion_revision = 0;
-	info->chip_id[0] = 0;
-	info->chip_id[1] = 0;
+	info->chip_id[0] = 32784;
+	info->chip_id[1] = 32784;
 	info->board_serial = 354133472; // 21.108 in 8.24 Format
 	info->flash_serial_high = 0;
 	info->flash_serial_low = 0;
