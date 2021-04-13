@@ -2,7 +2,7 @@
 # Info-Tool
 
 ## About
-It's a programm that provides _human readable output_ on the TDCs available in the system.
+It's a program that provides _human readable output_ on the TDCs available in the system.
 
 ## Source Code Project 
 The project files are created as [Go](https://golang.org/) files.
