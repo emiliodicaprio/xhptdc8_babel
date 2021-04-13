@@ -1,5 +1,14 @@
 package main
 
+/**
+Package:
+- Generate the executable file.
+- Process the command line.
+- Display the general information.
+- Call the Driver APIs wrapper `INFODSP "xhptdc8_info/xhptdc8_info_display"`.
+
+Refer to https://github.com/cronologic-de/xhptdc8_babel/edit/main/go/info/src-cgo/README.md for more information.
+*/
 func main() {
 	// Initialize the driver
 	if init_globals() == -1 {

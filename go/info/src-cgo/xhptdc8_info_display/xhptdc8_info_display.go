@@ -5,8 +5,8 @@ Functions that wrap and call the xhptdc8_driver APIs
 package xhptdc8_info_display
 
 /*
-	#cgo CFLAGS:  -Wall -g -I../../../../lib/include/
-	#cgo LDFLAGS: -static -L./ -l:../../../../lib/x64dummy/xhptdc8_driver_64.lib
+	#cgo CFLAGS: -Wall -g -I../../../../lib/include/
+	#cgo LDFLAGS: -L./ -l:../../../../lib/x64dummy/xhptdc8_driver_64.lib
 	#include "xhptdc8_interface.h"
 */
 import "C"
@@ -72,24 +72,6 @@ type Xhptdc8_static_info struct {
 	Flash_serial_low      Crono_uint_t
 	Flash_valid           byte
 	Calibration_date      string // Converted to string from []byte
-}
-
-type Xhptdc8_static_info_C struct {
-	Size                  Crono_int_t
-	Version               Crono_int_t
-	Board_id              Crono_int_t
-	Driver_revision       Crono_int_t
-	Driver_build_revision Crono_int_t
-	Firmware_revision     Crono_int_t
-	Board_revision        Crono_int_t
-	Board_configuration   Crono_int_t
-	Subversion_revision   Crono_int_t
-	Chip_id               [2]Crono_int_t
-	Board_serial          Crono_int_t
-	Flash_serial_high     Crono_uint_t
-	Flash_serial_low      Crono_uint_t
-	Flash_valid           byte
-	Calibration_date      [20]byte
 }
 
 type Xhptdc8_static_info_brief struct {
