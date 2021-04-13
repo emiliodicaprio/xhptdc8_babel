@@ -42,9 +42,9 @@ import "C"
 #### Steps
 1. 
 ```CMD
-go build .\xhptdc8_info.go .\info_aux.go
+go build -o xhptdc8_info_64.exe .\xhptdc8_info.go .\info_aux.go
 ```
-2. Run `xhptdc8_info.exe` (generated from previous step)
+2. Run `xhptdc8_info_64.exe` (generated from previous step)
 
 N.B. I used go version go1.16.2 windows/amd64.
 
