@@ -39,7 +39,7 @@ jobs:
     - name: Test Run
       run: |
         cd go\inf\src-cgo
-        go run .\go\info\src-cgo\xhptdc8_info.go .\go\info\src-cgo\info_aux.go
+        go run .\xhptdc8_info.go .\info_aux.go
         
     - name: Build 64 
       run: |
