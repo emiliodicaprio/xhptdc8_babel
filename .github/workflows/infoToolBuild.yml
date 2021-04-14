@@ -25,7 +25,7 @@ jobs:
          
     env: 
           X64_EXE_NAME: xhptdc8_info_64.exe
-          X64_EXE_REPO_PATH: .\go\bin\x64\
+          X64_EXE_REPO_PATH: ..\..\bin\x64\
           
     steps:
     - name: Install Go
@@ -35,16 +35,13 @@ jobs:
 
     - name: Checkout Code
       uses: actions/checkout@v2
-      
-    - name: Test Run
-      run: |
-        cd go\info\src-cgo
-        go build .\xhptdc8_info.go .\info_aux.go
-        
+              
     - name: Build 64 
       run: |
-        go build -o ${{env.SOLUTION_FILE_PATH}}${{env.X64_EXE_NAME}} ${{env.SOLUTION_FILE_PATH}}xhptdc8_info.go ${{env.SOLUTION_FILE_PATH}}info_aux.go
-        Copy-Item ${{env.SOLUTION_FILE_PATH}}${{env.X64_EXE_NAME}} -Destination ${{env.X64_EXE_REPO_PATH}}
+        cd go\info\src-cgo
+        go build -o ${{env.X64_EXE_NAME}} .\xhptdc8_info.go .\info_aux.go
+        ls
+        Copy-Item ${{env.X64_EXE_NAME}} -Destination ${{env.X64_EXE_REPO_PATH}}
         
     - name: Commit x64 EXE
       uses: EndBug/add-and-commit@v7.0.0
