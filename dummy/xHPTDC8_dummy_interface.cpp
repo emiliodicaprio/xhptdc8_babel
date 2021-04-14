@@ -313,7 +313,6 @@ extern "C" int xhptdc8_get_temperature_info(xhptdc8_manager hMgr, int index,
 	info->version = XHPTDC8_TEMP_INFO_VERSION;
 	info->tdc[0] = (float)(46.3);
 	info->tdc[1] = (float)(46.3);
-	info->fpga = 65;
 
 	return XHPTDC8_OK;
 }
