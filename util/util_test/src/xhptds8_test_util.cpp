@@ -42,6 +42,11 @@ int main(int argc,  char* argv[])
 	int count;
 
 	// Display each command-line argument.
+	if (1 == argc)
+	{
+		display_about();
+		return 0;
+	}
 	for (count = 1; count < argc; count++)
 	{
 		if (!strcmp(argv[count], "-help"))
@@ -84,7 +89,7 @@ int test_apply_yaml(char* src)
 	xhptdc8_manager_init_parameters* params = NULL;
 	int error_code;
 	char* error_message = NULL;
-	xhptdc8_init(&hMgr, params, &error_code, (const char**)&error_message);
+	hMgr = xhptdc8_init(params, &error_code, (const char**)&error_message);
 	xhptdc8_manager_configuration* cfg = new xhptdc8_manager_configuration;
 	xhptdc8_get_default_configuration(hMgr, cfg);
 	int results = xhptdc8_apply_yaml(cfg, src);

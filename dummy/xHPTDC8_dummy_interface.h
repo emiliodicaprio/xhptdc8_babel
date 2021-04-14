@@ -13,6 +13,8 @@
 #define XHPTDC8_VETO_INSIDE		1
 #define XHPTDC8_VETO_OUTSIDE	2
 
+#define DUMMY_DEVICES_COUNT		1
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -35,25 +37,30 @@ extern "C" {
 		int state;
 		xhptdc8_manager_configuration p_mgr_cfg;
 		/*
-		* In Milliseconds
+		In Milliseconds
 		*/
 		long start_capture_time;
 		/*
-		* Saves time captured because of call of pause() or stop()
+		Saves time captured because of call of pause() or stop()
 		*/
 		long captured_stored_time;
 		/*
-		* Number of calls to xhptdc8_read_hits()
-		* How many times *_read() has been called.
+		Number of calls to xhptdc8_read_hits()
+		How many times *_read() has been called.
 		*/
 		long read_hits_count;
 		/*
-		* Timestamp of calling *_read() function
+		Timestamp of calling *_read() function
 		*/
 		long last_read_time;
 
 		const static size_t MaxErrorMessageSize = 10000;
 		char last_error_message[MaxErrorMessageSize];
+
+		// Board user flash
+		unsigned char* user_flash = NULL;
+		// Board user flash size
+		int user_flash_size = 0;
 	} ;
 
 	const char* InvalidDevMgr = "Invalid device manager!";

@@ -9,6 +9,8 @@
 #ifndef CRONO_COMMON_INTERFACE_H
 #define CRONO_COMMON_INTERFACE_H
 
+#include "stdint.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -35,7 +37,7 @@ extern "C" {
 #define CRONO_INTERNAL_ERROR				15
 #define CRONO_CALIBRATION_FAILURE			16
 #define CRONO_INVALID_ARGUMENTS             17
-#define crono_bool_t unsigned char
+#define crono_bool_t uint8_t
 
 #define CRONO_PACKET_TYPE_8_BIT_SIGNED 0
 #define CRONO_PACKET_TYPE_16_BIT_SIGNED 1
@@ -90,29 +92,29 @@ extern "C" {
 	} crono_device;
 
 	typedef struct {
-		unsigned char channel;
-		unsigned char card;
-		unsigned char type;
-		unsigned char flags;
-		unsigned int length;
-		__int64 timestamp;
-		unsigned __int64 data[1];
+		uint8_t channel;
+		uint8_t card;
+		uint8_t type;
+		uint8_t flags;
+		uint8_t length;
+		int64_t timestamp;
+		uint64_t data[1];
 	} crono_packet;
 
 	typedef struct {
-		unsigned char channel;
-		unsigned char card;
-		unsigned char type;
-		unsigned char flags;
-		unsigned int length;
-		__int64 timestamp;
+		uint8_t channel;
+		uint8_t card;
+		uint8_t type;
+		uint8_t flags;
+		uint32_t length;
+		int64_t timestamp;
 	} crono_packet_only_timestamp;
 
 #define crono_packet_data_length(current) ((current)->type &128?0:(current)->length)
 
 #define crono_packet_bytes(current) ((crono_packet_data_length(current) + 2) * 8)
 
-#define crono_next_packet(current) ((volatile crono_packet*) (((__int64) (current)) +( ((current)->type&128?0:(current)->length) + 2) * 8))
+#define crono_next_packet(current) ((volatile crono_packet*) (((int64_t) (current)) +( ((current)->type&128?0:(current)->length) + 2) * 8))
 
 	/*! \ingroup defread
 	*/
