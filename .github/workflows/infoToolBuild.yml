@@ -36,11 +36,11 @@ jobs:
     - name: Checkout Code
       uses: actions/checkout@v2
               
+    # In the build, cd into the folder to avoid 'Not in GOROOT' error, then cd back again
     - name: Build 64 
       run: |
-        cd go\info\src-cgo
+        cd go\info\src-cgo 
         go build -o ${{env.X64_EXE_NAME}} .\xhptdc8_info.go .\info_aux.go
-        ls
         cd ..\..\..\       
         Copy-Item ${{env.SOLUTION_FILE_PATH}}${{env.X64_EXE_NAME}} -Destination ${{env.X64_EXE_REPO_PATH}}
         
