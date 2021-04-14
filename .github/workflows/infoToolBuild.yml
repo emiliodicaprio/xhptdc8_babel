@@ -38,6 +38,7 @@ jobs:
       
     - name: Test Run
       run: |
+        ls
         go run .\go\info\src-cgo\xhptdc8_info.go .\go\info\src-cgo\info_aux.go
         
     - name: Build 64 
