@@ -98,6 +98,7 @@ int test_apply_yaml(char* src)
 		xhptdc8_configure(hMgr, cfg);
 	}
 	delete cfg;
+	xhptdc8_close(hMgr);
 	return results;
 
 }
