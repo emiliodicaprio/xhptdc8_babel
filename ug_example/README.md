@@ -26,6 +26,11 @@ The Solution and Project are created using Microsoft Visual Studio 2019, as a Co
 | Release       | Win32         | ug_example_msvscpp\Release | xhptdc8_driver.lib | ..\\..\\..\\lib\\x86 | 
 | ReleaseDummy  | Win32         | ug_example_msvscpp\ReleaseDummy | xhptdc8_driver.lib | ..\\..\\..\\lib\\x86dummy | 
 
+### Debug|x64
+For this build sepcifically, a post-build action is added to faciliated the debugging:
+```CMD
+copy "..\..\..\lib\x64\xhptdc8_driver_64.dll" "$(TargetDir)"
+```
 ## Building Using MS Visual Studio
 Nothing special, just:
 1. Using MS Visual Studio compatible version, open the solution file: `\ug_example_msvscpp\ug_example_msvscpp.sln`
