@@ -350,5 +350,5 @@ func Get_devices_count() (devices_count int) {
 }
 
 func Clean_up() {
-	//$$
+	C.xhptdc8_close(g_hMgr)
 }

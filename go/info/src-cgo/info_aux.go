@@ -239,3 +239,7 @@ func display_devices_static_infos() {
 	}
 	fmt.Println()
 }
+
+func clean_up() {
+	INFODSP.Clean_up()
+}

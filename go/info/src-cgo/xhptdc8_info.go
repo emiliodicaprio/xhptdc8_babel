@@ -25,6 +25,7 @@ func main() {
 		display_devices_serials()
 		display_help()
 		display_footer()
+		clean_up()
 		return
 	case 0:
 		// No valid TDC passed in command line
@@ -33,6 +34,7 @@ func main() {
 		display_help()
 		display_devices_static_infos()
 		display_footer()
+		clean_up()
 		return
 	}
 	if !(*g_CmdLine_Flags.output_json_only) {
@@ -43,4 +45,5 @@ func main() {
 	if !(*g_CmdLine_Flags.output_json_only) {
 		display_footer()
 	}
+	clean_up()
 }
