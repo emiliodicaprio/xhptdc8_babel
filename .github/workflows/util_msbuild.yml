@@ -9,6 +9,9 @@ on:
     - 'util/util/**'
     - 'lib/include/**'
     
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+    
 env:
   # Configuration type to build.
   # You can convert this to a build matrix if you need coverage of multiple configuration types.
