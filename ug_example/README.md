@@ -27,7 +27,7 @@ The Solution and Project are created using Microsoft Visual Studio 2019, as a Co
 | ReleaseDummy  | Win32         | ug_example_msvscpp\ReleaseDummy | xhptdc8_driver.lib | ..\\..\\..\\lib\\x86dummy | 
 
 ### Debug|x64
-For this build sepcifically, a post-build action is added to faciliate the debugging:
+For this build sepcifically, a post-build action is added to facilitate the debugging:
 ```CMD
 copy "..\..\..\lib\x64\xhptdc8_driver_64.dll" "$(TargetDir)"
 ```
