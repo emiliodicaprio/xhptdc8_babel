@@ -72,6 +72,7 @@ jobs:
     - name: Configure CGO to x86
       run: |
         set GOARCH=386
+        go env GOOS GOARCH CGO_ENABLED CC
 
     - name: Display Versions 
       run: |
