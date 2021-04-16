@@ -21,7 +21,7 @@ jobs:
     runs-on: windows-latest
     defaults:
        run:
-         shell: powershell
+         shell: cmd
          
     env: 
           X64_EXE_NAME: xhptdc8_info_64.exe
