@@ -25,7 +25,7 @@ jobs:
          
     env: 
           X64_EXE_NAME: xhptdc8_info_64.exe
-          X64_EXE_REPO_PATH: ./go/bin/x64/
+          X64_EXE_REPO_PATH: .\go\bin\x64\
           X86_EXE_NAME: xhptdc8_info.exe
           X86_EXE_REPO_PATH: ./go/bin/x86/
           
