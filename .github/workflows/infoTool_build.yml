@@ -78,7 +78,8 @@ jobs:
       run: |
         set GOARCH=386
         set GOGCCFLAGS=-m32 -mthreads -fmessage-length=0 -fdebug-prefix-map=C:\Users\RUNNER~1\AppData\Local\Temp\go-build3768696574=/tmp/go-build -gno-record-gcc-switches
-        go env GOOS GOARCH CGO_ENABLED CC
+        go env GOOS GOARCH CGO_ENABLED CC GOGCCFLAGS
+        gcc --version
         cd go\info\src-cgo 
         go build -o ${{env.X86_EXE_NAME}} .\xhptdc8_info.go .\info_aux.go
         cd ..\..\..\       
