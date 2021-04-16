@@ -2,8 +2,8 @@
 // Header file containing structs and #defines commonly used by header files of derived CRONO device classes
 // The current driver version for Ndigo devices is 1.4.3.0
 // The current driver version for xTDC4/TimeTagger4 devices is 1.4.1
-// The current driver version for xHPTDC8 devices is 0.1.0.0
-// The current driver version for Ndigo6G devices is 0.1.0.0
+// The current driver version for xHPTDC8 devices is 0.18.0.x
+// The current driver version for Ndigo6G devices is 0.1.0.x
 //
 
 #ifndef CRONO_COMMON_INTERFACE_H
@@ -16,14 +16,14 @@ extern "C" {
 #endif
 
 
-	/** All ERRORS must be positive, because the upper byte is used by crono_tools */
+/** All ERRORS must be positive, because the upper byte is used by crono_tools */
 #define CRONO_OK							0
 #define CRONO_WINDRIVER_NOT_FOUND			1
 #define CRONO_DEVICE_NOT_FOUND				2
 #define CRONO_NOT_INITIALIZED				3
-	/* when a capture on a closed card is called */
+/* when a capture on a closed card is called */
 #define CRONO_WRONG_STATE					4
-	/* The pointer given to a xtdc4 driver function was not a valid pointer */
+/* The pointer given to a xtdc4 driver function was not a valid pointer */
 #define CRONO_INVALID_DEVICE				5
 #define CRONO_BUFFER_ALLOC_FAILED			6
 #define CRONO_TDC_NO_EDGE_FOUND				7
@@ -37,7 +37,6 @@ extern "C" {
 #define CRONO_INTERNAL_ERROR				15
 #define CRONO_CALIBRATION_FAILURE			16
 #define CRONO_INVALID_ARGUMENTS             17
-#define crono_bool_t uint8_t
 
 #define CRONO_PACKET_TYPE_8_BIT_SIGNED 0
 #define CRONO_PACKET_TYPE_16_BIT_SIGNED 1
@@ -81,6 +80,9 @@ extern "C" {
 #define CRONO_DEVICE_STATE_CAPTURING	3
 #define CRONO_DEVICE_STATE_PAUSED		4
 #define CRONO_DEVICE_STATE_CLOSED		5
+
+// data type used for boolean values in data structures
+	typedef uint8_t crono_bool_t;
 
 	/* Contains all user changeable settings*/
 	typedef struct {
