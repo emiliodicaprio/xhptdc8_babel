@@ -32,6 +32,9 @@ jobs:
       uses: actions/setup-go@v2
       with:
         go-version: '1.16.x' # The Go version to download (if necessary) and use.
+        
+    - name: GCC Version
+      run: gcc --version 
     
     - name: Set up MinGW
       uses: egor-tensin/setup-mingw@v2
@@ -41,7 +44,8 @@ jobs:
     - name: Go Var
       run: go env       
 
-    - name: ENV Var
-      run: set %PATH% 
-      
+    - name: GCC Version
+      run: gcc --version 
+
+     
  
