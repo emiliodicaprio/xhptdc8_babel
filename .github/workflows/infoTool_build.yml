@@ -61,7 +61,7 @@ jobs:
       with:
           author_name: Internal Workflow Action
           message: ${{env.COMMIT_MSG}}
-          add: ${{env.X64_EXE_REPO_PATH}}${{env.X64_EXE_NAME}}
+          add: ${{env.X64_EXE_REPO_PATH}}${{env.X64_EXE_NAME}} --force
 
     # Build x86 Version 
     # Install gcc 686
