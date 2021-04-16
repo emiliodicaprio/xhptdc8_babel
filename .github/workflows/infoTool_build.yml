@@ -69,11 +69,6 @@ jobs:
       with:
         platform: x86
 
-    - name: Configure CGO to x86
-      run: |
-        set GOARCH=386
-        go env GOOS GOARCH CGO_ENABLED CC
-
     - name: Display Versions 
       run: |
         go env GOOS GOARCH CGO_ENABLED CC
@@ -82,6 +77,8 @@ jobs:
     # In the build, cd into the folder to avoid 'Not in GOROOT' error, then cd back again
     - name: Build 86
       run: |
+        set GOARCH=386 
+        go env GOOS GOARCH CGO_ENABLED CC
         cd go\info\src-cgo 
         go build -o ${{env.X86_EXE_NAME}} .\xhptdc8_info.go .\info_aux.go
         cd ..\..\..\       
