@@ -15,6 +15,7 @@ static char ERR_MSG_INVALID_MANAGER[27] =		{ "Manager is invalid!" };
 static char ERR_MSG_INIT_FAILED_FMT[39] =		{ "xtdc8Manager initialization failed: %s" };
 static char ERR_MSG_INVALID_ARGS[18] =			{ "invalid arguments" };
 static char ERR_MSG_MEMORY_ALLOC[18] =			{ "memory allocation" };
+static char ERR_MSG_DEVICE_NOT_READY_TRIG[39] = { "Device not ready for software trigger!" };
 
 #endif // !XHPTDC8_RESOURCE_H
 

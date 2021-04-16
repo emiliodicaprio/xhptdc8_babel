@@ -903,3 +903,17 @@ int xhptdc8_write_user_flash(xhptdc8_manager hMgr, int index, unsigned char* fla
 
 	return XHPTDC8_OK;
 }
+
+extern "C" int xhptdc8_software_trigger(xhptdc8_manager hMgr, int index) 
+{
+	if (!xhptdc8_is_valid_device_index(hMgr, index))
+		return XHPTDC8_INVALID_ARGUMENTS;
+
+	xhptdc8_dummy_manager* mngr = (xhptdc8_dummy_manager*)(hMgr);
+	if ((mngr->state != ManagerState::CREATED) || (mngr->state != ManagerState::CLOSED))
+	{
+		snprintf(lastErrorMessage, MaxErrorMessageSize, ERR_MSG_DEVICE_NOT_READY_TRIG, XHPTDC8_WRONG_STATE);
+		return XHPTDC8_WRONG_STATE;
+	}
+	return XHPTDC8_OK;
+}
