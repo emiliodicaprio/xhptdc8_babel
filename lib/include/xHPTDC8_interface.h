@@ -189,7 +189,7 @@ extern "C" {
 
 	// Handle to manager information struct
 	typedef void* xhptdc8_manager;
-	//xhptdc8_manager INVALID_HMGR = NULL;
+	xhptdc8_manager INVALID_HMGR = NULL;
 
 	/**
 	* struct for the initialization of the xHPTDC8Manager.
