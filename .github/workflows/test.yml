@@ -33,8 +33,15 @@ jobs:
       with:
         go-version: '1.16.x' # The Go version to download (if necessary) and use.
     
+    - name: Set up MinGW
+      uses: egor-tensin/setup-mingw@v2
+      with:
+        platform: x86
+ 
+    - name: Go Var
+      run: go env       
+
     - name: ENV Var
       run: set %PATH% 
       
-    - name: Go Var
-      run: go env       
+ 
