@@ -50,8 +50,8 @@ jobs:
         go build -o ${{env.X64_EXE_NAME}} .\xhptdc8_info.go .\info_aux.go
         cd ..\..\..\       
     
-    - name: Copy exe to repository
-      run: Copy-Item ${{env.SOLUTION_FILE_PATH}}${{env.X64_EXE_NAME}} -Destination ${{env.X64_EXE_REPO_PATH}}
+    - name: Copy x64 EXE to Repository
+      run: copy ${{env.SOLUTION_FILE_PATH}}${{env.X64_EXE_NAME}} ${{env.X64_EXE_REPO_PATH}}
         
     - name: Commit x64 EXE
       uses: EndBug/add-and-commit@v7.0.0
@@ -82,7 +82,7 @@ jobs:
         cd go\info\src-cgo 
         go build -o ${{env.X86_EXE_NAME}} .\xhptdc8_info.go .\info_aux.go
         cd ..\..\..\       
-        Copy-Item ${{env.SOLUTION_FILE_PATH}}${{env.X86_EXE_NAME}} -Destination ${{env.X86_EXE_REPO_PATH}}
+        Copy ${{env.SOLUTION_FILE_PATH}}${{env.X86_EXE_NAME}} ${{env.X86_EXE_REPO_PATH}}
         
     - name: Commit x86 EXE
       uses: EndBug/add-and-commit@v7.0.0
