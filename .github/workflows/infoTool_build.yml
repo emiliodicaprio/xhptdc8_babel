@@ -10,7 +10,7 @@ on:
       - 'lib/include/**'
     
   # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
+  # workflow_dispatch:
 
 env: 
   SOLUTION_FILE_PATH: .\go\info\src-cgo\
