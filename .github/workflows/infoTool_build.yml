@@ -74,6 +74,9 @@ jobs:
         go env GOOS GOARCH CGO_ENABLED CC
         gcc --version
         
+    - name: List GOOS GOARCH
+      run: go tool dist list
+      
     # In the build, cd into the folder to avoid 'Not in GOROOT' error, then cd back again
     - name: Build 86
       run: |
