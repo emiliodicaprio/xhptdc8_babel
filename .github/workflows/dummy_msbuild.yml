@@ -60,14 +60,14 @@ jobs:
       with:
           author_name: Internal Workflow Action
           message: ${{env.COMMIT_MSG}}
-          add: ${{env.X86_REPO_LIB_PTH_COMMIT}}${{env.X86_DUMMY_DLL_NAME}}
+          add: ${{env.X86_REPO_LIB_PTH_COMMIT}}${{env.X86_DUMMY_DLL_NAME}} --force
 
     - name: Commit x86 Lib
       uses: EndBug/add-and-commit@v7.0.0
       with:
           author_name: Internal Workflow Action
           message: ${{env.COMMIT_MSG}}
-          add: ${{env.X86_REPO_LIB_PTH_COMMIT}}${{env.X86_DUMMY_LIB_NAME}}
+          add: ${{env.X86_REPO_LIB_PTH_COMMIT}}${{env.X86_DUMMY_LIB_NAME}} --force
 
     - name: Build Release x64
       env:
@@ -83,11 +83,11 @@ jobs:
       with:
           author_name: Internal Workflow Action
           message: ${{env.COMMIT_MSG}}
-          add: ${{env.X64_REPO_LIB_PTH_COMMIT}}${{env.X64_DUMMY_DLL_NAME}}
+          add: ${{env.X64_REPO_LIB_PTH_COMMIT}}${{env.X64_DUMMY_DLL_NAME}} --force
           
     - name: Commit x64 Lib
       uses: EndBug/add-and-commit@v7.0.0
       with:
           author_name: Internal Workflow Action
           message: ${{env.COMMIT_MSG}}
-          add: ${{env.X64_REPO_LIB_PTH_COMMIT}}${{env.X64_DUMMY_LIB_NAME}} 
+          add: ${{env.X64_REPO_LIB_PTH_COMMIT}}${{env.X64_DUMMY_LIB_NAME}} --force
