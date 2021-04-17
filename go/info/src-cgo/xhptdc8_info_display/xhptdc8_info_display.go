@@ -47,7 +47,7 @@ func Init_globals() (err_code int) {
 	var error_code C.int
 	var error_message *C.char
 	g_hMgr = C.xhptdc8_init(&params, &error_code, &error_message)
-	if g_hMgr == C.INVALID_HMGR {
+	if unsafe.Pointer(g_hMgr) == nil {
 		fmt.Println("Error initializing the device:", error_code, error_message)
 		return -1
 	}
