@@ -10,11 +10,11 @@ on:
       - 'lib/include/**'
     
   # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
+  # workflow_dispatch:
 
 env: 
   SOLUTION_FILE_PATH: .\go\info\src-cgo\
-  COMMIT_MSG: 'Internal build due to Util code change' 
+  COMMIT_MSG: 'Internal build due to code change' 
 
 jobs:
   build:
@@ -27,7 +27,7 @@ jobs:
           X64_EXE_NAME: xhptdc8_info_64.exe
           X64_EXE_REPO_PATH: .\go\bin\x64\
           X86_EXE_NAME: xhptdc8_info.exe
-          X86_EXE_REPO_PATH: ./go/bin/x86/
+          X86_EXE_REPO_PATH: .\go\bin\x86\
           
     steps:
     - name: Install Go
@@ -44,14 +44,17 @@ jobs:
       uses: actions/checkout@v2
               
     # In the build, cd into the folder to avoid 'Not in GOROOT' error, then cd back again
-    - name: Build 64 
+    - name: Build 64 EXE
       run: |
         cd go\info\src-cgo 
         go build -o ${{env.X64_EXE_NAME}} .\xhptdc8_info.go .\info_aux.go
         cd ..\..\..\       
     
     - name: Copy x64 EXE to Repository
-      run: copy ${{env.SOLUTION_FILE_PATH}}${{env.X64_EXE_NAME}} ${{env.X64_EXE_REPO_PATH}}${{env.X64_EXE_NAME}}
+      run: |
+        mkdir ${{env.X64_EXE_REPO_PATH}} 
+        dir ${{env.X64_EXE_REPO_PATH}}
+        copy ${{env.SOLUTION_FILE_PATH}}${{env.X64_EXE_NAME}} ${{env.X64_EXE_REPO_PATH}}${{env.X64_EXE_NAME}}
         
     - name: Commit x64 EXE
       uses: EndBug/add-and-commit@v7.0.0
@@ -67,18 +70,17 @@ jobs:
       with:
         platform: x86
 
-    - name: Configure CGO to x86
+    - name: List GOOS GOARCH
+      run: go tool dist list
+      
+    # In the build, cd into the folder to avoid 'Not in GOROOT' error, then cd back again
+    - name: Build 86 EXE
       run: |
         set GOARCH=386
-
-    - name: Display Versions 
-      run: |
-        go env GOOS GOARCH CGO_ENABLED CC
+        set CGO_ENABLED=1
+        set GOGCCFLAGS=-m32 -mthreads -fmessage-length=0 -fdebug-prefix-map=C:\Users\RUNNER~1\AppData\Local\Temp\go-build3768696574=/tmp/go-build -gno-record-gcc-switches
+        go env GOOS GOARCH CGO_ENABLED CC GOGCCFLAGS
         gcc --version
-        
-    # In the build, cd into the folder to avoid 'Not in GOROOT' error, then cd back again
-    - name: Build 86
-      run: |
         cd go\info\src-cgo 
         go build -o ${{env.X86_EXE_NAME}} .\xhptdc8_info.go .\info_aux.go
         cd ..\..\..\       

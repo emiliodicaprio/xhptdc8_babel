@@ -48,6 +48,12 @@ go build -o xhptdc8_info_64.exe .\xhptdc8_info.go .\info_aux.go
 
 N.B. I used go version go1.16.2 windows/amd64.
 
+### github Building Action
+github [Building Action: Info Tool Build](https://github.com/cronologic-de/xhptdc8_babel/blob/main/.github/workflows/infoTool_build.yml) is created to build `info` project as following:
+1. It builds the code automatically with relevant code update.
+2. It builds the `x86` version and checks it into _/go/bin/x86/_, and the `x64` version and checks it into _/go/bin/x64/_
+
+
 ## Using the Info Tool
 All details are found [on wiki](https://github.com/cronologic-de/xhptdc8_babel/wiki/using_info_tool)
 
