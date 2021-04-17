@@ -81,7 +81,7 @@ jobs:
         go env GOOS GOARCH CGO_ENABLED CC GOGCCFLAGS
         gcc --version
         cd go\info\src-cgo 
-        go build -o ${{env.X86_EXE_NAME}} 
+        go build -o ${{env.X86_EXE_NAME}} .\xhptdc8_info.go .\info_aux.go
         cd ..\..\..\       
         Copy ${{env.SOLUTION_FILE_PATH}}${{env.X86_EXE_NAME}} ${{env.X86_EXE_REPO_PATH}}${{env.X86_EXE_NAME}}
         
