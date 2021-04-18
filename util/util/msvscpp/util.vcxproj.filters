@@ -185,6 +185,9 @@
     <ClCompile Include="..\src\ryml_src\c4\error.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\xhptdc8_util.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\src\util.rc">
