@@ -45,7 +45,7 @@ const char* xhptdc8_get_all_error_messages(xhptdc8_manager hMgr, crono_bool_t in
 				}
 				else
 				{
-					APPEND_MSG(board_index, "Board does not exist");
+					APPEND_MSG(board_index, "Board does not exist.");
 				}
 				continue ;
 			}
