@@ -58,12 +58,11 @@ extern "C" {
 		char last_error_message[MaxErrorMessageSize];
 
 		// Board user flash
-		unsigned char* user_flash = NULL;
+		uint8_t* user_flash = NULL;
 		// Board user flash size
-		int user_flash_size = 0;
+		uint32_t user_flash_size = 0;
 	} ;
 
-	const char* InvalidDevMgr = "Invalid device manager!";
 	const char MSG_OK[3] = { "OK" };
 
 	crono_bool_t xhptdc8_is_valid_manager(xhptdc8_manager xhptdc8_mgr);
@@ -74,10 +73,11 @@ extern "C" {
 }
 #endif
 
-int init_static_info_internal(xhptdc8_static_info* info);
-void _set_last_error_internal(xhptdc8_manager xhptdc8_mgr, const char* format, ...);
-int _xhptdc8_read_hits_for_groups_internal(xhptdc8_dummy_manager* mngr, TDCHit* hit_buf, size_t size);
-int _xhptdc8_read_hits_for_NO_groups_internal(xhptdc8_dummy_manager* mngr, TDCHit* hit_buf, size_t size);
+int _init_static_info_internal(xhptdc8_static_info* info);
+void _set_last_error_internal(xhptdc8_manager xhptdc8_mgr, const char* errString);
+void _set_last_error_printf_internal(xhptdc8_manager xhptdc8_mgr, const char* format, ...);
+int _read_hits_for_groups_internal(xhptdc8_dummy_manager* mngr, TDCHit* hit_buf, size_t size);
+int _read_hits_for_NO_groups_internal(xhptdc8_dummy_manager* mngr, TDCHit* hit_buf, size_t size);
 crono_bool_t _xhptdc8_is_valid_device_index_inernal(xhptdc8_manager xhptdc8_mgr, int index);
 
 #endif

@@ -137,16 +137,19 @@ extern "C" xhptdc8_manager xhptdc8_init(
 		return NULL;
 	}
 
-	xhptdc8_dummy_manager* xhptdc8Manager = new xhptdc8_dummy_manager;
-	if (nullptr == xhptdc8Manager)
-	{
+	xhptdc8_dummy_manager* xhptdc8Manager;
+	try {
+		xhptdc8Manager = new xhptdc8_dummy_manager;
+	}
+	catch (std::bad_alloc& ba) {
+		fprintf(stdout, "Exception in memory allocation: %s", ba.what());
 		snprintf(lastErrorMessage, MaxErrorMessageSize, ERR_MSG_INIT_FAILED_FMT, ERR_MSG_MEMORY_ALLOC);
 		return NULL;
 	}
 	memset(xhptdc8Manager, 0, sizeof(xhptdc8_dummy_manager));
 	
 	// Initialize the structure
-	init_static_info_internal(&(xhptdc8Manager->staticInfo));
+	_init_static_info_internal(&(xhptdc8Manager->staticInfo));
 	memset(&(xhptdc8Manager->p_mgr_cfg), 0, sizeof(xhptdc8_manager_configuration));
 	*error_code = xhptdc8_get_default_init_parameters(&(xhptdc8Manager->params));
 	if (XHPTDC8_OK == (*error_code))
@@ -160,7 +163,7 @@ extern "C" xhptdc8_manager xhptdc8_init(
 /*
 * Internal function to init xhptdc8_static_info
 */
-int init_static_info_internal(xhptdc8_static_info* info)
+int _init_static_info_internal(xhptdc8_static_info* info)
 {
 	info->size = sizeof(xhptdc8_static_info);
 	info->version = XHPTDC8_STATIC_INFO_VERSION;
@@ -617,7 +620,7 @@ extern "C" int xhptdc8_stop_capture(xhptdc8_manager hMgr)
 	/*
 	* Driver code doesn't validate the state, so does this code
 	if (mngr->state != ManagerState::CAPTURING) {
-		_set_last_error_internal(hMgr, "Device is not capturing!");
+		_set_last_error_internal(hMgr, ERR_MSG_DEVICE_IS_NOT_CAPURING);
 		return XHPTDC8_WRONG_STATE;
 	}
 	*/
@@ -707,7 +710,7 @@ extern "C" int xhptdc8_read_hits(xhptdc8_manager hMgr, TDCHit* hit_buf, size_t s
 	xhptdc8_dummy_manager* mngr = (xhptdc8_dummy_manager*)(hMgr);
 	if (mngr->state != ManagerState::CAPTURING) 
 	{
-		_set_last_error_internal(hMgr, "Device is not capturing.");
+		_set_last_error_internal(hMgr, ERR_MSG_DEVICE_IS_NOT_CAPURING);
 		return XHPTDC8_WRONG_STATE;
 	}
 
@@ -715,7 +718,7 @@ extern "C" int xhptdc8_read_hits(xhptdc8_manager hMgr, TDCHit* hit_buf, size_t s
 
 	if ( mngr->p_mgr_cfg.grouping.enabled )
 	{
-		int ret = _xhptdc8_read_hits_for_groups_internal(mngr, hit_buf, size);
+		int ret = _read_hits_for_groups_internal(mngr, hit_buf, size);
 		switch (ret)
 		{
 		case 2:
@@ -731,14 +734,14 @@ extern "C" int xhptdc8_read_hits(xhptdc8_manager hMgr, TDCHit* hit_buf, size_t s
 	else
 	// Grouping is not enabled
 	{
-		return _xhptdc8_read_hits_for_NO_groups_internal(mngr, hit_buf, size);
+		return _read_hits_for_NO_groups_internal(mngr, hit_buf, size);
 	}
 }
 
 /*
 *  xhptdc8_read_hits when groups are note enabled
 */
-int _xhptdc8_read_hits_for_NO_groups_internal(xhptdc8_dummy_manager* mngr, TDCHit* hit_buf, size_t size)
+int _read_hits_for_NO_groups_internal(xhptdc8_dummy_manager* mngr, TDCHit* hit_buf, size_t size)
 {
 	// Calculate ms_since_last_call
 	SYSTEMTIME time;
@@ -774,7 +777,7 @@ int _xhptdc8_read_hits_for_NO_groups_internal(xhptdc8_dummy_manager* mngr, TDCHi
 *		 0: Error, buffer is smaller than milliseconds
 *		-1: Error, buffer size is smaller than 2
 */
-int _xhptdc8_read_hits_for_groups_internal(xhptdc8_dummy_manager* mngr, TDCHit * hit_buf, size_t size)
+int _read_hits_for_groups_internal(xhptdc8_dummy_manager* mngr, TDCHit * hit_buf, size_t size)
 {
 	if (mngr->read_hits_count < mngr->captured_stored_time)
 	// The number of calls is less than the number of milliseconds elapsed since 
@@ -809,7 +812,7 @@ int _xhptdc8_read_hits_for_groups_internal(xhptdc8_dummy_manager* mngr, TDCHit *
 /*
 * Return true : Is Valid
 *		 false: Is Invalid
-*/ //$$ rename to is valid manager
+*/ 
 extern "C" crono_bool_t xhptdc8_is_valid_manager(xhptdc8_manager hMgr)
 {
 	if (nullptr == hMgr)
@@ -847,7 +850,8 @@ crono_bool_t _xhptdc8_is_valid_device_index_inernal(xhptdc8_manager hMgr, int in
 	return true;
 }
 
-void _set_last_error_internal(xhptdc8_manager hMgr, const char * format, ...)
+void _set_last_error_printf_internal(xhptdc8_manager hMgr, const char* format, ...)
+
 {
 	if (!xhptdc8_is_valid_manager(hMgr))
 		return ;
@@ -859,7 +863,12 @@ void _set_last_error_internal(xhptdc8_manager hMgr, const char * format, ...)
 	va_end(arglist);
 }
 
-int xhptdc8_read_user_flash(xhptdc8_manager hMgr, int index, unsigned char* flash_data, size_t size)
+void _set_last_error_internal(xhptdc8_manager hMgr, const char* errString)
+{
+	_set_last_error_printf_internal(hMgr, "%s", errString);
+}
+
+int xhptdc8_read_user_flash(xhptdc8_manager hMgr, int index, uint8_t* flash_data, uint32_t size)
 {
 	if (!xhptdc8_is_valid_device_index(hMgr, index))
 		return XHPTDC8_INVALID_ARGUMENTS;
@@ -881,7 +890,7 @@ int xhptdc8_read_user_flash(xhptdc8_manager hMgr, int index, unsigned char* flas
 	return XHPTDC8_OK;
 }
 
-int xhptdc8_write_user_flash(xhptdc8_manager hMgr, int index, unsigned char* flash_data, size_t size)
+int xhptdc8_write_user_flash(xhptdc8_manager hMgr, int index, uint8_t* flash_data, uint32_t size)
 {
 	if (!xhptdc8_is_valid_device_index(hMgr, index))
 		return XHPTDC8_INVALID_ARGUMENTS;
@@ -897,7 +906,14 @@ int xhptdc8_write_user_flash(xhptdc8_manager hMgr, int index, unsigned char* fla
 		delete mngr->user_flash;
 		mngr->user_flash = NULL;
 	}
-	mngr->user_flash = new unsigned char[size];
+	try {
+		mngr->user_flash = new unsigned char[size];
+	}
+	catch (std::bad_alloc& ba) {
+		fprintf(stdout, "Exception in memory allocation: %s", ba.what());
+		_set_last_error_internal(hMgr, ERR_MSG_MEMORY_ALLOC);
+		return XHPTDC8_INVALID_ARGUMENTS;
+	}
 	memcpy(mngr->user_flash, flash_data, size);
 	mngr->user_flash_size = size;
 
@@ -912,7 +928,7 @@ extern "C" int xhptdc8_software_trigger(xhptdc8_manager hMgr, int index)
 	xhptdc8_dummy_manager* mngr = (xhptdc8_dummy_manager*)(hMgr);
 	if ((mngr->state != ManagerState::CREATED) || (mngr->state != ManagerState::CLOSED))
 	{
-		snprintf(lastErrorMessage, MaxErrorMessageSize, ERR_MSG_DEVICE_NOT_READY_TRIG, XHPTDC8_WRONG_STATE);
+		_set_last_error_internal(hMgr, ERR_MSG_DEVICE_NOT_READY_TRIG);
 		return XHPTDC8_WRONG_STATE;
 	}
 	return XHPTDC8_OK;
