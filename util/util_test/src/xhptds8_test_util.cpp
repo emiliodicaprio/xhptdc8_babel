@@ -105,7 +105,8 @@ int test_apply_yaml(char* src)
 		xhptdc8_configure(hMgr, cfg);
 	}
 	delete cfg;
-	xhptdc8_close(hMgr);
+	if (hMgr != NULL)
+		xhptdc8_close(hMgr);
 	return results;
 }
 
@@ -117,8 +118,9 @@ int display_all_error_messages(crono_bool_t include_ok, crono_bool_t fixed_lengt
 	char* error_message = NULL;
 	xhptdc8_get_default_init_parameters(&params);
 	hMgr = xhptdc8_init(&params, &error_code, (const char**)&error_message);
-	const char* err_msg = xhptdc8_get_all_error_messages(NULL, include_ok, fixed_length);
+	const char* err_msg = xhptdc8_get_all_error_messages(hMgr, include_ok, fixed_length);
 	printf(err_msg);
-	xhptdc8_close(hMgr);
+	if (hMgr!= NULL) 
+		xhptdc8_close(hMgr);
 	return 0;
 }
