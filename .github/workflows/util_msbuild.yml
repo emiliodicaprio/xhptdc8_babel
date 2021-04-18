@@ -67,7 +67,6 @@ jobs:
       with:
           author_name: Internal Workflow Action
           message: ${{env.COMMIT_MSG}}
-          pull_strategy: 'NO-PULL'
           add: ${{env.X86_REPO_LIB_PTH_COMMIT}}${{env.X86_DLL_NAME}} --force
 
     - name: Commit x86 DLL to Dummy Folder
@@ -75,7 +74,6 @@ jobs:
       with:
           author_name: Internal Workflow Action
           message: ${{env.COMMIT_MSG}}
-          pull_strategy: 'NO-PULL'
           add: ${{env.X86_DUMMY_REPO_LIB_PTH_COMMIT}}${{env.X86_DLL_NAME}} --force
           
     - name: Commit x86 Lib
@@ -83,7 +81,6 @@ jobs:
       with:
           author_name: Internal Workflow Action
           message: ${{env.COMMIT_MSG}}
-          pull_strategy: 'NO-PULL'
           add: ${{env.X86_REPO_LIB_PTH_COMMIT}}${{env.X86_LIB_NAME}} --force
 
     - name: Commit x86 Lib to Dummy Folder
@@ -91,7 +88,6 @@ jobs:
       with:
           author_name: Internal Workflow Action
           message: ${{env.COMMIT_MSG}}
-          pull_strategy: 'NO-PULL'
           add: ${{env.X86_DUMMY_REPO_LIB_PTH_COMMIT}}${{env.X86_LIB_NAME}} --force
 
     - name: Build Release x64
