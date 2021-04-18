@@ -18,10 +18,10 @@ env:
   # https://docs.github.com/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
   BUILD_CONFIGURATION: Release
   SOLUTION_FILE_PATH: .\util\util\msvscpp # The util library only, not xhptdc8_util_projects solution
-  X86_OUTPUT_DIR: ${{env.SOLUTION_FILE_PATH}}\Release\ 
+  X86_OUTPUT_DIR: .\util\util\msvscpp\Release\ # Can't use env context (e.g. SOLUTION_FILE_PATH) here, only in jobs, rewrite the path again
   X86_REPO_LIB_PTH: .\lib\x86\
   X86_DUMMY_REPO_LIB_PTH: .\lib\x86dummy\
-  X64_OUTPUT_DIR: ${{env.SOLUTION_FILE_PATH}}\x64\Release
+  X64_OUTPUT_DIR: .\util\util\msvscpp\x64\Release
   X64_REPO_LIB_PTH: .\lib\x64\
   X64_DUMMY_REPO_LIB_PTH: .\lib\x64dummy\
   X86_DLL_NAME: xhptdc8_util.dll
