@@ -45,7 +45,10 @@ extern "C" int xhptdc8_count_devices(int* error_code, const char** error_message
 		return XHPTDC8_INVALID_ARGUMENTS;
 	
 	if (nullptr == error_message)
+	{
+		*error_code = XHPTDC8_INVALID_ARGUMENTS;
 		return XHPTDC8_INVALID_ARGUMENTS;
+	}
 
 	*error_code = 0;
 	*error_message = (char*)MSG_OK; 
