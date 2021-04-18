@@ -14,7 +14,7 @@ namespace apply_yaml
 	char* error_message = NULL;	\
 	hMgr = xhptdc8_init(params, &error_code, (const char**)&error_message);	\
 	xhptdc8_manager_configuration* cfg = new xhptdc8_manager_configuration;	\
-	xhptdc8_get_default_configuration(hMgr, cfg);	\
+	xhptdc8_get_default_configuration(hMgr, cfg);	
 
 #define hMgr_CLEANUP_BLOCK \
 		xhptdc8_close(hMgr);
