@@ -12,13 +12,14 @@ The project structure follows [our standard project folder structure](https://gi
 - Project Settings -> Include Directories : `..\..\include;..\..\..\lib\include;.\ryml_src;` is added.
 - Project Settings -> Preprocessor Definitions: `XHPTDC8_UTIL_EXPORTS` is defined.
 - Project Settings -> Preprocessor Definitions: `XHPTDC8_VERBOSE_DEBUG` is defined for _Debug Configurations_ only.
+- `Output Directory` is left as the Visual Studio _Default_ Project Settings.
 
-| Config. | Env.  | Output Directory on Local  | Output Directory on github                      | Library Name    |
-| ------- |------ |-----------------           | -----------------------------------------       | --------------  |
-| Debug   | x64   | ..\\..\\..\\lib\\x64dummy\ | ..\\..\\..\\lib\x64dummy\; ..\\..\\..\\lib\x64\ | xhptdc8_util_64.dll |  
-| Release | x64   | ..\\..\\..\\lib\\x64dummy\ | ..\\..\\..\\lib\x64dummy\; ..\\..\\..\\lib\x64\ | xhptdc8_util_64.dll |  
-| Debug   | Win32 | ..\\..\\..\\lib\\x86dummy\ | ..\\..\\..\\lib\x86dummy\; ..\\..\\..\\lib\x86\ | xhptdc8_util.dll    |  
-| Release | Win32 | ..\\..\\..\\lib\\x86dummy\ | ..\\..\\..\\lib\x86dummy\; ..\\..\\..\\lib\x86\ | xhptdc8_util.dll    |  
+| Config. | Env.  | Output Directory on github                      | Library Name    |
+| ------- |------ | -----------------------------------------       | --------------  |
+| Debug   | x64   | ..\\..\\..\\lib\x64dummy\; ..\\..\\..\\lib\x64\ | xhptdc8_util_64.dll |  
+| Release | x64   | ..\\..\\..\\lib\x64dummy\; ..\\..\\..\\lib\x64\ | xhptdc8_util_64.dll |  
+| Debug   | Win32 | ..\\..\\..\\lib\x86dummy\; ..\\..\\..\\lib\x86\ | xhptdc8_util.dll    |  
+| Release | Win32 | ..\\..\\..\\lib\x86dummy\; ..\\..\\..\\lib\x86\ | xhptdc8_util.dll    |  
 * You can change the output directory if you want to keep both the release and debug versions of the DLL concurrently
 
 ### External Libraries
