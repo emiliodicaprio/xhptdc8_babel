@@ -8,41 +8,66 @@ static char lastErrorMessage[MaxErrorMessageSize];
 static char ERR_MSG_INTERNAL_ERR[15] = { "Internal Error" };
 const char* xhptdc8_get_all_error_messages(xhptdc8_manager hMgr, crono_bool_t include_ok, crono_bool_t fixed_length)
 {
+	int written_bytes = 0;
+	lastErrorMessage[0] = 0;	// Reset
+
 	char* count_err_message;
 	int count_err_code;
 	int devices_count = xhptdc8_count_devices(&count_err_code, (const char**)&count_err_message);
-	if (count_err_code != 0)
+	if (count_err_code != XHPTDC8_OK)
 	{
-		strcpy_s(lastErrorMessage, MaxErrorMessageSize, ERR_MSG_INTERNAL_ERR);
-		return lastErrorMessage;
+		snprintf(lastErrorMessage, MaxErrorMessageSize - 1, 
+			"-2, \"count_devices() returned error <%d> %s in get_all_error_messages().\"\n", count_err_code, count_err_message); 
 	}
-	lastErrorMessage[0] = 0;	// Reset
-
-	for (int written_bytes = 0 , board_index = 0; board_index < XHPTDC8_MANAGER_DEVICES_MAX; board_index++)
+	for (int board_index = 0; board_index < XHPTDC8_MANAGER_DEVICES_MAX; board_index++)
 	{
 		written_bytes = strlen(lastErrorMessage);
-		const char* err_msg = xhptdc8_get_last_error_message(hMgr, board_index);
-		if (	(board_index >= devices_count) // Board is not installed
-			&&	(!fixed_length)	// DONOT: Outputs a line for 8 boards, even if there are less boards in the system
-			)
+
+#define ERR_MSG_DEVICE_COUNT "Could not retrieve error message."
+#define APPEND_MSG(msg) \
+	{ snprintf(lastErrorMessage + written_bytes, MaxErrorMessageSize - written_bytes - 1, "%d, \"%s\"\n", board_index, msg); }
+
+		if (board_index >= devices_count)
+		// Board is not installed
 		{
-			break;
+			if (fixed_length)
+			// Outputs a line for 8 boards, even if there are less boards in the system
+			{
+				if (count_err_code != XHPTDC8_OK)
+				{
+					APPEND_MSG(ERR_MSG_DEVICE_COUNT);
+				}
+				else
+				{
+					APPEND_MSG("Board does not exist");
+				}
+				continue ;
+			}
+			else 
+			// No more boards in the system, and fixed_length is false
+			{
+				break;
+			}
 		}
+		if (count_err_code != XHPTDC8_OK)
+		{
+			APPEND_MSG(ERR_MSG_DEVICE_COUNT);
+			continue ;
+		}
+		const char* err_msg = xhptdc8_get_last_error_message(hMgr, board_index);
 		if (err_msg[0] == 0)
 		// No error (message) for this device
 		{
 			if (include_ok) 
 			// Outputs a line even if the board or the manager has no error
 			{
-				snprintf(lastErrorMessage + written_bytes, MaxErrorMessageSize - written_bytes - 1,
-					"%d, %d, %s\n", board_index, 0, "OK");
+				APPEND_MSG("OK");
 			}
 		}
 		else
 		// There is an error
 		{
-			snprintf(lastErrorMessage + written_bytes, MaxErrorMessageSize - written_bytes - 1,
-				"%d, %d, %s\n", board_index, 0, err_msg);
+			APPEND_MSG(err_msg);
 		}
 	}
 	return lastErrorMessage;

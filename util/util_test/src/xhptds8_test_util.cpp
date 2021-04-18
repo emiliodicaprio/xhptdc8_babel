@@ -8,6 +8,7 @@
 using namespace std;
 
 int test_apply_yaml(char* src);
+int display_all_error_messages(crono_bool_t include_ok, crono_bool_t fixed_length);
 
 void display_intro()
 {
@@ -28,6 +29,8 @@ void display_about()
 	printf("             the corresponding util API \"xhptdc8_apply_yaml\", then displays \n");
 	printf("             the results. User can then validate the entered YAML syntax and \n");
 	printf("             effect.\n");
+	printf("\n");
+	printf("-errmsg    : displays error messages.\n");
 	printf("\n");
 	printf("-help      : displays this help.\n");
 	printf("\n");
@@ -57,6 +60,10 @@ int main(int argc,  char* argv[])
 		// Pass YAML File to parse
 		{
 
+		}
+		else if (!strcmp(argv[count], "-errmsg"))
+		{
+			display_all_error_messages(true, true);
 		}
 		else if (!strcmp(argv[count], "-yamlentry"))
 		{
@@ -100,5 +107,18 @@ int test_apply_yaml(char* src)
 	delete cfg;
 	xhptdc8_close(hMgr);
 	return results;
+}
 
+int display_all_error_messages(crono_bool_t include_ok, crono_bool_t fixed_length)
+{
+	xhptdc8_manager hMgr;
+	xhptdc8_manager_init_parameters params;
+	int error_code;
+	char* error_message = NULL;
+	xhptdc8_get_default_init_parameters(&params);
+	hMgr = xhptdc8_init(&params, &error_code, (const char**)&error_message);
+	const char* err_msg = xhptdc8_get_all_error_messages(NULL, include_ok, fixed_length);
+	printf(err_msg);
+	xhptdc8_close(hMgr);
+	return 0;
 }
