@@ -274,6 +274,50 @@ manager_config:
   veto_relative_to_zero : true 
   overlap : true 
 ```
+### display_all_error_messages
+The driver function `get_last_error_message()` needs to be provided with an index that selects the manager or one of the boards, that can be inconvenient. 
+A new utilitt function is added to provide a method that returns the error messages from _all_ boards.
+
+This API is of the following signature:
+```C
+int display_all_error_messages(crono_bool_t include_ok, crono_bool_t fixed_length)
+```
+
+#### Specifications
+The function has two parameters:
+1. `include_ok` outputs a line even if the board or the manager has no error.
+2. `fixed_length` outputs a line for 8 boards, even if there are less boards in the system.
+
+Returns a pointer to the error messages, the pointer should not be deallocated using `delete` or similar deallocation functions. 
+
+#### Samples
+
+##### With include_ok=true, fixed_length=true
+Normal output is:
+```CMD
+0, "OK"
+1, "Board does not exist"
+2, "Board does not exist"
+3, "Board does not exist"
+4, "Board does not exist"
+5, "Board does not exist"
+6, "Board does not exist"
+7, "Board does not exist"
+```
+
+#### Passing an invalid hMgr
+Output is:
+```CMD
+-1, "Invalid arguments"
+0, "Manager is invalid!"
+1, "Board does not exist"
+2, "Board does not exist"
+3, "Board does not exist"
+4, "Board does not exist"
+5, "Board does not exist"
+6, "Board does not exist"
+7, "Board does not exist"
+```
 
 ___________________________
 
