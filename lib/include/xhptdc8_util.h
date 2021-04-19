@@ -102,7 +102,8 @@ extern "C" {
 	* @param include_ok[in]: Outputs a line even if the board or the manager has no error
 	* @param fixed_length[in]: Outputs a line for 8 boards, even if there are less boards in the system
 	* 
-	* @returns null-terminated error message for all boards.
+	* @returns null-terminated error message for all boards. 
+	* The pointer should not be deallocated using `delete` or similar deallocation functions.
 	*/
 	XHPTDC8_UTIL_API const char* xhptdc8_get_all_error_messages(xhptdc8_manager hMgr, crono_bool_t include_ok, crono_bool_t fixed_length);
 
