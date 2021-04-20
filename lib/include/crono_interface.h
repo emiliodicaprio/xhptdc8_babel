@@ -111,9 +111,8 @@ extern "C" {
 	typedef uint8_t crono_bool_t;
 
 	/**
-	*
+	* Basic device data structure for synchronizing cronologic Ndigo5G and HPTDC8 devices
 	*/
-	/* Contains all user changeable settings*/
 	typedef struct {
 		/* CRONO_DEVICE_*/
 		int device_type;

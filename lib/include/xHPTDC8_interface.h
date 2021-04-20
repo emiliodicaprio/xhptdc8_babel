@@ -287,91 +287,91 @@ extern "C" {
 	* If grouping is disabled all availabe data is read.
 	* In all cases, data is copied to buffer up to the size of the buffer.
 	*
-	* @param hMgr[in]. It must be initialized using xhptdc8_init().
+	* @param mgr[in]. It must be initialized using xhptdc8_init().
 	* @param hit_buf[out]. Buffer allocated and provdied by the user.
 	* @param read_max[out]. Size of the buffer.
 	*
 	* @returns Returns the number of read hits.
 	*/
-	XHPTDC8_API int xhptdc8_read_hits(xhptdc8_manager hMgr, TDCHit* hit_buf, size_t read_max);
+	XHPTDC8_API int xhptdc8_read_hits(xhptdc8_manager mgr, TDCHit* hit_buf, size_t read_max);
 
 	/**
 	* Finalize the driver for this device.
 	*
-	* @param hMgr[in]. It must be initialized using xhptdc8_init().
+	* @param mgr[in]. It must be initialized using xhptdc8_init().
 	*
 	* @returns XHPTDC8_OK in case of success, or error code in case of error.
 	*/
-	XHPTDC8_API int xhptdc8_close(xhptdc8_manager hMgr);
+	XHPTDC8_API int xhptdc8_close(xhptdc8_manager mgr);
 
 	/**
 	* Start the timing generator of an individual board.
 	* This can be done independently of the state of the data acquisition
 	*
-	* @param hMgr[in]. It must be initialized using xhptdc8_init().
+	* @param mgr[in]. It must be initialized using xhptdc8_init().
 	* @param index[in]. The index of the device.
 	*
 	* @returns XHPTDC8_OK in case of success, or error code in case of error.
 	*/
-	XHPTDC8_API int xhptdc8_start_tiger(xhptdc8_manager hMgr, int index);
+	XHPTDC8_API int xhptdc8_start_tiger(xhptdc8_manager mgr, int index);
 
 	/**
 	* Stop the timing generator of an individual board.
 	* This can be done independently of the state of the data acquisition
 	*
-	* @param hMgr[in]. It must be initialized using xhptdc8_init().
+	* @param mgr[in]. It must be initialized using xhptdc8_init().
 	* @param index[in]. The index of the device.
 	*
 	* @returns XHPTDC8_OK in case of success, or error code in case of error.
 	*/
-	XHPTDC8_API int xhptdc8_stop_tiger(xhptdc8_manager hMgr, int index);
+	XHPTDC8_API int xhptdc8_stop_tiger(xhptdc8_manager mgr, int index);
 
 	/**
 	* Start data acquisition.
 	*
-	* @param hMgr[in]. It must be initialized using xhptdc8_init().
+	* @param mgr[in]. It must be initialized using xhptdc8_init().
 	*
 	* @returns XHPTDC8_OK in case of success, or error code in case of error.
 	*/
-	XHPTDC8_API int xhptdc8_start_capture(xhptdc8_manager hMgr);
+	XHPTDC8_API int xhptdc8_start_capture(xhptdc8_manager mgr);
 
 	/**
 	* Pause a started data acquisition.
 	* It doesn’t allow for a configuration change.
 	*
-	* @param hMgr[in]. It must be initialized using xhptdc8_init().
+	* @param mgr[in]. It must be initialized using xhptdc8_init().
 	*
 	* @returns XHPTDC8_OK in case of success, or error code in case of error.
 	*/
-	XHPTDC8_API int xhptdc8_pause_capture(xhptdc8_manager hMgr);
+	XHPTDC8_API int xhptdc8_pause_capture(xhptdc8_manager mgr);
 
 	/**
 	* Call this to resume data acquisition after a call to xhptdc8_pause_capture().
 	* It doesn’t allow for a configuration change.
 	*
-	* @param hMgr[in]. It must be initialized using xhptdc8_init().
+	* @param mgr[in]. It must be initialized using xhptdc8_init().
 	*
 	* @returns XHPTDC8_OK in case of success, or error code in case of error.
 	*/
-	XHPTDC8_API int xhptdc8_continue_capture(xhptdc8_manager hMgr);
+	XHPTDC8_API int xhptdc8_continue_capture(xhptdc8_manager mgr);
 
 	/**
 	* Stop data acquisition.
 	*
-	* @param hMgr[in]. It must be initialized using xhptdc8_init().
+	* @param mgr[in]. It must be initialized using xhptdc8_init().
 	*
 	* @returns XHPTDC8_OK in case of success, or error code in case of error.
 	*/
-	XHPTDC8_API int xhptdc8_stop_capture(xhptdc8_manager hMgr);
+	XHPTDC8_API int xhptdc8_stop_capture(xhptdc8_manager mgr);
 
 	/**
 	* Generate a software trigger event.
 	*
-	* @param hMgr[in]. It must be initialized using xhptdc8_init().
+	* @param mgr[in]. It must be initialized using xhptdc8_init().
 	*
 	* @returns XHPTDC8_OK in case of success, or error code in case of error.
 	*/
-	XHPTDC8_API int xhptdc8_software_trigger(xhptdc8_manager hMgr, int index);
+	XHPTDC8_API int xhptdc8_software_trigger(xhptdc8_manager mgr, int index);
 
 	/**
 	* Structure contains static information.
@@ -492,13 +492,13 @@ extern "C" {
 	* Gets a structure that contains information about the board that does not change during
 	* run time.
 	*
-	* @param hMgr[in]. It must be initialized using xhptdc8_init().
+	* @param mgr[in]. It must be initialized using xhptdc8_init().
 	* @param index[in].The index of the device.
 	* @param info[out]. Buffer allocated and provided by the user to have a copy of the structure.
 	*
 	* @returns XHPTDC8_OK in case of success, or error code in case of error.
 	*/
-	XHPTDC8_API int xhptdc8_get_static_info(xhptdc8_manager hMgr, int index, xhptdc8_static_info* info);
+	XHPTDC8_API int xhptdc8_get_static_info(xhptdc8_manager mgr, int index, xhptdc8_static_info* info);
 
 	/**
 	* Contains fast dynamic information.
@@ -563,12 +563,12 @@ extern "C" {
 	* This call gets a structure that contains dynamic information that can be obtained within a
 	* few microseconds.
 	*
-	* @param hMgr[in]. It must be initialized using xhptdc8_init().
+	* @param mgr[in]. It must be initialized using xhptdc8_init().
 	* @param info[out]. Buffer allocated and provdied by the user to have a copy of the structure.
 	*
 	* @returns XHPTDC8_OK in case of success, or error code in case of error.
 	*/
-	XHPTDC8_API int xhptdc8_get_fast_info(xhptdc8_manager hMgr, int index, xhptdc8_fast_info * info);
+	XHPTDC8_API int xhptdc8_get_fast_info(xhptdc8_manager mgr, int index, xhptdc8_fast_info * info);
 
 	/**
 	* Contains information that may change with configuration
@@ -622,12 +622,12 @@ extern "C" {
 	* Gets a structure that contains information that changes indirectly due to configuration
 	* changes.
 	*
-	* @param hMgr[in]. It must be initialized using xhptdc8_init().
+	* @param mgr[in]. It must be initialized using xhptdc8_init().
 	* @param info[out]. Buffer allocated and provdied by the user to have a copy of the structure.
 	*
 	* @returns XHPTDC8_OK in case of success, or error code in case of error.
 	*/
-	XHPTDC8_API int xhptdc8_get_param_info(xhptdc8_manager hMgr, int index, xhptdc8_param_info* info);
+	XHPTDC8_API int xhptdc8_get_param_info(xhptdc8_manager mgr, int index, xhptdc8_param_info* info);
 
 	/**
 	* Contains temperature measurements
@@ -657,13 +657,13 @@ extern "C" {
 	/**
 	* Get temperature measurements from multiple sources on the board.
 	*
-	* @param hMgr[in]. It must be initialized using xhptdc8_init().
+	* @param mgr[in]. It must be initialized using xhptdc8_init().
 	* @param index[in]. The index of the device.
 	* @param info[out]. Buffer allocated and provdied by the user to have a copy of the structure.
 	*
 	* @returns XHPTDC8_OK in case of success, or error code in case of error.
 	*/
-	XHPTDC8_API int xhptdc8_get_temperature_info(xhptdc8_manager hMgr, int index, xhptdc8_temperature_info* info);
+	XHPTDC8_API int xhptdc8_get_temperature_info(xhptdc8_manager mgr, int index, xhptdc8_temperature_info* info);
 
 	/**
 	* Contains information about the active clock source.
@@ -710,29 +710,29 @@ extern "C" {
 	/**
 	* Get information on clocking configuration an status.
 	*
-	* @param hMgr[in]. It must be initialized using xhptdc8_init().
+	* @param mgr[in]. It must be initialized using xhptdc8_init().
 	* @param index[in]. The index of the device.
 	* @param info[out]. Buffer allocated and provdied by the user to have a copy of the structure.
 	*
 	* @returns XHPTDC8_OK in case of success, or error code in case of error.
 	*/
-	XHPTDC8_API int xhptdc8_get_clock_info(xhptdc8_manager hMgr, int index, xhptdc8_clock_info* info);
+	XHPTDC8_API int xhptdc8_get_clock_info(xhptdc8_manager mgr, int index, xhptdc8_clock_info* info);
 
 	/**
 	* Returns most recent error message.
 	*
-	* @param hMgr[in]. It must be initialized using xhptdc8_init().
+	* @param mgr[in]. It must be initialized using xhptdc8_init().
 	* @param index[in]. The index of the device. If set to -1 returns error message of the manager.
 	*/
-	XHPTDC8_API const char* xhptdc8_get_last_error_message(xhptdc8_manager hMgr, int index);
+	XHPTDC8_API const char* xhptdc8_get_last_error_message(xhptdc8_manager mgr, int index);
 
 	/**
 	* Returns the type of the device as CRONO_DEVICE_XHPTDC8.
 	*
-	* @param hMgr[in]. It must be initialized using xhptdc8_init().
+	* @param mgr[in]. It must be initialized using xhptdc8_init().
 	* @param index[in]. The index of the device.
 	*/
-	XHPTDC8_API int xhptdc8_get_device_type(xhptdc8_manager hMgr, int index);
+	XHPTDC8_API int xhptdc8_get_device_type(xhptdc8_manager mgr, int index);
 
 	/**
 	* Contains TDC channel settings.
@@ -1122,32 +1122,32 @@ extern "C" {
 	/**
 	* Gets default manager configuration. Copies the default configuration to the specified config pointer.
 	*
-	* @param hMgr[in]. It must be initialized using xhptdc8_init().
+	* @param mgr[in]. It must be initialized using xhptdc8_init().
 	* @param mgr_config[out].
 	*
 	* @returns XHPTDC8_OK in case of success, or error code in case of error.
 	*/
-	XHPTDC8_API int xhptdc8_get_default_configuration(xhptdc8_manager hMgr, xhptdc8_manager_configuration *mgr_config);
+	XHPTDC8_API int xhptdc8_get_default_configuration(xhptdc8_manager mgr, xhptdc8_manager_configuration *mgr_config);
 
 	/**
 	* Gets current configuration. Copies the current configuration to the specified config pointer.
 	*
-	* @param hMgr[in]. It must be initialized using xhptdc8_init().
+	* @param mgr[in]. It must be initialized using xhptdc8_init().
 	* @param mgr_config[out].
 	*
 	* @returns XHPTDC8_OK in case of success, or error code in case of error.
 	*/
-	XHPTDC8_API int xhptdc8_get_current_configuration(xhptdc8_manager hMgr, xhptdc8_manager_configuration *mgr_config);
+	XHPTDC8_API int xhptdc8_get_current_configuration(xhptdc8_manager mgr, xhptdc8_manager_configuration *mgr_config);
 
 	/**
 	* Configures the xHPTDC8 manager. The config information is copied, so can be changed afterwards.
 	*
-	* @param hMgr[in]. It must be initialized using xhptdc8_init().
+	* @param mgr[in]. It must be initialized using xhptdc8_init().
 	* @param mgr_config[out].
 	*
 	* @returns XHPTDC8_OK in case of success, or error code in case of error.
 	*/
-	XHPTDC8_API int xhptdc8_configure(xhptdc8_manager hMgr, xhptdc8_manager_configuration *mgr_config);
+	XHPTDC8_API int xhptdc8_configure(xhptdc8_manager mgr, xhptdc8_manager_configuration *mgr_config);
 
 	/**
 	* Returns the number of boards present in the system that are supported by this driver.
@@ -1209,28 +1209,28 @@ extern "C" {
 	* Caller must provide buffer of given size.
 	* Reserved area is of size XHPTDC8_USER_FLASH_SIZE
 	*
-	* @param hMgr[in]. It must be initialized using xhptdc8_init().
+	* @param mgr[in]. It must be initialized using xhptdc8_init().
 	* @param index[in]. The index of the device.
 	* @param flash_data[out]. Buffer provided by the caller of given size.
 	* @param size[in]. Size of the buffer.
 	*
 	* @returns XHPTDC8_OK in case of success, or error code in case of error.
 	*/
-	XHPTDC8_API int xhptdc8_read_user_flash(xhptdc8_manager hMgr, int index, uint8_t* flash_data, uint32_t size);
+	XHPTDC8_API int xhptdc8_read_user_flash(xhptdc8_manager mgr, int index, uint8_t* flash_data, uint32_t size);
 
 	/**
 	* Write to area of device flash reserved for user data
 	* Caller must provide buffer of given size
 	* Reserved area is of size XHPTDC8_USER_FLASH_SIZE
 	*
-	* @param hMgr[in]. It must be initialized using xhptdc8_init().
+	* @param mgr[in]. It must be initialized using xhptdc8_init().
 	* @param index[in]. The index of the device.
 	* @param flash_data[out]. Buffer provided by the caller of given size.
 	* @param size[in]. Size of the buffer.
 	*
 	* @returns XHPTDC8_OK in case of success, or error code in case of error.
 	*/
-	XHPTDC8_API int xhptdc8_write_user_flash(xhptdc8_manager hMgr, int index, uint8_t* flash_data, uint32_t size);
+	XHPTDC8_API int xhptdc8_write_user_flash(xhptdc8_manager mgr, int index, uint8_t* flash_data, uint32_t size);
 
 
 #ifdef __cplusplus
