@@ -136,7 +136,7 @@ extern "C" {
 		// Bit field of CRONO_PACKET_FLAG_* bits
 		uint8_t flags;
 		// length of data array in multiples of 8 bytes
-		uint8_t length;
+		uint32_t length;
 		// timestamp of packet creation, may be start or end of data depending on packet source.
 		int64_t timestamp;
 		// payload of the packet. Data type must be cast according to CRONO_PACKET_TYPE_*
