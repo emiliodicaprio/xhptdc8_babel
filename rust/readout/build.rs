@@ -8,6 +8,7 @@ fn main() {
     // shared library.
     println!("cargo:rustc-link-search=../../lib/x64dummy/");
     println!("cargo:rustc-link-lib=xhptdc8_driver_64");
+    println!("cargo:rustc-link-lib=xhptdc8_util_64");
 
     // Tell cargo to invalidate the built crate whenever the wrapper changes
     println!("cargo:rerun-if-changed=wrapper.h");
