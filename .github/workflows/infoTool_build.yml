@@ -6,7 +6,7 @@ on:
   push:
     branches: [ main ]
     paths:
-      - 'info/go/info/src-cgo/**'
+      - 'info/go/src-cgo/**'
       - 'lib/include/**'
     
   # Allows you to run this workflow manually from the Actions tab
