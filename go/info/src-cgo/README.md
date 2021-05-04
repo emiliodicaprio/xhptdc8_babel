@@ -52,7 +52,7 @@ N.B. I used go version go1.16.2 windows/amd64.
 #### Prerequisites
 1. Go installed on your local machine.
 2. Just make sure you have the latest files of `\lib\include\` and `\lib\x86dummy\` on your local machine.
-3. MinGW x86 (gcc i686) or equivalent is installed on your local machine.
+3. MinGW x86 (gcc i686) or equivalent is installed on your local machine, and its `bin` is on the path.
 
 #### Steps
 1. set GOARCH=386
