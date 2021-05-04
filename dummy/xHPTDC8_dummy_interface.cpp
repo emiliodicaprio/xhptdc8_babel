@@ -776,7 +776,7 @@ int _read_hits_for_NO_groups_internal(xhptdc8_dummy_manager* mngr, TDCHit* hit_b
 
 /*
 * xhptdc8_read_hits when groups are enabled
-* Return 2: Successfully filled hit_buf
+* Return 3: Successfully filled hit_buf
 *		 0: Error, buffer is smaller than milliseconds
 *		-1: Error, buffer size is smaller than 2
 */
@@ -786,22 +786,26 @@ int _read_hits_for_groups_internal(xhptdc8_dummy_manager* mngr, TDCHit * hit_buf
 	// The number of calls is less than the number of milliseconds elapsed since 
 	// the call to *_start_capture().
 	{
-		if (size < 2)
+		if (size < 3)
 		{
 			return -1;
 		}
 		int normal = int(g_distribution(g_generator));
 
 		hit_buf[0].time = mngr->read_hits_count * 1000000000;
-		hit_buf[1].time = mngr->read_hits_count * 1000000000 + normal;
-		hit_buf[0].channel = 0;
-		hit_buf[1].channel = 1;
+		hit_buf[1].time = 0;
+		hit_buf[2].time = normal;
+		hit_buf[1].channel = 255;
+		hit_buf[1].channel = 0;
+		hit_buf[2].channel = 1;
 		hit_buf[0].type = XHPTDC8_TDCHIT_TYPE_RISING;
 		hit_buf[1].type = XHPTDC8_TDCHIT_TYPE_RISING;
+		hit_buf[2].type = XHPTDC8_TDCHIT_TYPE_RISING;
 		hit_buf[0].bin = 0;
 		hit_buf[1].bin = 0;
+		hit_buf[2].bin = 0;
 
-		return 2;
+		return 3;
 	}
 	else
 	{
