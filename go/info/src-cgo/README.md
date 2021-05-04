@@ -34,7 +34,7 @@ import "C"
 - Wrap the needed APIs and structures.
 - Apply any data conversion needed between Go & C (DLL).
 
-### Building the Code
+### Building the Code (64-bit)
 #### Prerequisites
 1. Go installed on your local machine.
 2. Just make sure you have the latest files of `\lib\include\` and `\lib\x64dummy\` on your local machine.
