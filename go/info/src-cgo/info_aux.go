@@ -186,22 +186,43 @@ func display_info() {
 		*g_CmdLine_Flags.show_param_info = true
 		*g_CmdLine_Flags.show_clock_info = true
 	}
+	var error_code int
+	var sys_err error
 	if *g_CmdLine_Flags.show_clock_info {
-		INFODSP.Display_clock_info(g_Selected_Device_Index, *g_CmdLine_Flags.show_version_and_size, *g_CmdLine_Flags.output_json_only)
+		error_code, sys_err = INFODSP.Display_clock_info(g_Selected_Device_Index, *g_CmdLine_Flags.show_version_and_size, *g_CmdLine_Flags.output_json_only)
+		if error_code != 0 {
+			fmt.Println("Error displaying clock info: ", error_code, sys_err)
+		}
 	}
 	if *g_CmdLine_Flags.show_fast_info {
-		INFODSP.Display_fast_info(g_Selected_Device_Index, *g_CmdLine_Flags.show_version_and_size, *g_CmdLine_Flags.output_json_only)
+		error_code, sys_err = INFODSP.Display_fast_info(g_Selected_Device_Index, *g_CmdLine_Flags.show_version_and_size, *g_CmdLine_Flags.output_json_only)
+		if error_code != 0 {
+			fmt.Println("Error displaying fast info: ", error_code, sys_err)
+		}
 	}
 	if *g_CmdLine_Flags.show_param_info {
-		INFODSP.Display_param_info(g_Selected_Device_Index, *g_CmdLine_Flags.show_version_and_size, *g_CmdLine_Flags.output_json_only)
+		error_code, sys_err = INFODSP.Display_param_info(g_Selected_Device_Index, *g_CmdLine_Flags.show_version_and_size, *g_CmdLine_Flags.output_json_only)
+		fmt.Println(error_code)
+		if error_code != 0 {
+			fmt.Println("Error displaying param info: ", error_code, sys_err)
+		}
 	}
 	if *g_CmdLine_Flags.show_static_info {
-		INFODSP.Display_static_info(g_Selected_Device_Index, *g_CmdLine_Flags.show_version_and_size, *g_CmdLine_Flags.output_json_only)
+		error_code, sys_err = INFODSP.Display_static_info(g_Selected_Device_Index, *g_CmdLine_Flags.show_version_and_size, *g_CmdLine_Flags.output_json_only)
+		if error_code != 0 {
+			fmt.Println("Error displaying static info: ", error_code, sys_err)
+		}
 	}
 	if *g_CmdLine_Flags.show_temp_info {
-		INFODSP.Display_temperature_info(g_Selected_Device_Index, *g_CmdLine_Flags.show_version_and_size, *g_CmdLine_Flags.output_json_only)
+		error_code, sys_err = INFODSP.Display_temperature_info(g_Selected_Device_Index, *g_CmdLine_Flags.show_version_and_size, *g_CmdLine_Flags.output_json_only)
+		if error_code != 0 {
+			fmt.Println("Error displaying temp info: ", error_code, sys_err)
+		}
 	} else if *g_CmdLine_Flags.show_temperature_info {
-		INFODSP.Display_temperature_info(g_Selected_Device_Index, *g_CmdLine_Flags.show_version_and_size, *g_CmdLine_Flags.output_json_only)
+		error_code, sys_err = INFODSP.Display_temperature_info(g_Selected_Device_Index, *g_CmdLine_Flags.show_version_and_size, *g_CmdLine_Flags.output_json_only)
+		if error_code != 0 {
+			fmt.Println("Error displaying temp info: ", error_code, sys_err)
+		}
 	}
 	if !*(g_CmdLine_Flags.show_static_info) &&
 		!*(g_CmdLine_Flags.show_temp_info) &&
@@ -210,7 +231,10 @@ func display_info() {
 		!*(g_CmdLine_Flags.show_param_info) &&
 		!*(g_CmdLine_Flags.show_clock_info) {
 
-		INFODSP.Display_static_info(g_Selected_Device_Index, *g_CmdLine_Flags.show_version_and_size, *g_CmdLine_Flags.output_json_only)
+		error_code, sys_err = INFODSP.Display_static_info(g_Selected_Device_Index, *g_CmdLine_Flags.show_version_and_size, *g_CmdLine_Flags.output_json_only)
+		if error_code != 0 {
+			fmt.Println("Error displaying static info: ", error_code, sys_err)
+		}
 	}
 }
 
