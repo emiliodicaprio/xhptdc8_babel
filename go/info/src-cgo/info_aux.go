@@ -20,7 +20,6 @@ type CmdLine_Flags_T struct {
 	show_temp_info        *bool
 	show_temperature_info *bool
 	show_fast_info        *bool
-	show_param_info       *bool
 	show_clock_info       *bool
 	show_all_info         *bool
 	output_json_only      *bool
@@ -101,7 +100,6 @@ Usage:
           -temp         show temperature_info
           -temperature  show_temperature_info
           -fast         show fast_info
-          -param        show param_info
           -clock        show clock_info
           -all          show all infos structures
           -h            show this help
@@ -123,7 +121,6 @@ func process_command_line() (err_code int) {
 	g_CmdLine_Flags.show_temp_info = flag.Bool("temp", false, "show temperature_info")
 	g_CmdLine_Flags.show_temperature_info = flag.Bool("temperature", false, "show_temperature_info")
 	g_CmdLine_Flags.show_fast_info = flag.Bool("fast", false, "show fast_info")
-	g_CmdLine_Flags.show_param_info = flag.Bool("param", false, "show param_info")
 	g_CmdLine_Flags.show_clock_info = flag.Bool("clock", false, "show clock_info")
 	g_CmdLine_Flags.show_all_info = flag.Bool("all", false, "show all infos structures")
 	g_CmdLine_Flags.output_json_only = flag.Bool("d", false, "output requested data in JSON only with no headers")
@@ -183,43 +180,40 @@ func display_info() {
 		*g_CmdLine_Flags.show_temp_info = true
 		*g_CmdLine_Flags.show_temperature_info = true
 		*g_CmdLine_Flags.show_fast_info = true
-		*g_CmdLine_Flags.show_param_info = true
 		*g_CmdLine_Flags.show_clock_info = true
 	}
 	var error_code int
 	var sys_err error
 	if *g_CmdLine_Flags.show_clock_info {
-		error_code, sys_err = INFODSP.Display_clock_info(g_Selected_Device_Index, *g_CmdLine_Flags.show_version_and_size, *g_CmdLine_Flags.output_json_only)
+		error_code, sys_err = INFODSP.Display_clock_info(g_Selected_Device_Index,
+			*g_CmdLine_Flags.show_version_and_size, *g_CmdLine_Flags.output_json_only)
 		if error_code != 0 {
 			fmt.Println("Error displaying clock info: ", error_code, sys_err)
 		}
 	}
 	if *g_CmdLine_Flags.show_fast_info {
-		error_code, sys_err = INFODSP.Display_fast_info(g_Selected_Device_Index, *g_CmdLine_Flags.show_version_and_size, *g_CmdLine_Flags.output_json_only)
+		error_code, sys_err = INFODSP.Display_fast_info(g_Selected_Device_Index,
+			*g_CmdLine_Flags.show_version_and_size, *g_CmdLine_Flags.output_json_only)
 		if error_code != 0 {
 			fmt.Println("Error displaying fast info: ", error_code, sys_err)
 		}
 	}
-	if *g_CmdLine_Flags.show_param_info {
-		error_code, sys_err = INFODSP.Display_param_info(g_Selected_Device_Index, *g_CmdLine_Flags.show_version_and_size, *g_CmdLine_Flags.output_json_only)
-		fmt.Println(error_code)
-		if error_code != 0 {
-			fmt.Println("Error displaying param info: ", error_code, sys_err)
-		}
-	}
 	if *g_CmdLine_Flags.show_static_info {
-		error_code, sys_err = INFODSP.Display_static_info(g_Selected_Device_Index, *g_CmdLine_Flags.show_version_and_size, *g_CmdLine_Flags.output_json_only)
+		error_code, sys_err = INFODSP.Display_static_info(g_Selected_Device_Index,
+			*g_CmdLine_Flags.show_version_and_size, *g_CmdLine_Flags.output_json_only)
 		if error_code != 0 {
 			fmt.Println("Error displaying static info: ", error_code, sys_err)
 		}
 	}
 	if *g_CmdLine_Flags.show_temp_info {
-		error_code, sys_err = INFODSP.Display_temperature_info(g_Selected_Device_Index, *g_CmdLine_Flags.show_version_and_size, *g_CmdLine_Flags.output_json_only)
+		error_code, sys_err = INFODSP.Display_temperature_info(g_Selected_Device_Index,
+			*g_CmdLine_Flags.show_version_and_size, *g_CmdLine_Flags.output_json_only)
 		if error_code != 0 {
 			fmt.Println("Error displaying temp info: ", error_code, sys_err)
 		}
 	} else if *g_CmdLine_Flags.show_temperature_info {
-		error_code, sys_err = INFODSP.Display_temperature_info(g_Selected_Device_Index, *g_CmdLine_Flags.show_version_and_size, *g_CmdLine_Flags.output_json_only)
+		error_code, sys_err = INFODSP.Display_temperature_info(g_Selected_Device_Index,
+			*g_CmdLine_Flags.show_version_and_size, *g_CmdLine_Flags.output_json_only)
 		if error_code != 0 {
 			fmt.Println("Error displaying temp info: ", error_code, sys_err)
 		}
@@ -228,10 +222,10 @@ func display_info() {
 		!*(g_CmdLine_Flags.show_temp_info) &&
 		!*(g_CmdLine_Flags.show_temperature_info) &&
 		!*(g_CmdLine_Flags.show_fast_info) &&
-		!*(g_CmdLine_Flags.show_param_info) &&
 		!*(g_CmdLine_Flags.show_clock_info) {
 
-		error_code, sys_err = INFODSP.Display_static_info(g_Selected_Device_Index, *g_CmdLine_Flags.show_version_and_size, *g_CmdLine_Flags.output_json_only)
+		error_code, sys_err = INFODSP.Display_static_info(g_Selected_Device_Index,
+			*g_CmdLine_Flags.show_version_and_size, *g_CmdLine_Flags.output_json_only)
 		if error_code != 0 {
 			fmt.Println("Error displaying static info: ", error_code, sys_err)
 		}

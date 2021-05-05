@@ -233,52 +233,7 @@ func Display_fast_info(device_index int, show_details bool, display_json_only bo
 }
 
 //_____________________________________________________________________________
-// xhptdc8_param_info
-
-type Xhptdc8_param_info struct {
-	Size         Crono_int_t
-	Version      Crono_int_t
-	Binsize      Crono_double_t
-	Channels     Crono_int_t
-	Channel_mask Crono_int_t
-	Total_buffer int64
-}
-
-type Xhptdc8_param_info_brief struct {
-	Size         Crono_int_t `json:"-"`
-	Version      Crono_int_t `json:"-"`
-	Binsize      Crono_double_t
-	Channels     Crono_int_t
-	Channel_mask Crono_int_t
-	Total_buffer int64
-}
-
-/**
-Prerequisites:
-  init_golobals() is called, and g_hMgr is valid
-*/
-func Display_param_info(device_index int, show_details bool, display_json_only bool) (error_code int, sys_err error) {
-	var info C.xhptdc8_param_info
-	error_code = (int)(C.xhptdc8_get_param_info(g_hMgr, (C.int)(device_index), &info))
-	if error_code != C.XHPTDC8_OK {
-		return error_code, sys_err
-	}
-	var formatted_struct []byte
-	if show_details {
-		formatted_struct, _ = json.MarshalIndent((*Xhptdc8_param_info)(unsafe.Pointer(&info)), "", "  ")
-	} else {
-		formatted_struct, _ = json.MarshalIndent((*Xhptdc8_param_info_brief)(unsafe.Pointer(&info)), "", "  ")
-	}
-	if !display_json_only {
-		fmt.Println("param_info of xHPTDC8 serial", Get_device_serial(device_index), "at index", device_index)
-	}
-	fmt.Println(strings.ToLower(string(formatted_struct)))
-
-	return error_code, sys_err
-}
-
-//_____________________________________________________________________________
-// xhptdc8_param_info
+// xhptdc8_clock_info
 
 type Xhptdc8_clock_info struct {
 	Size          Crono_int_t
