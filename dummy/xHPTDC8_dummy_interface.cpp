@@ -267,9 +267,19 @@ extern "C" int xhptdc8_get_param_info(xhptdc8_manager mgr, int index,
 	if (nullptr == info)
 		return XHPTDC8_INVALID_ARGUMENTS;
 
+	xhptdc8_dummy_manager* mngr = (xhptdc8_dummy_manager*)(mgr);
+	if ((mngr->state == ManagerState::CREATED) || (mngr->state == ManagerState::INITIALIZED)) {
+		// Error("Device is not configured, ParamInfo not yet available.");
+		return XHPTDC8_WRONG_STATE;
+	}
+	if (mngr->state == ManagerState::CLOSED) {
+		//Error("Device is already closed.");
+		return XHPTDC8_WRONG_STATE;
+	}
+
 	info->size = sizeof(xhptdc8_param_info);
 	info->version = XHPTDC8_PARAM_INFO_VERSION;
-	info->binsize = 0;
+	info->binsize = 1 / 76.8 * 1000.0;			// 13.0208333 ps
 	info->channels = XHPTDC8_TDC_CHANNEL_COUNT; // 8
 	info->channel_mask = 0;
 	info->total_buffer = 0;
