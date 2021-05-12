@@ -78,6 +78,8 @@ pub fn process_command_line(output_file: &mut String, is_binary: &mut bool, hits
         .arg(Arg::with_name("HITS_NO")
             .short("n")
             .long("hitsno")
+            .value_name("HITS_NUMBER")
+            .takes_value(true)
             .help("The number of hits per file. Default is 10,000."))
         .arg(Arg::with_name("FILES_NO")
             .short("f")
@@ -180,7 +182,7 @@ pub fn get_device_serial(device_index: i32) -> f32 {
 }
 
 fn fixed824_to_float(fixed_val: i32) -> f32 {
-	let float_val = (fixed_val as f32) / ((1 << 24) as f32); 
+    let float_val = (fixed_val>>24) as f32 + ((fixed_val&0x00FFFFFF) as f32 * 0.001) ;
 	return float_val ;
 }
 
@@ -200,12 +202,6 @@ pub fn apply_yamls(yaml_files_names: Vec<String>) -> i32 {
     let mut ret : i32;
     let mut cfg = xhptdc8_manager_configuration::default();
 
-    if yaml_files_names.len() == 0 {
-        return 0 ;
-    }
-        
-    println!("") ;
-    println!("Configuring device using YAML file(s)") ;
     unsafe {
         ret = xhptdc8_get_default_configuration(g_mgr, &mut cfg) ;
         if  ret != XHPTDC8_OK.try_into().unwrap() {
@@ -213,22 +209,30 @@ pub fn apply_yamls(yaml_files_names: Vec<String>) -> i32 {
             return -1;
         }
     }
-    
-    // Apply all YAML files on cfg
-    for (_, file_name) in yaml_files_names.iter().enumerate() {
-        print!("File {}...", file_name);    
-        let yaml_string = fs::read_to_string(file_name)
-            .expect("Something went wrong reading the YAML file");    
-        let yaml_string_c: *const raw::c_char = yaml_string.as_ptr() as *const raw::c_char;
-        unsafe {
-            ret = xhptdc8_apply_yaml(&mut cfg, yaml_string_c);
-            if  ret < 0 {
-                print!(" {}: {}", "Error".red().bold(), ret.to_string());
-                return -1;
-            }
-        }
-        print!(" {}", "Parsed".green().bold());    
+   
+    if yaml_files_names.len() != 0 {
         println!("") ;
+        println!("Configuring device using YAML file(s)") ;
+        
+        // Apply all YAML files on cfg
+        for (_, file_name) in yaml_files_names.iter().enumerate() {
+            print!("File {}...", file_name);    
+            let yaml_string = fs::read_to_string(file_name)
+                .expect("Something went wrong reading the YAML file");    
+            let yaml_string_c: *const raw::c_char = yaml_string.as_ptr() as *const raw::c_char;
+            unsafe {
+                ret = xhptdc8_apply_yaml(&mut cfg, yaml_string_c);
+                if  ret < 0 {
+                    print!(" {}: {}", "Error".red().bold(), ret.to_string());
+                    return -1;
+                }
+            }
+            print!(" {}", "Parsed".green().bold());    
+            println!("") ;
+        }
+    } else {
+        println!("") ;
+        print!("Configuring device using default configuration...") ;
     }
 
     // Apply configuration on devices
@@ -238,10 +242,9 @@ pub fn apply_yamls(yaml_files_names: Vec<String>) -> i32 {
             print!(" {}: {}", "Error".red().bold(), ret.to_string());
             return -1;
         } else {
-            print!("{}", "Done".green().bold());    
+            println!("{}", "Done".green().bold());    
         }
     }
-    println!("") ;
     return 1 ;
 }
 
@@ -250,32 +253,44 @@ fn _write_to_output_file(mut file: &File, is_binary: bool, remaining_file_elemen
     bar : &indicatif::ProgressBar, total_target_hits_no : u32, total_written_hits_no: &mut u32) -> i32 {
     
     let mut output_value_to_write = String::new() ;    
-    let hit_index : i32 = *buffer_start_index ;
-        *total_written_hits_no += 1 ;
+    let mut hit_index : i32 = *buffer_start_index ;
+    let mut prev_bar_position = 0 ;
+    let mut cur_bar_position = 0 ;
     while   (hit_index < buffer_elements_count) // Elements still found in the buffer to be written
         &&  (*remaining_file_elements_count >0) // File still have space for a new element
     {
         if is_binary {
-            output_value_to_write = format!("{:b}\n", hits_buffer[hit_index as usize]) ;
+            output_value_to_write = format!("{:064b}{:08b}{:08b}{:016b}\n", 
+                hits_buffer[hit_index as usize].time,
+                hits_buffer[hit_index as usize].channel,
+                hits_buffer[hit_index as usize].type_,
+                hits_buffer[hit_index as usize].bin) ;
         } else {
             output_value_to_write = format!("{},{},{},{}\n", 
                                 hits_buffer[hit_index as usize].time,
                                 hits_buffer[hit_index as usize].channel,
                                 hits_buffer[hit_index as usize].type_,
-                                hits_buffer[hit_index as usize].bin) 
+                                hits_buffer[hit_index as usize].bin) ;
         }
         //println!("Value to write {}", output_value_to_write) ;
         match file.write_all(output_value_to_write.as_bytes()) {
             Err(why) => panic!("Couldn't write to file: {}", why),
             Ok(file) => file,
         }
-        *remaining_file_elements_count -= 1 ;
+        // Set loop invariants
         *total_written_hits_no += 1 ;
-        bar.set_position((100.0 * (*total_written_hits_no as f32 / total_target_hits_no as f32)) as u64) ;
-//        println!("total_written_hits_no {}, Position {}", *total_written_hits_no, 
-//            (100.0 * (*total_written_hits_no as f32 / total_target_hits_no as f32)) as u64);
+        *remaining_file_elements_count -= 1 ;
+        hit_index += 1 ;
+
+        // Set bar progress
+        cur_bar_position = (100.0 * (*total_written_hits_no as f32 / total_target_hits_no as f32)) as u64 ;
+        if cur_bar_position > (prev_bar_position + 1) {
+            bar.set_position(cur_bar_position) ;
+            prev_bar_position = cur_bar_position ;
+        }
+        // println!("total_written_hits_no {}, Position {}", *total_written_hits_no, 
+        //    (100.0 * (*total_written_hits_no as f32 / total_target_hits_no as f32)) as u64);
     }
-    println!("total_target_hits_no: {}", total_target_hits_no);
     return 1 ;
 }
 impl fmt::Binary for TDCHit {
@@ -287,24 +302,28 @@ impl fmt::Binary for TDCHit {
 pub fn acquire(output_file: String, is_binary: bool, hits_no: u32,
      files_no: u32) -> i32 {
 
-    println!("\nAcquiring hits...") ;  
-
     // ____________________
     // Initialize variables
-    let total_target_hits_no : u32  = hits_no * files_no;
-    let mut total_written_hits_no: u32 = 0 ;
-    const buffer_capacity : usize = DEFAULT_BUFFER_CAPACITY;
-    let mut hits_buffer = [TDCHit::default(); buffer_capacity];
-    let mut buffer_start_index : i32 = 0 ;
+    
+    let total_target_hits_no : u32  = hits_no * files_no; // Sum of ALL hits in ALL files 
+    let mut total_written_hits_no: u32 = 0 ;  // Sum of ALL hits written in ALL files
+                                              // filled only by _write_to_output_file
+    let mut hits_buffer = [TDCHit::default(); DEFAULT_BUFFER_CAPACITY]; // Hits buffer
+                                              // filled only by xhptdc8_read_hits
+    let mut buffer_start_index : i32 = 0 ;  // Index of buffer first element to be written in the output file 
     let mut started_capture : bool = false ;
-    let mut read_elements_count : raw::c_int = 0 ;
-    let mut remaining_file_elements_count = hits_no as i32;
+    let mut read_elements_count : raw::c_int = 0 ;  // Return of read function
+    let mut remaining_file_elements_count ; // Per file
     let x : xhptdc8_manager_configuration =xhptdc8_manager_configuration::default() ;
     let bar = ProgressBar::new(100);
 
     // ____________________
     // Loop on output files
     for file_index in 0..files_no {
+        // _______________________________
+        // Initialize file loop invariants
+        remaining_file_elements_count = hits_no as i32 ;
+
         // _________________
         // Set the file name
         let mut output_file_name = String::new();
@@ -321,8 +340,8 @@ pub fn acquire(output_file: String, is_binary: bool, hits_no: u32,
                 output_file_name = format!("{}.csv", output_file) ;
             }
         }
-        // ________________________________________________________
-        // Check last if buffer has values remaining from last file
+        // ___________________________________________________
+        // Check if buffer has values remaining from last file
         if read_elements_count > buffer_start_index {
             // written_elements_no = write_hits_buffer_into_file(output_file_name, hits_buffer, buffer_start_index, buffer_elements_count) ;
             // if written_elements_no < 0 {
@@ -335,24 +354,24 @@ pub fn acquire(output_file: String, is_binary: bool, hits_no: u32,
         // Start capturing if not already started
         unsafe {
             if !started_capture {
-                print!("Starting capture...");
                 match xhptdc8_start_capture(g_mgr) {
                 4 => panic!("{}: {}", "Error start capturing".red(), 4.to_string().red()) ,
                 17 => panic!("{}: {}", "Error start capturing".red(), 17.to_string().red()) ,
-                _ => { started_capture = true; println!(" {}", "Done".green().bold()); },
+                _ => { started_capture = true;  },
                 }
             }
         }
+        
         // ______________________
         // Create the output file
-        let mut file = match File::create(&output_file_name) {
+        let file = match File::create(&output_file_name) {
             Err(why) => panic!("{} {}: {}", 
                     "Couldn't create".red(), output_file_name.red(), why.to_string().red()),
             Ok(file) => file,
         };
+
         // ____________________________________________
         // Loop on read_hits to fill in the output file
-        buffer_start_index = 0 ;
         loop {  
             // _________
             // Read hits
@@ -369,6 +388,11 @@ pub fn acquire(output_file: String, is_binary: bool, hits_no: u32,
                     return -1 ;
                 }
             }
+            
+            // Initialize loop invariant
+            buffer_start_index = 0 ;
+
+            // Write the hits to the output file
             _write_to_output_file(
                 // File Parameters
                 &file, is_binary, &mut remaining_file_elements_count, 
@@ -377,6 +401,9 @@ pub fn acquire(output_file: String, is_binary: bool, hits_no: u32,
                 // Progerss Bar Parameters
                 &bar, total_target_hits_no, &mut total_written_hits_no) ;
 
+            // println!("remaining_file_elements_count {}, total_written_hits_no {}, total_target_hits_no {}", 
+            //    remaining_file_elements_count, total_written_hits_no, total_target_hits_no) ;
+
             // ___________________________
             // Check that the file is full
             if remaining_file_elements_count == 0 {
@@ -384,7 +411,7 @@ pub fn acquire(output_file: String, is_binary: bool, hits_no: u32,
                 break ;
             } else {
             // File is not full, still need to read more hits    
-                if total_target_hits_no >= total_target_hits_no {
+                if total_written_hits_no >= total_target_hits_no {
                 // No more hits to read, target is achieved
                     break ;    
                 } else {
@@ -403,7 +430,7 @@ pub fn acquire(output_file: String, is_binary: bool, hits_no: u32,
         }
     }
     // println!("{} {} {} {}", output_file, is_binary, hits_no, files_no) ;
-    // bar.finish(); Not needed, it also duplicates the bar line
+    bar.finish(); 
     return 1 ;
 }
 
