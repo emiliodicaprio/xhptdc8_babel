@@ -750,7 +750,7 @@ extern "C" int xhptdc8_read_hits(xhptdc8_manager mgr, TDCHit* hit_buf, size_t si
 		return _read_hits_for_NO_groups_internal(mngr, hit_buf, size);
 	}
 }
-
+#include <cinttypes>
 /*
 *  xhptdc8_read_hits when groups are note enabled
 */
@@ -760,25 +760,24 @@ int _read_hits_for_NO_groups_internal(xhptdc8_dummy_manager* mngr, TDCHit* hit_b
 	SYSTEMTIME time;
 	GetSystemTime(&time);
 	long current_timestamp = (time.wSecond * 1000) + time.wMilliseconds;
-	long ms_since_last_call = current_timestamp - mngr->last_read_time;
+	int64_t ms_since_last_call = current_timestamp - mngr->last_read_time;
 	mngr->last_read_time = current_timestamp;
 
 	// Calculate normal
 	int normal;
 
 	// Fill the hits
-	size_t max_hits_number = ((ms_since_last_call * 2) < (size - 1)) ? (ms_since_last_call * 2) : (size - 1);
-	for (int hit_index = 0; hit_index < max_hits_number; hit_index += 2) /*2 as we fill couples of entries every time*/
+	size_t max_hits_number = ((ms_since_last_call * 2) < (size)) ? (ms_since_last_call * 2) : (size);
+	for (int64_t hit_index = 0; hit_index < max_hits_number; hit_index += 2) /*2 as we fill couples of entries every time*/
 	{
 		normal = int(g_distribution(g_generator)); // for each hit_index, a new random shall be computed.
-
-		hit_buf[hit_index + 0].time = (ms_since_last_call + hit_index) * 1000000000;
+		hit_buf[hit_index    ].time = (ms_since_last_call + hit_index) * 1000000000;
 		hit_buf[hit_index + 1].time = (ms_since_last_call + hit_index) * 1000000000 + normal;
-		hit_buf[hit_index + 0].channel = 0;
+		hit_buf[hit_index    ].channel = 0;
 		hit_buf[hit_index + 1].channel = 1;
-		hit_buf[hit_index + 0].type = XHPTDC8_TDCHIT_TYPE_RISING;
+		hit_buf[hit_index    ].type = XHPTDC8_TDCHIT_TYPE_RISING;
 		hit_buf[hit_index + 1].type = XHPTDC8_TDCHIT_TYPE_RISING;
-		hit_buf[hit_index + 0].bin = 0;
+		hit_buf[hit_index    ].bin = 0;
 		hit_buf[hit_index + 1].bin = 0;
 	}
 	return int(max_hits_number);
