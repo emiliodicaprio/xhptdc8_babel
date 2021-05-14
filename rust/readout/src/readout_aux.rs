@@ -207,7 +207,7 @@ fn fixed824_to_float(fixed_val: i32) -> f32 {
 pub fn display_about() {
     let msg = 
 "-----------------------------------------------------------------------------
-                 HPTDC8 Readout Tool Application                       
+                 xHPTDC8 Readout Tool Application                       
 -----------------------------------------------------------------------------" ;
     println!("{}", msg) ;
 }
