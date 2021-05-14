@@ -289,7 +289,7 @@ extern "C" {
 	*
 	* @param mgr[in]. It must be initialized using xhptdc8_init().
 	* @param hit_buf[out]. Buffer allocated and provdied by the user.
-	* @param read_max[out]. Size of the buffer.
+	* @param read_max[in]. The number of elemenst that fit into the buffer 'hit_buf'.
 	*
 	* @returns Returns the number of read hits.
 	*/
@@ -366,6 +366,7 @@ extern "C" {
 
 	/**
 	* Generate a software trigger event.
+	* Prerequisites: Device should be configured and not closed.
 	*
 	* @param mgr[in]. It must be initialized using xhptdc8_init().
 	*
@@ -1152,7 +1153,7 @@ extern "C" {
 	/**
 	* Returns the number of boards present in the system that are supported by this driver.
 	*
-	* @param error_code[out]. In case of success, it is assigned the value {0}, otherwise,
+	* @param error_code[out]. In case of success, it is assigned the value XHPTDC8_OK, otherwise,
 	* it is assigned the relevant error code.
 	* @param error_message[out]. In case of error, it is assigned the error message.
 	*
