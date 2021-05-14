@@ -791,7 +791,11 @@ int _read_hits_for_NO_groups_internal(xhptdc8_dummy_manager* mngr, TDCHit* hit_b
 */
 int _read_hits_for_groups_internal(xhptdc8_dummy_manager* mngr, TDCHit * hit_buf, size_t size)
 {
-	if (mngr->read_hits_count < mngr->captured_stored_time)
+	SYSTEMTIME time;
+	GetSystemTime(&time);
+	long current_timestamp = (time.wSecond * 1000) + time.wMilliseconds;
+	int64_t ms_since_last_call = current_timestamp - mngr->captured_stored_time;
+	if (mngr->read_hits_count < ms_since_last_call)
 	// The number of calls is less than the number of milliseconds elapsed since 
 	// the call to *_start_capture().
 	{
