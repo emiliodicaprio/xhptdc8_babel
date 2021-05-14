@@ -268,7 +268,7 @@ pub fn apply_yamls(yaml_files_names: Vec<String>) -> i32 {
 
 fn _write_to_binary_output_file(mut file: &File, remaining_file_hits_no: &mut i32, 
     hits_buffer: &[TDCHit], buffer_start_index: &mut i32, buffer_hits_no: i32, 
-    total_written_hits_no: &mut u32) -> i32 
+    total_written_hits_no: &mut u32, grouping_enabled : bool) -> i32 
 {
     unsafe {
         if ENABLE_LOG {
@@ -280,8 +280,14 @@ fn _write_to_binary_output_file(mut file: &File, remaining_file_hits_no: &mut i3
     for hit_index in *buffer_start_index as usize..buffer_hits_no as usize{
         // Hits still found in the buffer to be written
         if *remaining_file_hits_no <= 0 {
-        // File is fulle and has no space for a new hit    
-            break ;
+            // File is full and has no space for a new hit    
+            if !grouping_enabled {
+            // Group is not enabled
+                break ;
+            } else {
+            // Group is enabled
+            // Don't break, accept extra hits
+            }
         } 
         let _t = file.write_all(&(hits_buffer[hit_index].time.to_be_bytes()));   
         let _c = file.write_all(&(hits_buffer[hit_index].channel.to_be_bytes())) ;
@@ -289,8 +295,13 @@ fn _write_to_binary_output_file(mut file: &File, remaining_file_hits_no: &mut i3
         let _b = file.write_all(&(hits_buffer[hit_index].bin.to_be_bytes())) ;
 
         // Set loop invariants
-        *total_written_hits_no += 1 ;
-        *remaining_file_hits_no -= 1 ;
+        if *remaining_file_hits_no > 0  {
+            *total_written_hits_no += 1 ;
+            *remaining_file_hits_no -= 1 ;
+        } else {
+        // No more hits remaining in the file
+        // Don't increment/decrement, as it's in grouping mode    
+        }
     }
     // Update buffer_start_index
     *buffer_start_index += (*total_written_hits_no - total_written_hits_no_before) as i32;
@@ -306,7 +317,7 @@ fn _write_to_binary_output_file(mut file: &File, remaining_file_hits_no: &mut i3
 
 fn _write_to_csv_output_file(mut file: &File, remaining_file_hits_no: &mut i32, 
     hits_buffer: &[TDCHit], buffer_start_index: &mut i32, buffer_hits_no: i32, 
-    total_written_hits_no: &mut u32) -> i32 {
+    total_written_hits_no: &mut u32, grouping_enabled : bool) -> i32 {
     
     unsafe {
         if ENABLE_LOG {
@@ -320,8 +331,14 @@ fn _write_to_csv_output_file(mut file: &File, remaining_file_hits_no: &mut i32,
     {
         // Hits still found in the buffer to be written
         if *remaining_file_hits_no <= 0 {
-        // File is fulle and has no space for a new hit    
-            break ;
+            // File is full and has no space for a new hit    
+            if !grouping_enabled {
+            // Group is not enabled
+                break ;
+            } else {
+            // Group is enabled
+            // Don't break, accept extra hits
+            }
         } 
         output_value_to_write = format!("{},{},{},{}\n", 
             hits_buffer[hit_index].time,
@@ -334,8 +351,13 @@ fn _write_to_csv_output_file(mut file: &File, remaining_file_hits_no: &mut i32,
             Ok(file) => file,
         }
         // Set loop invariants
-        *total_written_hits_no += 1 ;
-        *remaining_file_hits_no -= 1 ;
+        if *remaining_file_hits_no > 0  {
+            *total_written_hits_no += 1 ;
+            *remaining_file_hits_no -= 1 ;
+        } else {
+        // No more hits remaining in the file
+        // Don't increment/decrement, as it's in grouping mode    
+        }
     }
     // Update buffer_start_index
     *buffer_start_index += (*total_written_hits_no - total_written_hits_no_before) as i32;
@@ -351,7 +373,8 @@ fn _write_to_csv_output_file(mut file: &File, remaining_file_hits_no: &mut i32,
 
 fn _write_to_output_file(file: &File, is_binary: bool, remaining_file_hits_no: &mut i32, 
     hits_buffer: &[TDCHit], buffer_start_index: &mut i32, buffer_hits_no: i32, 
-    bar : &indicatif::ProgressBar, total_target_hits_no : u32, total_written_hits_no: &mut u32) -> i32 
+    bar : &indicatif::ProgressBar, total_target_hits_no : u32, total_written_hits_no: &mut u32,
+    grouping_enabled : bool) -> i32 
 {
     let prev_bar_position = bar.position() ;
     if is_binary {
@@ -361,7 +384,9 @@ fn _write_to_output_file(file: &File, is_binary: bool, remaining_file_hits_no: &
             // Buffer Parameters
             &hits_buffer, buffer_start_index, buffer_hits_no, 
             // Progerss Bar Parameters
-            total_written_hits_no) ;
+            total_written_hits_no,
+            // Grouping
+            grouping_enabled) ;
     } else {
         _write_to_csv_output_file(
             // File Parameters
@@ -369,7 +394,9 @@ fn _write_to_output_file(file: &File, is_binary: bool, remaining_file_hits_no: &
             // Buffer Parameters
             &hits_buffer, buffer_start_index, buffer_hits_no, 
             // Progerss Bar Parameters
-            total_written_hits_no) ;
+            total_written_hits_no,
+            // Grouping
+            grouping_enabled) ;
     }
     // Set bar progress
     let cur_bar_position = (100.0 * (*total_written_hits_no as f32 / total_target_hits_no as f32)) as u64 ;
@@ -435,6 +462,24 @@ pub fn acquire(output_file:&mut String, is_binary: bool, hits_no: u32, files_no:
     let mut read_hits_no : raw::c_int = 0 ;  // Return of read function
     let mut remaining_file_hits_no ; // Per file
     let bar = ProgressBar::new(100);
+    let mut cur_config : xhptdc8_manager_configuration = xhptdc8_manager_configuration::default();
+
+    // _________________________
+    // Get current configuration
+    unsafe {
+        let ret = xhptdc8_get_current_configuration(g_mgr, &mut cur_config) ;
+        match ret as i32 {
+            4 | 17 => panic!("{}: {}", "Error getting current configuration.".red(), ret.to_string().red()) ,
+            _ => {} ,
+        };
+        if ENABLE_LOG {
+            println!("Grouping Enablement {}",
+                match cur_config.grouping.enabled {
+                    0 => false.to_string().green().bold() ,
+                    _ => true.to_string().green().bold() ,
+                });
+        }
+    }
 
     // ____________________
     // Loop on output files
@@ -451,11 +496,11 @@ pub fn acquire(output_file:&mut String, is_binary: bool, hits_no: u32, files_no:
         // Start capturing if not already started
         unsafe {
             if !started_capture {
-                match xhptdc8_start_capture(g_mgr) {
-                4 => panic!("{}: {}", "Error start capturing".red(), 4.to_string().red()) ,
-                17 => panic!("{}: {}", "Error start capturing".red(), 17.to_string().red()) ,
+                let ret = xhptdc8_start_capture(g_mgr);
+                match ret {
+                4 | 17 => panic!("{}: {}", "Error start capturing".red(), ret.to_string().red()) ,
                 _ => { started_capture = true;  },
-                }
+                };
             }
         }
         
@@ -479,7 +524,12 @@ pub fn acquire(output_file:&mut String, is_binary: bool, hits_no: u32, files_no:
                 // Buffer Parameters
                 &hits_buffer, &mut buffer_start_index, read_hits_no, 
                 // Progerss Bar Parameters
-                &bar, total_target_hits_no, &mut total_written_hits_no) ;
+                &bar, total_target_hits_no, &mut total_written_hits_no,
+                // Grouping enablement
+                match cur_config.grouping.enabled {
+                    0 => false ,
+                    _ => true ,
+                }) ;
         }
         if remaining_file_hits_no <= 0 {
         // File is full
@@ -523,7 +573,12 @@ pub fn acquire(output_file:&mut String, is_binary: bool, hits_no: u32, files_no:
                 // Buffer Parameters
                 &hits_buffer, &mut buffer_start_index, read_hits_no, 
                 // Progerss Bar Parameters
-                &bar, total_target_hits_no, &mut total_written_hits_no) ;
+                &bar, total_target_hits_no, &mut total_written_hits_no,
+                // Grouping enablement
+                match cur_config.grouping.enabled {
+                    0 => false ,
+                    _ => true ,
+                } ) ;
 
             // _________________________
             // Check if the file is full
