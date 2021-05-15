@@ -30,16 +30,16 @@ jobs:
     #  # with:
       #  path: ./dummy ./lib
     
-    - name: Install LLVM and Clang
-      uses: KyleMayes/install-llvm-action@v1
-      with:
-        version: "10.0"
-        directory: ${{ runner.temp }}/llvm    
+#    - name: Install LLVM and Clang
+#      uses: KyleMayes/install-llvm-action@v1
+#      with:
+#        version: "10.0"
+#        directory: ${{ runner.temp }}/llvm    
         
-    - name: Show rustup Settings
-      run: |
-        rustup show
-        clang --version 
+#    - name: Show rustup Settings
+#      run: |
+#        rustup show
+#        clang --version 
 
     # Assuming that 'stable-x86_64-pc-windows-msvc' is default
   #  - name: Build x64 Release
@@ -62,9 +62,11 @@ jobs:
       run: | 
         ls "C:\Program Files (x86)"
         ls "C:\Program Files"
+        ls D:\a\_temp
         wget https://prereleases.llvm.org/win-snapshots/LLVM-12.0.0-6923b0a7-win32.exe -OutFile "C:\Temp\LLVM_Win32.exe"
         ls "C:\Temp"
         C:\Temp\LLVM_Win32.exe /S
+        ls D:\a\_temp
         ls "C:\"
         ls "C:\Program Files (x86)"
         ls "C:\Program Files (x86)\LLVM"
