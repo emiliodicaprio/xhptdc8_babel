@@ -63,10 +63,10 @@ jobs:
         wget https://prereleases.llvm.org/win-snapshots/LLVM-12.0.0-6923b0a7-win32.exe -OutFile "C:\Temp\LLVM_Win32.exe"
         C:\Temp\LLVM_Win32.exe /S
         
-    - name: Sleep 
-      uses: jakejarvis/wait-action@master
+    - name: Sleep for 180s
+      uses: juliangruber/sleep-action@v1
       with:
-        time: '180s'
+       time: 180s
 
     - name: Check Installation
       run: | 
