@@ -38,6 +38,8 @@ jobs:
       run: |
         rustup show
         ($env:PATH).split(";")
+        ($env:LIBCLANG_PATH)="${{env.LD_LIBRARY_PATH}}".substring(0, "${{env.LD_LIBRARY_PATH}}".length - 1)
+        ls ${{env:LIBCLANG_PATH}}
         rustup target add i686-pc-windows-msvc
         rustup show
         
