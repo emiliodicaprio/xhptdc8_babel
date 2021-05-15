@@ -28,8 +28,7 @@ jobs:
       #  path: ./dummy ./lib
 
     - name: Build
-      run: cargo build --verbose
-      
-    - name: Run tests
-      run: cargo test --verbose
-
+      run: |
+        cd rust/readout
+        cargo build --verbose
+  
