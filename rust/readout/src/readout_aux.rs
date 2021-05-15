@@ -3,7 +3,11 @@
 #![allow(non_snake_case)]
 #![allow(dead_code)]
 
-include!("../target/debug/build/xhptdc8_readout-2fec4d75702f6b5b/out/bindings.rs");
+#[cfg(target_arch="x86")]
+include!("./bindings/bindings.rs"); // Must = corresponding BINDINGS_FILE_NAME 
+
+#[cfg(target_arch="x86_64")]
+include!("./bindings/bindings_64.rs");  // Must = corresponding BINDINGS_FILE_NAME 
 
 use clap::{Arg, App};
 use std::os::raw ;
@@ -21,7 +25,13 @@ use std::time::{SystemTime};
 static mut ENABLE_LOG : bool = false ; 
 static mut g_mgr: xhptdc8_manager = ptr::null_mut();
 const DEFAULT_HITS_NO : u32 = 10000 ;
-const DEFAULT_BUFFER_CAPACITY : usize = 5000 ;
+
+#[cfg(target_arch="x86")]
+const DEFAULT_BUFFER_CAPACITY : u32 = 5000 ;
+
+#[cfg(target_arch="x86_64")]
+const DEFAULT_BUFFER_CAPACITY : u64 = 5000 ;
+
 const DEFAULT_FILES_NO : u32 = 1 ;
 const DEFAULT_MIN_HITS_TO_SLEEP : i32 = 10 ;
 const DEFAULT_SLEEP_MS : u64 = 100 ;
@@ -33,18 +43,18 @@ const DEFAULT_SLEEP_MS : u64 = 100 ;
  */
 pub fn init_globals() -> i32 
 {
-    print!("\nInitializing xHPTDC8 device... ") ;
+    print!("\nInitializing xHPTDC8 device...") ;
 	let mut params = xhptdc8_manager_init_parameters::default() ;
 	let mut error_code : raw::c_int = 0;
     let mut error_message: *const raw::c_char = ptr::null_mut();
     unsafe {
         g_mgr = xhptdc8_init(&mut params, &mut error_code, &mut error_message);
         if g_mgr == ptr::null_mut() || error_code != XHPTDC8_OK.try_into().unwrap() {
-            println!("{}", "Error".red().bold()) ;
+            println!("{}", "Error"/*.red().bold()*/) ;
             return -1
         }
     }
-    println!("{}", "Done".green().bold()) ;
+    println!(" {}", "Done"/*.green().bold()*/) ;
 	return 1 ;
 }
 
@@ -110,7 +120,7 @@ pub fn process_command_line(output_file: &mut String, is_binary: &mut bool, hits
     if let Some(n) = matches.value_of("HITS_NO") {
         *hits_no = n.parse::<u32>().unwrap();
         if *hits_no == 0 {
-            println!("{}", "zero Hits Numeber is not accepted".red()) ;
+            println!("{}", "zero Hits Numeber is not accepted"/*.red()*/) ;
             return -1 ;
         }
     }
@@ -120,7 +130,7 @@ pub fn process_command_line(output_file: &mut String, is_binary: &mut bool, hits
     if let Some(n) = matches.value_of("FILES_NO") {
         *files_no = n.parse::<u32>().unwrap();
         if *files_no == 0 {
-            println!("{}", "zero Files Numeber is not accepted".red()) ;
+            println!("{}", "zero Files Numeber is not accepted"/*.red()*/) ;
             return -1 ;
         }
     } 
@@ -164,12 +174,12 @@ pub fn display_devices_serials(error_code: &mut i32, error_message: *mut *const 
     unsafe {
         devices_count = xhptdc8_count_devices(error_code, error_message) ;
         if devices_count <=0 { 
-            println!("No devices found... {}", "Error".red().bold()) ;
+            println!("No devices found... {}", "Error"/*.red().bold()*/) ;
             return devices_count ;
         } 
     }
-	println!("{} {}", "Installed Devices Serials for TDC(s):".blue(), 
-        devices_count.to_string().white()) ;
+	println!("{} {}", "Installed Devices Serials for TDC(s):"/*.blue()*/, 
+        devices_count.to_string()/*.white()*/) ;
 
 	for device_index in 0..devices_count {
         let device_serial = get_device_serial(device_index) ;
@@ -177,7 +187,7 @@ pub fn display_devices_serials(error_code: &mut i32, error_message: *mut *const 
             return -1 ;
         }
         println!("{}) index {}: xHPTDC8 serial {}", 
-            device_index+1, device_index.to_string().blue(), device_serial.to_string().blue()) ;
+            device_index+1, device_index.to_string()/*.blue()*/, device_serial.to_string()/*.blue()*/) ;
 	}
     return devices_count ;
 }
@@ -192,7 +202,7 @@ pub fn get_device_serial(device_index: i32) -> f32 {
     unsafe {
         error_code = xhptdc8_get_static_info(g_mgr, device_index, &mut static_info) ;
         if error_code != XHPTDC8_OK.try_into().unwrap() {
-            println!("Error getting device static information: {}", error_code.to_string().red().bold());
+            println!("Error getting device static information: {}", error_code.to_string()/*.red().bold()*/);
             return -1.0 ;
         }
     }
@@ -223,7 +233,7 @@ pub fn apply_yamls(yaml_files_names: Vec<String>) -> i32 {
     unsafe {
         ret = xhptdc8_get_default_configuration(g_mgr, &mut cfg) ;
         if  ret != XHPTDC8_OK.try_into().unwrap() {
-            print!(" {}: {}\n", "Error".red().bold(), ret.to_string());
+            print!(" {}: {}\n", "Error"/*.red().bold()*/, ret.to_string());
             return -1;
         }
     }
@@ -241,11 +251,11 @@ pub fn apply_yamls(yaml_files_names: Vec<String>) -> i32 {
             unsafe {
                 ret = xhptdc8_apply_yaml(&mut cfg, yaml_string_c);
                 if  ret < 0 {
-                    print!(" {}: {}", "Error".red().bold(), ret.to_string());
+                    print!(" {}: {}", "Error"/*.red().bold()*/, ret.to_string());
                     return -1;
                 }
             }
-            print!(" {}", "Parsed".green().bold());    
+            print!(" {}", "Parsed"/*.green().bold()*/);    
             println!("") ;
         }
     } else {
@@ -257,10 +267,10 @@ pub fn apply_yamls(yaml_files_names: Vec<String>) -> i32 {
     unsafe {
         ret = xhptdc8_configure(g_mgr, &mut cfg);             
         if  ret != XHPTDC8_OK.try_into().unwrap() {
-            print!(" {}: {}", "Error".red().bold(), ret.to_string());
+            print!(" {}: {}", "Error"/*.red().bold()*/, ret.to_string());
             return -1;
         } else {
-            println!("{}", "Done".green().bold());    
+            println!("{}", "Done"/*.green().bold()*/);    
         }
     }
     return 1 ;
@@ -308,8 +318,8 @@ fn _write_to_binary_output_file(mut file: &File, remaining_file_hits_no: &mut i3
     unsafe {
         if ENABLE_LOG {
             println!("After writing : Buffer Start Index {}, Total Written Hits No {}", 
-                (*buffer_start_index).to_string().green().bold(), 
-                total_written_hits_no.to_string().green().bold());
+                (*buffer_start_index).to_string()/*.green().bold()*/, 
+                total_written_hits_no.to_string()/*.green().bold()*/);
         }
     }
     return 1 ;
@@ -364,8 +374,8 @@ fn _write_to_csv_output_file(mut file: &File, remaining_file_hits_no: &mut i32,
     unsafe {
         if ENABLE_LOG {
             println!("After writing : Buffer Start Index {}, Total Written Hits No {}", 
-                (*buffer_start_index).to_string().green().bold(), 
-                total_written_hits_no.to_string().green().bold());
+                (*buffer_start_index).to_string()/*.green().bold()*/, 
+                total_written_hits_no.to_string()/*.green().bold()*/);
         }
     }
     return 1 ;
@@ -409,7 +419,7 @@ fn _write_to_output_file(file: &File, is_binary: bool, remaining_file_hits_no: &
 fn _create_output_file(output_file: &mut String, is_binary: bool, files_no: u32, file_index: u32) -> File {
     // _________________
     // Set the file name
-    let mut output_file_name = String::new();
+    let output_file_name : String ;
     if files_no > 1 {
         if is_binary {
             output_file_name = format!("{}{:04}.dat", output_file, file_index+1) ;
@@ -427,12 +437,12 @@ fn _create_output_file(output_file: &mut String, is_binary: bool, files_no: u32,
     // Create the output file
     let file = match File::create(&output_file_name) {
         Err(why) => panic!("{} {}: {}", 
-                "Couldn't create".red(), output_file_name.red(), why.to_string().red()),
+                "Couldn't create"/*.red()*/, output_file_name/*.red()*/, why.to_string()/*.red()*/),
         Ok(file) => file,
     };
     unsafe {
         if ENABLE_LOG {
-            println!("Created output file: {}", output_file_name.green().bold()) ;
+            println!("Created output file: {}", output_file_name/*.green().bold()*/) ;
         }
     }
     return file ;
@@ -455,7 +465,7 @@ pub fn acquire(output_file:&mut String, is_binary: bool, hits_no: u32, files_no:
     let total_target_hits_no : u32  = hits_no * files_no; // Sum of ALL hits in ALL files 
     let mut total_written_hits_no: u32 = 0 ;  // Sum of ALL hits written in ALL files
                                               // filled only by _write_to_output_file
-    let mut hits_buffer = [TDCHit::default(); DEFAULT_BUFFER_CAPACITY]; // Hits buffer
+    let mut hits_buffer = [TDCHit::default(); DEFAULT_BUFFER_CAPACITY as usize]; // Hits buffer
                                               // filled only by xhptdc8_read_hits
     let mut buffer_start_index : i32 = 0 ;  // Index of buffer first hit to be written in the output file 
     let mut started_capture : bool = false ;
@@ -469,14 +479,14 @@ pub fn acquire(output_file:&mut String, is_binary: bool, hits_no: u32, files_no:
     unsafe {
         let ret = xhptdc8_get_current_configuration(g_mgr, &mut cur_config) ;
         match ret as i32 {
-            4 | 17 => panic!("{}: {}", "Error getting current configuration.".red(), ret.to_string().red()) ,
+            4 | 17 => panic!("{}: {}", "Error getting current configuration."/*.red()*/, ret.to_string()/*.red()*/) ,
             _ => {} ,
         };
         if ENABLE_LOG {
             println!("Grouping Enablement {}",
                 match cur_config.grouping.enabled {
-                    0 => false.to_string().green().bold() ,
-                    _ => true.to_string().green().bold() ,
+                    0 => false.to_string()/*.green().bold()*/ ,
+                    _ => true.to_string()/*.green().bold()*/ ,
                 });
         }
     }
@@ -498,7 +508,7 @@ pub fn acquire(output_file:&mut String, is_binary: bool, hits_no: u32, files_no:
             if !started_capture {
                 let ret = xhptdc8_start_capture(g_mgr);
                 match ret {
-                4 | 17 => panic!("{}: {}", "Error start capturing".red(), ret.to_string().red()) ,
+                4 | 17 => panic!("{}: {}", "Error start capturing"/*.red()*/, ret.to_string()/*.red()*/) ,
                 _ => { started_capture = true;  },
                 };
             }
@@ -512,9 +522,9 @@ pub fn acquire(output_file:&mut String, is_binary: bool, hits_no: u32, files_no:
             unsafe {
                 if ENABLE_LOG {
                     println!("Remaining from last file: Buffer Start Index {}, Read Hits {}, File Remaining Hits {}", 
-                        buffer_start_index.to_string().green().bold(), 
-                        read_hits_no.to_string().green().bold(), 
-                        remaining_file_hits_no.to_string().green().bold()) ;
+                        buffer_start_index.to_string()/*.green().bold()*/, 
+                        read_hits_no.to_string()/*.green().bold()*/, 
+                        remaining_file_hits_no.to_string()/*.green().bold()*/) ;
                 }
             }
             // Write the hits to the output file
@@ -543,10 +553,10 @@ pub fn acquire(output_file:&mut String, is_binary: bool, hits_no: u32, files_no:
             // Read hits
             unsafe {
                 // Pass hits_buffer array not a vector, as it's not guaranteed to be sequential in memory
-                read_hits_no = xhptdc8_read_hits(g_mgr, hits_buffer.as_mut_ptr(), DEFAULT_BUFFER_CAPACITY as u64) ;
+                read_hits_no = xhptdc8_read_hits(g_mgr, hits_buffer.as_mut_ptr(), DEFAULT_BUFFER_CAPACITY) ;
                 if read_hits_no < 0 {
                     bar.finish();
-                    println!("{}: {}", "Error reading hits".red(), read_hits_no.to_string().red());
+                    println!("{}: {}", "Error reading hits"/*.red()*/, read_hits_no.to_string()/*.red()*/);
                     if started_capture {
                         xhptdc8_stop_capture(g_mgr) ;
                     }
@@ -558,7 +568,7 @@ pub fn acquire(output_file:&mut String, is_binary: bool, hits_no: u32, files_no:
                     thread::sleep(time::Duration::from_millis(DEFAULT_SLEEP_MS));
                     if ENABLE_LOG {
                         println!("Read Hits No {}, Slept {} ms ", 
-                            read_hits_no.to_string().red(), DEFAULT_SLEEP_MS) ;
+                            read_hits_no.to_string()/*.red()*/, DEFAULT_SLEEP_MS) ;
                     }
                 }
             }
@@ -609,7 +619,7 @@ pub fn acquire(output_file:&mut String, is_binary: bool, hits_no: u32, files_no:
     unsafe {
         if ENABLE_LOG {
             println!("Elapsed Time: {:?}, Total Slept: {}", 
-                time_before.elapsed(), time_slept.to_string().red());
+                time_before.elapsed(), time_slept.to_string()/*.red()*/);
         }
     }
     return 1 ;
@@ -629,4 +639,79 @@ pub fn display_footer() {
                           End of Application                       
 -----------------------------------------------------------------------------" ;
 	println!("{}\n", msg) ;
+}
+
+impl Default for xhptdc8_manager_init_parameters {
+    fn default () -> xhptdc8_manager_init_parameters {
+        xhptdc8_manager_init_parameters{version: 0, buffer_size:0, variant:0, device_type:0, dma_read_delay:0,
+            multiboard:0, use_ext_clock:0, ignore_calibration:0}
+    }
+}
+
+impl Default for xhptdc8_manager_configuration {
+    fn default () -> xhptdc8_manager_configuration {
+        xhptdc8_manager_configuration{version: 0, size:0, device_configs:[xhptdc8_device_configuration::default(); 8], 
+            grouping: xhptdc8_grouping_configuration::default(), 
+            bin_to_ps: std::option::Option::None}
+    }
+}
+
+impl Default for xhptdc8_grouping_configuration {
+    fn default () -> xhptdc8_grouping_configuration {
+        xhptdc8_grouping_configuration{enabled: 0, trigger_channel:0, 
+            zero_channel:0, zero_channel_offset:0, 
+            range_start:0, range_stop:0, trigger_deadtime:0, require_window_hit:0, 
+            window_start:0, window_stop:0, veto_mode:0, veto_start:0, veto_stop:0, 
+            veto_relative_to_zero:0, overlap:0}
+    }
+}
+
+impl Default for xhptdc8_static_info {
+    fn default () -> xhptdc8_static_info {
+        xhptdc8_static_info{version: 0, size:0, board_id:0, 
+            driver_revision: 0, driver_build_revision:0, firmware_revision:0, board_revision:0, 
+            board_configuration:0, subversion_revision:0, chip_id:[0;2], board_serial:0,
+            flash_serial_high:0, flash_serial_low:0, flash_valid:0, calibration_date:[0;20]}
+    }
+}
+
+impl Default for TDCHit {
+    fn default () -> TDCHit {
+        TDCHit{time:0, channel:0, type_:0, bin:0}
+    }
+}
+
+impl Default for xhptdc8_device_configuration {
+    fn default () -> xhptdc8_device_configuration {
+        xhptdc8_device_configuration{size:0, version:0, auto_trigger_period:0, auto_trigger_random_exponent:0,
+            trigger_threshold:[0.0;8], trigger:[xhptdc8_trigger::default();16], 
+            gating_block:[xhptdc8_tiger_block::default();8], tiger_block:[xhptdc8_tiger_block::default();9],
+            channel:[xhptdc8_channel::default();8], adc_channel: xhptdc8_adc_channel::default(),
+            skip_alignment:0, alignment_source:0 }
+            
+    }
+}
+
+impl Default for xhptdc8_trigger {
+    fn default () -> xhptdc8_trigger {
+        xhptdc8_trigger{falling:0, rising:0}
+    }
+}
+
+impl Default for xhptdc8_tiger_block {
+    fn default () -> xhptdc8_tiger_block {
+        xhptdc8_tiger_block{mode:0, negate:0, retrigger:0, extend:0, start:0, stop:0, sources:0}
+    }
+}
+
+impl Default for xhptdc8_channel {
+    fn default () -> xhptdc8_channel {
+        xhptdc8_channel{enable:0, rising:0}
+    }
+}
+
+impl Default for xhptdc8_adc_channel {
+    fn default () -> xhptdc8_adc_channel {
+        xhptdc8_adc_channel{enable:0, watchdog_readout:0, watchdog_interval:0, trigger_threshold:0.0}
+    }
 }
