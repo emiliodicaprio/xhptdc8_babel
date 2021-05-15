@@ -22,8 +22,8 @@ jobs:
           COMMIT_MSG: 'Internal build due to Dummy-Library code change' 
         
     steps:
-    - name: Checkout Code
-      uses: actions/checkout@v2
+    #- name: Checkout Code
+    #  uses: actions/checkout@v2
       # Inprovement: Uncomment & adjust if we can check out only: ./lib & ./dummy instead of the whole repository
       # with:
       #  path: ./dummy ./lib
@@ -37,6 +37,11 @@ jobs:
     - name: Show Environment Settings
       run: |
         rustup show
-        
+
+    - name: Build x64
+      run: |
+        cd ${{env.SOLUTION_FILE_PATH}}
+        cargo build --target-dir='Build_x64' --verbose
+
     # Assuming that 'stable-x86_64-pc-windows-msvc' is default
     
