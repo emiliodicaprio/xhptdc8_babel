@@ -42,7 +42,10 @@ jobs:
         rustup show
 
     - name: Set Path
-      run: ($env:LIBCLANG_PATH)="${{env.LD_LIBRARY_PATH}}".substring(0, "${{env.LD_LIBRARY_PATH}}".length - 1)
+      run: |
+        ($env:LIBCLANG_PATH)
+        ($env:LIBCLANG_PATH)="${{env.LD_LIBRARY_PATH}}".substring(0, "${{env.LD_LIBRARY_PATH}}".length - 1)
+        ($env:LIBCLANG_PATH)
 
     - name: Build x64
       run: | 
