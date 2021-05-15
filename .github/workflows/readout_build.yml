@@ -38,11 +38,15 @@ jobs:
       run: |
         rustup show
         ($env:PATH).split(";")
-
-    - name: Build x64
-      run: |
-        cd ${{env.SOLUTION_FILE_PATH}}
-        cargo build --target-dir='Build_x64' --verbose
+        ls D:\a\_temp\llvm\bin
+        rustup target add i686-pc-windows-msvc
+        rustup show
+        
+        
+  #  - name: Build x64
+  #    run: |
+  #      cd ${{env.SOLUTION_FILE_PATH}}
+  #      cargo build --target-dir='Build_x64' --verbose
 
     # Assuming that 'stable-x86_64-pc-windows-msvc' is default
     
