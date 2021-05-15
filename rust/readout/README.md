@@ -9,3 +9,13 @@ This shall reside in a new sub directory and be both a tool for end users and a 
 The project is created u=using Rust.
 
 ### Project Environments and Configurations
+
+### Packages
+#### main
+
+### Building the Code (64-bit)
+#### Prerequisites
+1. 
+
+#### Steps
+1. 
