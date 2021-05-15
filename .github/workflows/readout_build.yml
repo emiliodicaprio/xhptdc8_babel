@@ -8,6 +8,7 @@ on:
 
 env:
   CARGO_TERM_COLOR: always
+  SOLUTION_FILE_PATH: .\rust\readout
 
 jobs:
   build:
@@ -29,9 +30,18 @@ jobs:
 
     - name: Show Environment Settings
       run: rustup show
-      
-    #- name: Build
-    #  run: |
-    #    cd rust/readout
-    #    cargo build --verbose
+    
+    # Assuming that 'stable-x86_64-pc-windows-msvc' is default
+    - name: Build x64
+      run: |
+        cd ${{env.SOLUTION_FILE_PATH}}
+        cargo build --target-dir='Build_x64' --verbose
+    
+    - name: Copy x64 EXE to Repository
+      run: |
+        ls
+        cd ${{env.SOLUTION_FILE_PATH}}
+        ls
+        
+        
   
