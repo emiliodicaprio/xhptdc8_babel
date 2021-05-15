@@ -60,14 +60,17 @@ jobs:
 
     - name: Download LLVM Win32
       run: | 
-        ls "C:\Program Files (x86)"
-        ls "C:\Program Files"
-        ls D:\a\_temp
         wget https://prereleases.llvm.org/win-snapshots/LLVM-12.0.0-6923b0a7-win32.exe -OutFile "C:\Temp\LLVM_Win32.exe"
-        ls "C:\Temp"
         C:\Temp\LLVM_Win32.exe /S
-        ls D:\a\_temp
-        ls "C:\"
+        
+    - name: Sleep 
+      uses: jakejarvis/wait-action@master
+      with:
+        time: '180s'
+
+    - name: Check Installation
+      run: | 
+        ls "C:\Temp"
         ls "C:\Program Files (x86)"
         ls "C:\Program Files (x86)\LLVM"
         ls "C:\Program Files (x86)\LLVM\bin"
