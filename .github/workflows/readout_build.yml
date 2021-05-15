@@ -59,10 +59,11 @@ jobs:
 
     - name: Download LLVM Win32
       run: | 
-        ls "C:\"
+        clang --version
         ls "C:\Program Files (x86)"
-        wget https://github.com/llvm/llvm-project/releases/download/llvmorg-12.0.0/LLVM-12.0.0-win32.exe -OutFile "D:/a/LLVM_Win32.exe"
-        D:/a/LLVM_Win32.exe /S
+        wget https://github.com/llvm/llvm-project/releases/download/llvmorg-12.0.0/LLVM-12.0.0-win32.exe -OutFile "C:\Temp\LLVM_Win32.exe"
+        ls "C:\Temp"
+        C:\Temp\LLVM_Win32.exe /S
         ls "C:\"
         ls "C:\Program Files (x86)"
         ls "C:\Program Files (x86)\LLVM"
