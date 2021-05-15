@@ -27,8 +27,11 @@ jobs:
       # with:
       #  path: ./dummy ./lib
 
-    - name: Build
-      run: |
-        cd rust/readout
-        cargo build --verbose
+    - name: Show Environment Settings
+      run: rustup show
+      
+    #- name: Build
+    #  run: |
+    #    cd rust/readout
+    #    cargo build --verbose
   
