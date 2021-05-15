@@ -38,7 +38,7 @@ jobs:
       run: |
         rustup show
         ($env:PATH).split(";")
-        ($env.LIBCLANG_PATH)=${{env.LD_LIBRARY_PATH}}.substring(0, ${{env.LD_LIBRARY_PATH}}.length - 1)
+        ($env:LIBCLANG_PATH)="${{env.LD_LIBRARY_PATH}}".substring(0, "${{env.LD_LIBRARY_PATH}}".length - 1)
         ls ${{env.LIBCLANG_PATH}}
         rustup target add i686-pc-windows-msvc
         rustup show
@@ -46,7 +46,7 @@ jobs:
         
     - name: Build x64
       run: |
-        ($env.LIBCLANG_PATH)=${{env.LD_LIBRARY_PATH}}.substring(0, ${{env.LD_LIBRARY_PATH}}.length - 1)
+        ($env:LIBCLANG_PATH)=${{env.LD_LIBRARY_PATH}}.substring(0, ${{env.LD_LIBRARY_PATH}}.length - 1)
         ($env:LIBCLANG_PATH).split(";")
         cd ${{env.SOLUTION_FILE_PATH}}
         cargo build --target-dir='Build_x64' --verbose
