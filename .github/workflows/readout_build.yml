@@ -1,0 +1,35 @@
+name: Readout Tool Build
+on: 
+  push:
+    paths:
+    - 'rust/readaout/**'
+    - 'lib/include/**'
+  workflow_dispatch:  
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build:
+    runs-on: windows-latest
+    defaults:
+       run:
+         shell: powershell
+    env: 
+          X86_REPO_LIB_PTH_COMMIT: ./lib/x86dummy/
+          X64_REPO_LIB_PTH_COMMIT: ./lib/x64dummy/
+          COMMIT_MSG: 'Internal build due to Dummy-Library code change' 
+        
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v2
+      # Inprovement: Uncomment & adjust if we can check out only: ./lib & ./dummy instead of the whole repository
+      # with:
+      #  path: ./dummy ./lib
+
+    - name: Build
+      run: cargo build --verbose
+      
+    - name: Run tests
+      run: cargo test --verbose
+
