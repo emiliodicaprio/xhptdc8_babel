@@ -37,6 +37,7 @@ jobs:
     - name: Show Environment Settings
       run: |
         rustup show
+        ($env:PATH).split(";")
 
     - name: Build x64
       run: |
