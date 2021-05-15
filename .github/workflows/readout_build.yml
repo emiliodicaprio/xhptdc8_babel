@@ -41,9 +41,13 @@ jobs:
         rustup target add i686-pc-windows-msvc
         rustup show
 
+    - name: Set Path
+      run: ($env:LIBCLANG_PATH)="${{env.LD_LIBRARY_PATH}}".substring(0, "${{env.LD_LIBRARY_PATH}}".length - 1)
+
     - name: Build x64
-      run: |
-        rustup show
+      run: | 
+        rustup show 
+        ($env:LIBCLANG_PATH)
         ($env:LIBCLANG_PATH)="${{env.LD_LIBRARY_PATH}}".substring(0, "${{env.LD_LIBRARY_PATH}}".length - 1)
         ls ${{env:LIBCLANG_PATH}}
         cd ${{env.SOLUTION_FILE_PATH}}
