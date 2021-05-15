@@ -44,6 +44,7 @@ jobs:
         
     - name: Build x64
       run: |
+        ls
         ($env:LIBCLANG_PATH)="${{env.LD_LIBRARY_PATH}}".substring(0, "${{env.LD_LIBRARY_PATH}}".length - 1)
         ls ${{env:LIBCLANG_PATH}}
         cd ${{env.SOLUTION_FILE_PATH}}
