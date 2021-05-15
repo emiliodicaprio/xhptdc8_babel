@@ -29,19 +29,9 @@ jobs:
       #  path: ./dummy ./lib
 
     - name: Show Environment Settings
-      run: rustup show
+      run: |
+        rustup show
+        ls C:\\msys64\\mingw64\\bin\\
     
     # Assuming that 'stable-x86_64-pc-windows-msvc' is default
-    - name: Build x64
-      run: |
-        cd ${{env.SOLUTION_FILE_PATH}}
-        cargo build --target-dir='Build_x64' --verbose
-    
-    - name: Copy x64 EXE to Repository
-      run: |
-        ls
-        cd ${{env.SOLUTION_FILE_PATH}}
-        ls
         
-        
-  
