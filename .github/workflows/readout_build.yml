@@ -41,14 +41,28 @@ jobs:
         rustup target add i686-pc-windows-msvc
         rustup show
 
+    # Assuming that 'stable-x86_64-pc-windows-msvc' is default
     - name: Build x64
       run: | 
-        ($env:LIBCLANG_PATH)
+        echo LIBCLANG_PATH: ($env:LIBCLANG_PATH)
         ($env:LIBCLANG_PATH)="${{env.LD_LIBRARY_PATH}}".substring(0, "${{env.LD_LIBRARY_PATH}}".length - 1)
-        ($env:LIBCLANG_PATH)
+        echo LIBCLANG_PATH: ($env:LIBCLANG_PATH)
         cd ${{env.SOLUTION_FILE_PATH}}
         cargo build --target-dir='Build_x64' --release --verbose
-        ls ${{env.SOLUTION_FILE_PATH}}/Build_x64/release
+        ls ./Build_x64/release
 
-    # Assuming that 'stable-x86_64-pc-windows-msvc' is default
+    - name: Add rustup Target i686
+      run: |
+        rustup show
+        rustup target add i686-pc-windows-msvc
+        rustup default i686-pc-windows-msvc
+
+    - name: Build x86
+      run: | 
+        ls
+        echo LIBCLANG_PATH: ($env:LIBCLANG_PATH)
+        cd ${{env.SOLUTION_FILE_PATH}}
+        cargo build --target-dir='Build_x86' --release --verbose
+        ls ./Build_x86/release
+
     
