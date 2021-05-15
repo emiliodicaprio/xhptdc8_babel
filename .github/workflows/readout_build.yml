@@ -30,15 +30,16 @@ jobs:
     #  # with:
       #  path: ./dummy ./lib
     
-   # - name: Install LLVM and Clang
-   #   uses: KyleMayes/install-llvm-action@v1
-   #   with:
-   #     version: "10.0"
-   #     directory: ${{ runner.temp }}/llvm    
+    - name: Install LLVM and Clang
+      uses: KyleMayes/install-llvm-action@v1
+      with:
+        version: "10.0"
+        directory: ${{ runner.temp }}/llvm    
         
     - name: Show rustup Settings
       run: |
         rustup show
+        clang --version 
 
     # Assuming that 'stable-x86_64-pc-windows-msvc' is default
   #  - name: Build x64 Release
