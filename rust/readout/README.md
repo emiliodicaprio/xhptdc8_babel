@@ -9,6 +9,13 @@ This shall reside in a new sub directory and be both a tool for end users and a 
 The project is created u=using Rust.
 
 ### Project Environments and Configurations
+1. For `bindgen` to work properly: make sure you installed `LLVM` for `clang.dll` and `libclang.dll`, setting `bin` directory on the path, setting `LIBCLANG_PATH` to `bin`, or you get error when using `cargo check` similar to:
+```CMD
+--- stderr
+  thread 'main' panicked at 'Unable to find libclang: "couldn\'t find any valid shared libraries matching: [\'clang.dll\', \'libclang.dll\'], set the `LIBCLANG_PATH` 
+environment variable to a path where one of these files can be found (invalid: [(C:\\Program Files\\LLVM\\bin\\libclang.dll: invalid DLL (64-bit))])"', C:\Users\basse\.cargo\registry\src\github.com-1285ae84e5963aae\bindgen-0.58.1\src/lib.rs:2057:31
+```
+Download from [LLVM Releases from github](https://github.com/llvm/llvm-project/releases), or [LLVM Download](https://releases.llvm.org/download.html)
 
 ### Packages
 #### main
