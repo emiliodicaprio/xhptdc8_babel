@@ -60,8 +60,13 @@ jobs:
 
     - name: Download LLVM Win32
       run: | 
-        wget https://prereleases.llvm.org/win-snapshots/LLVM-12.0.0-6923b0a7-win32.exe -OutFile "C:\Temp\LLVM_Win32.exe"
+        Get-Date -Format "dddd MM/dd/yyyy HH:mm"
+        wget https://github.com/llvm/llvm-project/releases/download/llvmorg-12.0.0/LLVM-12.0.0-win32.exe
+        Get-Date -Format "dddd MM/dd/yyyy HH:mm"
+        wget https://github.com/llvm/llvm-project/releases/download/llvmorg-12.0.0/LLVM-12.0.0-win32.exe -OutFile "C:\Temp\LLVM_Win32.exe"
+        Get-Date -Format "dddd MM/dd/yyyy HH:mm"
         C:\Temp\LLVM_Win32.exe /S
+        Get-Date -Format "dddd MM/dd/yyyy HH:mm"
         
     - name: Sleep for 180s
       uses: juliangruber/sleep-action@v1
