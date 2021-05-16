@@ -60,10 +60,10 @@ jobs:
 
     - name: Build x86 Release
       run: | 
-        ls C:\msys64\mingw32\bin libclang.dll
+        rustup show
         C:\msys64\mingw32\bin\clang --version
         ($env:LIBCLANG_PATH)='C:\msys64\mingw32\bin'
         echo LIBCLANG_PATH: ($env:LIBCLANG_PATH)
         cd ${{env.SOLUTION_FILE_PATH}}
-        cargo build --target-dir='${{env.X86_OUTPUT}}' --release --verbose
+        rustup run stable-i686-pc-windows-msvc cargo build --target-dir='${{env.X86_OUTPUT}}' --release --verbose
         ls ./${{env.X86_OUTPUT}}/release
