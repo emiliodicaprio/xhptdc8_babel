@@ -24,10 +24,10 @@ jobs:
           COMMIT_MSG: 'Internal build due to Dummy-Library code change' 
         
     steps:
-    #- name: Checkout Code
-    #  uses: actions/checkout@v2
-    #  # Inprovement: Uncomment & adjust if we can check out only: ./lib & ./dummy instead of the whole repository
-    #  # with:
+    - name: Checkout Code
+      uses: actions/checkout@v2
+      # Inprovement: Uncomment & adjust if we can check out only: ./lib & ./dummy instead of the whole repository
+      # with:
       #  path: ./dummy ./lib
     
 #    - name: Install LLVM and Clang
@@ -39,52 +39,35 @@ jobs:
     - name: Show rustup Settings
       run: |
         rustup show
-#        clang --version 
+         
 
     # Assuming that 'stable-x86_64-pc-windows-msvc' is default
-  #  - name: Build x64 Release
-  #    run: | 
-  #      ($env:LIBCLANG_PATH)="${{env.LD_LIBRARY_PATH}}".substring(0, "${{env.LD_LIBRARY_PATH}}".length - 1)
-  #      echo LIBCLANG_PATH: ($env:LIBCLANG_PATH)
-  #      cd ${{env.SOLUTION_FILE_PATH}}
-  #      cargo build --target-dir='${{env.X64_OUTPUT}}' --release --verbose
-  #      ls ./${{env.X64_OUTPUT}}/release
+    - name: Build x64 Release
+      run: | 
+        ls C:\msys64\mingw64\bin clang.dll
+        ls C:\msys64\mingw64\bin libclang.dll
+        C:\msys64\mingw64\bin\clang --version
+        ($env:LIBCLANG_PATH)=C:\msys64\mingw64\bin
+        echo LIBCLANG_PATH: ($env:LIBCLANG_PATH)
+        cd ${{env.SOLUTION_FILE_PATH}}
+        cargo build --target-dir='${{env.X64_OUTPUT}}' --release --verbose
+        ls ./${{env.X64_OUTPUT}}/release
 
-  #  - name: Install and Set As Default Target i686 for rustup
-  #    run: |
-  #      rustup show
-  #      rustup install stable-i686-pc-windows-msvc
-  #      rustup target add stable-i686-pc-windows-msvc
-  #      rustup default stable-i686-pc-windows-msvc
-  #      rustup show
+    - name: Install and Set As Default Target i686 for rustup
+      run: |
+        rustup show
+        rustup install stable-i686-pc-windows-msvc
+        rustup target add stable-i686-pc-windows-msvc
+        rustup default stable-i686-pc-windows-msvc
+        rustup show
 
     - name: Download LLVM Win32
       run: | 
-        "Date and time is: $((Get-Date).ToString())"
-        wget https://github.com/llvm/llvm-project/releases/download/llvmorg-12.0.0/LLVM-12.0.0-win32.exe
-        "Date and time is: $((Get-Date).ToString())"
-        wget https://github.com/llvm/llvm-project/releases/download/llvmorg-12.0.0/LLVM-12.0.0-win32.exe -OutFile "C:\Temp\LLVM_Win32.exe"
-        "Date and time is: $((Get-Date).ToString())"
-        C:\Temp\LLVM_Win32.exe /S
-        "Date and time is: $((Get-Date).ToString())"
-        
-    - name: Sleep for 180s
-      uses: juliangruber/sleep-action@v1
-      with:
-       time: 180s
-
-    - name: Check Installation
-      run: | 
-        ls "C:\Temp"
-        ls "C:\Program Files (x86)"
-        ls "C:\Program Files (x86)\LLVM"
-        ls "C:\Program Files (x86)\LLVM\bin"
-
- #   - name: Build x86 Release
- #     run: | 
- #       ($env:LIBCLANG_PATH)="${{env.LD_LIBRARY_PATH}}".substring(0, "${{env.LD_LIBRARY_PATH}}".length - 1)
- #       echo LIBCLANG_PATH: ($env:LIBCLANG_PATH)
- #       cd ${{env.SOLUTION_FILE_PATH}}
- #       cargo build --target-dir='${{env.X86_OUTPUT}}' --release --verbose
- #       ls ./${{env.X86_OUTPUT}}/release
- 
+        ls C:\msys64\mingw32\bin clang.dll
+        ls C:\msys64\mingw32\bin libclang.dll
+        C:\msys64\mingw32\bin\clang --version
+        ($env:LIBCLANG_PATH)=C:\msys32\mingw64\bin
+        echo LIBCLANG_PATH: ($env:LIBCLANG_PATH)
+        cd ${{env.SOLUTION_FILE_PATH}}
+        cargo build --target-dir='${{env.X86_OUTPUT}}' --release --verbose
+        ls ./${{env.X86_OUTPUT}}/release
