@@ -17,6 +17,13 @@ environment variable to a path where one of these files can be found (invalid: [
 ```
 Download from [LLVM Releases from github](https://github.com/llvm/llvm-project/releases), or [LLVM Download](https://releases.llvm.org/download.html)
 
+Note: using `mingw64` or `mingw32` to build `bindgen` generates the following error:
+```CMD
+--- stderr
+  thread 'main' panicked at 'Unable to find libclang: "the `libclang` shared library at F:/Work/mingw32\\bin\\clang.dll could not be opened: LoadLibraryExW failed"', C:\Users\basse\.cargo\registry\src\github.com-1285ae84e5963aae\bindgen-0.58.1\src/lib.rs:2057:31
+  note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+```
+
 ### Packages
 #### main
 
