@@ -29,7 +29,7 @@ Note: using `mingw64` or `mingw32` to build `bindgen` generates the following er
 
 #### C FFI Wrapping
 Used `bindgen` to build the `bindings.rs` wrapper file.
-1. Added the following to `Cargo.toml`
+* Added the following to `Cargo.toml`
 ```TOML
 [package]
 build = "build.rs"
@@ -37,7 +37,7 @@ build = "build.rs"
 [build-dependencies]
 bindgen = "0.58.1"
 ```
-2. Created [build.rs](https://github.com/cronologic-de/xhptdc8_babel/blob/main/rust/readout/build.rs) on the project folder.
+* Created [build.rs](https://github.com/cronologic-de/xhptdc8_babel/blob/main/rust/readout/build.rs) on the project folder.
    - Used `#cfg` to define parameters of every platform
    ```RUST
    #[cfg(target_arch="x86")]
@@ -49,7 +49,7 @@ bindgen = "0.58.1"
    - Used [wrapper.h](https://github.com/cronologic-de/xhptdc8_babel/blob/main/rust/readout/wrapper.h) to include the needed headers.
    - Saves `bindings.rs` (x86) and `bindings_64.rs`(x64) on [.\rust\readout\src\bindings](https://github.com/cronologic-de/xhptdc8_babel/tree/main/rust/readout/src/bindings). 
  
-3. Included the generated `bingings.rs` file in the code, in [readout_aux](https://github.com/cronologic-de/xhptdc8_babel/blob/main/rust/readout/src/readout_aux.rs).
+* Included the generated `bingings.rs` file in the code, in [readout_aux](https://github.com/cronologic-de/xhptdc8_babel/blob/main/rust/readout/src/readout_aux.rs).
 ```RUST
 #[cfg(target_arch="x86")]
 include!("./bindings/bindings.rs"); // Must = corresponding BINDINGS_FILE_NAME 
@@ -57,7 +57,7 @@ include!("./bindings/bindings.rs"); // Must = corresponding BINDINGS_FILE_NAME
 #[cfg(target_arch="x86_64")]
 include!("./bindings/bindings_64.rs");  // Must = corresponding BINDINGS_FILE_NAME 
 ```
-4. C Library functions are called directly in `unsafe` block, e.g.
+* C Library functions are called directly in `unsafe` block, e.g.
 ```RUST
 let mut static_info = xhptdc8_static_info::default() ;
 let error_code: i32 ;
@@ -65,7 +65,7 @@ unsafe {
     error_code = xhptdc8_get_static_info(g_mgr, device_index, &mut static_info) ;
 }
 ```
-5. Implemented `Default` trait for the used structures. e.g.
+* Implemented `Default` trait for the used structures for easy initialization. e.g.
 ```RUST
 impl Default for xhptdc8_adc_channel {
     fn default () -> xhptdc8_adc_channel {
