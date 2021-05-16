@@ -52,6 +52,8 @@ include!("./bindings/bindings_64.rs");  // Must = corresponding BINDINGS_FILE_NA
 ```
 4. C Library functions are called directly in `unsafe` block, e.g.
 ```RUST
+let mut static_info = xhptdc8_static_info::default() ;
+let error_code: i32 ;
 unsafe {
     error_code = xhptdc8_get_static_info(g_mgr, device_index, &mut static_info) ;
 }
