@@ -35,6 +35,16 @@ bindgen = "0.58.1"
    ```
    - Used [wrapper.h](https://github.com/cronologic-de/xhptdc8_babel/blob/main/rust/readout/wrapper.h) to include the needed headers.
    - Saves `bindings.rs` (x86) and `bindings_64.rs`(x64) on [.\rust\readout\src\bindings](https://github.com/cronologic-de/xhptdc8_babel/tree/main/rust/readout/src/bindings). 
+ 
+3. Included the generated `bingings.rs` file in the code, in [readout_aux](https://github.com/cronologic-de/xhptdc8_babel/blob/main/rust/readout/src/readout_aux.rs).
+```RUST
+#[cfg(target_arch="x86")]
+include!("./bindings/bindings.rs"); // Must = corresponding BINDINGS_FILE_NAME 
+
+#[cfg(target_arch="x86_64")]
+include!("./bindings/bindings_64.rs");  // Must = corresponding BINDINGS_FILE_NAME 
+```
+
 
 ### Building the Code (64-bit)
 #### Prerequisites
