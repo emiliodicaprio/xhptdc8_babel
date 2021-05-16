@@ -30,27 +30,27 @@ jobs:
       # with:
       #  path: ./dummy ./lib
     
-    - name: Install LLVM and Clang
-      uses: KyleMayes/install-llvm-action@v1
-      with:
-        version: "10.0"
-        directory: ${{ runner.temp }}/llvm    
+ #   - name: Install LLVM and Clang
+ #     uses: KyleMayes/install-llvm-action@v1
+ #     with:
+ #       version: "10.0"
+ #       directory: ${{ runner.temp }}/llvm    
         
-    - name: Show rustup Settings
-      run: |
-        rustup show
+ #   - name: Show rustup Settings
+ #     run: |
+ #       rustup show
          
     # Assuming that 'stable-x86_64-pc-windows-msvc' is default
-    - name: Build x64 Release
-      run: | 
-        clang --version
-        ($env:LIBCLANG_PATH)="${{env.LD_LIBRARY_PATH}}".substring(0, "${{env.LD_LIBRARY_PATH}}".length - 1)
-        echo LIBCLANG_PATH: ($env:LIBCLANG_PATH)
-        cd ${{env.SOLUTION_FILE_PATH}}
-        cargo build --target-dir='${{env.X64_OUTPUT}}' --release --verbose
-        ls ./${{env.X64_OUTPUT}}/release
+ #   - name: Build x64 Release
+ #     run: | 
+ #       clang --version
+ #       ($env:LIBCLANG_PATH)="${{env.LD_LIBRARY_PATH}}".substring(0, "${{env.LD_LIBRARY_PATH}}".length - 1)
+ #       echo LIBCLANG_PATH: ($env:LIBCLANG_PATH)
+ #       cd ${{env.SOLUTION_FILE_PATH}}
+ #       cargo build --target-dir='${{env.X64_OUTPUT}}' --release --verbose
+ #       ls ./${{env.X64_OUTPUT}}/release
 
-    - name: Install and Set As Default Target i686 for rustup
+    - name: Install Target i686 and Set As Default for rustup
       run: |
         rustup show
         rustup install stable-i686-pc-windows-msvc
@@ -58,12 +58,11 @@ jobs:
         rustup default stable-i686-pc-windows-msvc
         rustup show
 
-    - name: Download LLVM Win32
+    - name: Build x86 Release
       run: | 
-        ls C:\msys64\mingw32\bin clang.dll
         ls C:\msys64\mingw32\bin libclang.dll
         C:\msys64\mingw32\bin\clang --version
-        ($env:LIBCLANG_PATH)='C:\msys32\mingw64\bin'
+        ($env:LIBCLANG_PATH)='C:\msys64\mingw32\bin'
         echo LIBCLANG_PATH: ($env:LIBCLANG_PATH)
         cd ${{env.SOLUTION_FILE_PATH}}
         cargo build --target-dir='${{env.X86_OUTPUT}}' --release --verbose
