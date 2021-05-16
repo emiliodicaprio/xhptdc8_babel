@@ -36,9 +36,9 @@ jobs:
 #        version: "10.0"
 #        directory: ${{ runner.temp }}/llvm    
         
-#    - name: Show rustup Settings
-#      run: |
-#        rustup show
+    - name: Show rustup Settings
+      run: |
+        rustup show
 #        clang --version 
 
     # Assuming that 'stable-x86_64-pc-windows-msvc' is default
@@ -60,13 +60,13 @@ jobs:
 
     - name: Download LLVM Win32
       run: | 
-        Get-Date -Format "dddd MM/dd/yyyy HH:mm"
+        "Date and time is: $((Get-Date).ToString())"
         wget https://github.com/llvm/llvm-project/releases/download/llvmorg-12.0.0/LLVM-12.0.0-win32.exe
-        Get-Date -Format "dddd MM/dd/yyyy HH:mm"
+        "Date and time is: $((Get-Date).ToString())"
         wget https://github.com/llvm/llvm-project/releases/download/llvmorg-12.0.0/LLVM-12.0.0-win32.exe -OutFile "C:\Temp\LLVM_Win32.exe"
-        Get-Date -Format "dddd MM/dd/yyyy HH:mm"
+        "Date and time is: $((Get-Date).ToString())"
         C:\Temp\LLVM_Win32.exe /S
-        Get-Date -Format "dddd MM/dd/yyyy HH:mm"
+        "Date and time is: $((Get-Date).ToString())"
         
     - name: Sleep for 180s
       uses: juliangruber/sleep-action@v1
