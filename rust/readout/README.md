@@ -19,7 +19,6 @@ Used `bindgen` to build the `bindings.rs` wrapper file.
 ```TOML
 [package]
 build = "build.rs"
-authors = ["Bassem-Ramzy <75851720+Bassem-Ramzy@users.noreply.github.com>"]
 
 [build-dependencies]
 bindgen = "0.58.1"
@@ -44,8 +43,20 @@ include!("./bindings/bindings.rs"); // Must = corresponding BINDINGS_FILE_NAME
 #[cfg(target_arch="x86_64")]
 include!("./bindings/bindings_64.rs");  // Must = corresponding BINDINGS_FILE_NAME 
 ```
-
-
+4. C Library functions are called directly in `unsafe` block, e.g.
+```RUST
+unsafe {
+    error_code = xhptdc8_get_static_info(g_mgr, device_index, &mut static_info) ;
+}
+```
+5. Implemented `Default` trait for the used structures. e.g.
+```RUST
+impl Default for xhptdc8_adc_channel {
+    fn default () -> xhptdc8_adc_channel {
+        xhptdc8_adc_channel{enable:0, watchdog_readout:0, watchdog_interval:0, trigger_threshold:0.0}
+    }
+}
+```
 ### Building the Code (64-bit)
 #### Prerequisites
 1. 
