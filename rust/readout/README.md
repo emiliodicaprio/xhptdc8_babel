@@ -122,8 +122,17 @@ clap = "2"
 * https://docs.rs/clap/2.33.3/clap/ 
 * https://docs.rs/clap/2.31.0/clap/struct.Arg.html
 
-#### YAML for Configuration
-yaml-rust = "0.4"
+#### indicatif
+`indicatif` crate is used to display a progress bar that displays the progress while reading hits.
+
+`cargo.toml` has the following dependency for it:
+```YAML
+[dependencies]
+indicatif = {version = "*", features = ["rayon"]}
+```
+
+#### Useful Links
+* https://docs.rs/indicatif/0.15.0/indicatif/
 
 
 ### Building the Code (64-bit)
