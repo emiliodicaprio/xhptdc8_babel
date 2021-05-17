@@ -1,6 +1,5 @@
 extern crate bindgen;
 
-use std::env;
 use std::path::PathBuf;
 
 #[cfg(target_arch="x86")]
