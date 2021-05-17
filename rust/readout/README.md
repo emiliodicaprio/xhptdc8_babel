@@ -82,3 +82,44 @@ impl Default for xhptdc8_adc_channel {
 
 #### Steps
 1. 
+
+
+
+### github Building Action
+github [Building Action: Readout Tool Build](https://github.com/cronologic-de/xhptdc8_babel/edit/main/.github/workflows/readout_build.yml) is created to build `readout` project as following:
+1. It builds the code automatically with relevant code update.
+2. It creates the following files:
+
+#### Notes
+##### Building Win32
+I didn't find github action to donwnload and install `LLVM Win32`, so I had to do that manually.
+* `powershell` caused the issues mentioned below, so I had to use `cmd` instead.
+* Running the following using `cmd`:
+  ```YAML
+    - name: Install LLVM Win32
+      run: |
+        curl https://github.com/llvm/llvm-project/releases/download/llvmorg-12.0.0/LLVM-12.0.0-win32.exe -o "C:\Temp\LLVM_Win32.exe
+        C:\Temp\LLVM_Win32.exe /S
+  ```
+  Generates the following error:
+  ```CMD
+  The system cannot execute the specified program.
+  ```
+  Although it runs successfully on my local machine.
+* Only the scrept found in the action works successfully.
+
+##### Using powershell
+Using `powershell`, for a reason or another, doesn't install the LLVM Win32 exe when run on github action environment, while it is installed successfully locally on my machine; on the contrary, `cmd` does. Both the following scripts don't install it:
+```YAML
+    - name: Download and Install LLVM Win32
+      run: | 
+        wget https://prereleases.llvm.org/win-snapshots/LLVM-12.0.0-6923b0a7-win32.exe -OutFile "C:\Temp\LLVM_Win32.exe"
+        C:\Temp\LLVM_Win32.exe /S
+```
+and
+```YAML
+    - name: Download and Install LLVM Win32
+      run: | 
+        wget https://github.com/llvm/llvm-project/releases/download/llvmorg-12.0.0/LLVM-12.0.0-win32.exe -OutFile "C:\Temp\LLVM_Win32.exe"
+        C:\Temp\LLVM_Win32.exe /S
+```
