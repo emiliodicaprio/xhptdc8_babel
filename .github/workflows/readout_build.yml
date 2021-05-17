@@ -59,10 +59,9 @@ jobs:
         cd ${{env.SOLUTION_FILE_PATH}}
         cargo build --target-dir=${{env.X64_OUTPUT_DIR_NAME}} --release --verbose
 
-    # Copy EXE and rename bindings.rs
+    # Copy EXE 
     - name: Copy x64 Files to Repository
       run: |
-        cd 
         copy ${{env.SOLUTION_FILE_PATH}}\${{env.X64_OUTPUT_DIR}}${{env.X64_EXE_NAME}} ${{env.X64_EXE_REPO_DIR}}${{env.X64_EXE_REPO_NAME}}
         
     - name: Commit x64 EXE
@@ -101,3 +100,22 @@ jobs:
         cargo --version
         cd ${{env.SOLUTION_FILE_PATH}}
         cargo build --target-dir=${{env.X86_OUTPUT_DIR_NAME}} --release --verbose
+
+    # Copy EXE 
+    - name: Copy x86 Files to Repository
+      run: |
+        copy ${{env.SOLUTION_FILE_PATH}}\${{env.X86_OUTPUT_DIR}}${{env.X86_EXE_NAME}} ${{env.X86_EXE_REPO_DIR}}${{env.X86_EXE_REPO_NAME}}
+        
+    - name: Commit x86 EXE
+      uses: EndBug/add-and-commit@v7.0.0
+      with:
+          author_name: Internal Workflow Action
+          message: ${{env.COMMIT_MSG}}
+          add: ${{env.X86_EXE_REPO_DIR}}${{env.X86_EXE_REPO_NAME}} --force
+
+    - name: Commit x86 bindings
+      uses: EndBug/add-and-commit@v7.0.0
+      with:
+          author_name: Internal Workflow Action
+          message: ${{env.COMMIT_MSG}}
+          add: ${{env.X86_BINDINGS_REPO_DIR}}${{env.X86_BINDINGS_RS_REPO_NAME}} --force
