@@ -91,6 +91,20 @@ github [Building Action: Readout Tool Build](https://github.com/cronologic-de/xh
 2. It creates the following files:
 
 #### Notes
+##### Building Using Pre-installed mingw
+Using `mingw64` installed on C:\msys64\mingw64\bin and `mingw32` installed on C:\msys64\mingw32\bin, although have both clang.dll and libclang.dll, fail. 
+We get the following errors:
+```CMD
+ --- stderr
+  thread 'main' panicked at 'Unable to find libclang: "the `libclang` shared library at C:\\msys64\\mingw64\\bin\\libclang.dll could not be opened: LoadLibraryExW failed"', C:\Users\runneradmin\.cargo\registry\src\github.com-1ecc6299db9ec823\bindgen-0.58.1\src/lib.rs:2057:31
+Should use LLVM
+
+Same for 32
+--- stderr
+  thread 'main' panicked at 'Unable to find libclang: "the `libclang` shared library at C:\\msys64\\mingw32\\bin\\libclang.dll could not be opened: LoadLibraryExW failed"', C:\Users\runneradmin\.cargo\registry\src\github.com-1285ae84e5963aae\bindgen-0.58.1\src/lib.rs:2057:31
+```
+So, the solution is to use LLVM instead.
+
 ##### Building Win32
 I didn't find github action to donwnload and install `LLVM Win32`, so I had to do that manually.
 * `powershell` caused the issues mentioned below, so I had to use `cmd` instead.
