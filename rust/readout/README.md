@@ -24,10 +24,11 @@ Target: i686-pc-windows-msvc
 ```
 
 ### Project Environments and Configurations
-* For `bindgen` to work properly:
-  1. Make sure you installed `LLVM` for `clang.dll` and `libclang.dll`.
-  2. Set `bin` directory on the path.
-  3. Set `LIBCLANG_PATH` to `bin`, or you get error when using `cargo check` similar to:
+#### bindgen
+For `bindgen` to work properly:
+1. Make sure you installed `LLVM` for `clang.dll` and `libclang.dll`.
+2. Set `bin` directory on the path.
+3. Set `LIBCLANG_PATH` to `bin`, or you get error when using `cargo check` similar to:
 ```CMD
 --- stderr
   thread 'main' panicked at 'Unable to find libclang: "couldn\'t find any valid shared libraries matching: [\'clang.dll\', \'libclang.dll\'], set the `LIBCLANG_PATH` 
@@ -40,6 +41,14 @@ _Note_: using `mingw64` or `mingw32` to build `bindgen` generates the following 
 --- stderr
   thread 'main' panicked at 'Unable to find libclang: "the `libclang` shared library at F:/Work/mingw32\\bin\\clang.dll could not be opened: LoadLibraryExW failed"', C:\Users\basse\.cargo\registry\src\github.com-1285ae84e5963aae\bindgen-0.58.1\src/lib.rs:2057:31
   note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+```
+
+#### Cross-platform Compilation
+Make sure a proper `rustup target`, corresponding to the platform you want to buil the readout tool for, is installed and set to default. e.g.
+```CMD
+rustup install stable-i686-pc-windows-gnu
+rustup default stable-i686-pc-windows-gnu
+cargo build
 ```
 
 ### Packages
@@ -95,18 +104,32 @@ impl Default for xhptdc8_adc_channel {
 
 ### Building the Code (64-bit)
 #### Prerequisites
-1. 
+1. 64-bit compiler with both `clang.dll` and `libclang.dll` are found. 
+2. `LLVM` for 64 bit is installed.
+3. LLVM `bin` directory on the PATH.
+4. `LIBCLANG_PATH` is set to LLVM `bin`.
+5. `rustup target`, e.g. `stable-x86_64-pc-windows-msvc`, is installed and set as default.
 
 #### Steps
-1. 
+just use the usual
+```CMD
+cargo build
+```
 
 ### Building the Code (32-bit)
 #### Prerequisites
-1. 
+1. 32-bit compiler with both `clang.dll` and `libclang.dll` are found. 
+2. `LLVM` for 32 bit is installed.
+3. LLVM `bin` directory on the PATH.
+4. `LIBCLANG_PATH` is set to LLVM `bin`.
+5. `rustup target`, e.g. `stable-i686-pc-windows-msvc`, is installed and set as default.
 
 #### Steps
-1. 
-
+#### Steps
+just use the usual
+```CMD
+cargo build
+```
 
 ### github Building Action
 github [Building Action: Readout Tool Build](https://github.com/cronologic-de/xhptdc8_babel/edit/main/.github/workflows/readout_build.yml) is created to build `readout` project as following:
