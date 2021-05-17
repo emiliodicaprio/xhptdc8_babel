@@ -125,7 +125,6 @@ cargo build
 5. `rustup target`, e.g. `stable-i686-pc-windows-msvc`, is installed and set as default.
 
 #### Steps
-#### Steps
 just use the usual
 ```CMD
 cargo build
@@ -183,3 +182,27 @@ and
         wget https://github.com/llvm/llvm-project/releases/download/llvmorg-12.0.0/LLVM-12.0.0-win32.exe -OutFile "C:\Temp\LLVM_Win32.exe"
         C:\Temp\LLVM_Win32.exe /S
 ```
+
+## Using the Readout Tool
+All details are found [on wiki](https://github.com/cronologic-de/xhptdc8_babel/wiki/using_info_tool)
+
+### Usage
+
+```CMD
+USAGE:
+    xhptdc8_readout.exe [FLAGS] [OPTIONS]
+
+FLAGS:
+    -b, --binary     The content of the TDCHit structure bit by bit, so 96 bits per hit. Default is csv.
+        --csv        (Default) One line of text per hit, seperated by commas, "time, channel, type, bin"
+    -l, --log        Enable to display log message.
+    -h, --help       Prints help information
+    -V, --version    Prints version information
+
+OPTIONS:
+    -c, --config <YAML_FILE>...    A list of YAML files for the configuration.
+    -f, --filesno <NUMBER>         The number of files to be written. Default is 0.
+    -n, --hitsno <HITS_NUMBER>     The number of hits per file. Default is 10,000.
+    -o, --output <FILE>            The file to which the output will be written. Default is "output.csv"
+```
+
