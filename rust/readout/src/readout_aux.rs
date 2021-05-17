@@ -4,10 +4,10 @@
 #![allow(dead_code)]
 
 #[cfg(target_arch="x86")]
-include!("./bindings/bindings.rs"); // Must = corresponding BINDINGS_FILE_NAME 
+include!("./bindings/x86/bindings.rs"); // Must = corresponding BINDINGS_FILE_NAME 
 
 #[cfg(target_arch="x86_64")]
-include!("./bindings/bindings_64.rs");  // Must = corresponding BINDINGS_FILE_NAME 
+include!("./bindings/x64/bindings_64.rs");  // Must = corresponding BINDINGS_FILE_NAME 
 
 use clap::{Arg, App};
 use std::os::raw ;

@@ -14,6 +14,9 @@ static RUSTC_UTIL_LIB : &str = "cargo:rustc-link-lib=xhptdc8_util" ;
 #[cfg(target_arch="x86")]
 static BINDINGS_FILE_NAME : &str = "bindings.rs" ;
 
+#[cfg(target_arch="x86")]
+static BINDINGS_DIR_NAME : &str = "./src/bindings/x86/" ;
+
 #[cfg(target_arch="x86_64")]
 static RUSTC_LINK_SEARCH : &str = "cargo:rustc-link-search=../../lib/x64dummy/" ;
 
@@ -25,6 +28,9 @@ static RUSTC_UTIL_LIB : &str = "cargo:rustc-link-lib=xhptdc8_util_64" ;
 
 #[cfg(target_arch="x86_64")]
 static BINDINGS_FILE_NAME : &str = "bindings_64.rs" ;
+
+#[cfg(target_arch="x86_64")]
+static BINDINGS_DIR_NAME : &str = "./src/bindings/x64/" ;
 
 fn main() {
     // Tell cargo to tell rustc to link the system bzip2
@@ -52,7 +58,7 @@ fn main() {
         .expect("Unable to generate bindings");
 
     // Write the bindings to the ./src/bindings/bindings.rs file.
-    let out_path = PathBuf::from("./src/bindings/");
+    let out_path = PathBuf::from(BINDINGS_DIR_NAME);
     bindings
         .write_to_file(out_path.join(BINDINGS_FILE_NAME))
         .expect("Couldn't write bindings!");
