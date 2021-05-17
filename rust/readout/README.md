@@ -240,6 +240,7 @@ OPTIONS:
 ```
 
 ### Output Format
+The readout output files are generated in one of two formats: `csv` or `binary`.
 #### csv 
 The output files will be in csv format when either _no format is specified in command line_ or _--csv_ is specified.
 Format is: One line of text per hit, seperated by commas: `time, channel, type, bin`
