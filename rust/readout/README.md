@@ -170,17 +170,17 @@ I didn't find github action to donwnload and install `LLVM Win32`, so I had to d
 ##### Using powershell
 Using `powershell`, for a reason or another, doesn't install the LLVM Win32 exe when run on github action environment, while it is installed successfully locally on my machine; on the contrary, `cmd` does. Both the following scripts don't install it:
 ```YAML
-    - name: Download and Install LLVM Win32
-      run: | 
-        wget https://prereleases.llvm.org/win-snapshots/LLVM-12.0.0-6923b0a7-win32.exe -OutFile "C:\Temp\LLVM_Win32.exe"
-        C:\Temp\LLVM_Win32.exe /S
+- name: Download and Install LLVM Win32
+  run: | 
+    wget https://prereleases.llvm.org/win-snapshots/LLVM-12.0.0-6923b0a7-win32.exe -OutFile "C:\Temp\LLVM_Win32.exe"
+    C:\Temp\LLVM_Win32.exe /S
 ```
 and
 ```YAML
-    - name: Download and Install LLVM Win32
-      run: | 
-        wget https://github.com/llvm/llvm-project/releases/download/llvmorg-12.0.0/LLVM-12.0.0-win32.exe -OutFile "C:\Temp\LLVM_Win32.exe"
-        C:\Temp\LLVM_Win32.exe /S
+- name: Download and Install LLVM Win32
+  run: | 
+    wget https://github.com/llvm/llvm-project/releases/download/llvmorg-12.0.0/LLVM-12.0.0-win32.exe -OutFile "C:\Temp\LLVM_Win32.exe"
+    C:\Temp\LLVM_Win32.exe /S
 ```
 
 ## Using the Readout Tool
