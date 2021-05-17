@@ -14,10 +14,12 @@ jobs:
   build:
     runs-on: windows-latest
     defaults:
-       run:
-         shell: cmd
+      run:
+        shell: cmd
     env: 
-          COMMIT_MSG: 'Internal build due to Dummy-Library code change' 
+      X86_OUTPUT: Build_x86
+      X64_OUTPUT: Build_x64
+      COMMIT_MSG: 'Internal build due to Dummy-Library code change' 
         
     steps:
     - name: Checkout Code
