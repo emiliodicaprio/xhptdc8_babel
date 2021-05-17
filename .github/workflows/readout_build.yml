@@ -2,7 +2,7 @@ name: Readout Tool Build
 on: 
   push:
     paths:
-    - 'rust/readaout/**'
+    - 'rust/readout/**'
     - 'lib/include/**'
 #  workflow_dispatch:  
 
