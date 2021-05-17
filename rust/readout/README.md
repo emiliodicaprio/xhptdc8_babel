@@ -5,6 +5,11 @@
 New Users shall have a command line tool where they can gather data directly from the device to test it without having to write specific code.
 This shall reside in a new sub directory and be both a tool for end users and a code example for users.
 
+The readout tool enables the user to provide YAML configuration file(s) to configure the device(s) before reading hits from.
+
+Output format could be either cvs or binary.
+
+
 ## Source Code Project 
 The project is created using Rust.
 
@@ -53,7 +58,8 @@ cargo build
 
 ### Packages
 #### main
-
+* The main file `main.rs` is responsible for the main flow of the application.
+* [readout_aux](https://github.com/cronologic-de/xhptdc8_babel/blob/main/rust/readout/src/readout_aux.rs) has all the calls to the driver and util APIs.
 
 #### C FFI Wrapping
 Used `bindgen` to build the `bindings.rs` wrapper file.
@@ -101,6 +107,24 @@ impl Default for xhptdc8_adc_channel {
     }
 }
 ```
+
+#### clap
+`clap` crate is used for command line processing. 
+
+`cargo.toml` has the following dependency for it:
+```YAML
+[dependencies]
+clap = "2"
+```
+
+##### Useful Links
+* https://github.com/clap-rs/clap/tree/v2.33.0
+* https://docs.rs/clap/2.33.3/clap/ 
+* https://docs.rs/clap/2.31.0/clap/struct.Arg.html
+
+#### YAML for Configuration
+yaml-rust = "0.4"
+
 
 ### Building the Code (64-bit)
 #### Prerequisites
@@ -205,4 +229,20 @@ OPTIONS:
     -n, --hitsno <HITS_NUMBER>     The number of hits per file. Default is 10,000.
     -o, --output <FILE>            The file to which the output will be written. Default is "output.csv"
 ```
+
+### Output Format
+#### csv 
+The output files will be in csv format when either _no format is specified in command line_ or _--csv_ is specified.
+
+Format is: 
+One line of text per hit, seperated by commas
+time, channel, type, bin
+
+#### binary
+The output files will be in binary format when either _-b_ or _--binary_ is specified in the command line parameters.
+
+Format is: 
+Just the content of the `TDCHit` structure bit by bit. So 96 bits per hit, in the following order: time, channel, type, bin.
+
+Note that _the representation of every value is set as a byte array in big-endian (network) byte order_.
 
