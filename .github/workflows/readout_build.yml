@@ -14,77 +14,62 @@ jobs:
   build:
     runs-on: windows-latest
     defaults:
-       run:
-         shell: powershell
+      run:
+        shell: cmd
     env: 
-          X86_OUTPUT: Build_x86
-          X64_OUTPUT: Build_x64
-          X86_REPO_LIB_PTH_COMMIT: ./lib/x86dummy/
-          X64_REPO_LIB_PTH_COMMIT: ./lib/x64dummy/
-          COMMIT_MSG: 'Internal build due to Dummy-Library code change' 
+      X86_OUTPUT: Build_x86
+      X64_OUTPUT: Build_x64
+      COMMIT_MSG: 'Internal build due to Dummy-Library code change' 
         
     steps:
-    #- name: Checkout Code
-    #  uses: actions/checkout@v2
-    #  # Inprovement: Uncomment & adjust if we can check out only: ./lib & ./dummy instead of the whole repository
-    #  # with:
+    - name: Checkout Code
+      uses: actions/checkout@v2
+      # Inprovement: Uncomment & adjust if we can check out only: ./lib & ./dummy instead of the whole repository
+      # with:
       #  path: ./dummy ./lib
     
-#    - name: Install LLVM and Clang
-#      uses: KyleMayes/install-llvm-action@v1
-#      with:
-#        version: "10.0"
-#        directory: ${{ runner.temp }}/llvm    
+    - name: Install LLVM and Clang
+      uses: KyleMayes/install-llvm-action@v1
+      with:
+        version: "10.0"
+        directory: ${{ runner.temp }}/llvm    
         
     - name: Show rustup Settings
       run: |
         rustup show
-#        clang --version 
-
+         
     # Assuming that 'stable-x86_64-pc-windows-msvc' is default
-  #  - name: Build x64 Release
-  #    run: | 
-  #      ($env:LIBCLANG_PATH)="${{env.LD_LIBRARY_PATH}}".substring(0, "${{env.LD_LIBRARY_PATH}}".length - 1)
-  #      echo LIBCLANG_PATH: ($env:LIBCLANG_PATH)
-  #      cd ${{env.SOLUTION_FILE_PATH}}
-  #      cargo build --target-dir='${{env.X64_OUTPUT}}' --release --verbose
-  #      ls ./${{env.X64_OUTPUT}}/release
-
-  #  - name: Install and Set As Default Target i686 for rustup
-  #    run: |
-  #      rustup show
-  #      rustup install stable-i686-pc-windows-msvc
-  #      rustup target add stable-i686-pc-windows-msvc
-  #      rustup default stable-i686-pc-windows-msvc
-  #      rustup show
-
-    - name: Download LLVM Win32
+    - name: Build x64 Release
       run: | 
-        "Date and time is: $((Get-Date).ToString())"
-        wget https://github.com/llvm/llvm-project/releases/download/llvmorg-12.0.0/LLVM-12.0.0-win32.exe
-        "Date and time is: $((Get-Date).ToString())"
-        wget https://github.com/llvm/llvm-project/releases/download/llvmorg-12.0.0/LLVM-12.0.0-win32.exe -OutFile "C:\Temp\LLVM_Win32.exe"
-        "Date and time is: $((Get-Date).ToString())"
+        clang --version
+        SET LIBCLANG_PATH
+        SET LIBCLANG_PATH=%LD_LIBRARY_PATH:~0,-1%
+        SET LIBCLANG_PATH
+        cd ${{env.SOLUTION_FILE_PATH}}
+        cargo build --target-dir=${{env.X64_OUTPUT}} --release --verbose
+        ls ./${{env.X64_OUTPUT}}/release
+
+    - name: Install Target i686 and Set As Default for rustup
+      run: |
+        rustup show
+        rustup install stable-i686-pc-windows-msvc
+        rustup target add stable-i686-pc-windows-msvc
+        rustup default stable-i686-pc-windows-msvc
+        rustup show
+
+    - name: Install LLVM Win32
+      run: |
+        curl https://prereleases.llvm.org/win-snapshots/LLVM-12.0.0-6923b0a7-win32.exe -o "C:\Temp\LLVM_Win32.exe
         C:\Temp\LLVM_Win32.exe /S
-        "Date and time is: $((Get-Date).ToString())"
-        
-    - name: Sleep for 180s
-      uses: juliangruber/sleep-action@v1
-      with:
-       time: 180s
+        dir "C:\Program Files (x86)\LLVM\bin"
 
-    - name: Check Installation
+    - name: Build x86 Release
       run: | 
-        ls "C:\Temp"
-        ls "C:\Program Files (x86)"
-        ls "C:\Program Files (x86)\LLVM"
-        ls "C:\Program Files (x86)\LLVM\bin"
-
- #   - name: Build x86 Release
- #     run: | 
- #       ($env:LIBCLANG_PATH)="${{env.LD_LIBRARY_PATH}}".substring(0, "${{env.LD_LIBRARY_PATH}}".length - 1)
- #       echo LIBCLANG_PATH: ($env:LIBCLANG_PATH)
- #       cd ${{env.SOLUTION_FILE_PATH}}
- #       cargo build --target-dir='${{env.X86_OUTPUT}}' --release --verbose
- #       ls ./${{env.X86_OUTPUT}}/release
- 
+        set LIBCLANG_PATH=C:\Program Files (x86)\LLVM\bin
+        set LIBCLANG_PATH
+        set PATH=%PATH%;C:\Program Files (x86)\LLVM\bin
+        set PATH
+        cargo --version
+        cd ${{env.SOLUTION_FILE_PATH}}
+        cargo build --target-dir='${{env.X86_OUTPUT}}' --release --verbose
+        dir ./${{env.X86_OUTPUT}}/release
