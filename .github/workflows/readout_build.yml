@@ -54,7 +54,7 @@ jobs:
 
     - name: Install LLVM Win32
       run: |
-        curl https://github.com/llvm/llvm-project/releases/download/llvmorg-12.0.0/LLVM-12.0.0-win32.exe -o "C:\Temp\LLVM_Win32.exe
+        curl https://github.com/llvm/llvm-project/releases/download/llvmorg-12.0.0/LLVM-12.0.0-win32.exe -o C:\Temp\LLVM_Win32.exe
         C:\Temp\LLVM_Win32.exe /S
 
     - name: Build x86 Release
