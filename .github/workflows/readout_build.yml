@@ -21,10 +21,10 @@ jobs:
       X64_OUTPUT_DIR_NAME: Build_x64
       X86_OUTPUT_DIR: .\Build_x86\release\
       X64_OUTPUT_DIR: .\Build_x64\release\
-      X86_EXE_REPO_DIR: ..\bin\x86\
-      X64_EXE_REPO_DIR: ..\bin\x64\
-      X86_BINDINGS_REPO_DIR: .\src\bindings\x86\
-      X64_BINDINGS_REPO_DIR: .\src\bindings\x64\
+      X86_EXE_REPO_DIR: .\rust\bin\x86\
+      X64_EXE_REPO_DIR: .\rust\bin\x64\
+      X86_BINDINGS_REPO_DIR: .\rust\readout\src\bindings\x86\
+      X64_BINDINGS_REPO_DIR: .\rust\readout\src\bindings\x64\
       X86_EXE_NAME: xhptdc8_readout.exe
       X64_EXE_NAME: xhptdc8_readout.exe
       X86_EXE_REPO_NAME: xhptdc8_readout.exe
@@ -62,8 +62,8 @@ jobs:
     # Copy EXE and rename bindings.rs
     - name: Copy x64 Files to Repository
       run: |
-        cd ${{env.SOLUTION_FILE_PATH}}
-        copy ${{env.X64_OUTPUT_DIR}}${{env.X64_EXE_NAME}} ${{env.X64_EXE_REPO_DIR}}${{env.X64_EXE_REPO_NAME}}
+        cd 
+        copy ${{env.SOLUTION_FILE_PATH}}\${{env.X64_OUTPUT_DIR}}${{env.X64_EXE_NAME}} ${{env.X64_EXE_REPO_DIR}}${{env.X64_EXE_REPO_NAME}}
         
     - name: Commit x64 EXE
       uses: EndBug/add-and-commit@v7.0.0
