@@ -233,16 +233,11 @@ OPTIONS:
 ### Output Format
 #### csv 
 The output files will be in csv format when either _no format is specified in command line_ or _--csv_ is specified.
-
-Format is: 
-One line of text per hit, seperated by commas
-time, channel, type, bin
+Format is: One line of text per hit, seperated by commas: `time, channel, type, bin`
 
 #### binary
 The output files will be in binary format when either _-b_ or _--binary_ is specified in the command line parameters.
-
-Format is: 
-Just the content of the `TDCHit` structure bit by bit. So 96 bits per hit, in the following order: time, channel, type, bin.
+Format is: Just the content of the `TDCHit` structure bit by bit. So `96 bits per hit`, in the following order: _time, channel, type, bin_.
 
 Note that _the representation of every value is set as a byte array in big-endian (network) byte order_.
 
