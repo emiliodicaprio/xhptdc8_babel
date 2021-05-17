@@ -67,9 +67,11 @@ jobs:
       run: | 
         set LIBCLANG_PATH=C:\Program Files (x86)\LLVM\bin
         set LIBCLANG_PATH
+        set PATH
+        SET PATH=%PATH:~20%
         set PATH=%PATH%;C:\Program Files (x86)\LLVM\bin
         set PATH
         cargo --version
         cd ${{env.SOLUTION_FILE_PATH}}
-        cargo build --target-dir='${{env.X86_OUTPUT}}' --release --verbose
+        cargo build --target-dir=${{env.X86_OUTPUT}} --release --verbose
         dir ./${{env.X86_OUTPUT}}/release
