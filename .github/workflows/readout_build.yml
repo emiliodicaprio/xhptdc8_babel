@@ -40,8 +40,9 @@ jobs:
     - name: Build x64 Release
       run: | 
         clang --version
-        ($env:LIBCLANG_PATH)="${{env.LD_LIBRARY_PATH}}".substring(0, "${{env.LD_LIBRARY_PATH}}".length - 1)
-        echo LIBCLANG_PATH: ($env:LIBCLANG_PATH)
+        SET LIBCLANG_PATH
+        SET LIBCLANG_PATH=%${{env.LD_LIBRARY_PATH}}:~0,1%
+        SET LIBCLANG_PATH
         cd ${{env.SOLUTION_FILE_PATH}}
         cargo build --target-dir='${{env.X64_OUTPUT}}' --release --verbose
         ls ./${{env.X64_OUTPUT}}/release
