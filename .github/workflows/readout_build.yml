@@ -74,4 +74,4 @@ jobs:
         cargo --version
         cd ${{env.SOLUTION_FILE_PATH}}
         cargo build --target-dir=${{env.X86_OUTPUT}} --release --verbose
-        dir ./${{env.X86_OUTPUT}}/release
+        dir .\${{env.X86_OUTPUT}}\release
