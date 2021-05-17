@@ -63,6 +63,7 @@ jobs:
     - name: Copy x64 Files to Repository
       run: |
         dir
+        cd ${{env.SOLUTION_FILE_PATH}}
         dir ${{env.X64_OUTPUT_DIR}}
         dir ${{env.X64_EXE_REPO_DIR}}
         dir ${{env.X64_BINDINGS_REPO_DIR}}
