@@ -4,7 +4,7 @@ on:
     paths:
     - 'rust/readaout/**'
     - 'lib/include/**'
-  workflow_dispatch:  
+#  workflow_dispatch:  
 
 env:
   CARGO_TERM_COLOR: always
