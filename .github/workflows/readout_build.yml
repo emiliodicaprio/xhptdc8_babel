@@ -60,16 +60,12 @@ jobs:
         C:\Temp\LLVM_Win32.exe /S
         dir "C:\Program Files (x86)\LLVM\bin"
 
-    - name: Sleep for 180s - Chance for LLVM to install
-      uses: juliangruber/sleep-action@v1
-      with:
-       time: 180s
-
     - name: Build x86 Release
       run: | 
-        rustup show
         set LIBCLANG_PATH="C:\Program Files (x86)\LLVM\bin"
         set LIBCLANG_PATH
+        set PATH=%PATH%;C:\Program Files (x86)\LLVM\bin
+        set PATH
         cd ${{env.SOLUTION_FILE_PATH}}
-        rustup run stable-i686-pc-windows-msvc cargo build --target-dir='${{env.X86_OUTPUT}}' --release --verbose
+        rustup run cargo build --target-dir='${{env.X86_OUTPUT}}' --release --verbose
         dir ./${{env.X86_OUTPUT}}/release
