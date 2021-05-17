@@ -46,7 +46,7 @@ jobs:
         SET LIBCLANG_PATH=%LD_LIBRARY_PATH:~0,-1%
         SET LIBCLANG_PATH
         cd ${{env.SOLUTION_FILE_PATH}}
-        cargo build --target-dir='${{env.X64_OUTPUT}}' --release --verbose
+        cargo build --target-dir=${{env.X64_OUTPUT}} --release --verbose
         ls ./${{env.X64_OUTPUT}}/release
 
     - name: Install Target i686 and Set As Default for rustup
