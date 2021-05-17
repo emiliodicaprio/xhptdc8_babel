@@ -6,7 +6,22 @@ New Users shall have a command line tool where they can gather data directly fro
 This shall reside in a new sub directory and be both a tool for end users and a code example for users.
 
 ## Source Code Project 
-The project is created u=using Rust.
+The project is created using Rust.
+
+### An Overview
+The project files include `binding.rs` file that is generated using `bindgen`. `bindgen` uses [build.rs](https://github.com/cronologic-de/xhptdc8_babel/blob/main/rust/readout/build.rs) to generate the `binding.rs` file while linked to both `xhptdc8_driver` and `xhptdc8_util` libraries, and included [wrapper.h](https://github.com/cronologic-de/xhptdc8_babel/blob/main/rust/readout/wrapper.h) that includes `xhptdc8_util.h` which includes `xhptdc8_interface.h` in its turn.
+
+`binding.rs` has all xhptdc8 APIs and structures definitions needed by the readout tool.
+
+The project is developed on Windows 10, and is built for both `x86` and `x64` platforms:
+```CMD
+cargo 1.52.0 (69767412a 2021-04-21)
+
+clang version 12.0.0
+Target: x86_64-pc-windows-msvc
+&
+Target: i686-pc-windows-msvc
+```
 
 ### Project Environments and Configurations
 * For `bindgen` to work properly:
@@ -29,6 +44,7 @@ _Note_: using `mingw64` or `mingw32` to build `bindgen` generates the following 
 
 ### Packages
 #### main
+
 
 #### C FFI Wrapping
 Used `bindgen` to build the `bindings.rs` wrapper file.
@@ -76,6 +92,7 @@ impl Default for xhptdc8_adc_channel {
     }
 }
 ```
+
 ### Building the Code (64-bit)
 #### Prerequisites
 1. 
@@ -83,6 +100,12 @@ impl Default for xhptdc8_adc_channel {
 #### Steps
 1. 
 
+### Building the Code (32-bit)
+#### Prerequisites
+1. 
+
+#### Steps
+1. 
 
 
 ### github Building Action
