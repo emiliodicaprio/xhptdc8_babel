@@ -184,7 +184,7 @@ and
 ```
 
 ## Using the Readout Tool
-All details are found [on wiki](https://github.com/cronologic-de/xhptdc8_babel/wiki/using_info_tool)
+All details are found [on wiki](https://github.com/cronologic-de/xhptdc8_babel/wiki/using_readout_tool)
 
 ### Usage
 
