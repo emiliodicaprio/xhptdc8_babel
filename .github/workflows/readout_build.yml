@@ -41,7 +41,7 @@ jobs:
       run: | 
         clang --version
         SET LIBCLANG_PATH
-        SET LIBCLANG_PATH=%LD_LIBRARY_PATH:~0,1%
+        SET LIBCLANG_PATH=%LD_LIBRARY_PATH:~0,-1%
         SET LIBCLANG_PATH
         cd ${{env.SOLUTION_FILE_PATH}}
         cargo build --target-dir='${{env.X64_OUTPUT}}' --release --verbose
