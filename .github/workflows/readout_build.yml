@@ -65,7 +65,7 @@ jobs:
 
     - name: Build x86 Release
       run: | 
-        set LIBCLANG_PATH="C:\Program Files (x86)\LLVM\bin"
+        set LIBCLANG_PATH=C:\Program Files (x86)\LLVM\bin
         set LIBCLANG_PATH
         set PATH=%PATH%;C:\Program Files (x86)\LLVM\bin
         set PATH
