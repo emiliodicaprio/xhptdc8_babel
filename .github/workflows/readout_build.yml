@@ -62,14 +62,8 @@ jobs:
     # Copy EXE and rename bindings.rs
     - name: Copy x64 Files to Repository
       run: |
-        dir
         cd ${{env.SOLUTION_FILE_PATH}}
-        dir ${{env.X64_OUTPUT_DIR}}
-        dir ${{env.X64_EXE_REPO_DIR}}
-        dir ${{env.X64_BINDINGS_REPO_DIR}}
-        dir ${{env.X64_BINDINGS_REPO_DIR}}
         copy ${{env.X64_OUTPUT_DIR}}${{env.X64_EXE_NAME}} ${{env.X64_EXE_REPO_DIR}}${{env.X64_EXE_REPO_NAME}}
-        copy ${{env.X64_BINDINGS_REPO_DIR}}${{env.X64_BINDINGS_RS_NAME}} ${{env.X64_BINDINGS_REPO_DIR}}${{env.X64_BINDINGS_RS_REPO_NAME}}
         
     - name: Commit x64 EXE
       uses: EndBug/add-and-commit@v7.0.0
