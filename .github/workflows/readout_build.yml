@@ -24,30 +24,25 @@ jobs:
     steps:
     - name: Checkout Code
       uses: actions/checkout@v2
-      # Inprovement: Uncomment & adjust if we can check out only: ./lib & ./dummy instead of the whole repository
-      # with:
-      #  path: ./dummy ./lib
     
-    - name: Install LLVM and Clang
+    - name: Install LLVM and Clang, x64
       uses: KyleMayes/install-llvm-action@v1
       with:
         version: "10.0"
         directory: ${{ runner.temp }}/llvm    
         
-    - name: Show rustup Settings
-      run: |
-        rustup show
+#    Uncomment the following item if you need to display more information
+#    - name: Display Environment Settings
+#      run: |
+#        rustup show
          
     # Assuming that 'stable-x86_64-pc-windows-msvc' is default
     - name: Build x64 Release
       run: | 
         clang --version
-        SET LIBCLANG_PATH
         SET LIBCLANG_PATH=%LD_LIBRARY_PATH:~0,-1%
-        SET LIBCLANG_PATH
         cd ${{env.SOLUTION_FILE_PATH}}
         cargo build --target-dir=${{env.X64_OUTPUT}} --release --verbose
-        ls ./${{env.X64_OUTPUT}}/release
 
     - name: Install Target i686 and Set As Default for rustup
       run: |
@@ -59,19 +54,14 @@ jobs:
 
     - name: Install LLVM Win32
       run: |
-        curl https://prereleases.llvm.org/win-snapshots/LLVM-12.0.0-6923b0a7-win32.exe -o "C:\Temp\LLVM_Win32.exe
+        curl https://github.com/llvm/llvm-project/releases/download/llvmorg-12.0.0/LLVM-12.0.0-win32.exe -o "C:\Temp\LLVM_Win32.exe
         C:\Temp\LLVM_Win32.exe /S
-        dir "C:\Program Files (x86)\LLVM\bin"
 
     - name: Build x86 Release
       run: | 
         set LIBCLANG_PATH=C:\Program Files (x86)\LLVM\bin
-        set LIBCLANG_PATH
-        set PATH
-        SET PATH=%PATH:~20%
+        set PATH=%PATH:~20%
         set PATH=%PATH%;C:\Program Files (x86)\LLVM\bin
-        set PATH
         cargo --version
         cd ${{env.SOLUTION_FILE_PATH}}
         cargo build --target-dir=${{env.X86_OUTPUT}} --release --verbose
-        dir .\${{env.X86_OUTPUT}}\release
