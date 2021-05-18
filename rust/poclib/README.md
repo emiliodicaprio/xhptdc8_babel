@@ -14,7 +14,7 @@ Adding the following section to `Cargo.toml` to build dynamically linked library
 crate-type = ["cdylib"]
 ```
 
-[lib.rs](./rust/poclib/src/lib.rs) has all the exported function.
+[lib.rs](./src/lib.rs) has all the exported function.
 
 Using `cargo build` will generate the dll on the folder "/rust/poclib/target/debug".
 
@@ -25,8 +25,8 @@ The Solution and Project are created using Microsoft Visual Studio 2019.
 
 ### Building Test_POCLib Using MS Visual Studio
 Project can be built using the following MSVS files:
-1. [Solution File: test_poclib.sln](./rust/poclib/test_poclib.sln)
-2. [Project File: test_poclib.vcxproj](./rust/poclib/test_poclib/test_poclib/test_poclib.vcxproj)
+1. [Solution File: test_poclib.sln](./test_poclib/test_poclib.sln)
+2. [Project File: test_poclib.vcxproj](./test_poclib/test_poclib/test_poclib.vcxproj)
 
 Nothing special, just:
 1. Using MS Visual Studio compatible version, open one of the project or solution files mentioned above.
