@@ -21,7 +21,7 @@ Using `cargo build` will generate the dll on the folder "/rust/poclib/target/deb
 ### Test_POCLib Project Environments and Configurations
 The Solution and Project are created using Microsoft Visual Studio 2019.
   * Project Settings -> General -> Output Directory : ..\\..\\target\\debug. The output of the DLL.
-  * Project Settings -> Linker -> Input => Additional Dependencies : poclib.dll.lib is added.
+  * Project Settings -> Linker -> Input -> Additional Dependencies : poclib.dll.lib is added.
 
 ### Building Test_POCLib Using MS Visual Studio
 Project can be built using the following MSVS files:
