@@ -16,12 +16,28 @@ crate-type = ["cdylib"]
 
 [lib.rs](./src/lib.rs) has all the exported function.
 
-Using `cargo build` will generate the dll on the folder "/rust/poclib/target/debug".
+### Building POCLib
+#### x64
+Using `cargo build` will build the dll and lib on the folder "/rust/poclib/target/debug".
+
+#### x86
+Use the following command, as the test application uses the same target directory as well:
+```CMD
+rustup run stable-i686-pc-windows-msvc cargo build --target-dir=x86
+```
+It will build the DLL and lib on "/rust/poclib/x86/debug".
 
 ### Test_POCLib Project Environments and Configurations
+#### x64 
 The Solution and Project are created using Microsoft Visual Studio 2019.
   * Project Settings -> General -> Output Directory : ..\\..\\target\\debug. The output of the DLL.
   * Project Settings -> Linker -> Input -> Additional Dependencies : poclib.dll.lib is added.
+  * Project Settings -> VC++ Directories -> Library Directories: ..\\..\\target\\debug; is added
+#### x86 
+The Solution and Project are created using Microsoft Visual Studio 2019.
+  * Project Settings -> General -> Output Directory : ..\\..\\x86\\debug. The output of the DLL.
+  * Project Settings -> Linker -> Input -> Additional Dependencies : poclib.dll.lib is added.
+  * Project Settings -> VC++ Directories -> Library Directories: ..\\..\\x86\\debug; is added
 
 ### Building Test_POCLib Using MS Visual Studio
 Project can be built using the following MSVS files:
