@@ -533,7 +533,7 @@ int xhptdc8_apply_adc_channel_yaml(const ryml::NodeRef* device_config_node,
         device_config->adc_channel.watchdog_interval, XHPTDC8_APPLY_YAML_INVALID_ADC_CHANNEL_WDI);
 
     // trigger_threshold
-    APPLY_CHILD_DOUBLE_VALUE(adc_channel_node, "trigger_threshold", val > 0,
+    APPLY_CHILD_DOUBLE_VALUE(adc_channel_node, "trigger_threshold", ((val >= -1.32) && (val <= 1.18)),
         device_config->adc_channel.trigger_threshold, XHPTDC8_APPLY_YAML_INVALID_ADC_CHANNEL_TRTHRESH);
 
     return 1;
@@ -1056,7 +1056,7 @@ int xhptdc8_apply_yaml(xhptdc8_manager_configuration* manager_config, const char
             device_config_index < device_config_children_count; device_config_index++)
         {
             if ((0 == device_config_index) && apply_first_on_all_elements)
-                // First element in YAML is -1
+            // First element in YAML is -1
             {
                 continue; // Skip it
             }
@@ -1074,17 +1074,17 @@ int xhptdc8_apply_yaml(xhptdc8_manager_configuration* manager_config, const char
         for (int device_config_index = 0; device_config_index < XHPTDC8_MANAGER_DEVICES_MAX; device_config_index++)
         {
             if (RYML_NODE_EXISTS(update_from_yaml[device_config_index]))
-                // Values are provided in YAML by index
+            // Values are provided in YAML by index
             {
                 child_node = update_from_yaml[device_config_index];
             }
             else if (apply_first_on_all_elements)
-                // Values are NOT provided in YAML by index but -1 is
+            // Values are NOT provided in YAML by index but -1 is
             {
                 child_node = device_configs_first_item_node;
             }
             else
-                // Neither index nor -1 are found in YAML  
+            // Neither index nor -1 are found in YAML  
             {
                 // Skip the element
                 continue;
