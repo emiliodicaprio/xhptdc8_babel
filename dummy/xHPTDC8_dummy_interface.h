@@ -13,28 +13,43 @@
 #define XHPTDC8_VETO_INSIDE		1
 #define XHPTDC8_VETO_OUTSIDE	2
 
-#define DUMMY_DEVICES_COUNT		1
+#define DUMMY_DEVICES_COUNT		1	// MUST BE <= XHPTDC8_MANAGER_DEVICES_MAX
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-	enum ManagerState
-	{
-		CREATED = 0,
-		INITIALIZED = 1,
-		CONFIGURED = 2,
-		CAPTURING = 3,
-		PAUSED = 4,
-		CLOSED = 5
-	};
+	namespace ManagerState {
+		enum  Enum
+		{
+			UNINITIALIZED = 0,
+			INITIALIZED = 1,
+			CONFIGURED = 2,
+			CAPTURING = 3,
+			PAUSED = 4
+		};
+	}
+
+	namespace DeviceState {
+		// Should be equal to corresponding CRONO_DEVICE_STATE_xxx macro
+		enum Enum
+		{
+			CREATED = CRONO_DEVICE_STATE_CREATED,
+			INITIALIZED = CRONO_DEVICE_STATE_INITIALIZED,
+			CONFIGURED = CRONO_DEVICE_STATE_CONFIGURED,
+			CAPTURING = CRONO_DEVICE_STATE_CAPTURING,
+			PAUSED = CRONO_DEVICE_STATE_PAUSED,
+			CLOSED = CRONO_DEVICE_STATE_CLOSED
+		};
+	}
 
 	typedef struct xhptdc8_dummy_manager_ xhptdc8_dummy_manager;
 	struct xhptdc8_dummy_manager_
 	{
 		xhptdc8_manager_init_parameters params;
 		xhptdc8_static_info staticInfo;
-		int state;
+		ManagerState::Enum state;
+		DeviceState::Enum dev_state;
 		xhptdc8_manager_configuration p_mgr_cfg;
 		/*
 		In Milliseconds
@@ -65,19 +80,35 @@ extern "C" {
 
 	const char MSG_OK[3] = { "OK" };
 
-	crono_bool_t xhptdc8_is_valid_manager(xhptdc8_manager xhptdc8_mgr);
-	crono_bool_t xhptdc8_is_valid_device_index(xhptdc8_manager xhptdc8_mgr, int index);
-
-
 #ifdef __cplusplus
 }
 #endif
 
 int _init_static_info_internal(xhptdc8_static_info* info);
-void _set_last_error_internal(xhptdc8_manager xhptdc8_mgr, const char* errString);
-void _set_last_error_printf_internal(xhptdc8_manager xhptdc8_mgr, const char* format, ...);
-int _read_hits_for_groups_internal(xhptdc8_dummy_manager* mngr, TDCHit* hit_buf, size_t size);
-int _read_hits_for_NO_groups_internal(xhptdc8_dummy_manager* mngr, TDCHit* hit_buf, size_t size);
-crono_bool_t _xhptdc8_is_valid_device_index_inernal(xhptdc8_manager xhptdc8_mgr, int index);
+void _set_last_error_internal(const char* errString);
+void _set_last_error_printf_internal(const char* format, ...);
+int _read_hits_for_groups_internal(TDCHit* hit_buf, size_t size);
+int _read_hits_for_NO_groups_internal(TDCHit* hit_buf, size_t size);
+const char* _GetManagerStateMessage(ManagerState::Enum code);
+
+/**
+* Only one device is supported in the Dummy Library, so, index should be always 0
+*/
+#define CHECK_VALID_DEVICE(index) {if ((index < 0) || (index >= DUMMY_DEVICES_COUNT)) return XHPTDC8_INVALID_DEVICE ; }
+
+#define CHECK_MANAGER_STATE(s)	\
+	{ if(mngr.state != (s)) 	\
+		{	_set_last_error_printf_internal("xHPTDC8Manager is %s: expected state is %s", \
+				_GetManagerStateMessage(mngr.state), _GetManagerStateMessage(s));	\
+			return XHPTDC8_WRONG_STATE; \
+		}	\
+	}
+#define CHECK_MANAGER_STATE_OR(s1, s2) \
+	{ if(! (mngr.state == (s1) || mngr.state == (s2)))	\
+		{	_set_last_error_printf_internal("xHPTDC8Manager is %s: expected state is %s or %s", \
+				_GetManagerStateMessage(mngr.state), _GetManagerStateMessage(s1), _GetManagerStateMessage(s2) ); \
+			return XHPTDC8_WRONG_STATE; \
+		}	\
+	}
 
 #endif

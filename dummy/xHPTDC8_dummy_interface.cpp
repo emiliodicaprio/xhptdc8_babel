@@ -11,6 +11,10 @@
 
 static std::default_random_engine g_generator; // Random engine generator
 static std::normal_distribution<double> g_distribution(5000.0, 30.0);
+/**
+* Global variable of the manager
+*/
+xhptdc8_dummy_manager mngr;
 
 //_____________________________________________________________________________
 // Driver Information APIs
@@ -62,25 +66,22 @@ extern "C" int xhptdc8_count_devices(int* error_code, const char** error_message
 /*
 * Finalizes the driver for this device.
 */
-extern "C" int xhptdc8_close(xhptdc8_manager mgr)
+extern "C" int xhptdc8_close()
 {
-	if (!xhptdc8_is_valid_manager(mgr))
-		return XHPTDC8_INVALID_ARGUMENTS;
-
-	xhptdc8_dummy_manager* mngr = (xhptdc8_dummy_manager*)(mgr);
-	if (mngr->state != ManagerState::CREATED)
+	if (ManagerState::UNINITIALIZED == mngr.state)
 	{
-		// make sure the device is no longer capturing data
-		xhptdc8_stop_capture(mgr);
+		_set_last_error_internal(ERR_MSG_DEVICE_NOT_INIT);
+		return XHPTDC8_WRONG_STATE;
 	}
-	mngr->state = ManagerState::CLOSED;
-	delete mngr;
-
+	// make sure the device is no longer capturing data
+	xhptdc8_stop_capture(); //$$ not found in original driver code
+	mngr.state = ManagerState::UNINITIALIZED ; // CLOSED;
+	mngr.dev_state = DeviceState::CLOSED ;
 	return XHPTDC8_OK;
 }
 
 /*
-* Sets up the standard parameters.Gets a set of default parameters for xhptdc8_init().This must
+* Sets up the standard parameters. Gets a set of default parameters for xhptdc8_init(). This must
 * always be used to initialize the xhptdc8_init_parameter() structure.
 */
 extern "C" int xhptdc8_get_default_init_parameters(xhptdc8_manager_init_parameters* init)
@@ -117,50 +118,30 @@ extern "C" int xhptdc8_get_default_init_parameters(xhptdc8_manager_init_paramete
 */										 
 const static size_t MaxErrorMessageSize = 10000;
 static char lastErrorMessage[MaxErrorMessageSize];
-extern "C" xhptdc8_manager xhptdc8_init(
-	xhptdc8_manager_init_parameters* params, int* error_code, const char** error_message)
+extern "C" int xhptdc8_init(xhptdc8_manager_init_parameters* params)
 {
-	lastErrorMessage[0] = 0;
-	xhptdc8_manager mgr = NULL;
-
-	if (nullptr != error_message)
-	{
-		*error_message = (const char*)lastErrorMessage;
-	}
-	if (nullptr == error_code)
-	{
-		*error_code = XHPTDC8_INVALID_ARGUMENTS;
-		snprintf(lastErrorMessage, MaxErrorMessageSize, ERR_MSG_INIT_FAILED_FMT, ERR_MSG_INVALID_ARGS);
-		return NULL;
-	}
+	CHECK_MANAGER_STATE(ManagerState::UNINITIALIZED);
 	if (nullptr == params)
 	{
-		*error_code = XHPTDC8_INVALID_ARGUMENTS;
 		snprintf(lastErrorMessage, MaxErrorMessageSize, ERR_MSG_INIT_FAILED_FMT, ERR_MSG_INVALID_ARGS);
-		return NULL;
+		return XHPTDC8_INVALID_ARGUMENTS;
 	}
 
-	xhptdc8_dummy_manager* xhptdc8Manager;
-	try {
-		xhptdc8Manager = new xhptdc8_dummy_manager;
-	}
-	catch (std::bad_alloc& ba) {
-		fprintf(stdout, "Exception in memory allocation: %s", ba.what());
-		snprintf(lastErrorMessage, MaxErrorMessageSize, ERR_MSG_INIT_FAILED_FMT, ERR_MSG_MEMORY_ALLOC);
-		return NULL;
-	}
-	memset(xhptdc8Manager, 0, sizeof(xhptdc8_dummy_manager));
+	mngr.dev_state = DeviceState::CREATED;
+	lastErrorMessage[0] = 0;
+	memset(&mngr, 0, sizeof(xhptdc8_dummy_manager));
 	
 	// Initialize the structure
-	_init_static_info_internal(&(xhptdc8Manager->staticInfo));
-	memset(&(xhptdc8Manager->p_mgr_cfg), 0, sizeof(xhptdc8_manager_configuration));
-	*error_code = xhptdc8_get_default_init_parameters(&(xhptdc8Manager->params));
-	if (XHPTDC8_OK == (*error_code))
+	_init_static_info_internal(&(mngr.staticInfo));
+	memset(&(mngr.p_mgr_cfg), 0, sizeof(xhptdc8_manager_configuration));
+	int error_code = xhptdc8_get_default_init_parameters(&(mngr.params));
+	if (XHPTDC8_OK == error_code)
 	{
-		xhptdc8Manager->state = ManagerState::INITIALIZED;
-		mgr = (xhptdc8_manager*)xhptdc8Manager;
+		mngr.state = ManagerState::INITIALIZED ;
 	}
-	return mgr;
+	mngr.dev_state = DeviceState::INITIALIZED ;
+
+	return XHPTDC8_OK;
 }
 
 /*
@@ -183,8 +164,11 @@ int _init_static_info_internal(xhptdc8_static_info* info)
 	info->flash_serial_high = 0;
 	info->flash_serial_low = 0;
 	info->flash_valid = 0;
+#ifdef __linux__
+	strcpy(info->calibration_date, "2020-01-01 00:00");
+#else
 	strcpy_s(info->calibration_date, "2020-01-01 00:00");
-
+#endif 
 	return XHPTDC8_OK;
 }
 
@@ -195,28 +179,18 @@ int _init_static_info_internal(xhptdc8_static_info* info)
 /*
 * Returns the type of the device as CRONO_DEVICE_XHPTDC8.
 */
-extern "C" int xhptdc8_get_device_type(xhptdc8_manager mgr, int index)
+extern "C" int xhptdc8_get_device_type(int index)
 {
-	if (!xhptdc8_is_valid_device_index(mgr, index))
-		return XHPTDC8_INVALID_ARGUMENTS;
-
-	// Validate that the device manager device_type is set properly
-	xhptdc8_dummy_manager* mngr = (xhptdc8_dummy_manager*)(mgr);
-	if (CRONO_DEVICE_XHPTDC8 != mngr->params.device_type)
-		return XHPTDC8_INVALID_ARGUMENTS;
-
+	CHECK_VALID_DEVICE(index);
 	return CRONO_DEVICE_XHPTDC8;
 }
 
 /*
 * Returns most recent error message.
 */
-extern "C" const char* xhptdc8_get_last_error_message(xhptdc8_manager mgr, int index)
+extern "C" const char* xhptdc8_get_last_error_message(int index)
 {
-	if (!xhptdc8_is_valid_manager(mgr))
-		return ERR_MSG_INVALID_MANAGER;
-	xhptdc8_dummy_manager* mngr = (xhptdc8_dummy_manager*)(mgr);
-	return mngr->last_error_message;
+	return mngr.last_error_message;
 }
 
 /*
@@ -228,11 +202,9 @@ extern "C" const char* xhptdc8_get_last_error_message(xhptdc8_manager mgr, int i
 * - For demo purpose, we have only one device, index is always 0
 * 
 */
-extern "C" int xhptdc8_get_fast_info(xhptdc8_manager mgr, int index,
-		xhptdc8_fast_info* info)
+extern "C" int xhptdc8_get_fast_info(int index, xhptdc8_fast_info* info)
 {
-	if (!xhptdc8_is_valid_device_index(mgr, index))
-		return XHPTDC8_INVALID_ARGUMENTS;
+	CHECK_VALID_DEVICE(index);
 
 	if (nullptr == info)
 		return XHPTDC8_INVALID_ARGUMENTS;
@@ -258,21 +230,16 @@ extern "C" int xhptdc8_get_fast_info(xhptdc8_manager mgr, int index,
 * - For demo purpose, we have only one device, index is always 0
 *
 */
-extern "C" int xhptdc8_get_param_info(xhptdc8_manager mgr, int index,
-	xhptdc8_param_info* info)
+extern "C" int xhptdc8_get_param_info(int index, xhptdc8_param_info* info)
 {
-	if (!xhptdc8_is_valid_device_index(mgr, index))
-		return XHPTDC8_INVALID_ARGUMENTS;
-
 	if (nullptr == info)
 		return XHPTDC8_INVALID_ARGUMENTS;
 
-	xhptdc8_dummy_manager* mngr = (xhptdc8_dummy_manager*)(mgr);
-	if ((mngr->state == ManagerState::CREATED) || (mngr->state == ManagerState::INITIALIZED)) {
+	if ((mngr.dev_state == DeviceState::CREATED) || (mngr.dev_state== DeviceState::INITIALIZED)) {
 		// Error("Device is not configured, ParamInfo not yet available.");
 		return XHPTDC8_WRONG_STATE;
 	}
-	if (mngr->state == ManagerState::CLOSED) {
+	if (mngr.dev_state == DeviceState::CLOSED) {
 		//Error("Device is already closed.");
 		return XHPTDC8_WRONG_STATE;
 	}
@@ -296,16 +263,14 @@ extern "C" int xhptdc8_get_param_info(xhptdc8_manager mgr, int index,
 * - For demo purpose, we have only one device, index is always 0
 *
 */
-extern "C" int xhptdc8_get_static_info(xhptdc8_manager mgr, int index,
-	xhptdc8_static_info* info)
+extern "C" int xhptdc8_get_static_info (int index, xhptdc8_static_info* info)
 {
-	if (!xhptdc8_is_valid_device_index(mgr, index))
-		return XHPTDC8_INVALID_ARGUMENTS;
+	CHECK_VALID_DEVICE(index);
 
 	if (nullptr == info)
 		return XHPTDC8_INVALID_ARGUMENTS;
 
-	*info = ((xhptdc8_dummy_manager*)(mgr))->staticInfo;
+	*info = mngr.staticInfo;
 
 	return XHPTDC8_OK;
 }
@@ -317,11 +282,9 @@ extern "C" int xhptdc8_get_static_info(xhptdc8_manager mgr, int index,
 * - For demo purpose, we have only one device, index is always 0
 *
 */
-extern "C" int xhptdc8_get_temperature_info(xhptdc8_manager mgr, int index,
-	xhptdc8_temperature_info* info)
+extern "C" int xhptdc8_get_temperature_info(int index, xhptdc8_temperature_info* info)
 {
-	if (!xhptdc8_is_valid_device_index(mgr, index))
-		return XHPTDC8_INVALID_ARGUMENTS;
+	CHECK_VALID_DEVICE(index);
 
 	if (nullptr == info)
 		return XHPTDC8_INVALID_ARGUMENTS;
@@ -341,11 +304,9 @@ extern "C" int xhptdc8_get_temperature_info(xhptdc8_manager mgr, int index,
 * - For demo purpose, we have only one device, index is always 0
 *
 */
-extern "C" int xhptdc8_get_clock_info(xhptdc8_manager mgr, int index,
-	xhptdc8_clock_info* info)
+extern "C" int xhptdc8_get_clock_info(int index, xhptdc8_clock_info* info)
 {
-	if (!xhptdc8_is_valid_device_index(mgr, index))
-		return XHPTDC8_INVALID_ARGUMENTS;
+	CHECK_VALID_DEVICE(index);
 
 	if (nullptr == info)
 		return XHPTDC8_INVALID_ARGUMENTS;
@@ -390,36 +351,16 @@ extern "C" const char* xhptdc8_device_state_to_str(int state)
 /*
 * Configures the xHPTDC8 manager.
 */
-extern "C" int xhptdc8_configure(xhptdc8_manager mgr,
-					xhptdc8_manager_configuration* config)
+extern "C" int xhptdc8_configure(xhptdc8_manager_configuration* mgr_cfg)
 {
-	if (!xhptdc8_is_valid_manager(mgr))
+	if (nullptr == mgr_cfg)
 		return XHPTDC8_INVALID_ARGUMENTS;
 
-	if (nullptr == config)
-		return XHPTDC8_INVALID_ARGUMENTS;
-
-	xhptdc8_dummy_manager* mngr = (xhptdc8_dummy_manager*)(mgr);
-	if (mngr->state == ManagerState::CREATED) {
-		//Error("DeviceManager is not initialized, cannot start");
-		return XHPTDC8_WRONG_STATE;
-	}
-	if (mngr->state == ManagerState::CAPTURING) {
-		//Error("DeviceManager is capturing, cannot start");
-		return XHPTDC8_WRONG_STATE;
-	}
-	if (mngr->state == ManagerState::PAUSED) {
-		//Error("DeviceManager is paused, cannot start");
-		return XHPTDC8_WRONG_STATE;
-	}
-	if (mngr->state == ManagerState::CLOSED) {
-		//Error("DeviceManager is already closed");
-		return XHPTDC8_WRONG_STATE;
-	}
-	mngr->state = ManagerState::CONFIGURED;
+	CHECK_MANAGER_STATE_OR(ManagerState::INITIALIZED, ManagerState::CONFIGURED);
+	mngr.state = ManagerState::CONFIGURED;
 
 	// Copy the structure, don't do '=', as the caller might release its memory at any time
-	memcpy(&(mngr->p_mgr_cfg), config, sizeof(xhptdc8_manager_configuration));
+	memcpy(&(mngr.p_mgr_cfg), mgr_cfg, sizeof(xhptdc8_manager_configuration));
 
 	// For *_configure() you just return the status code and ignore the configuration.
 	return XHPTDC8_OK;
@@ -429,12 +370,8 @@ extern "C" int xhptdc8_configure(xhptdc8_manager mgr,
 * Gets default configuration.
 * Copies the default configuration to the specified config pointer.
 */
-extern "C" int xhptdc8_get_default_configuration(xhptdc8_manager mgr,
-	xhptdc8_manager_configuration * config)
+extern "C" int xhptdc8_get_default_configuration(xhptdc8_manager_configuration * config)
 {
-	if (!xhptdc8_is_valid_manager(mgr))
-		return XHPTDC8_INVALID_ARGUMENTS;
-
 	if (nullptr == config)
 		return XHPTDC8_INVALID_ARGUMENTS;
 
@@ -492,7 +429,6 @@ extern "C" int xhptdc8_get_default_configuration(xhptdc8_manager mgr,
 	config->grouping.range_start = 0;
 	config->grouping.range_stop = 0;
 	config->grouping.trigger_deadtime = 0;
-	config->grouping.require_window_hit = false;
 	config->grouping.window_start = 0;
 	config->grouping.window_stop = 0;
 	config->grouping.veto_mode = XHPTDC8_VETO_OFF; 
@@ -511,17 +447,12 @@ extern "C" int xhptdc8_get_default_configuration(xhptdc8_manager mgr,
 * Gets current configuration.
 * Copies the current configuration to the specified config pointer.
 */
-extern "C" int xhptdc8_get_current_configuration(xhptdc8_manager mgr,
-	xhptdc8_manager_configuration * config)
+extern "C" int xhptdc8_get_current_configuration(xhptdc8_manager_configuration * config)
 {
-	if (!xhptdc8_is_valid_manager(mgr))
-		return XHPTDC8_INVALID_ARGUMENTS;
-
 	if (nullptr == config)
 		return XHPTDC8_INVALID_ARGUMENTS;
 
-	xhptdc8_dummy_manager* mngr = (xhptdc8_dummy_manager*)(mgr);
-	memcpy(config, &(mngr->p_mgr_cfg), sizeof(xhptdc8_manager_configuration));
+	memcpy(config, &(mngr.p_mgr_cfg), sizeof(xhptdc8_manager_configuration));
 
 	return XHPTDC8_OK;
 }
@@ -533,39 +464,33 @@ extern "C" int xhptdc8_get_current_configuration(xhptdc8_manager mgr,
 /*
 * Start data acquisition.
 */
-extern "C" int xhptdc8_start_capture(xhptdc8_manager mgr)
+extern "C" int xhptdc8_start_capture()
 {
-	if (!xhptdc8_is_valid_manager(mgr))
-		return XHPTDC8_INVALID_ARGUMENTS;
-
-	xhptdc8_dummy_manager* mngr = (xhptdc8_dummy_manager*)(mgr);
-
-	if (mngr->state == ManagerState::CREATED || mngr->state == ManagerState::INITIALIZED) {
-		_set_last_error_internal(mgr, ERR_MSG_DEVICE_NOT_CONF);
+	if (mngr.dev_state == DeviceState::CREATED || mngr.dev_state == ManagerState::INITIALIZED) {
+		_set_last_error_internal(ERR_MSG_DEVICE_NOT_CONF);
 		return XHPTDC8_WRONG_STATE;
 	}
-	if (mngr->state == ManagerState::CAPTURING) {
-		_set_last_error_internal(mgr, ERR_MSG_DEVICE_IS_CAPTURING);
+	if (mngr.dev_state == DeviceState::CAPTURING) {
+		_set_last_error_internal(ERR_MSG_DEVICE_IS_CAPTURING);
 		return XHPTDC8_WRONG_STATE;
 	}
-	if (mngr->state == ManagerState::PAUSED) {
-		_set_last_error_internal(mgr, ERR_MSG_DEVICE_IS_CAPTURING);
+	if (mngr.dev_state == DeviceState::PAUSED) {
+		_set_last_error_internal(ERR_MSG_DEVICE_IS_CAPTURING);
 		return XHPTDC8_WRONG_STATE;
 	}
-	if (mngr->state == ManagerState::CLOSED) {
-		_set_last_error_internal(mgr, ERR_MSG_DEVICE_IS_CLOSED);
+	if (mngr.dev_state == DeviceState::CLOSED) {
+		_set_last_error_internal(ERR_MSG_DEVICE_IS_CLOSED);
 		return XHPTDC8_WRONG_STATE;
 	}
 
 	SYSTEMTIME time;
 	GetSystemTime(&time);
-	mngr->start_capture_time = (time.wSecond * 1000) + time.wMilliseconds;
+	mngr.start_capture_time = (time.wSecond * 1000) + time.wMilliseconds;
+	mngr.captured_stored_time = 0;
+	mngr.read_hits_count = 0;
+	mngr.last_read_time = 0;
+	mngr.dev_state = DeviceState::CAPTURING;
 
-	mngr->captured_stored_time = 0;
-	mngr->read_hits_count = 0;
-	mngr->last_read_time = 0;
-
-	mngr->state = ManagerState::CAPTURING;
 	return XHPTDC8_OK;
 }
 
@@ -573,25 +498,20 @@ extern "C" int xhptdc8_start_capture(xhptdc8_manager mgr)
 * Pause a started data acquisition.Pauseand continue have less overhead than start
 * and stop but don’t allow for a configuration change.
 */
-extern "C" int xhptdc8_pause_capture(xhptdc8_manager mgr)
+extern "C" int xhptdc8_pause_capture()
 {
-	if (!xhptdc8_is_valid_manager(mgr))
-		return XHPTDC8_INVALID_ARGUMENTS;
-
-	xhptdc8_dummy_manager* mngr = (xhptdc8_dummy_manager*)(mgr);
-
-	if (mngr->state != ManagerState::CAPTURING) {
-		_set_last_error_internal(mgr, ERR_MSG_DEVICE_IS_NOT_CAPURING);
+	if (mngr.state != ManagerState::CAPTURING) {
+		_set_last_error_internal(ERR_MSG_DEVICE_IS_NOT_CAPURING);
 		return XHPTDC8_WRONG_STATE;
 	}
 
 	SYSTEMTIME time;
 	GetSystemTime(&time);
-	mngr->captured_stored_time += (((time.wSecond * 1000) + time.wMilliseconds) - 
-		mngr->start_capture_time) ;
-	mngr->start_capture_time = 0 ;
+	mngr.captured_stored_time += (((time.wSecond * 1000) + time.wMilliseconds) -
+		mngr.start_capture_time) ;
+	mngr.start_capture_time = 0 ;
 
-	mngr->state = ManagerState::PAUSED;
+	mngr.state = ManagerState::PAUSED;
 	return XHPTDC8_OK;
 }
 
@@ -600,54 +520,44 @@ extern "C" int xhptdc8_pause_capture(xhptdc8_manager mgr)
 * Pause and continue have less overhead than start and stop 
 * but don’t allow for a configuration change.
 */
-extern "C" int xhptdc8_continue_capture(xhptdc8_manager mgr)
+extern "C" int xhptdc8_continue_capture()
 {
-	if (!xhptdc8_is_valid_manager(mgr))
-		return XHPTDC8_INVALID_ARGUMENTS;
-
-	xhptdc8_dummy_manager* mngr = (xhptdc8_dummy_manager*)(mgr);
-
-	if (mngr->state != ManagerState::PAUSED) {
-		_set_last_error_internal(mgr, ERR_MSG_DEVICE_IS_NOT_PAUSED);
+	if (mngr.state != ManagerState::PAUSED) {
+		_set_last_error_internal(ERR_MSG_DEVICE_IS_NOT_PAUSED);
 		return XHPTDC8_WRONG_STATE;
 	}
 
 	SYSTEMTIME time;
 	GetSystemTime(&time);
-	mngr->start_capture_time = (time.wSecond * 1000) + time.wMilliseconds;
+	mngr.start_capture_time = (time.wSecond * 1000) + time.wMilliseconds;
 
-	mngr->state = ManagerState::CAPTURING;
+	mngr.state = ManagerState::CAPTURING;
 	return XHPTDC8_OK;
 }
 
 /*
 * Stop data acquisition.
 */
-extern "C" int xhptdc8_stop_capture(xhptdc8_manager mgr)
+extern "C" int xhptdc8_stop_capture()
 {
-	if (!xhptdc8_is_valid_manager(mgr))
-		return XHPTDC8_INVALID_ARGUMENTS;
-
-	xhptdc8_dummy_manager* mngr = (xhptdc8_dummy_manager*)(mgr);
-
 	/*
 	* Driver code doesn't validate the state, so does this code
-	if (mngr->state != ManagerState::CAPTURING) {
-		_set_last_error_internal(mgr, ERR_MSG_DEVICE_IS_NOT_CAPURING);
+	if (mngr.state != ManagerState::CAPTURING) {
+		_set_last_error_internal(ERR_MSG_DEVICE_IS_NOT_CAPURING);
 		return XHPTDC8_WRONG_STATE;
 	}
 	*/
 
-	if (ManagerState::CAPTURING == mngr->state)
+	if (ManagerState::CAPTURING == mngr.state)
 	{
 		SYSTEMTIME time;
 		GetSystemTime(&time);
-		mngr->captured_stored_time += (((time.wSecond * 1000) + time.wMilliseconds) -
-			mngr->start_capture_time);
-		mngr->start_capture_time = 0;
+		mngr.captured_stored_time += (((time.wSecond * 1000) + time.wMilliseconds) -
+			mngr.start_capture_time);
+		mngr.start_capture_time = 0;
 	}
 
-	mngr->state = ManagerState::CONFIGURED;
+	mngr.state = ManagerState::CONFIGURED;
 	return XHPTDC8_OK;
 }
 
@@ -658,19 +568,16 @@ extern "C" int xhptdc8_stop_capture(xhptdc8_manager mgr)
 * - For demo purpose, we have only one device, index is always 0
 *
 */
-extern "C" int xhptdc8_start_tiger(xhptdc8_manager mgr, int index)
+extern "C" int xhptdc8_start_tiger(int index)
 {
-	if (!xhptdc8_is_valid_device_index(mgr, index))
-		return XHPTDC8_INVALID_ARGUMENTS;
+	CHECK_VALID_DEVICE(index);
 
-	xhptdc8_dummy_manager* mngr = (xhptdc8_dummy_manager*)(mgr);
-
-	if (mngr->state == ManagerState::CREATED || mngr->state == ManagerState::INITIALIZED) {
-		_set_last_error_internal(mgr, ERR_MSG_TIGER_DEVICE_NOT_CONF);
+	if (mngr.dev_state == DeviceState::CREATED || mngr.dev_state == DeviceState::INITIALIZED) {
+		_set_last_error_internal(ERR_MSG_TIGER_DEVICE_NOT_CONF);
 		return XHPTDC8_WRONG_STATE;
 	}
-	if (mngr->state == ManagerState::CLOSED) {
-		_set_last_error_internal(mgr, ERR_MSG_DEVICE_IS_CLOSED);
+	if (mngr.dev_state == DeviceState::CLOSED) {
+		_set_last_error_internal(ERR_MSG_DEVICE_IS_CLOSED);
 		return XHPTDC8_WRONG_STATE;
 	}
 	
@@ -684,15 +591,16 @@ extern "C" int xhptdc8_start_tiger(xhptdc8_manager mgr, int index)
 * - For demo purpose, we have only one device, index is always 0
 *
 */
-extern "C" int xhptdc8_stop_tiger(xhptdc8_manager mgr, int index)
+extern "C" int xhptdc8_stop_tiger(int index)
 {
-	if (!xhptdc8_is_valid_device_index(mgr, index))
-		return XHPTDC8_INVALID_ARGUMENTS;
+	CHECK_VALID_DEVICE(index);
 
-	xhptdc8_dummy_manager* mngr = (xhptdc8_dummy_manager*)(mgr);
-
-	if (mngr->state == ManagerState::CLOSED) {
-		_set_last_error_internal(mgr, ERR_MSG_DEVICE_IS_CLOSED);
+	if (mngr.dev_state == DeviceState::CREATED || mngr.dev_state == DeviceState::INITIALIZED) {
+		_set_last_error_internal(ERR_MSG_TIGER_DEVICE_NOT_CONF);
+		return XHPTDC8_WRONG_STATE;
+	}
+	if (mngr.dev_state == DeviceState::CLOSED) {
+		_set_last_error_internal(ERR_MSG_DEVICE_IS_CLOSED);
 		return XHPTDC8_WRONG_STATE;
 	}
 
@@ -710,28 +618,24 @@ extern "C" int xhptdc8_stop_tiger(xhptdc8_manager mgr, int index)
 * If the group is to large for the buffer the remaining hits of the group are discarded.
 * If grouping is disabled, all availabe data is read up to the size of the buffer.
 */
-extern "C" int xhptdc8_read_hits(xhptdc8_manager mgr, TDCHit* hit_buf, size_t size)
+extern "C" int xhptdc8_read_hits(TDCHit* hit_buf, size_t size)
 {
-	if (!xhptdc8_is_valid_manager(mgr))
-		return XHPTDC8_INVALID_ARGUMENTS;
-
 	if (nullptr == hit_buf)
 	{
 		return XHPTDC8_INVALID_ARGUMENTS;
 	}
 
-	xhptdc8_dummy_manager* mngr = (xhptdc8_dummy_manager*)(mgr);
-	if (mngr->state != ManagerState::CAPTURING) 
+	if (mngr.state != ManagerState::CAPTURING)
 	{
-		_set_last_error_internal(mgr, ERR_MSG_DEVICE_IS_NOT_CAPURING);
+		_set_last_error_internal(ERR_MSG_DEVICE_IS_NOT_CAPURING);
 		return XHPTDC8_WRONG_STATE;
 	}
 
-	mngr->read_hits_count++;
+	mngr.read_hits_count++;
 
-	if ( mngr->p_mgr_cfg.grouping.enabled )
+	if ( mngr.p_mgr_cfg.grouping.enabled )
 	{
-		int ret = _read_hits_for_groups_internal(mngr, hit_buf, size);
+		int ret = _read_hits_for_groups_internal(hit_buf, size);
 		switch (ret)
 		{
 		case 2:
@@ -740,28 +644,28 @@ extern "C" int xhptdc8_read_hits(xhptdc8_manager mgr, TDCHit* hit_buf, size_t si
 		case 0:
 		case -1:
 		default:
-			_set_last_error_internal(mgr, ERR_MSG_BUFFER_SIZE_SMALL);
+			_set_last_error_internal(ERR_MSG_BUFFER_SIZE_SMALL);
 			return ret ;
 		}
 	}
 	else
 	// Grouping is not enabled
 	{
-		return _read_hits_for_NO_groups_internal(mngr, hit_buf, size);
+		return _read_hits_for_NO_groups_internal(hit_buf, size);
 	}
 }
 #include <cinttypes>
 /*
 *  xhptdc8_read_hits when groups are note enabled
 */
-int _read_hits_for_NO_groups_internal(xhptdc8_dummy_manager* mngr, TDCHit* hit_buf, size_t size)
+int _read_hits_for_NO_groups_internal(TDCHit* hit_buf, size_t size)
 {
 	// Calculate ms_since_last_call
 	SYSTEMTIME time;
 	GetSystemTime(&time);
 	long current_timestamp = (time.wSecond * 1000) + time.wMilliseconds;
-	int64_t ms_since_last_call = current_timestamp - mngr->last_read_time;
-	mngr->last_read_time = current_timestamp;
+	int64_t ms_since_last_call = current_timestamp - mngr.last_read_time;
+	mngr.last_read_time = current_timestamp;
 
 	// Calculate normal
 	int normal;
@@ -789,13 +693,13 @@ int _read_hits_for_NO_groups_internal(xhptdc8_dummy_manager* mngr, TDCHit* hit_b
 *		 0: Error, buffer is smaller than milliseconds
 *		-1: Error, buffer size is smaller than 2
 */
-int _read_hits_for_groups_internal(xhptdc8_dummy_manager* mngr, TDCHit * hit_buf, size_t size)
+int _read_hits_for_groups_internal(TDCHit * hit_buf, size_t size)
 {
 	SYSTEMTIME time;
 	GetSystemTime(&time);
 	long current_timestamp = (time.wSecond * 1000) + time.wMilliseconds;
-	int64_t ms_since_last_call = current_timestamp - mngr->captured_stored_time;
-	if (mngr->read_hits_count < ms_since_last_call)
+	int64_t ms_since_last_call = current_timestamp - mngr.captured_stored_time;
+	if (mngr.read_hits_count < ms_since_last_call)
 	// The number of calls is less than the number of milliseconds elapsed since 
 	// the call to *_start_capture().
 	{
@@ -805,7 +709,7 @@ int _read_hits_for_groups_internal(xhptdc8_dummy_manager* mngr, TDCHit * hit_buf
 		}
 		int normal = int(g_distribution(g_generator));
 
-		hit_buf[0].time = mngr->read_hits_count * 1000000000;
+		hit_buf[0].time = mngr.read_hits_count * 1000000000;
 		hit_buf[1].time = 0;
 		hit_buf[2].time = normal;
 		hit_buf[1].channel = 255;
@@ -826,72 +730,9 @@ int _read_hits_for_groups_internal(xhptdc8_dummy_manager* mngr, TDCHit * hit_buf
 	}
 }
 
-//_____________________________________________________________________________
-// Internal Functions
-//
-/*
-* Return true : Is Valid
-*		 false: Is Invalid
-*/ 
-extern "C" crono_bool_t xhptdc8_is_valid_manager(xhptdc8_manager mgr)
+int xhptdc8_read_user_flash(int index, uint8_t* flash_data, uint32_t size)
 {
-	if (nullptr == mgr)
-	{
-		// No need to set the last error message, as XHPTDC8_INVALID_ARGUMENTS 
-		// should be returned by the caller
-		return false;
-	}
-	return true;
-}
-
-/*
-* Return true : Is Valid
-*		 false: Is Invalid
-*/
-extern "C" crono_bool_t xhptdc8_is_valid_device_index(xhptdc8_manager mgr, int index)
-{
-	return _xhptdc8_is_valid_device_index_inernal(mgr, index);
-}
-
-/*
-* Only one device is supported in the Dummy Library, so, index should be always 0
-*/
-crono_bool_t _xhptdc8_is_valid_device_index_inernal(xhptdc8_manager mgr, int index)
-{
-	if (!xhptdc8_is_valid_manager(mgr))
-		return false;
-
-	if ((index < 0) || (index >= DUMMY_DEVICES_COUNT))
-	{
-		// No need to set the last error message, as XHPTDC8_INVALID_ARGUMENTS 
-		// should be returned by the caller
-		return false;
-	}
-	return true;
-}
-
-void _set_last_error_printf_internal(xhptdc8_manager mgr, const char* format, ...)
-
-{
-	if (!xhptdc8_is_valid_manager(mgr))
-		return ;
-
-	xhptdc8_dummy_manager* mngr = (xhptdc8_dummy_manager*)(mgr);
-	va_list arglist;
-	va_start(arglist, format);
-	vsnprintf(mngr->last_error_message, mngr->MaxErrorMessageSize, format, arglist);
-	va_end(arglist);
-}
-
-void _set_last_error_internal(xhptdc8_manager mgr, const char* errString)
-{
-	_set_last_error_printf_internal(mgr, "%s", errString);
-}
-
-int xhptdc8_read_user_flash(xhptdc8_manager mgr, int index, uint8_t* flash_data, uint32_t size)
-{
-	if (!xhptdc8_is_valid_device_index(mgr, index))
-		return XHPTDC8_INVALID_ARGUMENTS;
+	CHECK_VALID_DEVICE(index);
 
 	if (nullptr == flash_data)
 		return XHPTDC8_INVALID_ARGUMENTS;
@@ -899,21 +740,19 @@ int xhptdc8_read_user_flash(xhptdc8_manager mgr, int index, uint8_t* flash_data,
 	if (size <= 0 )
 		return XHPTDC8_INVALID_ARGUMENTS;
 
-	xhptdc8_dummy_manager* mngr = (xhptdc8_dummy_manager*)(mgr);
-	if (NULL != mngr->user_flash) {
-		memcpy(flash_data, mngr->user_flash, 
-			mngr->user_flash_size > size ? size : mngr->user_flash_size);
-		if (mngr->user_flash_size < size)
-			size = mngr->user_flash_size;
+	if (NULL != mngr.user_flash) {
+		memcpy(flash_data, mngr.user_flash,
+			mngr.user_flash_size > size ? size : mngr.user_flash_size);
+		if (mngr.user_flash_size < size)
+			size = mngr.user_flash_size;
 	}
 
 	return XHPTDC8_OK;
 }
 
-int xhptdc8_write_user_flash(xhptdc8_manager mgr, int index, uint8_t* flash_data, uint32_t size)
+int xhptdc8_write_user_flash(int index, uint8_t* flash_data, uint32_t size)
 {
-	if (!xhptdc8_is_valid_device_index(mgr, index))
-		return XHPTDC8_INVALID_ARGUMENTS;
+	CHECK_VALID_DEVICE(index);
 
 	if (nullptr == flash_data)
 		return XHPTDC8_INVALID_ARGUMENTS;
@@ -921,35 +760,64 @@ int xhptdc8_write_user_flash(xhptdc8_manager mgr, int index, uint8_t* flash_data
 	if (size <= 0)
 		return XHPTDC8_INVALID_ARGUMENTS;
 
-	xhptdc8_dummy_manager* mngr = (xhptdc8_dummy_manager*)(mgr);
-	if (NULL != mngr->user_flash) {
-		delete mngr->user_flash;
-		mngr->user_flash = NULL;
+	if (NULL != mngr.user_flash) {
+		delete mngr.user_flash;
+		mngr.user_flash = NULL;
 	}
 	try {
-		mngr->user_flash = new unsigned char[size];
+		mngr.user_flash = new unsigned char[size];
 	}
 	catch (std::bad_alloc& ba) {
 		fprintf(stdout, "Exception in memory allocation: %s", ba.what());
-		_set_last_error_internal(mgr, ERR_MSG_MEMORY_ALLOC);
+		_set_last_error_internal(ERR_MSG_MEMORY_ALLOC);
 		return XHPTDC8_INVALID_ARGUMENTS;
 	}
-	memcpy(mngr->user_flash, flash_data, size);
-	mngr->user_flash_size = size;
+	memcpy(mngr.user_flash, flash_data, size);
+	mngr.user_flash_size = size;
 
 	return XHPTDC8_OK;
 }
 
-extern "C" int xhptdc8_software_trigger(xhptdc8_manager mgr, int index) 
+extern "C" int xhptdc8_software_trigger(int index) 
 {
-	if (!xhptdc8_is_valid_device_index(mgr, index))
-		return XHPTDC8_INVALID_ARGUMENTS;
-
-	xhptdc8_dummy_manager* mngr = (xhptdc8_dummy_manager*)(mgr);
-	if ((mngr->state != ManagerState::CREATED) || (mngr->state != ManagerState::CLOSED))
+	CHECK_VALID_DEVICE(index);
+	if ((mngr.dev_state != DeviceState::CREATED) || (mngr.dev_state != DeviceState::CLOSED))
 	{
-		_set_last_error_internal(mgr, ERR_MSG_DEVICE_NOT_READY_TRIG);
+		_set_last_error_internal(ERR_MSG_DEVICE_NOT_READY_TRIG);
 		return XHPTDC8_WRONG_STATE;
 	}
 	return XHPTDC8_OK;
+}
+
+//_____________________________________________________________________________
+// Internal Functions
+
+void _set_last_error_printf_internal(const char* format, ...)
+{
+	va_list arglist;
+	va_start(arglist, format);
+	vsnprintf(mngr.last_error_message, mngr.MaxErrorMessageSize, format, arglist);
+	va_end(arglist);
+}
+
+void _set_last_error_internal(const char* errString)
+{
+	_set_last_error_printf_internal("%s", errString);
+}
+
+const char* _GetManagerStateMessage(ManagerState::Enum code)
+{
+	switch (code) {
+	case ManagerState::UNINITIALIZED:
+		return XHPTDC8_MAN_MSG_UNINITIALIZED;
+	case ManagerState::INITIALIZED:
+		return XHPTDC8_MAN_MSG_INITIALIZED;
+	case ManagerState::CONFIGURED:
+		return XHPTDC8_MAN_MSG_CONFIGURED;
+	case ManagerState::CAPTURING:
+		return XHPTDC8_MAN_MSG_CAPTURING;
+	case ManagerState::PAUSED:
+		return XHPTDC8_MAN_MSG_PAUSED;
+	}
+	return "unknown error";  // just in case no code matches
 }

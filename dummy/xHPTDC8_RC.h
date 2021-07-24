@@ -4,6 +4,7 @@
 #ifndef XHPTDC8_RESOURCE_H
 #define XHPTDC8_RESOURCE_H
 
+static char ERR_MSG_DEVICE_NOT_INIT[35] =		{ "DeviceManager is not initialized." };
 static char ERR_MSG_DEVICE_NOT_CONF[40] =		{ "Device is not configured, cannot start." } ;
 static char ERR_MSG_DEVICE_IS_CAPTURING[29] =	{ "Device is already capturing." };
 static char ERR_MSG_DEVICE_IS_CLOSED[26] =		{ "Device is already closed." };
@@ -16,6 +17,14 @@ static char ERR_MSG_INIT_FAILED_FMT[39] =		{ "xtdc8Manager initialization failed
 static char ERR_MSG_INVALID_ARGS[19] =			{ "Invalid arguments." };
 static char ERR_MSG_MEMORY_ALLOC[28] =			{ "Error in memory allocation." };
 static char ERR_MSG_DEVICE_NOT_READY_TRIG[39] = { "Device not ready for software trigger!" };
+
+#define XHPTDC8_MAN_MSG_ERR_NOT_INITIALIZED		"Manager not initialized!"
+
+#define XHPTDC8_MAN_MSG_UNINITIALIZED		"not initialized"
+#define XHPTDC8_MAN_MSG_INITIALIZED			"initialized"
+#define XHPTDC8_MAN_MSG_CONFIGURED			"configured"
+#define XHPTDC8_MAN_MSG_CAPTURING			"capturing"
+#define XHPTDC8_MAN_MSG_PAUSED				"paused"
 
 #endif // !XHPTDC8_RESOURCE_H
 

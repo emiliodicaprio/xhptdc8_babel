@@ -30,7 +30,7 @@
 #define XHPTDC8_MANAGER_CONFIG_VERSION 1
 
 // The maximum number of boards supported by the device manager.
-#define	XHPTDC8_MANAGER_DEVICES_MAX 8
+#define	XHPTDC8_MANAGER_DEVICES_MAX 6
 // The number of TDC input channels.
 #define XHPTDC8_TDC_CHANNEL_COUNT 8
 // The number of gating blocks. One for each TDC input.
@@ -48,7 +48,7 @@
 #define XHPTDC8_BUFFER_USE_PHYSICAL	1
 
 // internal baseline of the AC coupled trigger signals
-// the input may swing between -1.32V - +2V
+// the input may swing between -1.32 V - +2 V
 #define XHPTDC8_INPUT_BASELINE			+1.32
 // typical trigger tresholds for selected signal standards
 #define XHPTDC8_THRESHOLD_P_NIM			+0.35
@@ -135,9 +135,9 @@
 * All errors are positive integers.
 */
 #define XHPTDC8_OK							CRONO_OK
-#define XHPTDC8_WINDRIVER_NOT_FOUND			CRONO_WINDRIVER_NOT_FOUND
+//#define XHPTDC8_WINDRIVER_NOT_FOUND			CRONO_WINDRIVER_NOT_FOUND
 #define XHPTDC8_DEVICE_NOT_FOUND			CRONO_DEVICE_NOT_FOUND
-#define XHPTDC8_NOT_INITIALIZED				CRONO_NOT_INITIALIZED
+//#define XHPTDC8_NOT_INITIALIZED				CRONO_NOT_INITIALIZED
 #define XHPTDC8_WRONG_STATE					CRONO_WRONG_STATE
 #define XHPTDC8_INVALID_DEVICE				CRONO_INVALID_DEVICE
 #define XHPTDC8_BUFFER_ALLOC_FAILED			CRONO_BUFFER_ALLOC_FAILED
@@ -173,6 +173,9 @@
 // Size of area of device flash reserved for user data: 64 KiByte
 #define XHPTDC8_USER_FLASH_SIZE 0x10000
 
+// 8 + 2 ADC
+#define XHPTDC8_NOF_CHANNELS_PER_CARD (10) 
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -186,9 +189,6 @@ extern "C" {
 #else
 #define XHPTDC8_API
 #endif
-
-	// Handle to manager information struct
-	typedef void* xhptdc8_manager;
 
 	/**
 	* struct for the initialization of the xHPTDC8Manager.
@@ -282,97 +282,113 @@ extern "C" {
 	} TDCHit;
 
 	/**
+	*
 	* Read a multitude of hits into a buffer provided by the user.
 	* If grouping is enabled a single group is read.
 	* If grouping is disabled all availabe data is read.
 	* In all cases, data is copied to buffer up to the size of the buffer.
 	*
-	* @param mgr[in]. It must be initialized using xhptdc8_init().
 	* @param hit_buf[out]. Buffer allocated and provdied by the user.
-	* @param read_max[in]. The number of elemenst that fit into the buffer 'hit_buf'.
+	* @param read_max[out]. Size of the buffer.
 	*
 	* @returns Returns the number of read hits.
 	*/
-	XHPTDC8_API int xhptdc8_read_hits(xhptdc8_manager mgr, TDCHit* hit_buf, size_t read_max);
+	XHPTDC8_API int xhptdc8_read_hits(TDCHit* hit_buf, size_t read_max);
+
+	/**
+	* TODO
+	*
+	*
+	* @param absolute_trigger_timestamp[out]. The absolute trigger timestamp in picoseconds.
+	* @param hit_counter[out].			Buffer allocated and provded by the user. This array provides the hit counts per channel.
+	*									The maximum count is defined by number_of_hits. Set the buffer size to number_of_channels.
+	*									Channels 8 and 9 mod XHPTDC8_NOF_CHANNELS_PER_CARD stay empty.
+	* @param tdc_array[out].			Buffer allocated and provded by the user. This is a matrix containing a list timestamps per channel.
+	*									Set the buffer size to number_of_channels x number_of_hits.
+	*									Remark: Adc channels per card are merged to channel 8 mod XHPTDC8_NOF_CHANNELS_PER_CARD,
+	*									so 9 mod XHPTDC8_NOF_CHANNELS_PER_CARD stays empty.
+	* @param adc_counter[out].			Buffer allocated and provded by the user. This array provides the hit counts per adc channel.
+	*									The maximum count is defined by number_of_hits.
+	*									Set the buffer size to devices count (use function xhptdc8_count_devices).
+	* @param adc_value[out].			Buffer allocated and provded by the user. This array provides the adc value per channel.
+	*									The maximum is defined by number_of_hits. Set the buffer size to devices count.
+	* @param number_of_tdcs[in].		This is the devices count that can be calculated by the function xhptdc8_count_devices.
+	* @param number_of_channels[in].	This has to be calculated by XHPTDC8_NOF_CHANNELS_PER_CARD * number_of_tdcs.
+	* @param number_of_hits[in].		This is used to define buffer sizes.
+	*
+	* @returns Returns the number of read hits.
+	*/
+	XHPTDC8_API int xhptdc8_read_group_matrix(int64_t* absolute_trigger_timestamp, int32_t* hit_counter, int64_t* tdc_array, int32_t* adc_counter, int32_t* adc_value, int32_t number_of_tdcs, int32_t number_of_channels, int32_t number_of_hits);
+
 
 	/**
 	* Finalize the driver for this device.
 	*
-	* @param mgr[in]. It must be initialized using xhptdc8_init().
-	*
 	* @returns XHPTDC8_OK in case of success, or error code in case of error.
 	*/
-	XHPTDC8_API int xhptdc8_close(xhptdc8_manager mgr);
+	XHPTDC8_API int xhptdc8_close();
 
 	/**
 	* Start the timing generator of an individual board.
 	* This can be done independently of the state of the data acquisition
 	*
-	* @param mgr[in]. It must be initialized using xhptdc8_init().
+	*
 	* @param index[in]. The index of the device.
 	*
 	* @returns XHPTDC8_OK in case of success, or error code in case of error.
 	*/
-	XHPTDC8_API int xhptdc8_start_tiger(xhptdc8_manager mgr, int index);
+	XHPTDC8_API int xhptdc8_start_tiger(int index);
 
 	/**
 	* Stop the timing generator of an individual board.
 	* This can be done independently of the state of the data acquisition
 	*
-	* @param mgr[in]. It must be initialized using xhptdc8_init().
+	*
 	* @param index[in]. The index of the device.
 	*
 	* @returns XHPTDC8_OK in case of success, or error code in case of error.
 	*/
-	XHPTDC8_API int xhptdc8_stop_tiger(xhptdc8_manager mgr, int index);
+	XHPTDC8_API int xhptdc8_stop_tiger(int index);
 
 	/**
 	* Start data acquisition.
-	*
-	* @param mgr[in]. It must be initialized using xhptdc8_init().
+	* Device manager must be initialized using xhptdc8_init().
 	*
 	* @returns XHPTDC8_OK in case of success, or error code in case of error.
 	*/
-	XHPTDC8_API int xhptdc8_start_capture(xhptdc8_manager mgr);
+	XHPTDC8_API int xhptdc8_start_capture();
 
 	/**
 	* Pause a started data acquisition.
-	* It doesn’t allow for a configuration change.
+	* It doesn't allow for a configuration change.
 	*
-	* @param mgr[in]. It must be initialized using xhptdc8_init().
 	*
 	* @returns XHPTDC8_OK in case of success, or error code in case of error.
 	*/
-	XHPTDC8_API int xhptdc8_pause_capture(xhptdc8_manager mgr);
+	XHPTDC8_API int xhptdc8_pause_capture();
 
 	/**
 	* Call this to resume data acquisition after a call to xhptdc8_pause_capture().
-	* It doesn’t allow for a configuration change.
-	*
-	* @param mgr[in]. It must be initialized using xhptdc8_init().
+	* It doesn't allow for a configuration change.
 	*
 	* @returns XHPTDC8_OK in case of success, or error code in case of error.
 	*/
-	XHPTDC8_API int xhptdc8_continue_capture(xhptdc8_manager mgr);
+	XHPTDC8_API int xhptdc8_continue_capture();
 
 	/**
 	* Stop data acquisition.
 	*
-	* @param mgr[in]. It must be initialized using xhptdc8_init().
 	*
 	* @returns XHPTDC8_OK in case of success, or error code in case of error.
 	*/
-	XHPTDC8_API int xhptdc8_stop_capture(xhptdc8_manager mgr);
+	XHPTDC8_API int xhptdc8_stop_capture();
 
 	/**
 	* Generate a software trigger event.
-	* Prerequisites: Device should be configured and not closed.
-	*
-	* @param mgr[in]. It must be initialized using xhptdc8_init().
 	*
 	* @returns XHPTDC8_OK in case of success, or error code in case of error.
 	*/
-	XHPTDC8_API int xhptdc8_software_trigger(xhptdc8_manager mgr, int index);
+	XHPTDC8_API int xhptdc8_software_trigger(int index);
 
 	/**
 	* Structure contains static information.
@@ -411,7 +427,7 @@ extern "C" {
 		int driver_revision;
 
 		/**
-		* The build number of the driver according to cronologic’s internal versioning system.
+		* The build number of the driver according to cronologic's internal versioning system.
 		*/
 		int driver_build_revision;
 
@@ -493,13 +509,12 @@ extern "C" {
 	* Gets a structure that contains information about the board that does not change during
 	* run time.
 	*
-	* @param mgr[in]. It must be initialized using xhptdc8_init().
 	* @param index[in].The index of the device.
 	* @param info[out]. Buffer allocated and provided by the user to have a copy of the structure.
 	*
 	* @returns XHPTDC8_OK in case of success, or error code in case of error.
 	*/
-	XHPTDC8_API int xhptdc8_get_static_info(xhptdc8_manager mgr, int index, xhptdc8_static_info* info);
+	XHPTDC8_API int xhptdc8_get_static_info(int index, xhptdc8_static_info* info);
 
 	/**
 	* Contains fast dynamic information.
@@ -529,7 +544,7 @@ extern "C" {
 		/**
 		* Alert bits from temperature sensor and the system monitor.
 		*
-		* Bit 0 is set if the TDC temperature exceeds 140°C. In this case the TDC did shut down
+		* Bit 0 is set if the TDC temperature exceeds 140 degree C. In this case the TDC did shut down
 		* and the device needs to be reinitialized.
 		*/
 		int alerts;
@@ -564,12 +579,11 @@ extern "C" {
 	* This call gets a structure that contains dynamic information that can be obtained within a
 	* few microseconds.
 	*
-	* @param mgr[in]. It must be initialized using xhptdc8_init().
 	* @param info[out]. Buffer allocated and provdied by the user to have a copy of the structure.
 	*
 	* @returns XHPTDC8_OK in case of success, or error code in case of error.
 	*/
-	XHPTDC8_API int xhptdc8_get_fast_info(xhptdc8_manager mgr, int index, xhptdc8_fast_info * info);
+	XHPTDC8_API int xhptdc8_get_fast_info(int index, xhptdc8_fast_info* info);
 
 	/**
 	* Contains information that may change with configuration
@@ -623,12 +637,11 @@ extern "C" {
 	* Gets a structure that contains information that changes indirectly due to configuration
 	* changes.
 	*
-	* @param mgr[in]. It must be initialized using xhptdc8_init().
 	* @param info[out]. Buffer allocated and provdied by the user to have a copy of the structure.
 	*
 	* @returns XHPTDC8_OK in case of success, or error code in case of error.
 	*/
-	XHPTDC8_API int xhptdc8_get_param_info(xhptdc8_manager mgr, int index, xhptdc8_param_info* info);
+	XHPTDC8_API int xhptdc8_get_param_info(int index, xhptdc8_param_info* info);
 
 	/**
 	* Contains temperature measurements
@@ -658,13 +671,12 @@ extern "C" {
 	/**
 	* Get temperature measurements from multiple sources on the board.
 	*
-	* @param mgr[in]. It must be initialized using xhptdc8_init().
 	* @param index[in]. The index of the device.
 	* @param info[out]. Buffer allocated and provdied by the user to have a copy of the structure.
 	*
 	* @returns XHPTDC8_OK in case of success, or error code in case of error.
 	*/
-	XHPTDC8_API int xhptdc8_get_temperature_info(xhptdc8_manager mgr, int index, xhptdc8_temperature_info* info);
+	XHPTDC8_API int xhptdc8_get_temperature_info(int index, xhptdc8_temperature_info* info);
 
 	/**
 	* Contains information about the active clock source.
@@ -711,29 +723,26 @@ extern "C" {
 	/**
 	* Get information on clocking configuration an status.
 	*
-	* @param mgr[in]. It must be initialized using xhptdc8_init().
 	* @param index[in]. The index of the device.
 	* @param info[out]. Buffer allocated and provdied by the user to have a copy of the structure.
 	*
 	* @returns XHPTDC8_OK in case of success, or error code in case of error.
 	*/
-	XHPTDC8_API int xhptdc8_get_clock_info(xhptdc8_manager mgr, int index, xhptdc8_clock_info* info);
+	XHPTDC8_API int xhptdc8_get_clock_info(int index, xhptdc8_clock_info* info);
 
 	/**
 	* Returns most recent error message.
 	*
-	* @param mgr[in]. It must be initialized using xhptdc8_init().
 	* @param index[in]. The index of the device. If set to -1 returns error message of the manager.
 	*/
-	XHPTDC8_API const char* xhptdc8_get_last_error_message(xhptdc8_manager mgr, int index);
+	XHPTDC8_API const char* xhptdc8_get_last_error_message(int index);
 
 	/**
 	* Returns the type of the device as CRONO_DEVICE_XHPTDC8.
 	*
-	* @param mgr[in]. It must be initialized using xhptdc8_init().
 	* @param index[in]. The index of the device.
 	*/
-	XHPTDC8_API int xhptdc8_get_device_type(xhptdc8_manager mgr, int index);
+	XHPTDC8_API int xhptdc8_get_device_type(int index);
 
 	/**
 	* Contains TDC channel settings.
@@ -873,6 +882,7 @@ extern "C" {
 	// discard hits outside the VETO window
 #define XHPTDC8_GROUPING_VETO_OUTSIDE 2
 
+
 	/**
 	* This structure configures the behaviour of the grouping functionality.
 	*/
@@ -892,21 +902,17 @@ extern "C" {
 		int trigger_channel;
 
 		/**
-		* Optionally, a different channel can be used to calculate the relative timestamps in a group.
-		* This is disabled per default by setting this paramteer to -1.
+		* Use this to define additional trigger channels.
+		* There is an OR-disjuction with the trigger_channel.
+		*
 		*/
-		int zero_channel;
-
-		/**
-		* This offset in picoseconds is added to relative timestamps within a group.
-		*/
-		int64_t zero_channel_offset;
+		uint64_t trigger_channel_bitmask;
 
 		/**
 		* Start of group range relative to the trigger channel.
 		* Values in the interval from range_start to range_stop are included in the group.
 		* Either or both values can be negative to create common-stop behaviour.
-		* -2^63 <= range_start <= range_stop < 2^63
+		* -2^63 <= range_start < range_stop < 2^63
 		* Intervals are always provided in picoseconds, independently of the bin size of the TDC.
 		*/
 		int64_t range_start;
@@ -919,22 +925,34 @@ extern "C" {
 
 		/**
 		* Dead time before new group start trigger is recognized.
-		* -2^63 <= range_start <= range_stop < 2^63
+		* 0 <= trigger_deadtime < 2^63
 		* Intervals are always provided in picoseconds, independently of the bin size of the TDC.
 		*/
 		int64_t trigger_deadtime;
 
 		/**
-		* If set to 'true', a group is only created if there is at least one hit in the window
-		* defined by window_start and window_stop.
-		* Value is either 'true' or 'false'.
+		* Optionally, a different channel can be used to calculate the relative timestamps in a group.
+		* This is disabled per default by setting this paramteer to -1.
 		*/
-		crono_bool_t require_window_hit;
+		int zero_channel;
+
+		/**
+		* This offset in picoseconds is added to relative timestamps within a group.
+		*/
+		int64_t zero_channel_offset;
+
+		/**
+		* Set a bitmask of channels, a group is only created
+		* if there is at least one
+		* hit in the windows defined by windows_start and window_stop.
+		* Usage is equivalent to trigger_channel_bitmask.
+		*/
+		uint64_t window_hit_channels;
 
 		/**
 		* A group is only created if there is at least one hit in the window defined by
 		* window_start and window_stop, and when require_window_hit is set 'true'.
-		* -2^63 <= window_start <= window_stop < 2^63
+		* -2^63 <= window_start < window_stop < 2^63
 		* Intervals are always provided in picoseconds, independently of the bin size of the TDC.
 		*/
 		int64_t window_start;
@@ -942,7 +960,7 @@ extern "C" {
 		/**
 		* A group is only created if there is at least one hit in the window defined by
 		* window_start and window_stop, and when require_window_hit is set 'true'.
-		* -2^63 <= window_start <= window_stop < 2^63
+		* -2^63 <= window_start < window_stop < 2^63
 		* Intervals are always provided in picoseconds, independently of the bin size of the TDC.
 		*/
 		int64_t window_stop;
@@ -967,12 +985,24 @@ extern "C" {
 		*/
 		int64_t veto_stop;
 
+		/**
+		*	If veto is enabled, veto filtering is active for channels
+		*	defined by a channel bitmask.
+		*	As default, filtering is active for all channels.
+		*/
+		uint64_t veto_active_channels;
+
 		/*
 		* If set, the veto window is defined relative to the zero channel.
 		* Otherwise the window is defined relative to the group trigger.
 		* Value is either 'true' or 'false'.
 		*/
 		crono_bool_t veto_relative_to_zero;
+
+		/*
+		*  discard groups which contained only a trigger signal
+		*/
+		crono_bool_t ignore_empty_events;
 
 		/*
 		* Unsupported, must remain 'false'.
@@ -1035,7 +1065,7 @@ extern "C" {
 		/**
 		* Set the threshold voltage for the input channels A . . .H.
 		* threshold[0 - 7] : threshold for channels A...H.
-		* Supported range is -1.32V to +1.18V. This should be close to 50% of the height of the input pulse.
+		* Supported range is -1.32 V to +1.18 V. This should be close to 50% of the height of the input pulse.
 		* The inputs are AC coupled.
 		* Examples for various signaling standards are defined as XHPTDC8_THRESHOLD_*.
 		*/
@@ -1123,43 +1153,40 @@ extern "C" {
 	/**
 	* Gets default manager configuration. Copies the default configuration to the specified config pointer.
 	*
-	* @param mgr[in]. It must be initialized using xhptdc8_init().
 	* @param mgr_config[out].
 	*
 	* @returns XHPTDC8_OK in case of success, or error code in case of error.
 	*/
-	XHPTDC8_API int xhptdc8_get_default_configuration(xhptdc8_manager mgr, xhptdc8_manager_configuration *mgr_config);
+	XHPTDC8_API int xhptdc8_get_default_configuration(xhptdc8_manager_configuration* mgr_config);
 
 	/**
 	* Gets current configuration. Copies the current configuration to the specified config pointer.
 	*
-	* @param mgr[in]. It must be initialized using xhptdc8_init().
 	* @param mgr_config[out].
 	*
 	* @returns XHPTDC8_OK in case of success, or error code in case of error.
 	*/
-	XHPTDC8_API int xhptdc8_get_current_configuration(xhptdc8_manager mgr, xhptdc8_manager_configuration *mgr_config);
+	XHPTDC8_API int xhptdc8_get_current_configuration(xhptdc8_manager_configuration* mgr_config);
 
 	/**
 	* Configures the xHPTDC8 manager. The config information is copied, so can be changed afterwards.
 	*
-	* @param mgr[in]. It must be initialized using xhptdc8_init().
 	* @param mgr_config[out].
 	*
 	* @returns XHPTDC8_OK in case of success, or error code in case of error.
 	*/
-	XHPTDC8_API int xhptdc8_configure(xhptdc8_manager mgr, xhptdc8_manager_configuration *mgr_config);
+	XHPTDC8_API int xhptdc8_configure(xhptdc8_manager_configuration* mgr_config);
 
 	/**
 	* Returns the number of boards present in the system that are supported by this driver.
 	*
-	* @param error_code[out]. In case of success, it is assigned the value XHPTDC8_OK, otherwise,
+	* @param error_code[out]. In case of success, it is assigned the value {0}, otherwise,
 	* it is assigned the relevant error code.
 	* @param error_message[out]. In case of error, it is assigned the error message.
 	*
 	* @returns The number of boards present in the system that are supported by this driver.
 	*/
-	XHPTDC8_API int xhptdc8_count_devices(int *error_code, const char** error_message);
+	XHPTDC8_API int xhptdc8_count_devices(int* error_code, const char** error_message);
 
 	/**	Sets up the standard parameters.
 	*
@@ -1170,21 +1197,16 @@ extern "C" {
 	*
 	* @returns XHPTDC8_OK in case of success, or error code in case of error.
 	*/
-	XHPTDC8_API int xhptdc8_get_default_init_parameters(xhptdc8_manager_init_parameters *init);
+	XHPTDC8_API int xhptdc8_get_default_init_parameters(xhptdc8_manager_init_parameters* init);
 
 	/**
 	* Opens and initializes all xHPTDC8-PCIe boards.
 	*
 	* @param init[in]. A structure of type xhptdc8_manager_init_parameters that must be completely initialized.
-	* @param error_code[out]. shall point to an integer where the driver can write the the error code.
-	* In case of success, it is assigned the value {0}, otherwise, it is assigned the relevant error code.
-	* @param error_message[out]. must point to a pointer to char. The driver will allocate a buffer for zero terminated
-	* error message and store the address of the buffer in the location provided by the user In case of error,
-	* it is assigned the error message.
 	*
-	* @returns The initialized manager
+	* @returns XHPTDC8_OK in case of success, or error code in case of error.
 	*/
-	XHPTDC8_API xhptdc8_manager xhptdc8_init(xhptdc8_manager_init_parameters* params, int* error_code, const char** error_message);
+	XHPTDC8_API int xhptdc8_init(xhptdc8_manager_init_parameters* params);
 
 	/**
 	* Returns the driver version, same format as xhptdc8_static_info.driver_revision. This function does
@@ -1210,28 +1232,26 @@ extern "C" {
 	* Caller must provide buffer of given size.
 	* Reserved area is of size XHPTDC8_USER_FLASH_SIZE
 	*
-	* @param mgr[in]. It must be initialized using xhptdc8_init().
 	* @param index[in]. The index of the device.
 	* @param flash_data[out]. Buffer provided by the caller of given size.
 	* @param size[in]. Size of the buffer.
 	*
 	* @returns XHPTDC8_OK in case of success, or error code in case of error.
 	*/
-	XHPTDC8_API int xhptdc8_read_user_flash(xhptdc8_manager mgr, int index, uint8_t* flash_data, uint32_t size);
+	XHPTDC8_API int xhptdc8_read_user_flash(int index, uint8_t* flash_data, uint32_t size);
 
 	/**
 	* Write to area of device flash reserved for user data
 	* Caller must provide buffer of given size
 	* Reserved area is of size XHPTDC8_USER_FLASH_SIZE
 	*
-	* @param mgr[in]. It must be initialized using xhptdc8_init().
 	* @param index[in]. The index of the device.
 	* @param flash_data[out]. Buffer provided by the caller of given size.
 	* @param size[in]. Size of the buffer.
 	*
 	* @returns XHPTDC8_OK in case of success, or error code in case of error.
 	*/
-	XHPTDC8_API int xhptdc8_write_user_flash(xhptdc8_manager mgr, int index, uint8_t* flash_data, uint32_t size);
+	XHPTDC8_API int xhptdc8_write_user_flash(int index, uint8_t* flash_data, uint32_t size);
 
 
 #ifdef __cplusplus
