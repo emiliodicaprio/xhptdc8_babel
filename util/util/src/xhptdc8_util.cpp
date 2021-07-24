@@ -7,7 +7,7 @@ const static size_t MaxErrorMessageSize = 10000;
 static char lastErrorMessage[MaxErrorMessageSize];
 static char ERR_MSG_INTERNAL_ERR[15] = { "Internal Error" };
 static char ERR_MSG_INVALID_ARGS[18] = { "Invalid arguments" };
-const char* xhptdc8_get_all_error_messages(xhptdc8_manager hMgr, crono_bool_t include_ok, crono_bool_t fixed_length)
+const char* xhptdc8_get_all_error_messages(crono_bool_t include_ok, crono_bool_t fixed_length)
 {
 	int written_bytes = 0;
 	lastErrorMessage[0] = 0;	// Reset
@@ -16,10 +16,6 @@ const char* xhptdc8_get_all_error_messages(xhptdc8_manager hMgr, crono_bool_t in
 	{ snprintf(lastErrorMessage + written_bytes, MaxErrorMessageSize - written_bytes - 1, "%d, \"%s\"\n", index, msg); \
 	written_bytes = strlen(lastErrorMessage);}
 
-	if (hMgr == NULL)
-	{
-		APPEND_MSG(-1, ERR_MSG_INVALID_ARGS);
-	}
 	char* count_err_message;
 	int count_err_code;
 	int devices_count = xhptdc8_count_devices(&count_err_code, (const char**)&count_err_message);
@@ -60,7 +56,7 @@ const char* xhptdc8_get_all_error_messages(xhptdc8_manager hMgr, crono_bool_t in
 			APPEND_MSG(board_index, ERR_MSG_DEVICE_COUNT);
 			continue ;
 		}
-		const char* err_msg = xhptdc8_get_last_error_message(hMgr, board_index);
+		const char* err_msg = xhptdc8_get_last_error_message(board_index);
 		if (err_msg[0] == 0)
 		// No error (message) for this device
 		{

@@ -105,7 +105,7 @@ extern "C" {
 	* @returns null-terminated error message for all boards. 
 	* The pointer should not be deallocated using `delete` or similar deallocation functions.
 	*/
-	XHPTDC8_UTIL_API const char* xhptdc8_get_all_error_messages(xhptdc8_manager hMgr, crono_bool_t include_ok, crono_bool_t fixed_length);
+	XHPTDC8_UTIL_API const char* xhptdc8_get_all_error_messages(crono_bool_t include_ok, crono_bool_t fixed_length);
 
 #ifdef __cplusplus
 }

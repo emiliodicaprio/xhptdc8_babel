@@ -891,10 +891,6 @@ int xhptdc8_apply_grouping_yaml(const ryml::NodeRef* config_mngr_node,
     APPLY_CHILD_LONGLONG_VALUE(grouping_node, "trigger_deadtime",
         true, manager_config->grouping.trigger_deadtime, XHPTDC8_APPLY_YAML_INVALID_GROUPING_TRIGDT);
 
-    // require_window_hit
-    APPLY_CHILD_BOOL_VALUE(grouping_node, "require_window_hit",
-        manager_config->grouping.require_window_hit, XHPTDC8_APPLY_YAML_INVALID_GROUPING_REQWINHIT);
-
     // window_start
     APPLY_CHILD_LONGLONG_VALUE(grouping_node, "window_start",
         true, manager_config->grouping.window_start, XHPTDC8_APPLY_YAML_INVALID_GROUPING_WINDO_START);
