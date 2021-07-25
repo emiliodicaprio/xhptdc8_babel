@@ -63,6 +63,7 @@ int main(int argc,  char* argv[])
 		}
 		else if (!strcmp(argv[count], "-errmsg"))
 		{
+			display_intro();
 			display_all_error_messages(true, true);
 		}
 		else if (!strcmp(argv[count], "-yamlentry"))
@@ -92,35 +93,29 @@ int main(int argc,  char* argv[])
 
 int test_apply_yaml(char* src)
 {
-	xhptdc8_manager hMgr;
 	xhptdc8_manager_init_parameters* params = NULL;
 	int error_code;
-	char* error_message = NULL;
-	hMgr = xhptdc8_init(params, &error_code, (const char**)&error_message);
+	error_code = xhptdc8_init(params);
 	xhptdc8_manager_configuration* cfg = new xhptdc8_manager_configuration;
-	xhptdc8_get_default_configuration(hMgr, cfg);
+	xhptdc8_get_default_configuration(cfg);
 	int results = xhptdc8_apply_yaml(cfg, src);
 	if (results > 0)
 	{
-		xhptdc8_configure(hMgr, cfg);
+		xhptdc8_configure(cfg);
 	}
 	delete cfg;
-	if (hMgr != NULL)
-		xhptdc8_close(hMgr);
+	xhptdc8_close();
 	return results;
 }
 
 int display_all_error_messages(crono_bool_t include_ok, crono_bool_t fixed_length)
 {
-	xhptdc8_manager hMgr;
 	xhptdc8_manager_init_parameters params;
 	int error_code;
-	char* error_message = NULL;
 	xhptdc8_get_default_init_parameters(&params);
-	hMgr = xhptdc8_init(&params, &error_code, (const char**)&error_message);
-	const char* err_msg = xhptdc8_get_all_error_messages(hMgr, include_ok, fixed_length);
+	error_code = xhptdc8_init(&params);
+	const char* err_msg = xhptdc8_get_all_error_messages(include_ok, fixed_length);
 	printf(err_msg);
-	if (hMgr!= NULL) 
-		xhptdc8_close(hMgr);
+	xhptdc8_close();
 	return 0;
 }

@@ -8,15 +8,13 @@ using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 namespace get_all_error_messages	
 {
 #define hMgr_INIT_BLOCK \
-	xhptdc8_manager hMgr;	\
+	int init_ret;	\
 	xhptdc8_manager_init_parameters params;	\
-	int error_code;	\
-	char* error_message = NULL;	\
 	xhptdc8_get_default_init_parameters(&params); \
-	hMgr = xhptdc8_init(&params, &error_code, (const char**)&error_message);	\
+	init_ret = xhptdc8_init(&params);	\
 
 #define hMgr_CLEANUP_BLOCK \
-		xhptdc8_close(hMgr);
+		xhptdc8_close();
 
 	TEST_CLASS(happy_scenario)
 	{
@@ -24,7 +22,7 @@ namespace get_all_error_messages
 		TEST_METHOD(include_ok_true_fixed_length_true)
 		{
 			hMgr_INIT_BLOCK;
-			std::string err_messages_str = xhptdc8_get_all_error_messages(hMgr, true, true);
+			std::string err_messages_str = xhptdc8_get_all_error_messages(true, true);
 			hMgr_CLEANUP_BLOCK;
 			Assert::AreNotEqual(std::string::npos, err_messages_str.find("0, \"OK\""));
 			Assert::AreNotEqual(std::string::npos, err_messages_str.find("1, \"Board does not exist.\""));
@@ -32,13 +30,12 @@ namespace get_all_error_messages
 			Assert::AreNotEqual(std::string::npos, err_messages_str.find("3, \"Board does not exist.\""));
 			Assert::AreNotEqual(std::string::npos, err_messages_str.find("4, \"Board does not exist.\""));
 			Assert::AreNotEqual(std::string::npos, err_messages_str.find("5, \"Board does not exist.\""));
-			Assert::AreNotEqual(std::string::npos, err_messages_str.find("6, \"Board does not exist.\""));
-			Assert::AreNotEqual(std::string::npos, err_messages_str.find("7, \"Board does not exist.\""));
+			// Assuming that boards number is 6, as per `XHPTDC8_MANAGER_DEVICES_MAX`
 		}
 		TEST_METHOD(include_ok_true_fixed_length_false)
 		{
 			hMgr_INIT_BLOCK;
-			std::string err_messages_str = xhptdc8_get_all_error_messages(hMgr, true, false);
+			std::string err_messages_str = xhptdc8_get_all_error_messages(true, false);
 			hMgr_CLEANUP_BLOCK;
 			Assert::AreNotEqual(std::string::npos, err_messages_str.find("0, \"OK\""));
 			Assert::AreEqual(std::string::npos, err_messages_str.find("1, "));
@@ -46,13 +43,12 @@ namespace get_all_error_messages
 			Assert::AreEqual(std::string::npos, err_messages_str.find("3, "));
 			Assert::AreEqual(std::string::npos, err_messages_str.find("4, "));
 			Assert::AreEqual(std::string::npos, err_messages_str.find("5, "));
-			Assert::AreEqual(std::string::npos, err_messages_str.find("6, "));
-			Assert::AreEqual(std::string::npos, err_messages_str.find("7, "));
+			// Assuming that boards number is 6, as per `XHPTDC8_MANAGER_DEVICES_MAX`
 		}
 		TEST_METHOD(include_ok_false_fixed_length_true)
 		{
 			hMgr_INIT_BLOCK;
-			std::string err_messages_str = xhptdc8_get_all_error_messages(hMgr, true, false);
+			std::string err_messages_str = xhptdc8_get_all_error_messages(true, false);
 			hMgr_CLEANUP_BLOCK;
 			Assert::AreNotEqual(std::string::npos, err_messages_str.find("0, \"OK\""));
 			Assert::AreEqual(std::string::npos, err_messages_str.find("1, "));
@@ -60,13 +56,12 @@ namespace get_all_error_messages
 			Assert::AreEqual(std::string::npos, err_messages_str.find("3, "));
 			Assert::AreEqual(std::string::npos, err_messages_str.find("4, "));
 			Assert::AreEqual(std::string::npos, err_messages_str.find("5, "));
-			Assert::AreEqual(std::string::npos, err_messages_str.find("6, "));
-			Assert::AreEqual(std::string::npos, err_messages_str.find("7, "));
+			// Assuming that boards number is 6, as per `XHPTDC8_MANAGER_DEVICES_MAX`
 		}
 		TEST_METHOD(include_ok_false_fixed_length_false)
 		{
 			hMgr_INIT_BLOCK;
-			std::string err_messages_str = xhptdc8_get_all_error_messages(hMgr, false, false);
+			std::string err_messages_str = xhptdc8_get_all_error_messages(false, false);
 			hMgr_CLEANUP_BLOCK;
 			Assert::AreEqual(std::string::npos, err_messages_str.find("0, OK"));
 			Assert::AreEqual(std::string::npos, err_messages_str.find("1, "));
@@ -74,8 +69,7 @@ namespace get_all_error_messages
 			Assert::AreEqual(std::string::npos, err_messages_str.find("3, "));
 			Assert::AreEqual(std::string::npos, err_messages_str.find("4, "));
 			Assert::AreEqual(std::string::npos, err_messages_str.find("5, "));
-			Assert::AreEqual(std::string::npos, err_messages_str.find("6, "));
-			Assert::AreEqual(std::string::npos, err_messages_str.find("7, "));
+			// Assuming that boards number is 6, as per `XHPTDC8_MANAGER_DEVICES_MAX`
 			Assert::AreEqual(err_messages_str.length(), (size_t)0);
 		}
 	};
@@ -84,21 +78,22 @@ namespace get_all_error_messages
 	public:
 		TEST_METHOD(wrong_argument_param)
 		{
-			xhptdc8_manager hMgr;	
 			int error_code;	
-			char* error_message = NULL;	
-			hMgr = xhptdc8_init(NULL, &error_code, (const char**)&error_message);
-			std::string err_messages_str = xhptdc8_get_all_error_messages(hMgr, true, true);
+			error_code = xhptdc8_init(NULL);
+			std::string err_messages_str = xhptdc8_get_all_error_messages(true, true);
 			hMgr_CLEANUP_BLOCK;
 
 			Assert::AreEqual(std::string::npos, err_messages_str.find("-1, \"Invalid arguments.\""));
 		}
+		/*
+		* Old version of API where hMngr was a first parameter
 		TEST_METHOD(wrong_argument_hMgr)
 		{
 			std::string err_messages_str = xhptdc8_get_all_error_messages(NULL, true, true);
 
 			Assert::AreEqual(std::string::npos, err_messages_str.find("-1, \"Invalid arguments.\""));
 		}
+		*/
 		TEST_METHOD(error_count_devices)
 		{
 			/*
