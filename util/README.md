@@ -501,7 +501,7 @@ Applied yaml node ([0]) on conifguation (rising) boolean value (true)
 ```
 
 #### Error Message Testing
-Selecting the flag `-errmsg` when running the application, calls the API with options: `include_ok=false`, `fixed_length=true`, and output is as following:
+Selecting the flag `-errmsg` when running the application, calls the API with options: `include_ok=false`, `fixed_length=true`, as following:
 ```
 xhptdc8_util_test_64.exe -errmsg
 ```
