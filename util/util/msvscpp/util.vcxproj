@@ -176,45 +176,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\lib\include\xhptdc8_util.h" />
-    <ClInclude Include="..\xhptdc8_util_yaml.h" />
-    <ClInclude Include="framework.h" />
-    <ClInclude Include="pch.h" />
-    <ClInclude Include="resource.h" />
-    <ClInclude Include="ryml_src\c4\allocator.hpp" />
-    <ClInclude Include="ryml_src\c4\base64.hpp" />
-    <ClInclude Include="ryml_src\c4\bitmask.hpp" />
-    <ClInclude Include="ryml_src\c4\blob.hpp" />
-    <ClInclude Include="ryml_src\c4\c4_pop.hpp" />
-    <ClInclude Include="ryml_src\c4\c4_push.hpp" />
-    <ClInclude Include="ryml_src\c4\charconv.hpp" />
-    <ClInclude Include="ryml_src\c4\char_traits.hpp" />
-    <ClInclude Include="ryml_src\c4\common.hpp" />
-    <ClInclude Include="ryml_src\c4\compiler.hpp" />
-    <ClInclude Include="ryml_src\c4\config.hpp" />
-    <ClInclude Include="ryml_src\c4\cpu.hpp" />
-    <ClInclude Include="ryml_src\c4\ctor_dtor.hpp" />
-    <ClInclude Include="ryml_src\c4\enum.hpp" />
-    <ClInclude Include="ryml_src\c4\error.hpp" />
-    <ClInclude Include="ryml_src\c4\export.hpp" />
-    <ClInclude Include="ryml_src\c4\format.hpp" />
-    <ClInclude Include="ryml_src\c4\hash.hpp" />
-    <ClInclude Include="ryml_src\c4\language.hpp" />
-    <ClInclude Include="ryml_src\c4\memory_resource.hpp" />
-    <ClInclude Include="ryml_src\c4\memory_util.hpp" />
-    <ClInclude Include="ryml_src\c4\platform.hpp" />
-    <ClInclude Include="ryml_src\c4\preprocessor.hpp" />
-    <ClInclude Include="ryml_src\c4\restrict.hpp" />
-    <ClInclude Include="ryml_src\c4\span.hpp" />
-    <ClInclude Include="ryml_src\c4\substr.hpp" />
-    <ClInclude Include="ryml_src\c4\substr_fwd.hpp" />
-    <ClInclude Include="ryml_src\c4\szconv.hpp" />
-    <ClInclude Include="ryml_src\c4\time.hpp" />
-    <ClInclude Include="ryml_src\c4\types.hpp" />
-    <ClInclude Include="ryml_src\c4\type_name.hpp" />
-    <ClInclude Include="ryml_src\c4\unrestrict.hpp" />
-    <ClInclude Include="ryml_src\c4\windows.hpp" />
-    <ClInclude Include="ryml_src\c4\windows_pop.hpp" />
-    <ClInclude Include="ryml_src\c4\windows_push.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\dllmain.cpp">
