@@ -435,7 +435,7 @@ github [Building Action: Util Test MSBuild](https://github.com/cronologic-de/xhp
 #### YAML Entry Testing
 Selecting the flag `-yamlentry` when running the application, as following:
 ```
-xhptdc8_util_test.exe -yamlentry
+xhptdc8_util_test_64.exe -yamlentry
 ```
 Will display the following message:
 
@@ -484,3 +484,27 @@ Calling xhptdc8_apply_yaml...
 
 Applied yaml node ([0]) on conifguation (rising) boolean value (true)
 ```
+
+#### Error Message Testing
+Selecting the flag `-errmsg` when running the application, as following:
+```
+xhptdc8_util_test_64.exe -errmsg
+```
+Will display the following message:
+
+```
+-----------------------------------------------------------------------------
+                 xHPTDC8 Utility Testing Application
+-----------------------------------------------------------------------------
+This program helps testing xHPTDC8 utility functions provided in "util"
+library.
+
+0, "OK"
+1, "Board does not exist."
+2, "Board does not exist."
+3, "Board does not exist."
+4, "Board does not exist."
+5, "Board does not exist."
+```
+
+* Assuming that Number of Boards are 6 (= `XHPTDC8_MANAGER_DEVICES_MAX`)
