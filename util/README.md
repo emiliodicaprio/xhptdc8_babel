@@ -301,22 +301,35 @@ Normal output is:
 3, "Board does not exist"
 4, "Board does not exist"
 5, "Board does not exist"
-6, "Board does not exist"
-7, "Board does not exist"
+```
+* Assuming that boards number is 6, as per `XHPTDC8_MANAGER_DEVICES_MAX`
+
+##### With include_ok=true, fixed_length=false
+Normal output is:
+```CMD
+-----------------------------------------------------------------------------
+                 xHPTDC8 Utility Testing Application
+-----------------------------------------------------------------------------
+This program helps testing xHPTDC8 utility functions provided in "util"
+library.
+
+0, "OK"
 ```
 
-#### Passing an invalid hMgr
-Output is:
+##### With include_ok=false, fixed_length=true
+Normal output is:
 ```CMD
--1, "Invalid arguments"
-0, "Manager is invalid!"
-1, "Board does not exist"
-2, "Board does not exist"
-3, "Board does not exist"
-4, "Board does not exist"
-5, "Board does not exist"
-6, "Board does not exist"
-7, "Board does not exist"
+-----------------------------------------------------------------------------
+                 xHPTDC8 Utility Testing Application
+-----------------------------------------------------------------------------
+This program helps testing xHPTDC8 utility functions provided in "util"
+library.
+
+1, "Board does not exist."
+2, "Board does not exist."
+3, "Board does not exist."
+4, "Board does not exist."
+5, "Board does not exist."
 ```
 
 ___________________________
@@ -339,8 +352,8 @@ The project structure follows [our standard project folder structure](https://gi
 
 | Config. | Env.  | Library Directory                       | Linker Input    |
 | ------- |-----  |-----------------                        | --------------- |
-| Debug   | x64   | ..\\..\\..\lib\x64dummy;..\\..\lib\x64; | xhptdc8_util.lib;xhptdc8_driver_64.lib |  
-| Release | x64   | ..\\..\\..\lib\x64dummy;..\\..\lib\x64; | xhptdc8_util.lib;xhptdc8_driver_64.lib |  
+| Debug   | x64   | ..\\..\\..\lib\x64dummy;..\\..\lib\x64; | xhptdc8_util_64.lib;xhptdc8_driver_64.lib |  
+| Release | x64   | ..\\..\\..\lib\x64dummy;..\\..\lib\x64; | xhptdc8_util_64.lib;xhptdc8_driver_64.lib |  
 | Debug   | Win32 | ..\\..\\..\lib\x86dummy;..\\..\lib\x86; | xhptdc8_util.lib;xhptdc8_driver.lib    |  
 | Release | Win32 | ..\\..\\..\lib\x86dummy;..\\..\lib\x86; | xhptdc8_util.lib;xhptdc8_driver.lib    |  
 
@@ -390,6 +403,8 @@ Command line flags:
              the results. User can then validate the entered YAML syntax and
              effect.
 
+-errmsg    : displays error messages.
+
 -help      : displays this help.
 
 
@@ -435,7 +450,7 @@ github [Building Action: Util Test MSBuild](https://github.com/cronologic-de/xhp
 #### YAML Entry Testing
 Selecting the flag `-yamlentry` when running the application, as following:
 ```
-xhptdc8_util_test.exe -yamlentry
+xhptdc8_util_test_64.exe -yamlentry
 ```
 Will display the following message:
 
@@ -484,3 +499,27 @@ Calling xhptdc8_apply_yaml...
 
 Applied yaml node ([0]) on conifguation (rising) boolean value (true)
 ```
+
+#### Error Message Testing
+Selecting the flag `-errmsg` when running the application, calls the API with options: `include_ok=false`, `fixed_length=true`, and output is as following:
+```
+xhptdc8_util_test_64.exe -errmsg
+```
+Will display the following message:
+
+```
+-----------------------------------------------------------------------------
+                 xHPTDC8 Utility Testing Application
+-----------------------------------------------------------------------------
+This program helps testing xHPTDC8 utility functions provided in "util"
+library.
+
+0, "OK"
+1, "Board does not exist."
+2, "Board does not exist."
+3, "Board does not exist."
+4, "Board does not exist."
+5, "Board does not exist."
+```
+
+* Assuming that Number of Boards are 6 (= `XHPTDC8_MANAGER_DEVICES_MAX`)
