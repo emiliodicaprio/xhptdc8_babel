@@ -390,6 +390,8 @@ Command line flags:
              the results. User can then validate the entered YAML syntax and
              effect.
 
+-errmsg    : displays error messages.
+
 -help      : displays this help.
 
 
