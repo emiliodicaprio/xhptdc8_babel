@@ -118,7 +118,7 @@ Two _identical_ versions of every structure are defined: the structure and the `
 Thanks to CGO, the APIs are called directly from within the code, for instance, to call the `xhptdc8_get_temperature_info()`, we write the following code:
 ```GO
 var info C.xhptdc8_temperature_info
-error_code = (int)(C.xhptdc8_get_temperature_info(g_hMgr, (C.int)(device_index), &info))
+error_code = (int)(C.xhptdc8_get_temperature_info((C.int)(device_index), &info))
 ```
 Just:
 - Use the `C` version of the structure as an argument.
@@ -163,7 +163,6 @@ func init_globals() (err_code int) {
 var g_Devices_Serials []Device_Serial_T
 var g_Devices_Serials_Sorted []Device_Serial_T
 var g_Devices_Count int = -1
-var g_hMgr C.xhptdc8_manager // Define the handle to manager as a pointer (void*)
 ```
 
 2. Parses and procesess the command line:
