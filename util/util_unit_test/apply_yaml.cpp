@@ -8,16 +8,13 @@ using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 namespace apply_yaml
 {
 #define hMgr_INIT_BLOCK \
-	xhptdc8_manager hMgr;	\
 	xhptdc8_manager_init_parameters* params = NULL;	\
-	int error_code;	\
-	char* error_message = NULL;	\
-	hMgr = xhptdc8_init(params, &error_code, (const char**)&error_message);	\
+	int error_code = xhptdc8_init(params);	\
 	xhptdc8_manager_configuration* cfg = new xhptdc8_manager_configuration;	\
-	xhptdc8_get_default_configuration(hMgr, cfg);	
+	xhptdc8_get_default_configuration(cfg);	
 
 #define hMgr_CLEANUP_BLOCK \
-		xhptdc8_close(hMgr);
+		xhptdc8_close();
 
 	int run_xhptdc8_apply_yaml(std::string yaml_string)
 	{
@@ -75,7 +72,7 @@ namespace apply_yaml
 				"    enable : true \n"
 				"    watchdog_readout : true \n"
 				"    watchdog_interval : 5 \n"
-				"    trigger_threshold : 6 \n"
+				"    trigger_threshold : 1.1 \n"
 				"   skip_alignment : true \n"
 				"   alignment_source : 1 \n"
 				" grouping : \n"
@@ -435,7 +432,7 @@ namespace apply_yaml
 				"    enable : true \n"
 				"    watchdog_readout : true \n"
 				"    watchdog_interval: 5\n"
-				"    trigger_threshold : 120\n"
+				"    trigger_threshold : 1.1\n"
 				"  5: \n"
 				"   trigger_threshold : \n"
 				"    1: 0.3499 # Start with the second element, leave the first to default\n"

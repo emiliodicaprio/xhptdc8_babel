@@ -8,11 +8,11 @@
 
 typedef unsigned int uint32;
 typedef unsigned __int64 uint64;
-int exit_on_fail(xhptdc8_manager hMgr, int status, const char* message);
+int exit_on_fail(int status, const char* message);
 const int MAX_TRYS_TO_READ_HITS = 1000;
 
 // create a manager object that provides access to all xHPTDC8 in the system
-xhptdc8_manager initialize_xhptdc8(int buffer_size) {
+int initialize_xhptdc8(int buffer_size) {
 	// prepare initialization
 	xhptdc8_manager_init_parameters params;
 
@@ -20,25 +20,24 @@ xhptdc8_manager initialize_xhptdc8(int buffer_size) {
 	params.buffer_size = buffer_size;
 
 	int error_code;
-	char* error_msg;
-	xhptdc8_manager hMgr;
-	hMgr = xhptdc8_init(&params, &error_code, (const char**)&error_msg);
-	exit_on_fail(hMgr, error_code, error_msg);
-	return hMgr;
+	char* error_msg = NULL;
+	error_code = xhptdc8_init(&params);
+	exit_on_fail(error_code, error_msg);
+	return error_code;
 }
 
-int get_device_count(xhptdc8_manager xhptdc8_man) {
+int get_device_count() {
 	int error_code;
 	char* error_msg;
 
 	int device_count = xhptdc8_count_devices(&error_code, (const char**)&error_msg); 
-	exit_on_fail(xhptdc8_man, error_code, error_msg);
+	exit_on_fail(error_code, error_msg);
 	return device_count;
 }
 
-int configure_xhptdc8(xhptdc8_manager xhptdc8_man, int device_count) {
+int configure_xhptdc8(int device_count) {
 	xhptdc8_manager_configuration* mgr_cfg = new xhptdc8_manager_configuration;
-	xhptdc8_get_default_configuration(xhptdc8_man, mgr_cfg);
+	xhptdc8_get_default_configuration(mgr_cfg);
 	int general_offset = 50, epsilon = 4;
 
 	// configure all devices with an identical configuration
@@ -81,15 +80,15 @@ int configure_xhptdc8(xhptdc8_manager xhptdc8_man, int device_count) {
 			mgr_cfg->device_configs[device_index].gating_block[block_index].stop = general_offset + channel_offset + epsilon + 1;
 		}
 	}
-	return xhptdc8_configure(xhptdc8_man, mgr_cfg);
+	return xhptdc8_configure(mgr_cfg);
 }
 
 
-void print_device_information(xhptdc8_manager xhptdc8_man) {
+void print_device_information() {
 	xhptdc8_static_info staticinfo;
 	printf("-------------------------\n");
-	for (int i = 0; i < get_device_count(xhptdc8_man); i++) {
-		xhptdc8_get_static_info(xhptdc8_man, i, &staticinfo);
+	for (int i = 0; i < get_device_count(); i++) {
+		xhptdc8_get_static_info(i, &staticinfo);
 		printf("Board Serial         : %d.%d\n", staticinfo.board_serial >> 24, staticinfo.board_serial & 0xffffff);
 		printf("Board Configuration  : %d\n", staticinfo.board_configuration);
 		printf("Board Revision       : %d\n", staticinfo.board_revision);
@@ -112,10 +111,10 @@ void print_hit(TDCHit* hit) {
 }
 
 // call read_hits() once per millisecond until there is some data or max count of trials
-int poll_for_hits(xhptdc8_manager xhptdc8_man, TDCHit* hit_buffer, size_t events_per_read) {
+int poll_for_hits(TDCHit* hit_buffer, size_t events_per_read) {
 	int trys_to_read_hits = 0;
 	while (trys_to_read_hits < MAX_TRYS_TO_READ_HITS) {
-		unsigned long hit_count = xhptdc8_read_hits(xhptdc8_man, hit_buffer, events_per_read);
+		unsigned long hit_count = xhptdc8_read_hits(hit_buffer, events_per_read);
 		if (hit_count)
 			return hit_count;
 		Sleep(1);
@@ -128,14 +127,14 @@ int poll_for_hits(xhptdc8_manager xhptdc8_man, TDCHit* hit_buffer, size_t events
 
 
 // fetch hits from the board by polling
-void read_hits_wrapper(xhptdc8_manager xhptdc8_man, int events_per_read) {
+void read_hits_wrapper(int events_per_read) {
 	int total_event_count = events_per_read * 10000;
 
 	TDCHit* hit_buffer = new TDCHit[events_per_read];
 
 	int total_events = 0;
 	while (total_events < total_event_count) {
-		unsigned long hit_count = poll_for_hits(xhptdc8_man, hit_buffer, events_per_read);
+		unsigned long hit_count = poll_for_hits(hit_buffer, events_per_read);
 
 		for (unsigned int i = 0; i < hit_count; i++)
 		{
@@ -150,10 +149,10 @@ void read_hits_wrapper(xhptdc8_manager xhptdc8_man, int events_per_read) {
 }
 
 // utility function to check for error, print error message and exit
-int exit_on_fail(xhptdc8_manager x_man, int status, const char* message) {
+int exit_on_fail(int status, const char* message) {
 	if (status == XHPTDC8_OK)
 		return status;
-	printf("%s: %s\n", message, xhptdc8_get_last_error_message(x_man, 0));
+	printf("%s: %s\n", message, xhptdc8_get_last_error_message(0));
 	exit(1);
 }
 
@@ -162,36 +161,36 @@ int main(int argc, char* argv[]) {
 	printf("\n\nThis is illustrating the usage of an xHPTDC8 examplary with internal triggering");
 
 	//init manager for devices
-	xhptdc8_manager x_man = initialize_xhptdc8(8 * 1024 * 1024);
+	int error_code = initialize_xhptdc8(8 * 1024 * 1024);
 
-	exit_on_fail(x_man,
+	exit_on_fail(
 		//configure all devices with that manager
-		configure_xhptdc8(x_man, get_device_count(x_man)),
+		configure_xhptdc8(get_device_count()),
 		"Could not configure.");
 
-	print_device_information(x_man);
+	print_device_information();
 
-	exit_on_fail(x_man,
+	exit_on_fail(
 		//start measurement
-		xhptdc8_start_capture(x_man),
+		xhptdc8_start_capture(),
 		"Could not start capturing.");
 
-	exit_on_fail(x_man,
+	exit_on_fail(
 		//start TiGer-functionality
-		xhptdc8_start_tiger(x_man, 0),
+		xhptdc8_start_tiger(0),
 		"Could not start TiGer.");
 
 	//collect measured data
-	read_hits_wrapper(x_man, 10000);
+	read_hits_wrapper(10000);
 
-	exit_on_fail(x_man,
+	exit_on_fail(
 		//stop measurement
-		xhptdc8_stop_capture(x_man),
+		xhptdc8_stop_capture(),
 		"Could not stop capturing.");
 
-	exit_on_fail(x_man,
+	exit_on_fail(
 		//close manager
-		xhptdc8_close(x_man),
+		xhptdc8_close(),
 		"Could not close devices-manager.");
 
 	return 0;
