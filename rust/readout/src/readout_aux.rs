@@ -11,7 +11,6 @@ include!("./bindings/x64/bindings_64.rs");  // Must = corresponding BINDINGS_FIL
 
 use clap::{Arg, App};
 use std::os::raw ;
-use std::ptr  ;
 use std::convert::TryInto ;
 use std::fs;
 use colored::* ;
@@ -23,7 +22,6 @@ use std::{thread, time};
 use std::time::{SystemTime};
 
 static mut ENABLE_LOG : bool = false ; 
-static mut g_mgr: xhptdc8_manager = ptr::null_mut();
 const DEFAULT_HITS_NO : u32 = 10000 ;
 
 #[cfg(target_arch="x86")]
@@ -45,11 +43,10 @@ pub fn init_globals() -> i32
 {
     print!("\nInitializing xHPTDC8 device...") ;
 	let mut params = xhptdc8_manager_init_parameters::default() ;
-	let mut error_code : raw::c_int = 0;
-    let mut error_message: *const raw::c_char = ptr::null_mut();
+	let error_code : raw::c_int;
     unsafe {
-        g_mgr = xhptdc8_init(&mut params, &mut error_code, &mut error_message);
-        if g_mgr == ptr::null_mut() || error_code != XHPTDC8_OK.try_into().unwrap() {
+        error_code = xhptdc8_init(&mut params);
+        if error_code != XHPTDC8_OK.try_into().unwrap() {
             println!("{}", "Error"/*.red().bold()*/) ;
             return -1
         }
@@ -200,7 +197,7 @@ pub fn get_device_serial(device_index: i32) -> f32 {
 	let mut static_info = xhptdc8_static_info::default() ;
     let error_code: i32 ;
     unsafe {
-        error_code = xhptdc8_get_static_info(g_mgr, device_index, &mut static_info) ;
+        error_code = xhptdc8_get_static_info(device_index, &mut static_info) ;
         if error_code != XHPTDC8_OK.try_into().unwrap() {
             println!("Error getting device static information: {}", error_code.to_string()/*.red().bold()*/);
             return -1.0 ;
@@ -231,7 +228,7 @@ pub fn apply_yamls(yaml_files_names: Vec<String>) -> i32 {
     let mut cfg = xhptdc8_manager_configuration::default();
 
     unsafe {
-        ret = xhptdc8_get_default_configuration(g_mgr, &mut cfg) ;
+        ret = xhptdc8_get_default_configuration(&mut cfg) ;
         if  ret != XHPTDC8_OK.try_into().unwrap() {
             print!(" {}: {}\n", "Error"/*.red().bold()*/, ret.to_string());
             return -1;
@@ -265,7 +262,7 @@ pub fn apply_yamls(yaml_files_names: Vec<String>) -> i32 {
 
     // Apply configuration on devices
     unsafe {
-        ret = xhptdc8_configure(g_mgr, &mut cfg);             
+        ret = xhptdc8_configure(&mut cfg);             
         if  ret != XHPTDC8_OK.try_into().unwrap() {
             print!(" {}: {}", "Error"/*.red().bold()*/, ret.to_string());
             return -1;
@@ -456,8 +453,7 @@ impl fmt::Binary for TDCHit {
 
 /**
  * Prerequisites:
- * - g_mgr is initialized and configured.
-*/
+ */
 pub fn acquire(output_file:&mut String, is_binary: bool, hits_no: u32, files_no: u32) -> i32 {
 
     // ____________________
@@ -477,7 +473,7 @@ pub fn acquire(output_file:&mut String, is_binary: bool, hits_no: u32, files_no:
     // _________________________
     // Get current configuration
     unsafe {
-        let ret = xhptdc8_get_current_configuration(g_mgr, &mut cur_config) ;
+        let ret = xhptdc8_get_current_configuration(&mut cur_config) ;
         match ret as i32 {
             4 | 17 => panic!("{}: {}", "Error getting current configuration."/*.red()*/, ret.to_string()/*.red()*/) ,
             _ => {} ,
@@ -506,7 +502,7 @@ pub fn acquire(output_file:&mut String, is_binary: bool, hits_no: u32, files_no:
         // Start capturing if not already started
         unsafe {
             if !started_capture {
-                let ret = xhptdc8_start_capture(g_mgr);
+                let ret = xhptdc8_start_capture();
                 match ret {
                 4 | 17 => panic!("{}: {}", "Error start capturing"/*.red()*/, ret.to_string()/*.red()*/) ,
                 _ => { started_capture = true;  },
@@ -553,12 +549,12 @@ pub fn acquire(output_file:&mut String, is_binary: bool, hits_no: u32, files_no:
             // Read hits
             unsafe {
                 // Pass hits_buffer array not a vector, as it's not guaranteed to be sequential in memory
-                read_hits_no = xhptdc8_read_hits(g_mgr, hits_buffer.as_mut_ptr(), DEFAULT_BUFFER_CAPACITY) ;
+                read_hits_no = xhptdc8_read_hits(hits_buffer.as_mut_ptr(), DEFAULT_BUFFER_CAPACITY) ;
                 if read_hits_no < 0 {
                     bar.finish();
                     println!("{}: {}", "Error reading hits"/*.red()*/, read_hits_no.to_string()/*.red()*/);
                     if started_capture {
-                        xhptdc8_stop_capture(g_mgr) ;
+                        xhptdc8_stop_capture() ;
                     }
                     return -1 ;
                 }
@@ -612,7 +608,7 @@ pub fn acquire(output_file:&mut String, is_binary: bool, hits_no: u32, files_no:
     // Cleanup
     if started_capture {
         unsafe {
-            xhptdc8_stop_capture(g_mgr) ;
+            xhptdc8_stop_capture() ;
         }
     }
     bar.finish(); 
@@ -628,7 +624,7 @@ pub fn acquire(output_file:&mut String, is_binary: bool, hits_no: u32, files_no:
 pub fn clean_up() {
     print!("\nCleaning up...") ;
     unsafe {
-        xhptdc8_close(g_mgr);
+        xhptdc8_close();
     }
     println!(" {}", "Done".green().bold());    
 }
@@ -650,7 +646,7 @@ impl Default for xhptdc8_manager_init_parameters {
 
 impl Default for xhptdc8_manager_configuration {
     fn default () -> xhptdc8_manager_configuration {
-        xhptdc8_manager_configuration{version: 0, size:0, device_configs:[xhptdc8_device_configuration::default(); 8], 
+        xhptdc8_manager_configuration{version: 0, size:0, device_configs:[xhptdc8_device_configuration::default(); 6], 
             grouping: xhptdc8_grouping_configuration::default(), 
             bin_to_ps: std::option::Option::None}
     }
@@ -658,11 +654,11 @@ impl Default for xhptdc8_manager_configuration {
 
 impl Default for xhptdc8_grouping_configuration {
     fn default () -> xhptdc8_grouping_configuration {
-        xhptdc8_grouping_configuration{enabled: 0, trigger_channel:0, 
+        xhptdc8_grouping_configuration{enabled: 0, trigger_channel:0, trigger_channel_bitmask:0,
             zero_channel:0, zero_channel_offset:0, 
-            range_start:0, range_stop:0, trigger_deadtime:0, require_window_hit:0, 
+            range_start:0, range_stop:0, trigger_deadtime:0, window_hit_channels:0, 
             window_start:0, window_stop:0, veto_mode:0, veto_start:0, veto_stop:0, 
-            veto_relative_to_zero:0, overlap:0}
+            veto_relative_to_zero:0, veto_active_channels:0, ignore_empty_events:0, overlap:0}
     }
 }
 

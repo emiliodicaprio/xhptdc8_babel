@@ -83,7 +83,7 @@ pub const XHPTDC8_TEMP_INFO_VERSION: u32 = 3;
 pub const XHPTDC8_CLOCK_INFO_VERSION: u32 = 1;
 pub const XHPTDC8_DEVICE_CONFIG_VERSION: u32 = 3;
 pub const XHPTDC8_MANAGER_CONFIG_VERSION: u32 = 1;
-pub const XHPTDC8_MANAGER_DEVICES_MAX: u32 = 8;
+pub const XHPTDC8_MANAGER_DEVICES_MAX: u32 = 6;
 pub const XHPTDC8_TDC_CHANNEL_COUNT: u32 = 8;
 pub const XHPTDC8_GATE_COUNT: u32 = 8;
 pub const XHPTDC8_TIGER_COUNT: u32 = 9;
@@ -142,9 +142,7 @@ pub const XHPTDC8_TDCHIT_TYPE_ADC_ERROR_UNUSED: u32 = 4;
 pub const XHPTDC8_TDCHIT_TYPE_ADC_ERROR_INVALID_TRIGGER: u32 = 8;
 pub const XHPTDC8_TDCHIT_TYPE_ADC_ERROR_DATA_LOST: u32 = 16;
 pub const XHPTDC8_OK: u32 = 0;
-pub const XHPTDC8_WINDRIVER_NOT_FOUND: u32 = 1;
 pub const XHPTDC8_DEVICE_NOT_FOUND: u32 = 2;
-pub const XHPTDC8_NOT_INITIALIZED: u32 = 3;
 pub const XHPTDC8_WRONG_STATE: u32 = 4;
 pub const XHPTDC8_INVALID_DEVICE: u32 = 5;
 pub const XHPTDC8_BUFFER_ALLOC_FAILED: u32 = 6;
@@ -166,6 +164,7 @@ pub const XHPTDC8_DEVICE_STATE_CAPTURING: u32 = 3;
 pub const XHPTDC8_DEVICE_STATE_PAUSED: u32 = 4;
 pub const XHPTDC8_DEVICE_STATE_CLOSED: u32 = 5;
 pub const XHPTDC8_USER_FLASH_SIZE: u32 = 65536;
+pub const XHPTDC8_NOF_CHANNELS_PER_CARD: u32 = 10;
 pub const XHPTDC8_GATE_OFF: u32 = 0;
 pub const XHPTDC8_GATE_ON: u32 = 1;
 pub const XHPTDC8_TIGER_OFF: u32 = 0;
@@ -218,7 +217,6 @@ pub const XHPTDC8_APPLY_YAML_INVALID_GROUPING_TRIGCH: i32 = -91;
 pub const XHPTDC8_APPLY_YAML_INVALID_GROUPING_ZEROCH: i32 = -92;
 pub const XHPTDC8_APPLY_YAML_INVALID_GROUPING_ZEROCHOFF: i32 = -93;
 pub const XHPTDC8_APPLY_YAML_INVALID_GROUPING_TRIGDT: i32 = -95;
-pub const XHPTDC8_APPLY_YAML_INVALID_GROUPING_REQWINHIT: i32 = -96;
 pub const XHPTDC8_APPLY_YAML_INVALID_GROUPING_VETOMD: i32 = -97;
 pub const XHPTDC8_APPLY_YAML_INVALID_GROUPING_VETORZERO: i32 = -98;
 pub const XHPTDC8_APPLY_YAML_INVALID_GROUPING_RANGE_START: i32 = -99;
@@ -519,7 +517,6 @@ fn bindgen_test_layout_crono_packet_only_timestamp() {
         )
     );
 }
-pub type xhptdc8_manager = *mut ::std::os::raw::c_void;
 #[doc = " struct for the initialization of the xHPTDC8Manager."]
 #[doc = " This structure MUST be completely INITIALIZED although"]
 #[doc = " xhptdc8_get_default_init_parameters() will set sensible defaults."]
@@ -747,96 +744,105 @@ extern "C" {
     #[doc = " If grouping is disabled all availabe data is read."]
     #[doc = " In all cases, data is copied to buffer up to the size of the buffer."]
     #[doc = ""]
-    #[doc = " @param mgr[in]. It must be initialized using xhptdc8_init()."]
     #[doc = " @param hit_buf[out]. Buffer allocated and provdied by the user."]
-    #[doc = " @param read_max[in]. The number of elemenst that fit into the buffer 'hit_buf'."]
+    #[doc = " @param read_max[out]. Size of the buffer."]
     #[doc = ""]
     #[doc = " @returns Returns the number of read hits."]
-    pub fn xhptdc8_read_hits(
-        mgr: xhptdc8_manager,
-        hit_buf: *mut TDCHit,
-        read_max: size_t,
+    pub fn xhptdc8_read_hits(hit_buf: *mut TDCHit, read_max: size_t) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    #[doc = " TODO"]
+    #[doc = ""]
+    #[doc = ""]
+    #[doc = " @param absolute_trigger_timestamp[out]. The absolute trigger timestamp in picoseconds."]
+    #[doc = " @param hit_counter[out].\t\t\tBuffer allocated and provded by the user. This array provides the hit counts per channel."]
+    #[doc = "\t\t\t\t\t\t\t\t\tThe maximum count is defined by number_of_hits. Set the buffer size to number_of_channels."]
+    #[doc = "\t\t\t\t\t\t\t\t\tChannels 8 and 9 mod XHPTDC8_NOF_CHANNELS_PER_CARD stay empty."]
+    #[doc = " @param tdc_array[out].\t\t\tBuffer allocated and provded by the user. This is a matrix containing a list timestamps per channel."]
+    #[doc = "\t\t\t\t\t\t\t\t\tSet the buffer size to number_of_channels x number_of_hits."]
+    #[doc = "\t\t\t\t\t\t\t\t\tRemark: Adc channels per card are merged to channel 8 mod XHPTDC8_NOF_CHANNELS_PER_CARD,"]
+    #[doc = "\t\t\t\t\t\t\t\t\tso 9 mod XHPTDC8_NOF_CHANNELS_PER_CARD stays empty."]
+    #[doc = " @param adc_counter[out].\t\t\tBuffer allocated and provded by the user. This array provides the hit counts per adc channel."]
+    #[doc = "\t\t\t\t\t\t\t\t\tThe maximum count is defined by number_of_hits."]
+    #[doc = "\t\t\t\t\t\t\t\t\tSet the buffer size to devices count (use function xhptdc8_count_devices)."]
+    #[doc = " @param adc_value[out].\t\t\tBuffer allocated and provded by the user. This array provides the adc value per channel."]
+    #[doc = "\t\t\t\t\t\t\t\t\tThe maximum is defined by number_of_hits. Set the buffer size to devices count."]
+    #[doc = " @param number_of_tdcs[in].\t\tThis is the devices count that can be calculated by the function xhptdc8_count_devices."]
+    #[doc = " @param number_of_channels[in].\tThis has to be calculated by XHPTDC8_NOF_CHANNELS_PER_CARD * number_of_tdcs."]
+    #[doc = " @param number_of_hits[in].\t\tThis is used to define buffer sizes."]
+    #[doc = ""]
+    #[doc = " @returns Returns the number of read hits."]
+    pub fn xhptdc8_read_group_matrix(
+        absolute_trigger_timestamp: *mut i64,
+        hit_counter: *mut i32,
+        tdc_array: *mut i64,
+        adc_counter: *mut i32,
+        adc_value: *mut i32,
+        number_of_tdcs: i32,
+        number_of_channels: i32,
+        number_of_hits: i32,
     ) -> ::std::os::raw::c_int;
 }
 extern "C" {
     #[doc = " Finalize the driver for this device."]
     #[doc = ""]
-    #[doc = " @param mgr[in]. It must be initialized using xhptdc8_init()."]
-    #[doc = ""]
     #[doc = " @returns XHPTDC8_OK in case of success, or error code in case of error."]
-    pub fn xhptdc8_close(mgr: xhptdc8_manager) -> ::std::os::raw::c_int;
+    pub fn xhptdc8_close() -> ::std::os::raw::c_int;
 }
 extern "C" {
     #[doc = " Start the timing generator of an individual board."]
     #[doc = " This can be done independently of the state of the data acquisition"]
     #[doc = ""]
-    #[doc = " @param mgr[in]. It must be initialized using xhptdc8_init()."]
+    #[doc = ""]
     #[doc = " @param index[in]. The index of the device."]
     #[doc = ""]
     #[doc = " @returns XHPTDC8_OK in case of success, or error code in case of error."]
-    pub fn xhptdc8_start_tiger(
-        mgr: xhptdc8_manager,
-        index: ::std::os::raw::c_int,
-    ) -> ::std::os::raw::c_int;
+    pub fn xhptdc8_start_tiger(index: ::std::os::raw::c_int) -> ::std::os::raw::c_int;
 }
 extern "C" {
     #[doc = " Stop the timing generator of an individual board."]
     #[doc = " This can be done independently of the state of the data acquisition"]
     #[doc = ""]
-    #[doc = " @param mgr[in]. It must be initialized using xhptdc8_init()."]
+    #[doc = ""]
     #[doc = " @param index[in]. The index of the device."]
     #[doc = ""]
     #[doc = " @returns XHPTDC8_OK in case of success, or error code in case of error."]
-    pub fn xhptdc8_stop_tiger(
-        mgr: xhptdc8_manager,
-        index: ::std::os::raw::c_int,
-    ) -> ::std::os::raw::c_int;
+    pub fn xhptdc8_stop_tiger(index: ::std::os::raw::c_int) -> ::std::os::raw::c_int;
 }
 extern "C" {
     #[doc = " Start data acquisition."]
-    #[doc = ""]
-    #[doc = " @param mgr[in]. It must be initialized using xhptdc8_init()."]
+    #[doc = " Device manager must be initialized using xhptdc8_init()."]
     #[doc = ""]
     #[doc = " @returns XHPTDC8_OK in case of success, or error code in case of error."]
-    pub fn xhptdc8_start_capture(mgr: xhptdc8_manager) -> ::std::os::raw::c_int;
+    pub fn xhptdc8_start_capture() -> ::std::os::raw::c_int;
 }
 extern "C" {
     #[doc = " Pause a started data acquisition."]
-    #[doc = " It doesn�t allow for a configuration change."]
+    #[doc = " It doesn't allow for a configuration change."]
     #[doc = ""]
-    #[doc = " @param mgr[in]. It must be initialized using xhptdc8_init()."]
     #[doc = ""]
     #[doc = " @returns XHPTDC8_OK in case of success, or error code in case of error."]
-    pub fn xhptdc8_pause_capture(mgr: xhptdc8_manager) -> ::std::os::raw::c_int;
+    pub fn xhptdc8_pause_capture() -> ::std::os::raw::c_int;
 }
 extern "C" {
     #[doc = " Call this to resume data acquisition after a call to xhptdc8_pause_capture()."]
-    #[doc = " It doesn�t allow for a configuration change."]
-    #[doc = ""]
-    #[doc = " @param mgr[in]. It must be initialized using xhptdc8_init()."]
+    #[doc = " It doesn't allow for a configuration change."]
     #[doc = ""]
     #[doc = " @returns XHPTDC8_OK in case of success, or error code in case of error."]
-    pub fn xhptdc8_continue_capture(mgr: xhptdc8_manager) -> ::std::os::raw::c_int;
+    pub fn xhptdc8_continue_capture() -> ::std::os::raw::c_int;
 }
 extern "C" {
     #[doc = " Stop data acquisition."]
     #[doc = ""]
-    #[doc = " @param mgr[in]. It must be initialized using xhptdc8_init()."]
     #[doc = ""]
     #[doc = " @returns XHPTDC8_OK in case of success, or error code in case of error."]
-    pub fn xhptdc8_stop_capture(mgr: xhptdc8_manager) -> ::std::os::raw::c_int;
+    pub fn xhptdc8_stop_capture() -> ::std::os::raw::c_int;
 }
 extern "C" {
     #[doc = " Generate a software trigger event."]
-    #[doc = " Prerequisites: Device should be configured and not closed."]
-    #[doc = ""]
-    #[doc = " @param mgr[in]. It must be initialized using xhptdc8_init()."]
     #[doc = ""]
     #[doc = " @returns XHPTDC8_OK in case of success, or error code in case of error."]
-    pub fn xhptdc8_software_trigger(
-        mgr: xhptdc8_manager,
-        index: ::std::os::raw::c_int,
-    ) -> ::std::os::raw::c_int;
+    pub fn xhptdc8_software_trigger(index: ::std::os::raw::c_int) -> ::std::os::raw::c_int;
 }
 #[doc = " Structure contains static information."]
 #[doc = ""]
@@ -862,7 +868,7 @@ pub struct xhptdc8_static_info {
     #[doc = " Change in the second digit denote significant improvements or changes that don't break compatibility"]
     #[doc = " and the third digit changes with minor bugfixes and the like."]
     pub driver_revision: ::std::os::raw::c_int,
-    #[doc = " The build number of the driver according to cronologic�s internal versioning system."]
+    #[doc = " The build number of the driver according to cronologic's internal versioning system."]
     pub driver_build_revision: ::std::os::raw::c_int,
     #[doc = " Revision number of the FPGA configuration"]
     pub firmware_revision: ::std::os::raw::c_int,
@@ -1096,13 +1102,11 @@ extern "C" {
     #[doc = " Gets a structure that contains information about the board that does not change during"]
     #[doc = " run time."]
     #[doc = ""]
-    #[doc = " @param mgr[in]. It must be initialized using xhptdc8_init()."]
     #[doc = " @param index[in].The index of the device."]
     #[doc = " @param info[out]. Buffer allocated and provided by the user to have a copy of the structure."]
     #[doc = ""]
     #[doc = " @returns XHPTDC8_OK in case of success, or error code in case of error."]
     pub fn xhptdc8_get_static_info(
-        mgr: xhptdc8_manager,
         index: ::std::os::raw::c_int,
         info: *mut xhptdc8_static_info,
     ) -> ::std::os::raw::c_int;
@@ -1125,7 +1129,7 @@ pub struct xhptdc8_fast_info {
     pub fpga_rpm: ::std::os::raw::c_int,
     #[doc = " Alert bits from temperature sensor and the system monitor."]
     #[doc = ""]
-    #[doc = " Bit 0 is set if the TDC temperature exceeds 140�C. In this case the TDC did shut down"]
+    #[doc = " Bit 0 is set if the TDC temperature exceeds 140 degree C. In this case the TDC did shut down"]
     #[doc = " and the device needs to be reinitialized."]
     pub alerts: ::std::os::raw::c_int,
     #[doc = " Reports power management confguration of PCIe lanes."]
@@ -1243,12 +1247,10 @@ extern "C" {
     #[doc = " This call gets a structure that contains dynamic information that can be obtained within a"]
     #[doc = " few microseconds."]
     #[doc = ""]
-    #[doc = " @param mgr[in]. It must be initialized using xhptdc8_init()."]
     #[doc = " @param info[out]. Buffer allocated and provdied by the user to have a copy of the structure."]
     #[doc = ""]
     #[doc = " @returns XHPTDC8_OK in case of success, or error code in case of error."]
     pub fn xhptdc8_get_fast_info(
-        mgr: xhptdc8_manager,
         index: ::std::os::raw::c_int,
         info: *mut xhptdc8_fast_info,
     ) -> ::std::os::raw::c_int;
@@ -1360,12 +1362,10 @@ extern "C" {
     #[doc = " Gets a structure that contains information that changes indirectly due to configuration"]
     #[doc = " changes."]
     #[doc = ""]
-    #[doc = " @param mgr[in]. It must be initialized using xhptdc8_init()."]
     #[doc = " @param info[out]. Buffer allocated and provdied by the user to have a copy of the structure."]
     #[doc = ""]
     #[doc = " @returns XHPTDC8_OK in case of success, or error code in case of error."]
     pub fn xhptdc8_get_param_info(
-        mgr: xhptdc8_manager,
         index: ::std::os::raw::c_int,
         info: *mut xhptdc8_param_info,
     ) -> ::std::os::raw::c_int;
@@ -1434,13 +1434,11 @@ fn bindgen_test_layout_xhptdc8_temperature_info() {
 extern "C" {
     #[doc = " Get temperature measurements from multiple sources on the board."]
     #[doc = ""]
-    #[doc = " @param mgr[in]. It must be initialized using xhptdc8_init()."]
     #[doc = " @param index[in]. The index of the device."]
     #[doc = " @param info[out]. Buffer allocated and provdied by the user to have a copy of the structure."]
     #[doc = ""]
     #[doc = " @returns XHPTDC8_OK in case of success, or error code in case of error."]
     pub fn xhptdc8_get_temperature_info(
-        mgr: xhptdc8_manager,
         index: ::std::os::raw::c_int,
         info: *mut xhptdc8_temperature_info,
     ) -> ::std::os::raw::c_int;
@@ -1547,13 +1545,11 @@ fn bindgen_test_layout_xhptdc8_clock_info() {
 extern "C" {
     #[doc = " Get information on clocking configuration an status."]
     #[doc = ""]
-    #[doc = " @param mgr[in]. It must be initialized using xhptdc8_init()."]
     #[doc = " @param index[in]. The index of the device."]
     #[doc = " @param info[out]. Buffer allocated and provdied by the user to have a copy of the structure."]
     #[doc = ""]
     #[doc = " @returns XHPTDC8_OK in case of success, or error code in case of error."]
     pub fn xhptdc8_get_clock_info(
-        mgr: xhptdc8_manager,
         index: ::std::os::raw::c_int,
         info: *mut xhptdc8_clock_info,
     ) -> ::std::os::raw::c_int;
@@ -1561,22 +1557,16 @@ extern "C" {
 extern "C" {
     #[doc = " Returns most recent error message."]
     #[doc = ""]
-    #[doc = " @param mgr[in]. It must be initialized using xhptdc8_init()."]
     #[doc = " @param index[in]. The index of the device. If set to -1 returns error message of the manager."]
     pub fn xhptdc8_get_last_error_message(
-        mgr: xhptdc8_manager,
         index: ::std::os::raw::c_int,
     ) -> *const ::std::os::raw::c_char;
 }
 extern "C" {
     #[doc = " Returns the type of the device as CRONO_DEVICE_XHPTDC8."]
     #[doc = ""]
-    #[doc = " @param mgr[in]. It must be initialized using xhptdc8_init()."]
     #[doc = " @param index[in]. The index of the device."]
-    pub fn xhptdc8_get_device_type(
-        mgr: xhptdc8_manager,
-        index: ::std::os::raw::c_int,
-    ) -> ::std::os::raw::c_int;
+    pub fn xhptdc8_get_device_type(index: ::std::os::raw::c_int) -> ::std::os::raw::c_int;
 }
 #[doc = " Contains TDC channel settings."]
 #[repr(C)]
@@ -1867,36 +1857,41 @@ pub struct xhptdc8_grouping_configuration {
     #[doc = ""]
     #[doc = " By default the trigger channels defines the zero point reference for the group event timestamps."]
     pub trigger_channel: ::std::os::raw::c_int,
-    #[doc = " Optionally, a different channel can be used to calculate the relative timestamps in a group."]
-    #[doc = " This is disabled per default by setting this paramteer to -1."]
-    pub zero_channel: ::std::os::raw::c_int,
-    #[doc = " This offset in picoseconds is added to relative timestamps within a group."]
-    pub zero_channel_offset: i64,
+    #[doc = " Use this to define additional trigger channels."]
+    #[doc = " There is an OR-disjuction with the trigger_channel."]
+    #[doc = ""]
+    pub trigger_channel_bitmask: u64,
     #[doc = " Start of group range relative to the trigger channel."]
     #[doc = " Values in the interval from range_start to range_stop are included in the group."]
     #[doc = " Either or both values can be negative to create common-stop behaviour."]
-    #[doc = " -2^63 <= range_start <= range_stop < 2^63"]
+    #[doc = " -2^63 <= range_start < range_stop < 2^63"]
     #[doc = " Intervals are always provided in picoseconds, independently of the bin size of the TDC."]
     pub range_start: i64,
     #[doc = " End of group range relative to the trigger channel."]
     #[doc = " Intervals are always provided in picoseconds, independently of the bin size of the TDC."]
     pub range_stop: i64,
     #[doc = " Dead time before new group start trigger is recognized."]
-    #[doc = " -2^63 <= range_start <= range_stop < 2^63"]
+    #[doc = " 0 <= trigger_deadtime < 2^63"]
     #[doc = " Intervals are always provided in picoseconds, independently of the bin size of the TDC."]
     pub trigger_deadtime: i64,
-    #[doc = " If set to 'true', a group is only created if there is at least one hit in the window"]
-    #[doc = " defined by window_start and window_stop."]
-    #[doc = " Value is either 'true' or 'false'."]
-    pub require_window_hit: crono_bool_t,
+    #[doc = " Optionally, a different channel can be used to calculate the relative timestamps in a group."]
+    #[doc = " This is disabled per default by setting this paramteer to -1."]
+    pub zero_channel: ::std::os::raw::c_int,
+    #[doc = " This offset in picoseconds is added to relative timestamps within a group."]
+    pub zero_channel_offset: i64,
+    #[doc = " Set a bitmask of channels, a group is only created"]
+    #[doc = " if there is at least one"]
+    #[doc = " hit in the windows defined by windows_start and window_stop."]
+    #[doc = " Usage is equivalent to trigger_channel_bitmask."]
+    pub window_hit_channels: u64,
     #[doc = " A group is only created if there is at least one hit in the window defined by"]
     #[doc = " window_start and window_stop, and when require_window_hit is set 'true'."]
-    #[doc = " -2^63 <= window_start <= window_stop < 2^63"]
+    #[doc = " -2^63 <= window_start < window_stop < 2^63"]
     #[doc = " Intervals are always provided in picoseconds, independently of the bin size of the TDC."]
     pub window_start: i64,
     #[doc = " A group is only created if there is at least one hit in the window defined by"]
     #[doc = " window_start and window_stop, and when require_window_hit is set 'true'."]
-    #[doc = " -2^63 <= window_start <= window_stop < 2^63"]
+    #[doc = " -2^63 <= window_start < window_stop < 2^63"]
     #[doc = " Intervals are always provided in picoseconds, independently of the bin size of the TDC."]
     pub window_stop: i64,
     #[doc = " A window defined by veto_start and veto_stop can be used to suppress hits."]
@@ -1910,14 +1905,19 @@ pub struct xhptdc8_grouping_configuration {
     #[doc = " A window defined by veto_start and veto_stop can be used to suppress hits."]
     #[doc = " -2^63 <= veto_start <= veto_stop < 2^63"]
     pub veto_stop: i64,
+    #[doc = "\tIf veto is enabled, veto filtering is active for channels"]
+    #[doc = "\tdefined by a channel bitmask."]
+    #[doc = "\tAs default, filtering is active for all channels."]
+    pub veto_active_channels: u64,
     pub veto_relative_to_zero: crono_bool_t,
+    pub ignore_empty_events: crono_bool_t,
     pub overlap: crono_bool_t,
 }
 #[test]
 fn bindgen_test_layout_xhptdc8_grouping_configuration() {
     assert_eq!(
         ::std::mem::size_of::<xhptdc8_grouping_configuration>(),
-        104usize,
+        120usize,
         concat!("Size of: ", stringify!(xhptdc8_grouping_configuration))
     );
     assert_eq!(
@@ -1952,28 +1952,15 @@ fn bindgen_test_layout_xhptdc8_grouping_configuration() {
     );
     assert_eq!(
         unsafe {
-            &(*(::std::ptr::null::<xhptdc8_grouping_configuration>())).zero_channel as *const _
-                as usize
+            &(*(::std::ptr::null::<xhptdc8_grouping_configuration>())).trigger_channel_bitmask
+                as *const _ as usize
         },
         8usize,
         concat!(
             "Offset of field: ",
             stringify!(xhptdc8_grouping_configuration),
             "::",
-            stringify!(zero_channel)
-        )
-    );
-    assert_eq!(
-        unsafe {
-            &(*(::std::ptr::null::<xhptdc8_grouping_configuration>())).zero_channel_offset
-                as *const _ as usize
-        },
-        16usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(xhptdc8_grouping_configuration),
-            "::",
-            stringify!(zero_channel_offset)
+            stringify!(trigger_channel_bitmask)
         )
     );
     assert_eq!(
@@ -1981,7 +1968,7 @@ fn bindgen_test_layout_xhptdc8_grouping_configuration() {
             &(*(::std::ptr::null::<xhptdc8_grouping_configuration>())).range_start as *const _
                 as usize
         },
-        24usize,
+        16usize,
         concat!(
             "Offset of field: ",
             stringify!(xhptdc8_grouping_configuration),
@@ -1994,7 +1981,7 @@ fn bindgen_test_layout_xhptdc8_grouping_configuration() {
             &(*(::std::ptr::null::<xhptdc8_grouping_configuration>())).range_stop as *const _
                 as usize
         },
-        32usize,
+        24usize,
         concat!(
             "Offset of field: ",
             stringify!(xhptdc8_grouping_configuration),
@@ -2007,7 +1994,7 @@ fn bindgen_test_layout_xhptdc8_grouping_configuration() {
             &(*(::std::ptr::null::<xhptdc8_grouping_configuration>())).trigger_deadtime as *const _
                 as usize
         },
-        40usize,
+        32usize,
         concat!(
             "Offset of field: ",
             stringify!(xhptdc8_grouping_configuration),
@@ -2017,7 +2004,20 @@ fn bindgen_test_layout_xhptdc8_grouping_configuration() {
     );
     assert_eq!(
         unsafe {
-            &(*(::std::ptr::null::<xhptdc8_grouping_configuration>())).require_window_hit
+            &(*(::std::ptr::null::<xhptdc8_grouping_configuration>())).zero_channel as *const _
+                as usize
+        },
+        40usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(xhptdc8_grouping_configuration),
+            "::",
+            stringify!(zero_channel)
+        )
+    );
+    assert_eq!(
+        unsafe {
+            &(*(::std::ptr::null::<xhptdc8_grouping_configuration>())).zero_channel_offset
                 as *const _ as usize
         },
         48usize,
@@ -2025,7 +2025,20 @@ fn bindgen_test_layout_xhptdc8_grouping_configuration() {
             "Offset of field: ",
             stringify!(xhptdc8_grouping_configuration),
             "::",
-            stringify!(require_window_hit)
+            stringify!(zero_channel_offset)
+        )
+    );
+    assert_eq!(
+        unsafe {
+            &(*(::std::ptr::null::<xhptdc8_grouping_configuration>())).window_hit_channels
+                as *const _ as usize
+        },
+        56usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(xhptdc8_grouping_configuration),
+            "::",
+            stringify!(window_hit_channels)
         )
     );
     assert_eq!(
@@ -2033,7 +2046,7 @@ fn bindgen_test_layout_xhptdc8_grouping_configuration() {
             &(*(::std::ptr::null::<xhptdc8_grouping_configuration>())).window_start as *const _
                 as usize
         },
-        56usize,
+        64usize,
         concat!(
             "Offset of field: ",
             stringify!(xhptdc8_grouping_configuration),
@@ -2046,7 +2059,7 @@ fn bindgen_test_layout_xhptdc8_grouping_configuration() {
             &(*(::std::ptr::null::<xhptdc8_grouping_configuration>())).window_stop as *const _
                 as usize
         },
-        64usize,
+        72usize,
         concat!(
             "Offset of field: ",
             stringify!(xhptdc8_grouping_configuration),
@@ -2059,7 +2072,7 @@ fn bindgen_test_layout_xhptdc8_grouping_configuration() {
             &(*(::std::ptr::null::<xhptdc8_grouping_configuration>())).veto_mode as *const _
                 as usize
         },
-        72usize,
+        80usize,
         concat!(
             "Offset of field: ",
             stringify!(xhptdc8_grouping_configuration),
@@ -2072,7 +2085,7 @@ fn bindgen_test_layout_xhptdc8_grouping_configuration() {
             &(*(::std::ptr::null::<xhptdc8_grouping_configuration>())).veto_start as *const _
                 as usize
         },
-        80usize,
+        88usize,
         concat!(
             "Offset of field: ",
             stringify!(xhptdc8_grouping_configuration),
@@ -2085,7 +2098,7 @@ fn bindgen_test_layout_xhptdc8_grouping_configuration() {
             &(*(::std::ptr::null::<xhptdc8_grouping_configuration>())).veto_stop as *const _
                 as usize
         },
-        88usize,
+        96usize,
         concat!(
             "Offset of field: ",
             stringify!(xhptdc8_grouping_configuration),
@@ -2095,10 +2108,23 @@ fn bindgen_test_layout_xhptdc8_grouping_configuration() {
     );
     assert_eq!(
         unsafe {
+            &(*(::std::ptr::null::<xhptdc8_grouping_configuration>())).veto_active_channels
+                as *const _ as usize
+        },
+        104usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(xhptdc8_grouping_configuration),
+            "::",
+            stringify!(veto_active_channels)
+        )
+    );
+    assert_eq!(
+        unsafe {
             &(*(::std::ptr::null::<xhptdc8_grouping_configuration>())).veto_relative_to_zero
                 as *const _ as usize
         },
-        96usize,
+        112usize,
         concat!(
             "Offset of field: ",
             stringify!(xhptdc8_grouping_configuration),
@@ -2108,9 +2134,22 @@ fn bindgen_test_layout_xhptdc8_grouping_configuration() {
     );
     assert_eq!(
         unsafe {
+            &(*(::std::ptr::null::<xhptdc8_grouping_configuration>())).ignore_empty_events
+                as *const _ as usize
+        },
+        113usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(xhptdc8_grouping_configuration),
+            "::",
+            stringify!(ignore_empty_events)
+        )
+    );
+    assert_eq!(
+        unsafe {
             &(*(::std::ptr::null::<xhptdc8_grouping_configuration>())).overlap as *const _ as usize
         },
-        97usize,
+        114usize,
         concat!(
             "Offset of field: ",
             stringify!(xhptdc8_grouping_configuration),
@@ -2152,7 +2191,7 @@ pub struct xhptdc8_device_configuration {
     pub auto_trigger_random_exponent: ::std::os::raw::c_int,
     #[doc = " Set the threshold voltage for the input channels A . . .H."]
     #[doc = " threshold[0 - 7] : threshold for channels A...H."]
-    #[doc = " Supported range is -1.32V to +1.18V. This should be close to 50% of the height of the input pulse."]
+    #[doc = " Supported range is -1.32 V to +1.18 V. This should be close to 50% of the height of the input pulse."]
     #[doc = " The inputs are AC coupled."]
     #[doc = " Examples for various signaling standards are defined as XHPTDC8_THRESHOLD_*."]
     pub trigger_threshold: [f64; 8usize],
@@ -2355,7 +2394,7 @@ pub struct xhptdc8_manager_configuration {
     pub version: ::std::os::raw::c_int,
     #[doc = " A structure with the configuration for an individual xHPTDC8-PCIe board."]
     #[doc = " Use the function xhptdc8_count_devices() to query how many entries contain valid information."]
-    pub device_configs: [xhptdc8_device_configuration; 8usize],
+    pub device_configs: [xhptdc8_device_configuration; 6usize],
     #[doc = " Structure with the parameters for grouping."]
     pub grouping: xhptdc8_grouping_configuration,
     #[doc = " Reserved for future use. Do not change!"]
@@ -2365,7 +2404,7 @@ pub struct xhptdc8_manager_configuration {
 fn bindgen_test_layout_xhptdc8_manager_configuration() {
     assert_eq!(
         ::std::mem::size_of::<xhptdc8_manager_configuration>(),
-        4088usize,
+        3112usize,
         concat!("Size of: ", stringify!(xhptdc8_manager_configuration))
     );
     assert_eq!(
@@ -2414,7 +2453,7 @@ fn bindgen_test_layout_xhptdc8_manager_configuration() {
         unsafe {
             &(*(::std::ptr::null::<xhptdc8_manager_configuration>())).grouping as *const _ as usize
         },
-        3976usize,
+        2984usize,
         concat!(
             "Offset of field: ",
             stringify!(xhptdc8_manager_configuration),
@@ -2426,7 +2465,7 @@ fn bindgen_test_layout_xhptdc8_manager_configuration() {
         unsafe {
             &(*(::std::ptr::null::<xhptdc8_manager_configuration>())).bin_to_ps as *const _ as usize
         },
-        4080usize,
+        3104usize,
         concat!(
             "Offset of field: ",
             stringify!(xhptdc8_manager_configuration),
@@ -2438,43 +2477,37 @@ fn bindgen_test_layout_xhptdc8_manager_configuration() {
 extern "C" {
     #[doc = " Gets default manager configuration. Copies the default configuration to the specified config pointer."]
     #[doc = ""]
-    #[doc = " @param mgr[in]. It must be initialized using xhptdc8_init()."]
     #[doc = " @param mgr_config[out]."]
     #[doc = ""]
     #[doc = " @returns XHPTDC8_OK in case of success, or error code in case of error."]
     pub fn xhptdc8_get_default_configuration(
-        mgr: xhptdc8_manager,
         mgr_config: *mut xhptdc8_manager_configuration,
     ) -> ::std::os::raw::c_int;
 }
 extern "C" {
     #[doc = " Gets current configuration. Copies the current configuration to the specified config pointer."]
     #[doc = ""]
-    #[doc = " @param mgr[in]. It must be initialized using xhptdc8_init()."]
     #[doc = " @param mgr_config[out]."]
     #[doc = ""]
     #[doc = " @returns XHPTDC8_OK in case of success, or error code in case of error."]
     pub fn xhptdc8_get_current_configuration(
-        mgr: xhptdc8_manager,
         mgr_config: *mut xhptdc8_manager_configuration,
     ) -> ::std::os::raw::c_int;
 }
 extern "C" {
     #[doc = " Configures the xHPTDC8 manager. The config information is copied, so can be changed afterwards."]
     #[doc = ""]
-    #[doc = " @param mgr[in]. It must be initialized using xhptdc8_init()."]
     #[doc = " @param mgr_config[out]."]
     #[doc = ""]
     #[doc = " @returns XHPTDC8_OK in case of success, or error code in case of error."]
     pub fn xhptdc8_configure(
-        mgr: xhptdc8_manager,
         mgr_config: *mut xhptdc8_manager_configuration,
     ) -> ::std::os::raw::c_int;
 }
 extern "C" {
     #[doc = " Returns the number of boards present in the system that are supported by this driver."]
     #[doc = ""]
-    #[doc = " @param error_code[out]. In case of success, it is assigned the value XHPTDC8_OK, otherwise,"]
+    #[doc = " @param error_code[out]. In case of success, it is assigned the value {0}, otherwise,"]
     #[doc = " it is assigned the relevant error code."]
     #[doc = " @param error_message[out]. In case of error, it is assigned the error message."]
     #[doc = ""]
@@ -2501,18 +2534,9 @@ extern "C" {
     #[doc = " Opens and initializes all xHPTDC8-PCIe boards."]
     #[doc = ""]
     #[doc = " @param init[in]. A structure of type xhptdc8_manager_init_parameters that must be completely initialized."]
-    #[doc = " @param error_code[out]. shall point to an integer where the driver can write the the error code."]
-    #[doc = " In case of success, it is assigned the value {0}, otherwise, it is assigned the relevant error code."]
-    #[doc = " @param error_message[out]. must point to a pointer to char. The driver will allocate a buffer for zero terminated"]
-    #[doc = " error message and store the address of the buffer in the location provided by the user In case of error,"]
-    #[doc = " it is assigned the error message."]
     #[doc = ""]
-    #[doc = " @returns The initialized manager"]
-    pub fn xhptdc8_init(
-        params: *mut xhptdc8_manager_init_parameters,
-        error_code: *mut ::std::os::raw::c_int,
-        error_message: *mut *const ::std::os::raw::c_char,
-    ) -> xhptdc8_manager;
+    #[doc = " @returns XHPTDC8_OK in case of success, or error code in case of error."]
+    pub fn xhptdc8_init(params: *mut xhptdc8_manager_init_parameters) -> ::std::os::raw::c_int;
 }
 extern "C" {
     #[doc = " Returns the driver version, same format as xhptdc8_static_info.driver_revision. This function does"]
@@ -2537,14 +2561,12 @@ extern "C" {
     #[doc = " Caller must provide buffer of given size."]
     #[doc = " Reserved area is of size XHPTDC8_USER_FLASH_SIZE"]
     #[doc = ""]
-    #[doc = " @param mgr[in]. It must be initialized using xhptdc8_init()."]
     #[doc = " @param index[in]. The index of the device."]
     #[doc = " @param flash_data[out]. Buffer provided by the caller of given size."]
     #[doc = " @param size[in]. Size of the buffer."]
     #[doc = ""]
     #[doc = " @returns XHPTDC8_OK in case of success, or error code in case of error."]
     pub fn xhptdc8_read_user_flash(
-        mgr: xhptdc8_manager,
         index: ::std::os::raw::c_int,
         flash_data: *mut u8,
         size: u32,
@@ -2555,14 +2577,12 @@ extern "C" {
     #[doc = " Caller must provide buffer of given size"]
     #[doc = " Reserved area is of size XHPTDC8_USER_FLASH_SIZE"]
     #[doc = ""]
-    #[doc = " @param mgr[in]. It must be initialized using xhptdc8_init()."]
     #[doc = " @param index[in]. The index of the device."]
     #[doc = " @param flash_data[out]. Buffer provided by the caller of given size."]
     #[doc = " @param size[in]. Size of the buffer."]
     #[doc = ""]
     #[doc = " @returns XHPTDC8_OK in case of success, or error code in case of error."]
     pub fn xhptdc8_write_user_flash(
-        mgr: xhptdc8_manager,
         index: ::std::os::raw::c_int,
         flash_data: *mut u8,
         size: u32,
@@ -2596,7 +2616,6 @@ extern "C" {
     #[doc = " @returns null-terminated error message for all boards."]
     #[doc = " The pointer should not be deallocated using `delete` or similar deallocation functions."]
     pub fn xhptdc8_get_all_error_messages(
-        hMgr: xhptdc8_manager,
         include_ok: crono_bool_t,
         fixed_length: crono_bool_t,
     ) -> *const ::std::os::raw::c_char;
