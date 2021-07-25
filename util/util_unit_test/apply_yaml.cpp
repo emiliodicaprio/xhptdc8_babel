@@ -83,7 +83,6 @@ namespace apply_yaml
 				"  range_start : 12345 \n"
 				"  range_stop : 23456 \n"
 				"  trigger_deadtime : 25 \n"
-				"  require_window_hit : true \n"
 				"  window_start : 10 \n"
 				"  window_stop : 20 \n"
 				"  veto_mode : 2 \n"

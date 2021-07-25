@@ -76,7 +76,6 @@ extern "C" {
 	#define XHPTDC8_APPLY_YAML_INVALID_GROUPING_ZEROCH		-92	// Invalid "grouping" value of "zero_channel"
 	#define XHPTDC8_APPLY_YAML_INVALID_GROUPING_ZEROCHOFF	-93	// Invalid "grouping" value of "zero_channel_offset"
 	#define XHPTDC8_APPLY_YAML_INVALID_GROUPING_TRIGDT		-95	// Invalid "grouping" value of "trigger_deadtime"
-	#define XHPTDC8_APPLY_YAML_INVALID_GROUPING_REQWINHIT	-96	// Invalid "grouping" value of "require_window_hit"
 	#define XHPTDC8_APPLY_YAML_INVALID_GROUPING_VETOMD		-97	// Invalid "grouping" value of "veto_mode"
 	#define XHPTDC8_APPLY_YAML_INVALID_GROUPING_VETORZERO	-98	// Invalid "grouping" value of "veto_relative_to_zero"
 	#define XHPTDC8_APPLY_YAML_INVALID_GROUPING_RANGE_START	-99	// Invalid "grouping" value of "range_start"
