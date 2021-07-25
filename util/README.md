@@ -265,7 +265,6 @@ manager_config:
   range_start : 12345 
   range_stop : 23456 
   trigger_deadtime : 25 
-  require_window_hit : true 
   window_start : 10 
   window_stop : 20 
   veto_mode : 2 
