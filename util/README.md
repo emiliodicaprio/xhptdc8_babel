@@ -339,8 +339,8 @@ The project structure follows [our standard project folder structure](https://gi
 
 | Config. | Env.  | Library Directory                       | Linker Input    |
 | ------- |-----  |-----------------                        | --------------- |
-| Debug   | x64   | ..\\..\\..\lib\x64dummy;..\\..\lib\x64; | xhptdc8_util.lib;xhptdc8_driver_64.lib |  
-| Release | x64   | ..\\..\\..\lib\x64dummy;..\\..\lib\x64; | xhptdc8_util.lib;xhptdc8_driver_64.lib |  
+| Debug   | x64   | ..\\..\\..\lib\x64dummy;..\\..\lib\x64; | xhptdc8_util_64.lib;xhptdc8_driver_64.lib |  
+| Release | x64   | ..\\..\\..\lib\x64dummy;..\\..\lib\x64; | xhptdc8_util_64.lib;xhptdc8_driver_64.lib |  
 | Debug   | Win32 | ..\\..\\..\lib\x86dummy;..\\..\lib\x86; | xhptdc8_util.lib;xhptdc8_driver.lib    |  
 | Release | Win32 | ..\\..\\..\lib\x86dummy;..\\..\lib\x86; | xhptdc8_util.lib;xhptdc8_driver.lib    |  
 
