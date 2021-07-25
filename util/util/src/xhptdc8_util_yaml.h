@@ -79,7 +79,7 @@ const char YAML_XHPTDC8_TIGGER_THRESHOLD_NAME[18] = { "trigger_threshold" };
 /// <summary>
 /// Does nothing, only valid when XHPTDC8_VERBOSE_DEBUG is defined
 /// </summary>
-#define VERBOSE_DEBUG_MSG(msg) 
+#define VERBOSE_DEBUG_MSG(msg, ...) 
 
 /// <summary>
 /// Does nothing, only valid when XHPTDC8_VERBOSE_DEBUG is defined
