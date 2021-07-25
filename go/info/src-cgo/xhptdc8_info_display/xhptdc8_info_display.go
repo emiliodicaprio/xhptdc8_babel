@@ -28,8 +28,6 @@ type Crono_uint_t uint32
 type Crono_float_t float32
 type Crono_double_t float64
 
-var g_hMgr C.xhptdc8_manager // Define the handle to manager as a pointer (void*)
-
 type Xhptdc8_manager_init_parameters struct {
 	Version            Crono_int_t
 	Buffer_size        int64
@@ -42,13 +40,12 @@ type Xhptdc8_manager_init_parameters struct {
 }
 
 func Init_globals() (err_code int) {
-	// Initialize driver, g_hMgr
+	// Initialize driver
 	var params C.xhptdc8_manager_init_parameters
 	var error_code C.int
-	var error_message *C.char
-	g_hMgr = C.xhptdc8_init(&params, &error_code, &error_message)
-	if unsafe.Pointer(g_hMgr) == nil {
-		fmt.Println("Error initializing the device:", error_code, error_message)
+	error_code = C.xhptdc8_init(&params)
+	if error_code != C.XHPTDC8_OK {
+		fmt.Println("Error initializing the device:", error_code)
 		return -1
 	}
 	return 1
@@ -96,7 +93,7 @@ type Xhptdc8_static_info_brief struct {
 // extern "C" int xhptdc8_get_static_info(xhptdc8_manager hMgr, int index, xhptdc8_static_info* info)
 func Xhptdc8_get_static_info(device_index int, static_info *Xhptdc8_static_info) (error_code int) {
 	var static_info_C C.xhptdc8_static_info
-	error_code = (int)(C.xhptdc8_get_static_info(g_hMgr, (C.int)(device_index), &static_info_C))
+	error_code = (int)(C.xhptdc8_get_static_info((C.int)(device_index), &static_info_C))
 	if error_code == C.XHPTDC8_OK {
 		static_info.Board_configuration = (Crono_int_t)(static_info_C.board_configuration)
 		static_info.Board_id = (Crono_int_t)(static_info_C.board_id)
@@ -120,7 +117,7 @@ func Xhptdc8_get_static_info(device_index int, static_info *Xhptdc8_static_info)
 
 /**
 Prerequisites:
-  init_golobals() is called, and g_hMgr is valid
+  init_golobals() is called
 */
 func Display_static_info(device_index int, show_details bool, display_json_only bool) (error_code int, sys_err error) {
 	var info Xhptdc8_static_info
@@ -161,11 +158,11 @@ type Xhptdc8_temperature_info_brief struct {
 
 /**
 Prerequisites:
-  init_golobals() is called, and g_hMgr is valid
+  init_golobals() is called
 */
 func Display_temperature_info(device_index int, show_details bool, display_json_only bool) (error_code int, sys_err error) {
 	var info C.xhptdc8_temperature_info
-	error_code = (int)(C.xhptdc8_get_temperature_info(g_hMgr, (C.int)(device_index), &info))
+	error_code = (int)(C.xhptdc8_get_temperature_info((C.int)(device_index), &info))
 	if error_code != C.XHPTDC8_OK {
 		return error_code, sys_err
 	}
@@ -210,11 +207,11 @@ type Xhptdc8_fast_info_brief struct {
 
 /**
 Prerequisites:
-  init_golobals() is called, and g_hMgr is valid
+  init_golobals() is called
 */
 func Display_fast_info(device_index int, show_details bool, display_json_only bool) (error_code int, sys_err error) {
 	var info C.xhptdc8_fast_info
-	error_code = (int)(C.xhptdc8_get_fast_info(g_hMgr, (C.int)(device_index), &info))
+	error_code = (int)(C.xhptdc8_get_fast_info((C.int)(device_index), &info))
 	if error_code != C.XHPTDC8_OK {
 		return error_code, sys_err
 	}
@@ -255,11 +252,11 @@ type Xhptdc8_clock_info_brief struct {
 
 /**
 Prerequisites:
-  init_golobals() is called, and g_hMgr is valid
+  init_golobals() is called
 */
 func Display_clock_info(device_index int, show_details bool, display_json_only bool) (error_code int, sys_err error) {
 	var info C.xhptdc8_clock_info
-	error_code = (int)(C.xhptdc8_get_clock_info(g_hMgr, (C.int)(device_index), &info))
+	error_code = (int)(C.xhptdc8_get_clock_info((C.int)(device_index), &info))
 	if error_code != C.XHPTDC8_OK {
 		return error_code, sys_err
 	}
@@ -281,11 +278,11 @@ func Display_clock_info(device_index int, show_details bool, display_json_only b
 //_____________________________________________________________________________
 /**
 Prerequisites:
-  init_golobals() is called, and g_hMgr is valid
+  init_golobals() is called
 */
 func Get_device_serial(device_index int) (board_serial float32) {
 	var info C.xhptdc8_static_info
-	error_code := (int)(C.xhptdc8_get_static_info(g_hMgr, (C.int)(device_index), &info))
+	error_code := (int)(C.xhptdc8_get_static_info((C.int)(device_index), &info))
 	if error_code == C.XHPTDC8_OK {
 		return float32(fixed824_to_float((Crono_int_t)(info.board_serial)))
 	} else {
@@ -306,5 +303,5 @@ func Get_devices_count() (devices_count int) {
 }
 
 func Clean_up() {
-	C.xhptdc8_close(g_hMgr)
+	C.xhptdc8_close()
 }
