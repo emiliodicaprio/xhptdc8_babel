@@ -59,7 +59,7 @@ type Xhptdc8_static_info struct {
 	Size                  Crono_int_t
 	Version               Crono_int_t
 	Board_id              Crono_int_t
-	Driver_revision       Crono_int_t
+	Driver_revision       string
 	Driver_build_revision Crono_int_t
 	Firmware_revision     Crono_int_t
 	Board_revision        Crono_int_t
@@ -77,7 +77,7 @@ type Xhptdc8_static_info_brief struct {
 	Size                  Crono_int_t `json:"-"`
 	Version               Crono_int_t `json:"-"`
 	Board_id              Crono_int_t
-	Driver_revision       Crono_int_t
+	Driver_revision       string
 	Driver_build_revision Crono_int_t
 	Firmware_revision     Crono_int_t
 	Board_revision        Crono_int_t
@@ -109,7 +109,11 @@ func Xhptdc8_get_static_info(device_index int, static_info *Xhptdc8_static_info)
 		static_info.Chip_id[0] = (Hex_Uint)(static_info_C.chip_id[0])
 		static_info.Chip_id[1] = (Hex_Uint)(static_info_C.chip_id[1])
 		static_info.Driver_build_revision = (Crono_int_t)(static_info_C.driver_build_revision)
-		static_info.Driver_revision = (Crono_int_t)(static_info_C.driver_revision)
+		Driver_revision := (Crono_int_t)(static_info_C.driver_revision)
+		Major := (Driver_revision >> 16) & 0xff
+		Minor := (Driver_revision >> 8) & 0xff
+		Revision := Driver_revision & 0xff
+		static_info.Driver_revision = fmt.Sprintf("%d.%d.%d", Major, Minor, Revision)
 		static_info.Firmware_revision = (Crono_int_t)(static_info_C.firmware_revision)
 		static_info.Flash_serial_high = (Hex_Uint)(static_info_C.flash_serial_high)
 		static_info.Flash_serial_low = (Hex_Uint)(static_info_C.flash_serial_low)
