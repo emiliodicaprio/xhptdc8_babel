@@ -186,7 +186,7 @@ So, the solution is to use LLVM instead.
 ##### Building Win32
 I didn't find github action to donwnload and install `LLVM Win32`, so I had to do that manually.
 * `powershell` caused the issues mentioned below, so I had to use `cmd` instead.
-* Running the following using `cmd`:
+* Running the following using `powershell`:
   ```YAML
     - name: Install LLVM Win32
       run: |
@@ -198,7 +198,7 @@ I didn't find github action to donwnload and install `LLVM Win32`, so I had to d
   The system cannot execute the specified program.
   ```
   Although it runs successfully on my local machine.
-* Only the scrept found in the action works successfully.
+* Only the script found in the action works successfully.
 
 ##### Using powershell
 Using `powershell`, for a reason or another, doesn't install the LLVM Win32 exe when run on github action environment, while it is installed successfully locally on my machine; on the contrary, `cmd` does. Both the following scripts don't install it:
