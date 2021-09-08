@@ -180,3 +180,9 @@ Where `g_CmdLine_Flags` is the controller of all information that should be disp
 The function `Xhptdc8_get_static_info` is provided specially for static_info, for data/format conversion for:
 - `board_serial`: 8.24 format conversion from int to float, using `fixed824_to_float` custom function.
 - `calibration_date`: Date in bytes to String, using `convert_byte_ptr_to_string` custom function.
+
+#### Display Value as Hexadecimal
+It was [required](/../../issues/45) to display `Chip_id`, `Flash_serial_high`, and `Flash_serial_low` as hexadecimal value; for that, the following updates are applied:
+1. Added a new type `Hex_Uint`.
+2. Defined all variables needed to be displayed as hexadecimal for this type.
+3. Customized `MarshalJSON` for this type in `func (uintVal Hex_Uint) MarshalJSON() ([]byte, error)`
