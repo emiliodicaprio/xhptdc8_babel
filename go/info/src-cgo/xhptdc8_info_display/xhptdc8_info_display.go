@@ -53,6 +53,7 @@ func Init_globals() (err_code int) {
 
 //_____________________________________________________________________________
 // xhptdc8_static_info
+type Hex_Uint Crono_uint_t
 
 type Xhptdc8_static_info struct {
 	Size                  Crono_int_t
@@ -64,10 +65,10 @@ type Xhptdc8_static_info struct {
 	Board_revision        Crono_int_t
 	Board_configuration   Crono_int_t
 	Subversion_revision   Crono_int_t
-	Chip_id               [2]Crono_int_t
+	Chip_id               [2]Hex_Uint
 	Board_serial          Crono_float_t // Converted to float from 8.24
-	Flash_serial_high     Crono_uint_t
-	Flash_serial_low      Crono_uint_t
+	Flash_serial_high     Hex_Uint
+	Flash_serial_low      Hex_Uint
 	Flash_valid           byte
 	Calibration_date      string // Converted to string from []byte
 }
@@ -82,12 +83,17 @@ type Xhptdc8_static_info_brief struct {
 	Board_revision        Crono_int_t
 	Board_configuration   Crono_int_t
 	Subversion_revision   Crono_int_t
-	Chip_id               [2]Crono_int_t
+	Chip_id               [2]Hex_Uint
 	Board_serial          Crono_float_t
-	Flash_serial_high     Crono_uint_t
-	Flash_serial_low      Crono_uint_t
+	Flash_serial_high     Hex_Uint
+	Flash_serial_low      Hex_Uint
 	Flash_valid           byte
 	Calibration_date      string
+}
+
+func (uintVal Hex_Uint) MarshalJSON() ([]byte, error) {
+	jsonValue := fmt.Sprintf("\"0x%0x\"", uintVal)
+	return []byte(jsonValue), nil
 }
 
 // extern "C" int xhptdc8_get_static_info(xhptdc8_manager hMgr, int index, xhptdc8_static_info* info)
@@ -100,13 +106,13 @@ func Xhptdc8_get_static_info(device_index int, static_info *Xhptdc8_static_info)
 		static_info.Board_revision = (Crono_int_t)(static_info_C.board_revision)
 		static_info.Board_serial = (Crono_float_t)(fixed824_to_float((Crono_int_t)(static_info_C.board_serial)))
 		convert_byte_ptr_to_string((*rune)(unsafe.Pointer(&(static_info_C.calibration_date[0]))), &static_info.Calibration_date) // Conversion
-		static_info.Chip_id[0] = (Crono_int_t)(static_info_C.chip_id[0])
-		static_info.Chip_id[1] = (Crono_int_t)(static_info_C.chip_id[1])
+		static_info.Chip_id[0] = (Hex_Uint)(static_info_C.chip_id[0])
+		static_info.Chip_id[1] = (Hex_Uint)(static_info_C.chip_id[1])
 		static_info.Driver_build_revision = (Crono_int_t)(static_info_C.driver_build_revision)
 		static_info.Driver_revision = (Crono_int_t)(static_info_C.driver_revision)
 		static_info.Firmware_revision = (Crono_int_t)(static_info_C.firmware_revision)
-		static_info.Flash_serial_high = (Crono_uint_t)(static_info_C.flash_serial_high)
-		static_info.Flash_serial_low = (Crono_uint_t)(static_info_C.flash_serial_low)
+		static_info.Flash_serial_high = (Hex_Uint)(static_info_C.flash_serial_high)
+		static_info.Flash_serial_low = (Hex_Uint)(static_info_C.flash_serial_low)
 		static_info.Flash_valid = (byte)(static_info_C.flash_valid)
 		static_info.Size = (Crono_int_t)(static_info_C.size)
 		static_info.Subversion_revision = (Crono_int_t)(static_info_C.subversion_revision)
