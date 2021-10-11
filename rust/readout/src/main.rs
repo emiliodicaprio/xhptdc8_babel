@@ -34,12 +34,16 @@ fn main() {
     error_code = 0 ;
     let disp_ret = readout_aux::display_devices_serials(&mut error_code, &mut error_message) ;
     match disp_ret {
-        -1 => { println!("Error displaying devices serials."); return ; },
+        -1 => { println!("Error displaying devices serials."); readout_aux::clean_up() ; return ; },
         0 => { println!("No devices found, exit."); return ; } ,
         _ => {} // Do nothing
     }
 
-    readout_aux::apply_yamls(yaml_files_names) ;
+    let apply_ret = readout_aux::apply_yamls(yaml_files_names) ;
+    match apply_ret {
+        -1 => { println!("Error applying yaml."); readout_aux::clean_up() ; return ; },
+        _ => {} // Do nothing
+    }
     readout_aux::acquire(&mut output_file, is_binary, hits_no, files_no) ;
     readout_aux::clean_up() ;
     readout_aux::display_footer() ;

@@ -227,6 +227,7 @@ pub fn apply_yamls(yaml_files_names: Vec<String>) -> i32 {
     let mut ret : i32;
     let mut cfg = xhptdc8_manager_configuration::default();
 
+    println!("Getting default cconfiguration") ;
     unsafe {
         ret = xhptdc8_get_default_configuration(&mut cfg) ;
         if  ret != XHPTDC8_OK.try_into().unwrap() {
