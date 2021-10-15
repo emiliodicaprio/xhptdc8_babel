@@ -4,6 +4,7 @@
 
 use std::ptr  ;
 use std::os::raw ;
+use std::path::Path;
 
 mod readout_aux ;
 
@@ -27,6 +28,16 @@ fn main() {
         readout_aux::clean_up() ;
         readout_aux::display_footer() ;
         return ;
+    }
+
+    // Check if YAML files exist
+    for (_, file_name) in yaml_files_names.iter().enumerate() {
+        if !Path::new(file_name).exists() {
+            println!("File {} doesn't exist", file_name) ;
+            readout_aux::clean_up() ;
+            readout_aux::display_footer() ;
+            return ;
+        }
     }
 
     let mut error_message: *const raw::c_char = ptr::null_mut();
