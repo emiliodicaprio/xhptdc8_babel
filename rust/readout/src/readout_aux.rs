@@ -712,3 +712,8 @@ impl Default for xhptdc8_adc_channel {
         xhptdc8_adc_channel{enable:0, watchdog_readout:0, watchdog_interval:0, trigger_threshold:0.0}
     }
 }
+
+pub fn filesize(path: &str) -> Result<u64, std::io::Error> {
+    let x = fs::metadata(path)?.len();
+    Ok(x)
+}

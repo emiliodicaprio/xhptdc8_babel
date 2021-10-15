@@ -30,10 +30,18 @@ fn main() {
         return ;
     }
 
-    // Check if YAML files exist
+    // Check if YAML files
     for (_, file_name) in yaml_files_names.iter().enumerate() {
-        if !Path::new(file_name).exists() {
-            println!("File {} doesn't exist", file_name) ;
+        let path = Path::new(file_name);
+        if !path.exists() {
+            println!("Error: File {} doesn't exist.", file_name) ;
+            readout_aux::clean_up() ;
+            readout_aux::display_footer() ;
+            return ;
+        }
+        let x = readout_aux::filesize(file_name);
+        if x.unwrap() == 0 {
+            println!("Error: File {} is empty.", file_name) ;
             readout_aux::clean_up() ;
             readout_aux::display_footer() ;
             return ;
