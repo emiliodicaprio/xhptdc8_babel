@@ -254,7 +254,7 @@ manager_config:
     enable : true 
     watchdog_readout : true 
     watchdog_interval : 5 
-    trigger_threshold : 6 
+    trigger_threshold : 1 
    skip_alignment : true 
    alignment_source : 1 
  grouping : 
