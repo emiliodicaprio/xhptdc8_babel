@@ -33,7 +33,7 @@ const char YAML_XHPTDC8_TIGGER_THRESHOLD_NAME[18] = { "trigger_threshold" };
 /// <param name="key_val">The applied value, of type int</param>  
 #define VERBOSE_DEBUG_MSG_YAML_APPLIED_I(node, key_name, key_val) \
     {   std::string node_name ; _get_node_key_name_internal(&node, &node_name); \
-        fprintf(stdout, "Applied yaml node ([%s]) on conifguation (%s) integer value (%d)\n", \
+        fprintf(stdout, "Applied yaml node ([%s]) on configuation (%s) integer value (%d)\n", \
         node_name.c_str(), key_name, key_val); }
 
 /// <summary>
@@ -46,7 +46,7 @@ const char YAML_XHPTDC8_TIGGER_THRESHOLD_NAME[18] = { "trigger_threshold" };
 /// <param name="key_val">The applied value, of type double</param>  
 #define VERBOSE_DEBUG_MSG_YAML_APPLIED_D(node, key_name, key_val) \
     {   std::string node_name ; _get_node_key_name_internal(&node, &node_name); \
-        fprintf(stdout, "Applied yaml node ([%s]) on conifguation (%s) double value (%f)\n", \
+        fprintf(stdout, "Applied yaml node ([%s]) on configuation (%s) double value (%f)\n", \
         node_name.c_str(), key_name, key_val); }
 
 /// <summary>
@@ -59,7 +59,7 @@ const char YAML_XHPTDC8_TIGGER_THRESHOLD_NAME[18] = { "trigger_threshold" };
 /// <param name="key_val">The applied value, of type chrono_bool_t</param>  
 #define VERBOSE_DEBUG_MSG_YAML_APPLIED_B(node, key_name, key_val) \
     {   std::string node_name ; _get_node_key_name_internal(&node, &node_name); \
-        fprintf(stdout, "Applied yaml node ([%s]) on conifguation (%s) boolean value (%s)\n", \
+        fprintf(stdout, "Applied yaml node ([%s]) on configuation (%s) boolean value (%s)\n", \
         node_name.c_str(), key_name, key_val); }
 
 /// <summary>
@@ -72,7 +72,7 @@ const char YAML_XHPTDC8_TIGGER_THRESHOLD_NAME[18] = { "trigger_threshold" };
 /// <param name="key_val">The applied value, of type long long</param>  
 #define VERBOSE_DEBUG_MSG_YAML_APPLIED_LL(node, key_name, key_val) \
     {   std::string node_name ; _get_node_key_name_internal(&node, &node_name); \
-        fprintf(stdout, "Applied yaml node ([%s]) on conifguation (%s) long long value (%lld)\n",   \
+        fprintf(stdout, "Applied yaml node ([%s]) on configuation (%s) long long value (%lld)\n",   \
         node_name.c_str(), key_name, key_val); }
 
 #else

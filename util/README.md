@@ -496,7 +496,7 @@ manager_config:
 
 Calling xhptdc8_apply_yaml...
 
-Applied yaml node ([0]) on conifguation (rising) boolean value (true)
+Applied yaml node ([0]) on configuation (rising) boolean value (true)
 ```
 
 #### Error Message Testing
