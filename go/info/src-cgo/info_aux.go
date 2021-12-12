@@ -93,8 +93,8 @@ Command:
   xhptdc8_info.exe [TDC] [Flags]
 Usage: 
   [TDC]   is either an integer as the index of the TDC, or a serial number of the TDC
+		  passed as a value of the flag -tdc, i.e. -tdc=[TDC]	
   [Flags] Can be one or more of the following flags:
-          -tdc=[TDC]	is either an integer as the index of the TDC, or a serial number of the TDC
           -v            show size and version information for all selected structures
           -static       show static_info
           -temp         show temperature_info
