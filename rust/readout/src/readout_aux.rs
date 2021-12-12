@@ -242,14 +242,14 @@ pub fn apply_yamls(yaml_files_names: Vec<String>) -> i32 {
         
         // Apply all YAML files on cfg
         for (_, file_name) in yaml_files_names.iter().enumerate() {
-            print!("File {}...", file_name);    
+            println!("File {}...", file_name);    
             let yaml_string = fs::read_to_string(file_name)
                 .expect("Something went wrong reading the YAML file");    
             let yaml_string_c: *const raw::c_char = yaml_string.as_ptr() as *const raw::c_char;
             unsafe {
                 ret = xhptdc8_apply_yaml(&mut cfg, yaml_string_c);
                 if  ret < 0 {
-                    print!(" {}: {}", "Error"/*.red().bold()*/, ret.to_string());
+                    println!("{}: {}", "Error"/*.red().bold()*/, ret.to_string());
                     return -1;
                 }
             }
@@ -265,7 +265,7 @@ pub fn apply_yamls(yaml_files_names: Vec<String>) -> i32 {
     unsafe {
         ret = xhptdc8_configure(&mut cfg);             
         if  ret != XHPTDC8_OK.try_into().unwrap() {
-            print!(" {}: {}", "Error"/*.red().bold()*/, ret.to_string());
+            println!(" {}: {} ", "Error"/*.red().bold()*/, ret.to_string());
             return -1;
         } else {
             println!("{}", "Done"/*.green().bold()*/);    
