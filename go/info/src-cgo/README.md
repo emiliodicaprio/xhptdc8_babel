@@ -169,7 +169,6 @@ var g_Devices_Count int = -1
 And initializes the following global variables:
 ```GO
 var g_CmdLine_Flags = CmdLine_Flags_T{}
-var g_Selected_Device_Index = -1
 ```
 Where `g_CmdLine_Flags` is the controller of all information that should be displayed by the application.
 
