@@ -150,7 +150,7 @@ func process_command_line() (err_code int) {
 	if sel_devices_cout > g_Devices_Count {
 		fmt.Println("Error: Number of entered TDCs <", sel_devices_cout,
 			"> is greater than installed number of TDCs <", g_Devices_Count, ">")
-		return 0
+		return -1
 	}
 	var tdc_arg_f float64
 	var sel_device_is_found bool
@@ -196,6 +196,16 @@ func process_command_line() (err_code int) {
 			g_Devices_Serials[int(tdc_arg_f)].Is_selected = true
 			fmt.Println("Board index selected is: <", int(tdc_arg_f), ">")
 		}
+	}
+	if sel_devices_cout == 0 &&
+		!*g_CmdLine_Flags.show_all_info &&
+		!*(g_CmdLine_Flags.show_static_info) &&
+		!*(g_CmdLine_Flags.show_temp_info) &&
+		!*(g_CmdLine_Flags.show_temperature_info) &&
+		!*(g_CmdLine_Flags.show_fast_info) &&
+		!*(g_CmdLine_Flags.show_clock_info) {
+		// No command line options are given
+		return 0
 	}
 	return 1
 }

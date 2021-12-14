@@ -28,7 +28,7 @@ func main() {
 		clean_up()
 		return
 	case 0:
-		// No valid TDC passed in command line
+		// No command line options are given
 		display_about()
 		display_devices_serials()
 		display_help()
