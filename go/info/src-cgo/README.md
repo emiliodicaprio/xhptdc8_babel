@@ -40,9 +40,9 @@ import "C"
 2. Just make sure you have the latest files of `\lib\include\` and `\lib\x64dummy\` on your local machine.
 
 #### Steps
-1. 
+1. Using `cmd`, 
 ```CMD
-go build -o xhptdc8_info_64.exe .\xhptdc8_info.go .\info_aux.go
+\Path\To\Project\go\info\src-cgo>go build -o xhptdc8_info_64.exe .\xhptdc8_info.go .\info_aux.go
 ```
 2. Run `xhptdc8_info_64.exe` (generated from previous step)
 
