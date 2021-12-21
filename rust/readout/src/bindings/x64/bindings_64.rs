@@ -2609,7 +2609,6 @@ extern "C" {
 extern "C" {
     #[doc = " Returns the error messages from all boards."]
     #[doc = ""]
-    #[doc = " @param hMgr[in]. It must be initialized using xhptdc8_init()."]
     #[doc = " @param include_ok[in]: Outputs a line even if the board or the manager has no error"]
     #[doc = " @param fixed_length[in]: Outputs a line for 8 boards, even if there are less boards in the system"]
     #[doc = ""]
