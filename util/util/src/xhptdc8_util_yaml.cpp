@@ -867,12 +867,12 @@ int xhptdc8_apply_grouping_yaml(const ryml::NodeRef* config_mngr_node,
 
     // trigger_channel
     APPLY_CHILD_INTEGER_VALUE(grouping_node, "trigger_channel", 
-        (val > 0) && (val < XHPTDC8_TDC_CHANNEL_COUNT),
+        (val >= 0) && (val < XHPTDC8_TDC_CHANNEL_COUNT),
         manager_config->grouping.trigger_channel, XHPTDC8_APPLY_YAML_INVALID_GROUPING_TRIGCH);
 
     // zero_channel
     APPLY_CHILD_INTEGER_VALUE(grouping_node, "zero_channel",
-        ((val > 0) || (-1 == val)) && (val < XHPTDC8_TDC_CHANNEL_COUNT),
+        ((val >= 0) || (-1 == val)) && (val < XHPTDC8_TDC_CHANNEL_COUNT),
         manager_config->grouping.zero_channel, XHPTDC8_APPLY_YAML_INVALID_GROUPING_ZEROCH);
 
     // zero_channel_offset

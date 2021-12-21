@@ -24,43 +24,61 @@ const char YAML_XHPTDC8_TIGGER_THRESHOLD_NAME[18] = { "trigger_threshold" };
 #define VERBOSE_DEBUG_MSG(fmtstr, ...) { printf(fmtstr, ##__VA_ARGS__); }
 
 /// <summary>
-/// Prints a message that an integer value <paramref name="key_val"/> is applied 
-/// on child node whose key name is <paramref name="key_name"/> and is a child of 
-/// node <paramref name="node"/>. Only defined when XHPTDC8_VERBOSE_DEBUG is defined.
+/// Prints a message that an integer value <paramref name="key_val"/> is applied
+/// on child node whose key name is <paramref name="key_name"/> and is a child
+/// of node <paramref name="node"/>. Only defined when XHPTDC8_VERBOSE_DEBUG is
+/// defined.
 /// </summary>
-/// <param name="node">Parent node, of type ryml::NodeRef</param>  
-/// <param name="key_name">The child key name, of type char*</param>  
-/// <param name="key_val">The applied value, of type int</param>  
-#define VERBOSE_DEBUG_MSG_YAML_APPLIED_I(node, key_name, key_val) \
-    {   std::string node_name ; _get_node_key_name_internal(&node, &node_name); \
-        fprintf(stdout, "Applied yaml node ([%s]) on configuation (%s) integer value (%d)\n", \
-        node_name.c_str(), key_name, key_val); }
+/// <param name="node">Parent node, of type ryml::NodeRef</param>
+/// <param name="key_name">The child key name, of type char*</param>
+/// <param name="key_val">The applied value, of type int</param>
+#define VERBOSE_DEBUG_MSG_YAML_APPLIED_I(node, key_name, key_val)              \
+  {                                                                            \
+    std::string node_name;                                                     \
+    _get_node_key_name_internal(&node, &node_name);                            \
+    fprintf(                                                                   \
+        stdout,                                                                \
+        "Applied yaml node ([%s]) on configuration (%s) integer value (%d)\n", \
+        node_name.c_str(), key_name, key_val);                                 \
+  }
 
 /// <summary>
-/// Prints a message that a double value <paramref name="key_val"/> is applied 
-/// on child node whose key name is <paramref name="key_name"/> and is a child of 
-/// node <paramref name="node"/>. Only defined when XHPTDC8_VERBOSE_DEBUG is defined.
+/// Prints a message that a double value <paramref name="key_val"/> is applied
+/// on child node whose key name is <paramref name="key_name"/> and is a child
+/// of node <paramref name="node"/>. Only defined when XHPTDC8_VERBOSE_DEBUG is
+/// defined.
 /// </summary>
-/// <param name="node">Parent node, of type ryml::NodeRef</param>  
-/// <param name="key_name">The child key name, of type char*</param>  
-/// <param name="key_val">The applied value, of type double</param>  
-#define VERBOSE_DEBUG_MSG_YAML_APPLIED_D(node, key_name, key_val) \
-    {   std::string node_name ; _get_node_key_name_internal(&node, &node_name); \
-        fprintf(stdout, "Applied yaml node ([%s]) on configuation (%s) double value (%f)\n", \
-        node_name.c_str(), key_name, key_val); }
+/// <param name="node">Parent node, of type ryml::NodeRef</param>
+/// <param name="key_name">The child key name, of type char*</param>
+/// <param name="key_val">The applied value, of type double</param>
+#define VERBOSE_DEBUG_MSG_YAML_APPLIED_D(node, key_name, key_val)              \
+  {                                                                            \
+    std::string node_name;                                                     \
+    _get_node_key_name_internal(&node, &node_name);                            \
+    fprintf(                                                                   \
+        stdout,                                                                \
+        "Applied yaml node ([%s]) on configuration (%s) double value (%f)\n",  \
+        node_name.c_str(), key_name, key_val);                                 \
+  }
 
 /// <summary>
-/// Prints a message that a boolean value <paramref name="key_val"/> is applied 
-/// on child node whose key name is <paramref name="key_name"/> and is a child of 
-/// node <paramref name="node"/>. Only defined when XHPTDC8_VERBOSE_DEBUG is defined.
+/// Prints a message that a boolean value <paramref name="key_val"/> is applied
+/// on child node whose key name is <paramref name="key_name"/> and is a child
+/// of node <paramref name="node"/>. Only defined when XHPTDC8_VERBOSE_DEBUG is
+/// defined.
 /// </summary>
-/// <param name="node">Parent node, of type ryml::NodeRef</param>  
-/// <param name="key_name">The child key name, of type char*</param>  
-/// <param name="key_val">The applied value, of type chrono_bool_t</param>  
-#define VERBOSE_DEBUG_MSG_YAML_APPLIED_B(node, key_name, key_val) \
-    {   std::string node_name ; _get_node_key_name_internal(&node, &node_name); \
-        fprintf(stdout, "Applied yaml node ([%s]) on configuation (%s) boolean value (%s)\n", \
-        node_name.c_str(), key_name, key_val); }
+/// <param name="node">Parent node, of type ryml::NodeRef</param>
+/// <param name="key_name">The child key name, of type char*</param>
+/// <param name="key_val">The applied value, of type chrono_bool_t</param>
+#define VERBOSE_DEBUG_MSG_YAML_APPLIED_B(node, key_name, key_val)              \
+  {                                                                            \
+    std::string node_name;                                                     \
+    _get_node_key_name_internal(&node, &node_name);                            \
+    fprintf(                                                                   \
+        stdout,                                                                \
+        "Applied yaml node ([%s]) on configuration (%s) boolean value (%s)\n", \
+        node_name.c_str(), key_name, key_val);                                 \
+  }
 
 /// <summary>
 /// Prints a message that a long long value <paramref name="key_val"/> is applied 
@@ -69,11 +87,16 @@ const char YAML_XHPTDC8_TIGGER_THRESHOLD_NAME[18] = { "trigger_threshold" };
 /// </summary>
 /// <param name="node">Parent node, of type ryml::NodeRef</param>  
 /// <param name="key_name">The child key name, of type char*</param>  
-/// <param name="key_val">The applied value, of type long long</param>  
-#define VERBOSE_DEBUG_MSG_YAML_APPLIED_LL(node, key_name, key_val) \
-    {   std::string node_name ; _get_node_key_name_internal(&node, &node_name); \
-        fprintf(stdout, "Applied yaml node ([%s]) on configuation (%s) long long value (%lld)\n",   \
-        node_name.c_str(), key_name, key_val); }
+/// <param name="key_val">The applied value, of type long long</param>
+#define VERBOSE_DEBUG_MSG_YAML_APPLIED_LL(node, key_name, key_val)             \
+  {                                                                            \
+    std::string node_name;                                                     \
+    _get_node_key_name_internal(&node, &node_name);                            \
+    fprintf(stdout,                                                            \
+            "Applied yaml node ([%s]) on configuration (%s) long long value "  \
+            "(%lld)\n",                                                        \
+            node_name.c_str(), key_name, key_val);                             \
+  }
 
 #else
 /// <summary>
