@@ -378,6 +378,8 @@ The following files are needed to be copied to the build _output directory_, car
 1. xhptdc8_util.dll/xhptdc8_util_64.dll
 2. xhptdc8_driver.dll/xhptdc8_driver_64.dll
 
+Otherwise, you might get an error "_Failed to set up the execution context to run the test_" when running the tests.
+
 ### Run
 Nothing special, just select the underlying test, and hit run
 
