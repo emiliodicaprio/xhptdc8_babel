@@ -393,6 +393,12 @@ Guidleines as per `namespace apply_yaml`:
 
 ![Test Cases Tree](https://github.com/cronologic-de/xhptdc8_babel/blob/main/util/docs/yaml_reader/TestCasesTree.JPG)
 
+### Log Message
+In case you needed to log message, you can use the following:
+```C
+			Logger::WriteMessage(err_messages_str.c_str());
+```
+
 ___________________________
 
 # util_test Project
