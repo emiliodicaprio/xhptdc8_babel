@@ -877,7 +877,7 @@ int xhptdc8_apply_grouping_yaml(const ryml::NodeRef* config_mngr_node,
 
     // zero_channel_offset
     APPLY_CHILD_DOUBLE_VALUE(grouping_node, "zero_channel_offset",
-        (val > 0), manager_config->grouping.zero_channel_offset, XHPTDC8_APPLY_YAML_INVALID_GROUPING_ZEROCHOFF);
+        (val >= 0), manager_config->grouping.zero_channel_offset, XHPTDC8_APPLY_YAML_INVALID_GROUPING_ZEROCHOFF);
 
     // range_start
     APPLY_CHILD_LONGLONG_VALUE(grouping_node, "range_start",
