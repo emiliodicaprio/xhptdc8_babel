@@ -97,7 +97,6 @@ extern "C" {
 	/**
 	* Returns the error messages from all boards.
 	* 
-	* @param hMgr[in]. It must be initialized using xhptdc8_init().
 	* @param include_ok[in]: Outputs a line even if the board or the manager has no error
 	* @param fixed_length[in]: Outputs a line for 8 boards, even if there are less boards in the system
 	* 

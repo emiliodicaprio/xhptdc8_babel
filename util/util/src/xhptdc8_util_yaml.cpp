@@ -529,7 +529,7 @@ int xhptdc8_apply_adc_channel_yaml(const ryml::NodeRef* device_config_node,
         device_config->adc_channel.watchdog_readout, XHPTDC8_APPLY_YAML_INVALID_ADC_CHANNEL_WDRO);
 
     // watchdog_interval
-    APPLY_CHILD_INTEGER_VALUE(adc_channel_node, "watchdog_interval", val > 0,
+    APPLY_CHILD_INTEGER_VALUE(adc_channel_node, "watchdog_interval", ((100 <= val) && (val <= 7500)),
         device_config->adc_channel.watchdog_interval, XHPTDC8_APPLY_YAML_INVALID_ADC_CHANNEL_WDI);
 
     // trigger_threshold
