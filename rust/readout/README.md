@@ -252,3 +252,5 @@ Format is: Just the content of the `TDCHit` structure bit by bit. So `96 bits pe
 
 Note that _the representation of every value is set as a byte array in big-endian (network) byte order_.
 
+### Notes
+* With `-l` option, using a debug version of `xhptdc8_util` will provide richer information.
