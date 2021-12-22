@@ -20,6 +20,8 @@ use std::fmt;
 use std::io::Write;
 use std::{thread, time};
 use std::time::{SystemTime};
+use std::ffi::CStr;
+use std::str;
 
 static mut ENABLE_LOG : bool = false ; 
 const DEFAULT_HITS_NO : u32 = 10000 ;
@@ -249,7 +251,16 @@ pub fn apply_yamls(yaml_files_names: Vec<String>) -> i32 {
             unsafe {
                 ret = xhptdc8_apply_yaml(&mut cfg, yaml_string_c);
                 if  ret < 0 {
-                    println!("{}: {}", "Error"/*.red().bold()*/, ret.to_string());
+                    let err_msg: *const raw::c_char ;
+                    err_msg = xhptdc8_get_err_message(ret);
+                    let err_msg_cs = CStr::from_ptr(err_msg) ;
+                    let err_msg_cs = err_msg_cs.to_owned();
+                    // Errro is displayed as "Invalid \"gating_block\" value of \"retrigger\""
+                    // Remove the `\"`, note that the string has no backslash , 
+                    // what you see in the code or the output are the escape characters.
+                    // Replace it with backtick
+                    let err_msg_cs = str::replace(err_msg_cs.to_str().unwrap(), "\"", "`");
+                    println!("{}: <{}> {:?}", "Error"/*.red().bold()*/, ret.to_string(), err_msg_cs);                
                     return -1;
                 }
             }
