@@ -524,8 +524,8 @@ fn bindgen_test_layout_crono_packet_only_timestamp() {
 #[derive(Debug, Copy, Clone)]
 pub struct xhptdc8_manager_init_parameters {
     #[doc = " Version number of the xhptdc8_manager_init_parameters structure"]
-    #[doc = " Is set to XHPTDC8_API_VERSION by xhptdc8_get_default_init_parameters()."]
-    #[doc = " Must be left unchanged."]
+    #[doc = " Is set to XHPTDC8_API_VERSION by"]
+    #[doc = " xhptdc8_get_default_init_parameters(). Must be left unchanged."]
     pub version: ::std::os::raw::c_int,
     #[doc = " The minimum size of the DMA buffer."]
     #[doc = " If set to 0, the default size of 16MB is used."]
@@ -536,17 +536,17 @@ pub struct xhptdc8_manager_init_parameters {
     #[doc = " Initialized by xhptdc8_get_default_init_parameters()."]
     #[doc = " Must be left unchanged."]
     pub device_type: ::std::os::raw::c_int,
-    #[doc = " The update delay of the writing pointer after a packet has been send over PCIe. Specified in"]
-    #[doc = " multiples of 16 ns. Should not be changed by the user."]
-    #[doc = " The base unit is 16 to 32 ns."]
+    #[doc = " The update delay of the writing pointer after a packet has been send"]
+    #[doc = " over PCIe. Specified in multiples of 16 ns. Should not be changed by"]
+    #[doc = " the user. The base unit is 16 to 32 ns."]
     pub dma_read_delay: ::std::os::raw::c_int,
     #[doc = " Several xHPTDC8-PCIe can be used in sync."]
-    #[doc = " If set to 1 enable multiboard operation. If set to 0 disable multiboard operation."]
-    #[doc = " Value is either 'true' or 'false'."]
+    #[doc = " If set to 1 enable multiboard operation. If set to 0 disable"]
+    #[doc = " multiboard operation. Value is either 'true' or 'false'."]
     pub multiboard: crono_bool_t,
     #[doc = " Select external 10 MHz reference."]
-    #[doc = " If set to 1 use external 10 MHz reference. If set to 0 use internal reference."]
-    #[doc = " Value is either 'true' or 'false'."]
+    #[doc = " If set to 1 use external 10 MHz reference. If set to 0 use internal"]
+    #[doc = " reference. Value is either 'true' or 'false'."]
     pub use_ext_clock: crono_bool_t,
     #[doc = " Ignore calibration values read from device flash."]
     #[doc = " Value is either 'true' or 'false'."]
@@ -671,18 +671,21 @@ fn bindgen_test_layout_xhptdc8_manager_init_parameters() {
 #[derive(Debug, Copy, Clone)]
 pub struct TDCHit {
     #[doc = " The time stamp of the hit in picoseconds."]
-    #[doc = " If grouping is enabled the timestamp is relative to the trigger or the separate"]
-    #[doc = " zero reference of the group. Otherwise the timestampe is continuously"]
-    #[doc = " counting up from the call to start_capture()"]
+    #[doc = " If grouping is enabled the timestamp is relative to the trigger or"]
+    #[doc = " the separate zero reference of the group. Otherwise the timestampe is"]
+    #[doc = " continuously counting up from the call to start_capture()"]
     pub time: i64,
-    #[doc = " For the first board in the system this 0 to 7 for the TDC channels A to H. 8 or 9 for ADC data."]
-    #[doc = " Data from channels 8 and 9 should usually be treated as data from the same channel."]
-    #[doc = " For the other boards the channel number is incremented by board_id * 10"]
+    #[doc = " For the first board in the system this 0 to 7 for the TDC channels A"]
+    #[doc = " to H. 8 or 9 for ADC data. Data from channels 8 and 9 should usually"]
+    #[doc = " be treated as data from the same channel. For the other boards the"]
+    #[doc = " channel number is incremented by board_id * 10"]
     pub channel: u8,
     #[doc = " Additional information on the type of hit recorded."]
-    #[doc = " It is of one of the values XHPTDC8_TDCHIT_TYPE_* or'ed with error flags if required."]
+    #[doc = " It is of one of the values XHPTDC8_TDCHIT_TYPE_* or'ed with error"]
+    #[doc = " flags if required."]
     pub type_: u8,
-    #[doc = " For ADC hits this contains the sampled voltage. For TDC hits the content is undefined."]
+    #[doc = " For ADC hits this contains the sampled voltage. For TDC hits the"]
+    #[doc = " content is undefined."]
     pub bin: u16,
 }
 #[test]
@@ -754,21 +757,28 @@ extern "C" {
     #[doc = " TODO"]
     #[doc = ""]
     #[doc = ""]
-    #[doc = " @param absolute_trigger_timestamp[out]. The absolute trigger timestamp in picoseconds."]
-    #[doc = " @param hit_counter[out].\t\t\tBuffer allocated and provded by the user. This array provides the hit counts per channel."]
-    #[doc = "\t\t\t\t\t\t\t\t\tThe maximum count is defined by number_of_hits. Set the buffer size to number_of_channels."]
-    #[doc = "\t\t\t\t\t\t\t\t\tChannels 8 and 9 mod XHPTDC8_NOF_CHANNELS_PER_CARD stay empty."]
-    #[doc = " @param tdc_array[out].\t\t\tBuffer allocated and provded by the user. This is a matrix containing a list timestamps per channel."]
-    #[doc = "\t\t\t\t\t\t\t\t\tSet the buffer size to number_of_channels x number_of_hits."]
-    #[doc = "\t\t\t\t\t\t\t\t\tRemark: Adc channels per card are merged to channel 8 mod XHPTDC8_NOF_CHANNELS_PER_CARD,"]
-    #[doc = "\t\t\t\t\t\t\t\t\tso 9 mod XHPTDC8_NOF_CHANNELS_PER_CARD stays empty."]
-    #[doc = " @param adc_counter[out].\t\t\tBuffer allocated and provded by the user. This array provides the hit counts per adc channel."]
-    #[doc = "\t\t\t\t\t\t\t\t\tThe maximum count is defined by number_of_hits."]
-    #[doc = "\t\t\t\t\t\t\t\t\tSet the buffer size to devices count (use function xhptdc8_count_devices)."]
-    #[doc = " @param adc_value[out].\t\t\tBuffer allocated and provded by the user. This array provides the adc value per channel."]
-    #[doc = "\t\t\t\t\t\t\t\t\tThe maximum is defined by number_of_hits. Set the buffer size to devices count."]
-    #[doc = " @param number_of_tdcs[in].\t\tThis is the devices count that can be calculated by the function xhptdc8_count_devices."]
-    #[doc = " @param number_of_channels[in].\tThis has to be calculated by XHPTDC8_NOF_CHANNELS_PER_CARD * number_of_tdcs."]
+    #[doc = " @param absolute_trigger_timestamp[out]. The absolute trigger timestamp in"]
+    #[doc = "picoseconds."]
+    #[doc = " @param hit_counter[out].\t\t\tBuffer allocated and provded by"]
+    #[doc = "the user. This array provides the hit counts per channel. The maximum count is"]
+    #[doc = "defined by number_of_hits. Set the buffer size to number_of_channels. Channels"]
+    #[doc = "8 and 9 mod XHPTDC8_NOF_CHANNELS_PER_CARD stay empty."]
+    #[doc = " @param tdc_array[out].\t\t\tBuffer allocated and provded by"]
+    #[doc = "the user. This is a matrix containing a list timestamps per channel. Set the"]
+    #[doc = "buffer size to number_of_channels x number_of_hits. Remark: Adc channels per"]
+    #[doc = "card are merged to channel 8 mod XHPTDC8_NOF_CHANNELS_PER_CARD, so 9 mod"]
+    #[doc = "XHPTDC8_NOF_CHANNELS_PER_CARD stays empty."]
+    #[doc = " @param adc_counter[out].\t\t\tBuffer allocated and provded by"]
+    #[doc = "the user. This array provides the hit counts per adc channel. The maximum"]
+    #[doc = "count is defined by number_of_hits. Set the buffer size to devices count (use"]
+    #[doc = "function xhptdc8_count_devices)."]
+    #[doc = " @param adc_value[out].\t\t\tBuffer allocated and provded by"]
+    #[doc = "the user. This array provides the adc value per channel. The maximum is"]
+    #[doc = "defined by number_of_hits. Set the buffer size to devices count."]
+    #[doc = " @param number_of_tdcs[in].\t\tThis is the devices count that can be"]
+    #[doc = "calculated by the function xhptdc8_count_devices."]
+    #[doc = " @param number_of_channels[in].\tThis has to be calculated by"]
+    #[doc = "XHPTDC8_NOF_CHANNELS_PER_CARD * number_of_tdcs."]
     #[doc = " @param number_of_hits[in].\t\tThis is used to define buffer sizes."]
     #[doc = ""]
     #[doc = " @returns Returns the number of read hits."]
@@ -818,7 +828,7 @@ extern "C" {
 }
 extern "C" {
     #[doc = " Pause a started data acquisition."]
-    #[doc = " It doesn't allow for a configuration change."]
+    #[doc = " It doesn�t allow for a configuration change."]
     #[doc = ""]
     #[doc = ""]
     #[doc = " @returns XHPTDC8_OK in case of success, or error code in case of error."]
@@ -826,7 +836,7 @@ extern "C" {
 }
 extern "C" {
     #[doc = " Call this to resume data acquisition after a call to xhptdc8_pause_capture()."]
-    #[doc = " It doesn't allow for a configuration change."]
+    #[doc = " It doesn�t allow for a configuration change."]
     #[doc = ""]
     #[doc = " @returns XHPTDC8_OK in case of success, or error code in case of error."]
     pub fn xhptdc8_continue_capture() -> ::std::os::raw::c_int;
@@ -846,36 +856,39 @@ extern "C" {
 }
 #[doc = " Structure contains static information."]
 #[doc = ""]
-#[doc = " This structure contains information about the board that does not change during run time."]
-#[doc = " It is provided by the function xhptdc8_get_static_info()."]
+#[doc = " This structure contains information about the board that does not change"]
+#[doc = " during run time. It is provided by the function xhptdc8_get_static_info()."]
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct xhptdc8_static_info {
     #[doc = " The number of bytes occupied by the structure."]
     pub size: ::std::os::raw::c_int,
-    #[doc = " A version number that is increased when the definition of the structure is changed."]
-    #[doc = " Set to XHPTDC8_STATIC_INFO_VERSION."]
+    #[doc = " A version number that is increased when the definition of the"]
+    #[doc = " structure is changed. Set to XHPTDC8_STATIC_INFO_VERSION."]
     pub version: ::std::os::raw::c_int,
     #[doc = " ID of the board."]
-    #[doc = " All xHPTDC8-PCIe boards in the system are numbered according in order of their serial numbers starting at zero."]
+    #[doc = " All xHPTDC8-PCIe boards in the system are numbered according in order"]
+    #[doc = " of their serial numbers starting at zero."]
     pub board_id: ::std::os::raw::c_int,
     #[doc = " Encoded version number for the driver."]
     #[doc = ""]
-    #[doc = " The lower three bytes contain a triple level hierarchy of version numbers."]
-    #[doc = " E.g. 0x010103 codes version 1.1.3."]
+    #[doc = " The lower three bytes contain a triple level hierarchy of version"]
+    #[doc = " numbers. E.g. 0x010103 codes version 1.1.3."]
     #[doc = ""]
-    #[doc = " A change in the first digit generally requires a recompilation of user applications."]
-    #[doc = " Change in the second digit denote significant improvements or changes that don't break compatibility"]
-    #[doc = " and the third digit changes with minor bugfixes and the like."]
+    #[doc = " A change in the first digit generally requires a recompilation of"]
+    #[doc = " user applications. Change in the second digit denote significant"]
+    #[doc = " improvements or changes that don't break compatibility and the third"]
+    #[doc = " digit changes with minor bugfixes and the like."]
     pub driver_revision: ::std::os::raw::c_int,
-    #[doc = " The build number of the driver according to cronologic's internal versioning system."]
+    #[doc = " The build number of the driver according to cronologic�s internal"]
+    #[doc = " versioning system."]
     pub driver_build_revision: ::std::os::raw::c_int,
     #[doc = " Revision number of the FPGA configuration"]
     pub firmware_revision: ::std::os::raw::c_int,
     #[doc = " Board revision number."]
     #[doc = ""]
-    #[doc = " The board revision number can be read from a register. It is a four bit number"]
-    #[doc = " that changes when the schematic of the board is changed."]
+    #[doc = " The board revision number can be read from a register. It is a four"]
+    #[doc = " bit number that changes when the schematic of the board is changed."]
     #[doc = " - 0: Experimental first board Version. Labeled \"Rev. 1\""]
     #[doc = " - 2: First commercial Version. Labeled \"Rev. 2\""]
     pub board_revision: ::std::os::raw::c_int,
@@ -886,9 +899,10 @@ pub struct xhptdc8_static_info {
     pub board_configuration: ::std::os::raw::c_int,
     #[doc = " Subversion revision id of the FPGA configuration."]
     #[doc = ""]
-    #[doc = " A number to track builds of the firmware in more detail than the firmware revision. It changes"]
-    #[doc = " with every change in the firmware, even if there is no visible effect for the user. The subversion"]
-    #[doc = " revision number can be read from a register."]
+    #[doc = " A number to track builds of the firmware in more detail than the"]
+    #[doc = " firmware revision. It changes with every change in the firmware, even"]
+    #[doc = " if there is no visible effect for the user. The subversion revision"]
+    #[doc = " number can be read from a register."]
     pub subversion_revision: ::std::os::raw::c_int,
     #[doc = " 16bit factory ID of the TDC chip."]
     #[doc = ""]
@@ -896,8 +910,8 @@ pub struct xhptdc8_static_info {
     pub chip_id: [::std::os::raw::c_int; 2usize],
     #[doc = " Serial number"]
     #[doc = ""]
-    #[doc = " With year and running number in 8.24 format. The number is identical to the one"]
-    #[doc = " printed on the silvery sticker on the board."]
+    #[doc = " With year and running number in 8.24 format. The number is identical"]
+    #[doc = " to the one printed on the silvery sticker on the board."]
     pub board_serial: ::std::os::raw::c_int,
     #[doc = " High 32 bits of 64 bit manufacturer serial number of the flash chip."]
     pub flash_serial_high: u32,
@@ -905,11 +919,13 @@ pub struct xhptdc8_static_info {
     pub flash_serial_low: u32,
     #[doc = " Calibration data read from flash is valid."]
     #[doc = ""]
-    #[doc = " If not 'false', the driver found valid calibration data in the flash on the board and is using it."]
+    #[doc = " If not 'false', the driver found valid calibration data in the flash"]
+    #[doc = " on the board and is using it."]
     pub flash_valid: crono_bool_t,
     #[doc = " Calibration date"]
     #[doc = ""]
-    #[doc = " DIN EN ISO 8601 string YYYY-MM-DD HH:DD describing the time when the card was calibrated."]
+    #[doc = " DIN EN ISO 8601 string YYYY-MM-DD HH:DD describing the time when the"]
+    #[doc = " card was calibrated."]
     pub calibration_date: [::std::os::raw::c_char; 20usize],
 }
 #[test]
@@ -1099,11 +1115,12 @@ fn bindgen_test_layout_xhptdc8_static_info() {
 extern "C" {
     #[doc = " Returns static information about the device."]
     #[doc = ""]
-    #[doc = " Gets a structure that contains information about the board that does not change during"]
-    #[doc = " run time."]
+    #[doc = " Gets a structure that contains information about the board that does not"]
+    #[doc = " change during run time."]
     #[doc = ""]
     #[doc = " @param index[in].The index of the device."]
-    #[doc = " @param info[out]. Buffer allocated and provided by the user to have a copy of the structure."]
+    #[doc = " @param info[out]. Buffer allocated and provided by the user to have a copy of"]
+    #[doc = " the structure."]
     #[doc = ""]
     #[doc = " @returns XHPTDC8_OK in case of success, or error code in case of error."]
     pub fn xhptdc8_get_static_info(
@@ -1119,7 +1136,8 @@ extern "C" {
 pub struct xhptdc8_fast_info {
     #[doc = " The number of bytes occupied by the structure"]
     pub size: ::std::os::raw::c_int,
-    #[doc = " A version number that is increased when the definition of the structure is changed."]
+    #[doc = " A version number that is increased when the definition of the"]
+    #[doc = " structure is changed."]
     #[doc = ""]
     #[doc = " Set to XHPTDC8_FAST_INFO_VERSION."]
     pub version: ::std::os::raw::c_int,
@@ -1129,8 +1147,8 @@ pub struct xhptdc8_fast_info {
     pub fpga_rpm: ::std::os::raw::c_int,
     #[doc = " Alert bits from temperature sensor and the system monitor."]
     #[doc = ""]
-    #[doc = " Bit 0 is set if the TDC temperature exceeds 140 degree C. In this case the TDC did shut down"]
-    #[doc = " and the device needs to be reinitialized."]
+    #[doc = " Bit 0 is set if the TDC temperature exceeds 140 �C. In this case the"]
+    #[doc = " TDC did shut down and the device needs to be reinitialized."]
     pub alerts: ::std::os::raw::c_int,
     #[doc = " Reports power management confguration of PCIe lanes."]
     #[doc = " Should always be 0."]
@@ -1138,7 +1156,8 @@ pub struct xhptdc8_fast_info {
     #[doc = " Number of PCIe lanes the card uses."]
     #[doc = " Should always be 1 for the xHPTDC8-PCIe."]
     pub pcie_link_width: ::std::os::raw::c_int,
-    #[doc = " Maximum size for a single PCIe transaction in bytes. Depends on system configuration."]
+    #[doc = " Maximum size for a single PCIe transaction in bytes. Depends on"]
+    #[doc = " system configuration."]
     pub pcie_max_payload: ::std::os::raw::c_int,
     #[doc = " The current state of the device."]
     #[doc = " Should be one of the values XHPTDC8_DEVICE_STATE_*"]
@@ -1244,10 +1263,11 @@ fn bindgen_test_layout_xhptdc8_fast_info() {
 extern "C" {
     #[doc = " Returns fast dynamic information about the device."]
     #[doc = ""]
-    #[doc = " This call gets a structure that contains dynamic information that can be obtained within a"]
-    #[doc = " few microseconds."]
+    #[doc = " This call gets a structure that contains dynamic information that can be"]
+    #[doc = " obtained within a few microseconds."]
     #[doc = ""]
-    #[doc = " @param info[out]. Buffer allocated and provdied by the user to have a copy of the structure."]
+    #[doc = " @param info[out]. Buffer allocated and provdied by the user to have a copy of"]
+    #[doc = " the structure."]
     #[doc = ""]
     #[doc = " @returns XHPTDC8_OK in case of success, or error code in case of error."]
     pub fn xhptdc8_get_fast_info(
@@ -1258,19 +1278,22 @@ extern "C" {
 #[doc = " Contains information that may change with configuration"]
 #[doc = ""]
 #[doc = " Structure is filled by xhptdc8_get_param_info()."]
-#[doc = " This structure contains information that changes indirectly due to configuration changes."]
+#[doc = " This structure contains information that changes indirectly due to"]
+#[doc = " configuration changes."]
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct xhptdc8_param_info {
     #[doc = " The number of bytes occupied by the structure."]
     pub size: ::std::os::raw::c_int,
-    #[doc = " A version number that is increased when the definition of the structure is changed."]
+    #[doc = " A version number that is increased when the definition of the"]
+    #[doc = " structure is changed."]
     #[doc = ""]
     #[doc = " Set to XHPTDC8_PARAM_INFO_VERSION."]
     pub version: ::std::os::raw::c_int,
     #[doc = " Binsize (in ps) of the measured TDC data."]
     #[doc = ""]
-    #[doc = " The TDC main clk is running at a frequency of 76.8 GHz resulting in a binsize of ~13.0208 ps."]
+    #[doc = " The TDC main clk is running at a frequency of 76.8 GHz resulting in a"]
+    #[doc = " binsize of ~13.0208 ps."]
     pub binsize: f64,
     #[doc = " Number of TDC channels of the board."]
     #[doc = ""]
@@ -1359,10 +1382,11 @@ fn bindgen_test_layout_xhptdc8_param_info() {
 extern "C" {
     #[doc = " Returns information that may change with configuration"]
     #[doc = ""]
-    #[doc = " Gets a structure that contains information that changes indirectly due to configuration"]
-    #[doc = " changes."]
+    #[doc = " Gets a structure that contains information that changes indirectly due to"]
+    #[doc = " configuration changes."]
     #[doc = ""]
-    #[doc = " @param info[out]. Buffer allocated and provdied by the user to have a copy of the structure."]
+    #[doc = " @param info[out]. Buffer allocated and provdied by the user to have a copy of"]
+    #[doc = " the structure."]
     #[doc = ""]
     #[doc = " @returns XHPTDC8_OK in case of success, or error code in case of error."]
     pub fn xhptdc8_get_param_info(
@@ -1372,14 +1396,16 @@ extern "C" {
 }
 #[doc = " Contains temperature measurements"]
 #[doc = ""]
-#[doc = " CAVE: TDC temp diode takes about 2.5 us after wakeup from power down to provide a valid measurement"]
-#[doc = " Structure filled by xhptdc8_get_temperature_info()"]
+#[doc = " CAVE: TDC temp diode takes about 2.5 us after wakeup from power down to"]
+#[doc = " provide a valid measurement Structure filled by"]
+#[doc = " xhptdc8_get_temperature_info()"]
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct xhptdc8_temperature_info {
     #[doc = " The number of bytes occupied by the structure"]
     pub size: ::std::os::raw::c_int,
-    #[doc = " A version number that is increased when the definition of the structure is changed."]
+    #[doc = " A version number that is increased when the definition of the"]
+    #[doc = " structure is changed."]
     #[doc = ""]
     #[doc = " Set to XHPTDC8_TEMP_INFO_VERSION."]
     pub version: ::std::os::raw::c_int,
@@ -1435,7 +1461,8 @@ extern "C" {
     #[doc = " Get temperature measurements from multiple sources on the board."]
     #[doc = ""]
     #[doc = " @param index[in]. The index of the device."]
-    #[doc = " @param info[out]. Buffer allocated and provdied by the user to have a copy of the structure."]
+    #[doc = " @param info[out]. Buffer allocated and provdied by the user to have a copy of"]
+    #[doc = " the structure."]
     #[doc = ""]
     #[doc = " @returns XHPTDC8_OK in case of success, or error code in case of error."]
     pub fn xhptdc8_get_temperature_info(
@@ -1451,17 +1478,18 @@ extern "C" {
 pub struct xhptdc8_clock_info {
     #[doc = " The number of bytes occupied by the structure."]
     pub size: ::std::os::raw::c_int,
-    #[doc = " A version number that is increased when the definition of the structure is changed."]
+    #[doc = " A version number that is increased when the definition of the"]
+    #[doc = " structure is changed."]
     #[doc = ""]
     #[doc = " Set to XHPTDC8_CLOCK_INFO_VERSION."]
     pub version: ::std::os::raw::c_int,
-    #[doc = " CDCE62005 PLL locked. Set if the jitter cleaning PLL clock synthesizer achieved lock."]
-    #[doc = " Value is either 'true' or 'false'."]
+    #[doc = " CDCE62005 PLL locked. Set if the jitter cleaning PLL clock"]
+    #[doc = " synthesizer achieved lock. Value is either 'true' or 'false'."]
     pub cdce_locked: crono_bool_t,
     #[doc = " Version information from the CDCE62005 clock synthesizer."]
     pub cdce_version: ::std::os::raw::c_int,
-    #[doc = " Source for the clock synthesizer is usually the 10MHz on board oscillator."]
-    #[doc = " Value: 'false': internal 10 MHz, 'true': LEMO clock"]
+    #[doc = " Source for the clock synthesizer is usually the 10MHz on board"]
+    #[doc = " oscillator. Value: 'false': internal 10 MHz, 'true': LEMO clock"]
     pub use_ext_clock: crono_bool_t,
     #[doc = " Set if the FPGA datapath PLLs achieved lock."]
     #[doc = " Value is either 'true' or 'false'."]
@@ -1546,7 +1574,8 @@ extern "C" {
     #[doc = " Get information on clocking configuration an status."]
     #[doc = ""]
     #[doc = " @param index[in]. The index of the device."]
-    #[doc = " @param info[out]. Buffer allocated and provdied by the user to have a copy of the structure."]
+    #[doc = " @param info[out]. Buffer allocated and provdied by the user to have a copy of"]
+    #[doc = " the structure."]
     #[doc = ""]
     #[doc = " @returns XHPTDC8_OK in case of success, or error code in case of error."]
     pub fn xhptdc8_get_clock_info(
@@ -1557,7 +1586,8 @@ extern "C" {
 extern "C" {
     #[doc = " Returns most recent error message."]
     #[doc = ""]
-    #[doc = " @param index[in]. The index of the device. If set to -1 returns error message of the manager."]
+    #[doc = " @param index[in]. The index of the device. If set to -1 returns error message"]
+    #[doc = " of the manager."]
     pub fn xhptdc8_get_last_error_message(
         index: ::std::os::raw::c_int,
     ) -> *const ::std::os::raw::c_char;
@@ -1620,29 +1650,28 @@ pub struct xhptdc8_tiger_block {
     #[doc = " It is of one of the values XHPTDC8_TIGER_*"]
     pub mode: ::std::os::raw::c_int,
     #[doc = " Inverts output polarity."]
-    #[doc = " For gating blocks, a value of 'false' enables inputs between start and stop,"]
-    #[doc = " A value of 'true' enables outputs outside that interval."]
+    #[doc = " For gating blocks, a value of 'false' enables inputs between start"]
+    #[doc = " and stop, A value of 'true' enables outputs outside that interval."]
     #[doc = " The TiGeR creates a high pulse from start to stop unless negated."]
     #[doc = " Default value is 'false'."]
     pub negate: crono_bool_t,
     #[doc = " Enables retrigger setting."]
     #[doc = " If enabled, the timer is reset to the value of the start parameter,"]
-    #[doc = " whenever the input signal is set while waiting to reach the stop time."]
-    #[doc = " Value is either 'true' or 'false'."]
-    #[doc = " Default value is 'false'"]
+    #[doc = " whenever the input signal is set while waiting to reach the stop"]
+    #[doc = " time. Value is either 'true' or 'false'. Default value is 'false'"]
     pub retrigger: crono_bool_t,
     #[doc = " Not implemented."]
     pub extend: crono_bool_t,
-    #[doc = " The start time at which the TiGeR or Gate output is set, relative to the trigger input."]
-    #[doc = " It is in multiples of 20 ns/3 = 6.6 ns."]
-    #[doc = " Must fullfil condition: 0 <= start <= stop <= (2^16 - 1)"]
+    #[doc = " The start time at which the TiGeR or Gate output is set, relative to"]
+    #[doc = " the trigger input. It is in multiples of 20 ns/3 = 6.6 ns. Must"]
+    #[doc = " fullfil condition: 0 <= start <= stop <= (2^16 - 1)"]
     pub start: ::std::os::raw::c_int,
-    #[doc = " The duration from start time in which the TiGeR or Gate output is set, relative to the trigger input."]
-    #[doc = " It is in multiples of 20 ns/3 = 6.6 ns."]
-    #[doc = " Must fullfil condition: 0 <= start <= stop <= (2^16 - 1)"]
+    #[doc = " The duration from start time in which the TiGeR or Gate output is"]
+    #[doc = " set, relative to the trigger input. It is in multiples of 20 ns/3"]
+    #[doc = " = 6.6 ns. Must fullfil condition: 0 <= start <= stop <= (2^16 - 1)"]
     pub stop: ::std::os::raw::c_int,
-    #[doc = " A bit mask with a bit set for all trigger sources that can trigger this TiGeR or Gate block."]
-    #[doc = " Default value is XHPTDC8_TRIGGER_SOURCE_A."]
+    #[doc = " A bit mask with a bit set for all trigger sources that can trigger"]
+    #[doc = " this TiGeR or Gate block. Default value is XHPTDC8_TRIGGER_SOURCE_A."]
     pub sources: ::std::os::raw::c_int,
 }
 #[test]
@@ -1728,16 +1757,16 @@ fn bindgen_test_layout_xhptdc8_tiger_block() {
         )
     );
 }
-#[doc = " For each input, this structure determines wheter rising or falling edges on the inputs create trigger"]
-#[doc = " events for the TiGeR and gating blocks."]
+#[doc = " For each input, this structure determines wheter rising or falling edges on"]
+#[doc = " the inputs create trigger events for the TiGeR and gating blocks."]
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct xhptdc8_trigger {
-    #[doc = " If set to 'true', a trigger event is created inside the FPGA at the falling edge."]
-    #[doc = " Value is either 'true' or 'false'."]
+    #[doc = " If set to 'true', a trigger event is created inside the FPGA at the"]
+    #[doc = " falling edge. Value is either 'true' or 'false'."]
     pub falling: crono_bool_t,
-    #[doc = " If set to 'true', a trigger event is created inside the FPGA at the rising edge."]
-    #[doc = " Value is either 'true' or 'false'."]
+    #[doc = " If set to 'true', a trigger event is created inside the FPGA at the"]
+    #[doc = " rising edge. Value is either 'true' or 'false'."]
     pub rising: crono_bool_t,
 }
 #[test]
@@ -1855,55 +1884,64 @@ pub struct xhptdc8_grouping_configuration {
     pub enabled: crono_bool_t,
     #[doc = " Channel number that is used to trigger the creation of a group."]
     #[doc = ""]
-    #[doc = " By default the trigger channels defines the zero point reference for the group event timestamps."]
+    #[doc = " By default the trigger channels defines the zero point reference for"]
+    #[doc = " the group event timestamps."]
     pub trigger_channel: ::std::os::raw::c_int,
     #[doc = " Use this to define additional trigger channels."]
     #[doc = " There is an OR-disjuction with the trigger_channel."]
     #[doc = ""]
     pub trigger_channel_bitmask: u64,
     #[doc = " Start of group range relative to the trigger channel."]
-    #[doc = " Values in the interval from range_start to range_stop are included in the group."]
-    #[doc = " Either or both values can be negative to create common-stop behaviour."]
-    #[doc = " -2^63 <= range_start < range_stop < 2^63"]
-    #[doc = " Intervals are always provided in picoseconds, independently of the bin size of the TDC."]
+    #[doc = " Values in the interval from range_start to range_stop are included in"]
+    #[doc = " the group. Either or both values can be negative to create"]
+    #[doc = " common-stop behaviour. -2^63 <= range_start < range_stop < 2^63"]
+    #[doc = " Intervals are always provided in picoseconds, independently of the"]
+    #[doc = " bin size of the TDC."]
     pub range_start: i64,
     #[doc = " End of group range relative to the trigger channel."]
-    #[doc = " Intervals are always provided in picoseconds, independently of the bin size of the TDC."]
+    #[doc = " Intervals are always provided in picoseconds, independently of the"]
+    #[doc = " bin size of the TDC."]
     pub range_stop: i64,
     #[doc = " Dead time before new group start trigger is recognized."]
     #[doc = " 0 <= trigger_deadtime < 2^63"]
-    #[doc = " Intervals are always provided in picoseconds, independently of the bin size of the TDC."]
+    #[doc = " Intervals are always provided in picoseconds, independently of the"]
+    #[doc = " bin size of the TDC."]
     pub trigger_deadtime: i64,
-    #[doc = " Optionally, a different channel can be used to calculate the relative timestamps in a group."]
-    #[doc = " This is disabled per default by setting this paramteer to -1."]
+    #[doc = " Optionally, a different channel can be used to calculate the relative"]
+    #[doc = " timestamps in a group. This is disabled per default by setting this"]
+    #[doc = " parameter to -1."]
     pub zero_channel: ::std::os::raw::c_int,
-    #[doc = " This offset in picoseconds is added to relative timestamps within a group."]
+    #[doc = " This offset in picoseconds is added to relative timestamps within a"]
+    #[doc = " group."]
     pub zero_channel_offset: i64,
     #[doc = " Set a bitmask of channels, a group is only created"]
     #[doc = " if there is at least one"]
     #[doc = " hit in the windows defined by windows_start and window_stop."]
     #[doc = " Usage is equivalent to trigger_channel_bitmask."]
     pub window_hit_channels: u64,
-    #[doc = " A group is only created if there is at least one hit in the window defined by"]
-    #[doc = " window_start and window_stop, and when require_window_hit is set 'true'."]
-    #[doc = " -2^63 <= window_start < window_stop < 2^63"]
-    #[doc = " Intervals are always provided in picoseconds, independently of the bin size of the TDC."]
+    #[doc = " A group is only created if there is at least one hit in the window"]
+    #[doc = " defined by window_start and window_stop, and when require_window_hit"]
+    #[doc = " is set 'true'. -2^63 <= window_start < window_stop < 2^63 Intervals"]
+    #[doc = " are always provided in picoseconds, independently of the bin size of"]
+    #[doc = " the TDC."]
     pub window_start: i64,
-    #[doc = " A group is only created if there is at least one hit in the window defined by"]
-    #[doc = " window_start and window_stop, and when require_window_hit is set 'true'."]
-    #[doc = " -2^63 <= window_start < window_stop < 2^63"]
-    #[doc = " Intervals are always provided in picoseconds, independently of the bin size of the TDC."]
+    #[doc = " A group is only created if there is at least one hit in the window"]
+    #[doc = " defined by window_start and window_stop, and when require_window_hit"]
+    #[doc = " is set 'true'. -2^63 <= window_start < window_stop < 2^63 Intervals"]
+    #[doc = " are always provided in picoseconds, independently of the bin size of"]
+    #[doc = " the TDC."]
     pub window_stop: i64,
-    #[doc = " A window defined by veto_start and veto_stop can be used to suppress hits."]
-    #[doc = " The functionality is very similar to the gating blocks but is defined in software."]
-    #[doc = " This feature can not be used to improve FIFO usage or PCIe bandwidth usage."]
-    #[doc = " It is of one of the values XHPTDC8_GROUPING_VETO_*"]
+    #[doc = " A window defined by veto_start and veto_stop can be used to suppress"]
+    #[doc = " hits. The functionality is very similar to the gating blocks but is"]
+    #[doc = " defined in software. This feature can not be used to improve FIFO"]
+    #[doc = " usage or PCIe bandwidth usage. It is of one of the values"]
+    #[doc = " XHPTDC8_GROUPING_VETO_*"]
     pub veto_mode: ::std::os::raw::c_int,
-    #[doc = " A window defined by veto_start and veto_stop can be used to suppress hits."]
-    #[doc = " -2^63 <= veto_start <= veto_stop < 2^63"]
+    #[doc = " A window defined by veto_start and veto_stop can be used to suppress"]
+    #[doc = " hits. -2^63 <= veto_start <= veto_stop < 2^63"]
     pub veto_start: i64,
-    #[doc = " A window defined by veto_start and veto_stop can be used to suppress hits."]
-    #[doc = " -2^63 <= veto_start <= veto_stop < 2^63"]
+    #[doc = " A window defined by veto_start and veto_stop can be used to suppress"]
+    #[doc = " hits. -2^63 <= veto_start <= veto_stop < 2^63"]
     pub veto_stop: i64,
     #[doc = "\tIf veto is enabled, veto filtering is active for channels"]
     #[doc = "\tdefined by a channel bitmask."]
@@ -2165,35 +2203,34 @@ fn bindgen_test_layout_xhptdc8_grouping_configuration() {
 pub struct xhptdc8_device_configuration {
     #[doc = " The number of bytes occupied by the structure."]
     pub size: ::std::os::raw::c_int,
-    #[doc = " A version number that is increased when the definition of the structure is changed."]
+    #[doc = " A version number that is increased when the definition of the"]
+    #[doc = " structure is changed."]
     #[doc = ""]
     #[doc = " Set to XHPTDC8_DEVICE_CONFIG_VERSION."]
     pub version: ::std::os::raw::c_int,
     #[doc = " Create a trigger periodically."]
     #[doc = ""]
     #[doc = " There are two parameters: M = auto_trigger_period"]
-    #[doc = " and N = auto_trigger_random_exponent that result in a distance between triggers of T clock cycles."]
-    #[doc = " T = 1 + M + [1...2^N] clock cycles."]
-    #[doc = " 0 <= M < 2^32"]
-    #[doc = " 0 <= N < 32"]
-    #[doc = " There is no enable or reset. The auto trigger is running continously."]
-    #[doc = " The usage of this trigger can be configured in the channels."]
+    #[doc = " and N = auto_trigger_random_exponent that result in a distance"]
+    #[doc = " between triggers of T clock cycles. T = 1 + M + [1...2^N] clock"]
+    #[doc = " cycles. 0 <= M < 2^32 0 <= N < 32 There is no enable or reset. The"]
+    #[doc = " auto trigger is running continously. The usage of this trigger can be"]
+    #[doc = " configured in the channels."]
     pub auto_trigger_period: ::std::os::raw::c_int,
     #[doc = " Create a trigger randomly."]
     #[doc = ""]
     #[doc = " There are two parameters: M = auto_trigger_period"]
-    #[doc = " and N = auto_trigger_random_exponent that result in a distance between triggers of T clock cycles."]
-    #[doc = " T = 1 + M + [1...2^N] clock cycles."]
-    #[doc = " 0 <= M < 2^32"]
-    #[doc = " 0 <= N < 32"]
-    #[doc = " There is no enable or reset. The auto trigger is running continously."]
-    #[doc = " The usage of this trigger can be configured in the channels."]
+    #[doc = " and N = auto_trigger_random_exponent that result in a distance"]
+    #[doc = " between triggers of T clock cycles. T = 1 + M + [1...2^N] clock"]
+    #[doc = " cycles. 0 <= M < 2^32 0 <= N < 32 There is no enable or reset. The"]
+    #[doc = " auto trigger is running continously. The usage of this trigger can be"]
+    #[doc = " configured in the channels."]
     pub auto_trigger_random_exponent: ::std::os::raw::c_int,
     #[doc = " Set the threshold voltage for the input channels A . . .H."]
     #[doc = " threshold[0 - 7] : threshold for channels A...H."]
-    #[doc = " Supported range is -1.32 V to +1.18 V. This should be close to 50% of the height of the input pulse."]
-    #[doc = " The inputs are AC coupled."]
-    #[doc = " Examples for various signaling standards are defined as XHPTDC8_THRESHOLD_*."]
+    #[doc = " Supported range is -1.32 V to +1.18 V. This should be close to 50% of"]
+    #[doc = " the height of the input pulse. The inputs are AC coupled. Examples"]
+    #[doc = " for various signaling standards are defined as XHPTDC8_THRESHOLD_*."]
     pub trigger_threshold: [f64; 8usize],
     #[doc = " Configuration of the polarity of the external trigger sources."]
     pub trigger: [xhptdc8_trigger; 16usize],
@@ -2206,22 +2243,30 @@ pub struct xhptdc8_device_configuration {
     #[doc = " Configuration of ADC channel."]
     pub adc_channel: xhptdc8_adc_channel,
     #[doc = " Configure TDC alignemet"]
-    #[doc = " If set to 'true', the phase of the two TDC chips is not realigned when capturing is restartet."]
-    #[doc = " If set to 'false', it will be realigned on start_capture() (default)."]
-    #[doc = " Should usually be left unchanged."]
-    #[doc = " Value is either 'true' or 'false'."]
+    #[doc = " If set to 'true', the phase of the two TDC chips is not realigned"]
+    #[doc = " when capturing is restartet. If set to 'false', it will be realigned"]
+    #[doc = " on start_capture() (default). Should usually be left unchanged. Value"]
+    #[doc = " is either 'true' or 'false'."]
     pub skip_alignment: crono_bool_t,
-    #[doc = " Define a signal source that is used for TDC alignment. Should usually be left unchanged."]
-    #[doc = " If set to XHPTDC8_ALIGN_TIGER use TiGeR pulse for alignment (pulses are present on LEMO inputs during alignment)."]
-    #[doc = " If set to XHPTDC8_ALIGN_PIN use internal alignment pins for alignment (no pulses are present on LEMO inputs during alignment)."]
-    #[doc = " If set to XHPTDC8_ALIGN_RESERVED use internal alignment pins for alignment and do not disable after alignment (internal use only)."]
+    #[doc = " Define a signal source that is used for TDC alignment. Should usually"]
+    #[doc = " be left unchanged. If set to XHPTDC8_ALIGN_TIGER use TiGeR pulse for"]
+    #[doc = " alignment (pulses are present on LEMO inputs during alignment). If"]
+    #[doc = " set to XHPTDC8_ALIGN_PIN use internal alignment pins for alignment"]
+    #[doc = " (no pulses are present on LEMO inputs during alignment). If set to"]
+    #[doc = " XHPTDC8_ALIGN_RESERVED use internal alignment pins for alignment and"]
+    #[doc = " do not disable after alignment (internal use only)."]
     pub alignment_source: ::std::os::raw::c_int,
+    #[doc = " Select TDC alignment pin state when not in use."]
+    #[doc = " If set to 0 set to GND."]
+    #[doc = " If set to 1 set to VCCIO."]
+    #[doc = " If set to 2 set to high-Z."]
+    pub alignment_off_state: ::std::os::raw::c_int,
 }
 #[test]
 fn bindgen_test_layout_xhptdc8_device_configuration() {
     assert_eq!(
         ::std::mem::size_of::<xhptdc8_device_configuration>(),
-        496usize,
+        504usize,
         concat!("Size of: ", stringify!(xhptdc8_device_configuration))
     );
     assert_eq!(
@@ -2381,6 +2426,19 @@ fn bindgen_test_layout_xhptdc8_device_configuration() {
             stringify!(alignment_source)
         )
     );
+    assert_eq!(
+        unsafe {
+            &(*(::std::ptr::null::<xhptdc8_device_configuration>())).alignment_off_state as *const _
+                as usize
+        },
+        496usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(xhptdc8_device_configuration),
+            "::",
+            stringify!(alignment_off_state)
+        )
+    );
 }
 #[doc = " Contains global configuration information."]
 #[repr(C)]
@@ -2388,12 +2446,14 @@ fn bindgen_test_layout_xhptdc8_device_configuration() {
 pub struct xhptdc8_manager_configuration {
     #[doc = " The number of bytes occupied by the structure."]
     pub size: ::std::os::raw::c_int,
-    #[doc = " A version number that is increased when the definition of the structure is changed."]
+    #[doc = " A version number that is increased when the definition of the"]
+    #[doc = " structure is changed."]
     #[doc = ""]
     #[doc = " Set to XHPTDC8_MANAGER_CONFIG_VERSION."]
     pub version: ::std::os::raw::c_int,
-    #[doc = " A structure with the configuration for an individual xHPTDC8-PCIe board."]
-    #[doc = " Use the function xhptdc8_count_devices() to query how many entries contain valid information."]
+    #[doc = " A structure with the configuration for an individual xHPTDC8-PCIe"]
+    #[doc = " board. Use the function xhptdc8_count_devices() to query how many"]
+    #[doc = " entries contain valid information."]
     pub device_configs: [xhptdc8_device_configuration; 6usize],
     #[doc = " Structure with the parameters for grouping."]
     pub grouping: xhptdc8_grouping_configuration,
@@ -2404,7 +2464,7 @@ pub struct xhptdc8_manager_configuration {
 fn bindgen_test_layout_xhptdc8_manager_configuration() {
     assert_eq!(
         ::std::mem::size_of::<xhptdc8_manager_configuration>(),
-        3112usize,
+        3160usize,
         concat!("Size of: ", stringify!(xhptdc8_manager_configuration))
     );
     assert_eq!(
@@ -2453,7 +2513,7 @@ fn bindgen_test_layout_xhptdc8_manager_configuration() {
         unsafe {
             &(*(::std::ptr::null::<xhptdc8_manager_configuration>())).grouping as *const _ as usize
         },
-        2984usize,
+        3032usize,
         concat!(
             "Offset of field: ",
             stringify!(xhptdc8_manager_configuration),
@@ -2465,7 +2525,7 @@ fn bindgen_test_layout_xhptdc8_manager_configuration() {
         unsafe {
             &(*(::std::ptr::null::<xhptdc8_manager_configuration>())).bin_to_ps as *const _ as usize
         },
-        3104usize,
+        3152usize,
         concat!(
             "Offset of field: ",
             stringify!(xhptdc8_manager_configuration),
@@ -2475,7 +2535,8 @@ fn bindgen_test_layout_xhptdc8_manager_configuration() {
     );
 }
 extern "C" {
-    #[doc = " Gets default manager configuration. Copies the default configuration to the specified config pointer."]
+    #[doc = " Gets default manager configuration. Copies the default configuration to the"]
+    #[doc = " specified config pointer."]
     #[doc = ""]
     #[doc = " @param mgr_config[out]."]
     #[doc = ""]
@@ -2485,7 +2546,8 @@ extern "C" {
     ) -> ::std::os::raw::c_int;
 }
 extern "C" {
-    #[doc = " Gets current configuration. Copies the current configuration to the specified config pointer."]
+    #[doc = " Gets current configuration. Copies the current configuration to the specified"]
+    #[doc = " config pointer."]
     #[doc = ""]
     #[doc = " @param mgr_config[out]."]
     #[doc = ""]
@@ -2495,7 +2557,8 @@ extern "C" {
     ) -> ::std::os::raw::c_int;
 }
 extern "C" {
-    #[doc = " Configures the xHPTDC8 manager. The config information is copied, so can be changed afterwards."]
+    #[doc = " Configures the xHPTDC8 manager. The config information is copied, so can be"]
+    #[doc = " changed afterwards."]
     #[doc = ""]
     #[doc = " @param mgr_config[out]."]
     #[doc = ""]
@@ -2505,13 +2568,16 @@ extern "C" {
     ) -> ::std::os::raw::c_int;
 }
 extern "C" {
-    #[doc = " Returns the number of boards present in the system that are supported by this driver."]
+    #[doc = " Returns the number of boards present in the system that are supported by this"]
+    #[doc = " driver."]
     #[doc = ""]
-    #[doc = " @param error_code[out]. In case of success, it is assigned the value {0}, otherwise,"]
-    #[doc = " it is assigned the relevant error code."]
-    #[doc = " @param error_message[out]. In case of error, it is assigned the error message."]
+    #[doc = " @param error_code[out]. In case of success, it is assigned the value {0},"]
+    #[doc = " otherwise, it is assigned the relevant error code."]
+    #[doc = " @param error_message[out]. In case of error, it is assigned the error"]
+    #[doc = " message."]
     #[doc = ""]
-    #[doc = " @returns The number of boards present in the system that are supported by this driver."]
+    #[doc = " @returns The number of boards present in the system that are supported by"]
+    #[doc = " this driver."]
     pub fn xhptdc8_count_devices(
         error_code: *mut ::std::os::raw::c_int,
         error_message: *mut *const ::std::os::raw::c_char,
@@ -2520,8 +2586,8 @@ extern "C" {
 extern "C" {
     #[doc = "\tSets up the standard parameters."]
     #[doc = ""]
-    #[doc = " Gets a set of default parameters for xhptdc8_init(). This must always be used to initialize"]
-    #[doc = " the xtdc8manager_init_parameters structure."]
+    #[doc = " Gets a set of default parameters for xhptdc8_init(). This must always be used"]
+    #[doc = " to initialize the xtdc8manager_init_parameters structure."]
     #[doc = ""]
     #[doc = " @param init[in]."]
     #[doc = ""]
@@ -2533,19 +2599,21 @@ extern "C" {
 extern "C" {
     #[doc = " Opens and initializes all xHPTDC8-PCIe boards."]
     #[doc = ""]
-    #[doc = " @param init[in]. A structure of type xhptdc8_manager_init_parameters that must be completely initialized."]
+    #[doc = " @param init[in]. A structure of type xhptdc8_manager_init_parameters that"]
+    #[doc = " must be completely initialized."]
     #[doc = ""]
     #[doc = " @returns XHPTDC8_OK in case of success, or error code in case of error."]
     pub fn xhptdc8_init(params: *mut xhptdc8_manager_init_parameters) -> ::std::os::raw::c_int;
 }
 extern "C" {
-    #[doc = " Returns the driver version, same format as xhptdc8_static_info.driver_revision. This function does"]
-    #[doc = " not require a xHPTDC8-PCIe board to be present."]
+    #[doc = " Returns the driver version, same format as"]
+    #[doc = " xhptdc8_static_info.driver_revision. This function does not require a"]
+    #[doc = " xHPTDC8-PCIe board to be present."]
     pub fn xhptdc8_get_driver_revision() -> ::std::os::raw::c_int;
 }
 extern "C" {
-    #[doc = " Returns the driver version including SVN build revision as a string. This function does"]
-    #[doc = " not require a xHPTDC8-PCIe board to be present."]
+    #[doc = " Returns the driver version including SVN build revision as a string. This"]
+    #[doc = " function does not require a xHPTDC8-PCIe board to be present."]
     pub fn xhptdc8_get_driver_revision_str() -> *const ::std::os::raw::c_char;
 }
 extern "C" {
