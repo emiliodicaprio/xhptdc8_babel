@@ -3,11 +3,12 @@ name: Dummy Library MSBuild
 # 1. Builds the Dummy Library Release x64 & x86 DLL & Lib, using MSBuild
 # 2. Copies the DLLs & Libs to the corresponding folders on ./lib repository folder, and commits
 
-on: 
-  push:
-    paths:
-    - 'dummy/**'
-    - 'lib/include/**'
+# on: workflow_dispatch
+#on: 
+#  push:
+#    paths:
+#    - 'dummy/**'
+#    - 'lib/include/**'
 env:
   # Configuration type to build.
   # You can convert this to a build matrix if you need coverage of multiple configuration types.
