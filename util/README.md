@@ -217,7 +217,7 @@ Here is the complete elements of the manager configuration sturcture, including 
 ```YAML
 manager_config:
  device_configs:
-  0:
+  0:                                  # configuration for the first device
    auto_trigger_period : 200
    auto_trigger_random_exponent : 20
    trigger_threshold :
@@ -263,7 +263,8 @@ manager_config:
    skip_alignment : false
    alignment_source : 1
    alignment_off_state : 0
- grouping :
+
+ grouping :                           # grouping configuration
   enabled : true
   trigger_channel : 0
   trigger_channel_bitmask : 0
@@ -282,6 +283,7 @@ manager_config:
   veto_relative_to_zero : true
   ignore_empty_events : false
   overlap : false
+...                                   # end of configuration data
 ```
 ### display_all_error_messages
 The driver function `get_last_error_message()` needs to be provided with an index that selects the manager or one of the boards, that can be inconvenient.

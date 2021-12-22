@@ -175,7 +175,9 @@
     <None Include="cpp.hint" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\lib\include\xHPTDC8_interface.h" />
     <ClInclude Include="..\..\..\lib\include\xhptdc8_util.h" />
+    <ClInclude Include="..\src\xhptdc8_util_yaml.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\dllmain.cpp">

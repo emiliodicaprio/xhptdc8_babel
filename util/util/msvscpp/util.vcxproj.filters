@@ -21,6 +21,12 @@
     <ClInclude Include="..\..\..\lib\include\xhptdc8_util.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\xhptdc8_util_yaml.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\lib\include\xHPTDC8_interface.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\dllmain.cpp">
