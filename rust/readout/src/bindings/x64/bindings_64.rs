@@ -227,7 +227,7 @@ pub const XHPTDC8_APPLY_YAML_INVALID_GROUPING_VETO_START: i32 = -103;
 pub const XHPTDC8_APPLY_YAML_INVALID_GROUPING_VETO_STOP: i32 = -104;
 pub const XHPTDC8_APPLY_YAML_ERR_TGRBLCKS_EXCEED_MAX: i32 = -120;
 pub const XHPTDC8_APPLY_YAML_TGRBLCK_INVALID_MODE: i32 = -121;
-pub const XHPTDC8_APPLY_YAML_TGRBLCK_INVALID_NEGATE: i32 = -121;
+pub const XHPTDC8_APPLY_YAML_TGRBLCK_INVALID_NEGATE: i32 = -122;
 pub const XHPTDC8_APPLY_YAML_TGRBLCK_INVALID_RETRIG: i32 = -123;
 pub const XHPTDC8_APPLY_YAML_TGRBLCK_INVALID_START: i32 = -124;
 pub const XHPTDC8_APPLY_YAML_TGRBLCK_INVALID_STOP: i32 = -125;
@@ -2617,5 +2617,12 @@ extern "C" {
     pub fn xhptdc8_get_all_error_messages(
         include_ok: crono_bool_t,
         fixed_length: crono_bool_t,
+    ) -> *const ::std::os::raw::c_char;
+}
+extern "C" {
+    #[doc = " @returns null-terminated error message of YAML error code `err_code`."]
+    #[doc = " The pointer should not be deallocated using `delete` or similar deallocation functions."]
+    pub fn xhptdc8_get_err_message(
+        err_code: ::std::os::raw::c_int,
     ) -> *const ::std::os::raw::c_char;
 }
