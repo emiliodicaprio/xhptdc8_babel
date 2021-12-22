@@ -1,13 +1,3 @@
-
-
-
-
-
-
-
-
-
-
 name: Util Test MSBuild
 
 on: 
@@ -55,7 +45,9 @@ jobs:
       # See https://docs.microsoft.com/visualstudio/msbuild/msbuild-command-line-reference
       run: |
         msbuild ${{env.SOLUTION_FILE_PATH}} /m /property:Configuration=Release /property:Platform=${{env.BUILD_PLATFORM}}
+        ls ${{env.X86_REPO_EXE_PATH}}
         Copy-Item ${{env.X86_OUTPUT_DIR}}${{env.X86_EXE_NAME}} -Destination ${{env.X86_REPO_EXE_PATH}}
+        ls ${{env.X86_REPO_EXE_PATH}}
         
     - name: Commit x86 EXE
       uses: EndBug/add-and-commit@v7.0.0
