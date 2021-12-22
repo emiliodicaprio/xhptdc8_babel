@@ -702,7 +702,8 @@ impl Default for TDCHit {
 
 impl Default for xhptdc8_device_configuration {
     fn default () -> xhptdc8_device_configuration {
-        xhptdc8_device_configuration{size:0, version:0, auto_trigger_period:0, auto_trigger_random_exponent:0,
+        xhptdc8_device_configuration{alignment_off_state: 0, size:0, version:0, 
+            auto_trigger_period:0, auto_trigger_random_exponent:0,
             trigger_threshold:[0.0;8], trigger:[xhptdc8_trigger::default();16], 
             gating_block:[xhptdc8_tiger_block::default();8], tiger_block:[xhptdc8_tiger_block::default();9],
             channel:[xhptdc8_channel::default();8], adc_channel: xhptdc8_adc_channel::default(),
