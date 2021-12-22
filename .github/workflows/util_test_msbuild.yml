@@ -1,11 +1,11 @@
 name: Util Test MSBuild
 
-on: workflow_dispatch
-#  push:
-#    paths:
-#    - 'util/util_test/**'
-#    - 'lib/include/**'
-    
+# on: workflow_dispatch
+on: 
+  push:
+    paths:
+    - 'util/util_test/**'
+    - 'lib/include/**'    
 env:
   # Configuration type to build.
   # You can convert this to a build matrix if you need coverage of multiple configuration types.
@@ -45,9 +45,7 @@ jobs:
       # See https://docs.microsoft.com/visualstudio/msbuild/msbuild-command-line-reference
       run: |
         msbuild ${{env.SOLUTION_FILE_PATH}} /m /property:Configuration=Release /property:Platform=${{env.BUILD_PLATFORM}}
-        ls ${{env.X86_REPO_EXE_PATH}}
         Copy-Item ${{env.X86_OUTPUT_DIR}}${{env.X86_EXE_NAME}} -Destination ${{env.X86_REPO_EXE_PATH}}
-        ls ${{env.X86_REPO_EXE_PATH}}
         
     - name: Commit x86 EXE
       uses: EndBug/add-and-commit@v7.0.0
