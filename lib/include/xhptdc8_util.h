@@ -86,7 +86,7 @@ extern "C" {
 	#define XHPTDC8_APPLY_YAML_INVALID_GROUPING_VETO_STOP	-104// Invalid "grouping" value of "veto_stop"
 	#define XHPTDC8_APPLY_YAML_ERR_TGRBLCKS_EXCEED_MAX	-120	// "tiger_block" array index exceeds XHPTDC8_TIGER_COUNT
 	#define XHPTDC8_APPLY_YAML_TGRBLCK_INVALID_MODE		-121	// Invalid "tiger_block" value of "mode"
-	#define XHPTDC8_APPLY_YAML_TGRBLCK_INVALID_NEGATE	-121	// Invalid "tiger_block" value of "negate"
+	#define XHPTDC8_APPLY_YAML_TGRBLCK_INVALID_NEGATE	-122	// Invalid "tiger_block" value of "negate"
 	#define XHPTDC8_APPLY_YAML_TGRBLCK_INVALID_RETRIG	-123	// Invalid "tiger_block" value of "retrigger"
 	#define XHPTDC8_APPLY_YAML_TGRBLCK_INVALID_START	-124	// Invalid "tiger_block" value of "start"
 	#define XHPTDC8_APPLY_YAML_TGRBLCK_INVALID_STOP		-125	// Invalid "tiger_block" value of "stop"
@@ -104,6 +104,12 @@ extern "C" {
 	* The pointer should not be deallocated using `delete` or similar deallocation functions.
 	*/
 	XHPTDC8_UTIL_API const char* xhptdc8_get_all_error_messages(crono_bool_t include_ok, crono_bool_t fixed_length);
+
+	/**
+	* @returns null-terminated error message of YAML error code `err_code`.
+	* The pointer should not be deallocated using `delete` or similar deallocation functions.
+	*/
+	XHPTDC8_UTIL_API const char* xhptdc8_get_err_message(int err_code);
 
 #ifdef __cplusplus
 }

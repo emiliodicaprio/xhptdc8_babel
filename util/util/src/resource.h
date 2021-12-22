@@ -1,7 +1,7 @@
 //{{NO_DEPENDENCIES}}
 // Microsoft Visual C++ generated include file.
 // Used by util.rc
-
+#include "xhptdc8_util.h"
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED

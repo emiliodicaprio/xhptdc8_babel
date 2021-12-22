@@ -20,6 +20,9 @@ namespace apply_yaml
 	{
 		hMgr_INIT_BLOCK;
 		int apply_yaml_result = xhptdc8_apply_yaml(cfg, yaml_string.c_str());
+		if (apply_yaml_result < 0) {
+			Logger::WriteMessage(xhptdc8_get_err_message(apply_yaml_result));
+		}
 		delete cfg;
 		hMgr_CLEANUP_BLOCK;
 		return apply_yaml_result;
