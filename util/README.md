@@ -398,7 +398,7 @@ Guidleines as per `namespace apply_yaml`:
 ### Log Message
 In case you needed to log message, you can use the following:
 ```C
-			Logger::WriteMessage(err_messages_str.c_str());
+Logger::WriteMessage(err_messages_str.c_str());
 ```
 
 ___________________________
