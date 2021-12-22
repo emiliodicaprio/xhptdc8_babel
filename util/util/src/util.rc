@@ -145,7 +145,7 @@ BEGIN
     XHPTDC8_APPLY_YAML_INVALID_TRIGGER_RISING 
                             "Invalid ""trigger"" value of ""rising"""
     XHPTDC8_APPLY_YAML_INVALID_TRIGGER_FALL 
-                            " Invalid ""trigger"" value of ""falling"""
+                            "Invalid ""trigger"" value of ""falling"""
 END
 
 STRINGTABLE

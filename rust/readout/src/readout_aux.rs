@@ -43,13 +43,18 @@ const DEFAULT_SLEEP_MS : u64 = 100 ;
  */
 pub fn init_globals() -> i32 
 {
+    let error_message : *const raw::c_char;
+
     print!("\nInitializing xHPTDC8 device...") ;
 	let mut params = xhptdc8_manager_init_parameters::default() ;
 	let error_code : raw::c_int;
     unsafe {
         error_code = xhptdc8_init(&mut params);
         if error_code != XHPTDC8_OK.try_into().unwrap() {
-            println!("{}", "Error"/*.red().bold()*/) ;
+            error_message = xhptdc8_get_last_error_message(error_code);
+            let err_msg_cs = CStr::from_ptr(error_message).to_owned() ;
+            println!("{} {:?}", "Error: "/*.red().bold()*/, err_msg_cs) ;
+
             return -1
         }
     }
@@ -228,6 +233,7 @@ pub fn display_about() {
 pub fn apply_yamls(yaml_files_names: Vec<String>) -> i32 {
     let mut ret : i32;
     let mut cfg = xhptdc8_manager_configuration::default();
+    let error_message : *const raw::c_char;
 
     println!("Getting default configuration") ;
     unsafe {
@@ -253,8 +259,7 @@ pub fn apply_yamls(yaml_files_names: Vec<String>) -> i32 {
                 if  ret < 0 {
                     let err_msg: *const raw::c_char ;
                     err_msg = xhptdc8_get_err_message(ret);
-                    let err_msg_cs = CStr::from_ptr(err_msg) ;
-                    let err_msg_cs = err_msg_cs.to_owned();
+                    let err_msg_cs = CStr::from_ptr(err_msg).to_owned() ;
                     // Errro is displayed as "Invalid \"gating_block\" value of \"retrigger\""
                     // Remove the `\"`, note that the string has no backslash , 
                     // what you see in the code or the output are the escape characters.
@@ -276,7 +281,9 @@ pub fn apply_yamls(yaml_files_names: Vec<String>) -> i32 {
     unsafe {
         ret = xhptdc8_configure(&mut cfg);             
         if  ret != XHPTDC8_OK.try_into().unwrap() {
-            println!(" {}: {} ", "Error"/*.red().bold()*/, ret.to_string());
+            error_message = xhptdc8_get_last_error_message(0);
+            let err_msg_cs = CStr::from_ptr(error_message).to_owned() ;
+            println!(" {}: {} {:?} ", "Error"/*.red().bold()*/, ret.to_string(), err_msg_cs);
             return -1;
         } else {
             println!("{}", "Done"/*.green().bold()*/);    
@@ -515,8 +522,12 @@ pub fn acquire(output_file:&mut String, is_binary: bool, hits_no: u32, files_no:
         unsafe {
             if !started_capture {
                 let ret = xhptdc8_start_capture();
+                let error_message : *const raw::c_char;
+                error_message = xhptdc8_get_last_error_message(ret);
+                let err_msg_cs = CStr::from_ptr(error_message).to_owned() ;
                 match ret {
-                4 | 17 => panic!("{}: {}", "Error start capturing"/*.red()*/, ret.to_string()/*.red()*/) ,
+                4 | 17 => panic!("{}: {} - {:?}", "Error start capturing"/*.red()*/, 
+                    ret.to_string()/*.red()*/, err_msg_cs) ,
                 _ => { started_capture = true;  },
                 };
             }
