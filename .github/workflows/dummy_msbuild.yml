@@ -3,7 +3,7 @@ name: Dummy Library MSBuild
 # 1. Builds the Dummy Library Release x64 & x86 DLL & Lib, using MSBuild
 # 2. Copies the DLLs & Libs to the corresponding folders on ./lib repository folder, and commits
 
-# on: workflow_dispatch
+on: workflow_dispatch
 #on: 
 #  push:
 #    paths:
