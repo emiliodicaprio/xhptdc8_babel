@@ -1,10 +1,10 @@
 name: Util Test MSBuild
 
-on: 
-  push:
-    paths:
-    - 'util/util_test/**'
-    - 'lib/include/**'
+on: workflow_dispatch
+#  push:
+#    paths:
+#    - 'util/util_test/**'
+#    - 'lib/include/**'
     
 env:
   # Configuration type to build.
