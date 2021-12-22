@@ -47,6 +47,7 @@ extern "C" {
 	#define XHPTDC8_APPLY_YAML_INVALID_AUTO_TRIG_RAND	-33		// Invalid value of "auto_trigger_random_exponent"
 	#define XHPTDC8_APPLY_YAML_INVALID_SKIP_ALGNMT		-34		// Invalid value of "skip_alignment"
 	#define XHPTDC8_APPLY_YAML_INVALID_ALGNMT_SRCE		-35		// Invalid value of "alignment_source"
+    #define XHPTDC8_APPLY_YAML_INVALID_ALGNMT_OFFSTAT	-36		// Invalid value of "alignment_off_state"
 	#define XHPTDC8_APPLY_YAML_THRESHOLDS_EXCEED_MAX	-40		// "trigger_threshold" array index exceeds XHPTDC8_TDC_CHANNEL_COUNT
 	#define XHPTDC8_APPLY_YAML_INVALID_THRESHOLD		-41		// Invalid value of "trigger_threshold" array element 
 	#define XHPTDC8_APPLY_YAML_INVALID_THRESHOLD_STRUCT	-42		// "trigger_threshold" is not an array map, or index is invalid

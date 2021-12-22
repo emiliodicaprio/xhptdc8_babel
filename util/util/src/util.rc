@@ -118,6 +118,8 @@ BEGIN
                             "Invalid value of ""trigger_threshold"" array element "
     XHPTDC8_APPLY_YAML_THRESHOLDS_EXCEED_MAX 
                             """trigger_threshold"" array index exceeds XHPTDC8_TDC_CHANNEL_COUNT"
+    XHPTDC8_APPLY_YAML_INVALID_ALGNMT_OFFSTAT 
+                            "Invalid value of ""alignment_off_state"""
     XHPTDC8_APPLY_YAML_INVALID_ALGNMT_SRCE 
                             "Invalid value of ""alignment_source"""
     XHPTDC8_APPLY_YAML_INVALID_SKIP_ALGNMT 

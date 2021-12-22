@@ -988,6 +988,11 @@ int xhptdc8_apply_device_config_yaml(const ryml::NodeRef* device_config_node,
         (0 == val) || (1 == val) || (2 == val),
         device_config->alignment_source, XHPTDC8_APPLY_YAML_INVALID_ALGNMT_SRCE);
 
+    // alignment_source
+    APPLY_CHILD_INTEGER_VALUE((*device_config_node), "alignment_off_state",
+        (0 == val) || (1 == val) || (2 == val),
+        device_config->alignment_off_state, XHPTDC8_APPLY_YAML_INVALID_ALGNMT_OFFSTAT);
+
     return 1;
 }
 
