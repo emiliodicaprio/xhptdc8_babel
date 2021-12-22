@@ -82,7 +82,8 @@ bindgen = "0.58.1"
    ```
    - Used [wrapper.h](https://github.com/cronologic-de/xhptdc8_babel/blob/main/rust/readout/wrapper.h) to include the needed headers.
    - Saves `bindings.rs` (x86) and `bindings_64.rs`(x64) on [.\rust\readout\src\bindings](https://github.com/cronologic-de/xhptdc8_babel/tree/main/rust/readout/src/bindings). 
- 
+   - When updating APIs in any other DLLs (e.g. util, driver), you need to make sure both the updated .dll and .lib are copied to `RUSTC_LINK_SEARCH` path, and you do `cargo clean` before building.
+  
 * Included the generated `bingings.rs` file in the code, in [readout_aux](https://github.com/cronologic-de/xhptdc8_babel/blob/main/rust/readout/src/readout_aux.rs).
 ```RUST
 #[cfg(target_arch="x86")]
