@@ -55,28 +55,24 @@ set(CRONO_DEP_PKG_DIR
 set(CRONO_DEP_PKG_INC_DIR       ${CRONO_DEP_PKG_DIR}/include)
 
 # Include directories paths ___________________________________________________
-include_directories(${CRONO_TARGET_NAME} PRIVATE 
-        ${PROJ_SRC_INDIR}/include
-        # Include dependency folder
-        ${CRONO_DEP_PKG_INC_DIR}
-)
+include_directories(${CRONO_TARGET_NAME} PRIVATE ${CRONO_DEP_PKG_INC_DIR})
 
 # Link to xhptdc8_driver library ________________________________________
 IF(CRONO_GEN_ARCH STREQUAL "x86" AND CRONO_GEN_PLATFORM STREQUAL "windows")
         add_library(xhptdc8_driver SHARED IMPORTED GLOBAL)
         set_target_properties(xhptdc8_driver PROPERTIES IMPORTED_IMPLIB 
-        xhptdc8_driver.lib)  
-        set(CRONO_DEP_PKG_LIB_DIR     ${CRONO_DEP_PKG_DIR}/x86)
-        set(CRONO_XHPTDC8_LIB_NAME      xhptdc8_driver.lib)
+                xhptdc8_driver.lib)  
+        set(CRONO_DEP_PKG_LIB_DIR ${CRONO_DEP_PKG_DIR}/x86)
+        set(CRONO_XHPTDC8_LIB_NAME xhptdc8_driver.lib)
 ELSEIF(CRONO_GEN_ARCH STREQUAL "x86_64" AND CRONO_GEN_PLATFORM STREQUAL "windows")
         add_library(xhptdc8_driver_64 SHARED IMPORTED GLOBAL)
         set_target_properties(xhptdc8_driver_64 PROPERTIES IMPORTED_IMPLIB 
-        xhptdc8_driver_64.lib)  
-        set(CRONO_DEP_PKG_LIB_DIR     ${CRONO_DEP_PKG_DIR}/x64)
-        set(CRONO_XHPTDC8_LIB_NAME      xhptdc8_driver_64.lib)
+                xhptdc8_driver_64.lib)  
+        set(CRONO_DEP_PKG_LIB_DIR ${CRONO_DEP_PKG_DIR}/x64)
+        set(CRONO_XHPTDC8_LIB_NAME xhptdc8_driver_64.lib)
 ELSEIF(CRONO_GEN_PLATFORM STREQUAL "linux")
-        set(CRONO_DEP_PKG_LIB_DIR     ${CRONO_DEP_PKG_DIR}/x64)
-        set(CRONO_XHPTDC8_LIB_NAME      xhptdc8_driver.a)
+        set(CRONO_DEP_PKG_LIB_DIR ${CRONO_DEP_PKG_DIR}/x64)
+        set(CRONO_XHPTDC8_LIB_NAME xhptdc8_driver.a)
 ENDIF()
 link_directories(${CRONO_DEP_PKG_LIB_DIR})
 
@@ -98,35 +94,56 @@ add_executable(${CRONO_TARGET_NAME}
 
 # Windows-specific Configurations _____________________________________________
 IF ( CRONO_GEN_PLATFORM  STREQUAL "windows")
-        IF(         CRONO_GEN_ARCH STREQUAL "x86" 
-                AND CRONO_GEN_PLATFORM STREQUAL "windows")
+        IF( CRONO_GEN_ARCH STREQUAL "x86" 
+            AND CRONO_GEN_PLATFORM STREQUAL "windows")
                 target_link_libraries(${CRONO_TARGET_NAME} xhptdc8_driver)
-        ELSEIF(     CRONO_GEN_ARCH STREQUAL "x86_64" 
+        ELSEIF( CRONO_GEN_ARCH STREQUAL "x86_64" 
                 AND CRONO_GEN_PLATFORM STREQUAL "windows")
                 target_link_libraries(${CRONO_TARGET_NAME} xhptdc8_driver_64)
         ENDIF()
+
+        # Command that copies the corresponding library to the output folder
+        string(
+        APPEND _copy_cmd
+                "xcopy;/c;/f;/y;\"${CRONO_DEP_PKG_LIB_DIR}/*.*\";"
+                "\"${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/$<IF:$<CONFIG:Debug>,Debug,Release>\""
+        )
+
 # Linux-specific Configurations _______________________________________________
 ELSEIF (CRONO_GEN_PLATFORM STREQUAL "linux") 
-        # Compilation options _________________________________________________ 
-        add_compile_options(-Wall $<$<CONFIG:Debug>:-g>)
-        add_compile_definitions($<$<CONFIG:Debug>:CRONO_DEBUG_ENABLED>)
-        if (NOT CMAKE_BUILD_TYPE)
+        # Compilation options 
+        IF(NOT CMAKE_BUILD_TYPE)
                 message(STATUS  
                         "Crono: assuming build type is `Release` as none was specified.")
                 set(CMAKE_BUILD_TYPE Release)
-        endif()
+        ENDIF()
+        IF("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
+                add_compile_options(-Wall -g>)
+                add_compile_definitions(CRONO_DEBUG_ENABLED)
+        ENDIF()
+
+        # Adjust .o files names, remove .cpp from .o file name
+        set(CMAKE_CXX_OUTPUT_EXTENSION_REPLACE ON) 
+        
+        # Link to xhptdc8_driver library 
+        add_library(xhptdc8_driver STATIC IMPORTED GLOBAL)
+        set_target_properties(xhptdc8_driver PROPERTIES IMPORTED_IMPLIB xhptdc8_driver.a)  
+        target_link_libraries(${CRONO_TARGET_NAME} xhptdc8_driver.a)
 
         # Rename the library with prefix `lib` for the linker to find it
         add_custom_command(TARGET ${CRONO_TARGET_NAME} PRE_BUILD 
                 COMMAND "cp" ${CRONO_DEP_PKG_LIB_DIR}/xhptdc8_driver.a 
                         ${CRONO_DEP_PKG_LIB_DIR}/libxhptdc8_driver.a)
 
-        # Link to xhptdc8_driver library ________________________________________
-        add_library(xhptdc8_driver STATIC IMPORTED GLOBAL)
-        set_target_properties(xhptdc8_driver PROPERTIES IMPORTED_IMPLIB xhptdc8_driver.a)  
-        target_link_libraries(${CRONO_TARGET_NAME} xhptdc8_driver.a)
-
-        # Adjust .o files names  ______________________________________________
-        # Remove .cpp from .o file name
-        set(CMAKE_CXX_OUTPUT_EXTENSION_REPLACE ON) 
+        # Command that copies the corresponding library to the output folder
+        string(APPEND _copy_cmd
+                "xcopy;/c;/f;/y;\"${CRONO_DEP_PKG_LIB_DIR}/*.*\";"
+                "\"${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${CMAKE_BUILD_TYPE}\""
+        )
 ENDIF()
+
+# Copy library to executable directory to run and debug
+add_custom_command(TARGET ${CRONO_TARGET_NAME} POST_BUILD 
+        COMMAND "${_copy_cmd}"
+        COMMAND_EXPAND_LISTS
+)
