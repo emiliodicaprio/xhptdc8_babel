@@ -108,6 +108,11 @@ IF ( CRONO_GEN_PLATFORM  STREQUAL "windows")
                 "xcopy;/c;/f;/y;\"${CRONO_DEP_PKG_LIB_DIR}/*.*\";"
                 "\"${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/$<IF:$<CONFIG:Debug>,Debug,Release>\""
         )
+        # Copy library to executable directory to run and debug
+        add_custom_command(TARGET ${CRONO_TARGET_NAME} POST_BUILD 
+                COMMAND "${_copy_cmd}"
+                COMMAND_EXPAND_LISTS
+        )
 
 # Linux-specific Configurations _______________________________________________
 ELSEIF (CRONO_GEN_PLATFORM STREQUAL "linux") 
@@ -134,16 +139,7 @@ ELSEIF (CRONO_GEN_PLATFORM STREQUAL "linux")
         add_custom_command(TARGET ${CRONO_TARGET_NAME} PRE_BUILD 
                 COMMAND "cp" ${CRONO_DEP_PKG_LIB_DIR}/xhptdc8_driver.a 
                         ${CRONO_DEP_PKG_LIB_DIR}/libxhptdc8_driver.a)
-
-        # Command that copies the corresponding library to the output folder
-        string(APPEND _copy_cmd
-                "xcopy;/c;/f;/y;\"${CRONO_DEP_PKG_LIB_DIR}/*.*\";"
-                "\"${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${CMAKE_BUILD_TYPE}\""
-        )
+        
+        # No need to copy xhptdc8_driver.a to output folder similar to Windows
+        # as it's statically linked.
 ENDIF()
-
-# Copy library to executable directory to run and debug
-add_custom_command(TARGET ${CRONO_TARGET_NAME} POST_BUILD 
-        COMMAND "${_copy_cmd}"
-        COMMAND_EXPAND_LISTS
-)
