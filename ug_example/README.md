@@ -1,52 +1,92 @@
 
 # xHPTDC8 User Guide Example
 
-This directory contains a project to compile the C++ example show in the user guide of the cronologic xHPTDC8 time-to-digital converter.
+## About
+
+This directory contains a project to compile the C++ example shows in the user guide of the cronologic xHPTDC8 time-to-digital converter.
 
 You can download the user guide from the [product web page](https://www.cronologic.de/products/tdcs/xhptdc8-pcie).
 
-# The Project 
+---
 
-## About
-The Solution and Project are created using Microsoft Visual Studio 2019, as a Console App
+## Build the Project
 
-## Project Environments and Configurations
-- The Target Exectuable name is `xhptdc8_ugex.exe`
-- Project Settings -> Include Directories : `..\..\..\lib\include` is added.
-- Configuration that is related to `Dummy Library` links to the .lib file in its corresponsing `x_NN_dummy` directory.
+### Overview
+- The project is a Console App.
+- The Project can be mainly built using `CMake`, on both Windows and Linux. 
+- `CMake` also can be used on Windows by Microsoft Visual Studio 2019 or later for build and debug, [`CMakeSettings.json`](/tools/CMakeSetting.json) is provided to build the project using Visual Studio CMake Tools.
+- Every time the project is built, it copies the related driver files from `driver` folder to the 
 
-| Configuration | Environment   | Output Directory | Linked Library | Library Directory |
-| ------------- |-------------  |----------------- | -------------  | -------------------- |
-| Debug         | x64           | ug_example_msvscpp\x64\Debug | xhptdc8_driver_64.lib | ..\\..\\..\\lib\\x64 | 
-| DebugDummy    | x64           | ug_example_msvscpp\x64\DebugDummy | xhptdc8_driver_64.lib | ..\\..\\..\\lib\\x64dummy | 
-| Release       | x64           | ug_example_msvscpp\x64\Release | xhptdc8_driver_64.lib | ..\\..\\..\\lib\\x64 | 
-| ReleaseDummy  | x64           | ug_example_msvscpp\x64\ReleaseDummy | xhptdc8_driver_64.lib | ..\\..\\..\\lib\\x64dummy | 
-| Debug         | Win32         | ug_example_msvscpp\Debug | xhptdc8_driver.lib | ..\\..\\..\\lib\\x86 | 
-| DebugDummy    | Win32         | ug_example_msvscpp\DebugDummy | xhptdc8_driver.lib | ..\\..\\..\\lib\\x86dummy | 
-| Release       | Win32         | ug_example_msvscpp\Release | xhptdc8_driver.lib | ..\\..\\..\\lib\\x86 | 
-| ReleaseDummy  | Win32         | ug_example_msvscpp\ReleaseDummy | xhptdc8_driver.lib | ..\\..\\..\\lib\\x86dummy | 
+### Prerequisites
 
-### Debug|x64
-For this build sepcifically, a post-build action is added to facilitate the debugging:
-```CMD
-copy "..\..\..\lib\x64\xhptdc8_driver_64.dll" "$(TargetDir)"
+##### 1. Install `CMake`
+To check if `CMake` is installed, run `cmake --version`; if not installed, please refer to [Installing CMake](https://cmake.org/install/).
+
+##### 2. Copy Driver Files
+Copy the `driver` folder to the project folder as following:
 ```
-## Building Using MS Visual Studio
-Nothing special, just:
-1. Using MS Visual Studio compatible version, open the solution file: `\ug_example_msvscpp\ug_example_msvscpp.sln`
-2. Select the needed _Configuration_ and _Environment_ to build.
-3. Hit _Build ug_example_msvscpp_, and check the built executable file in the corresponsing directory as per the [table above](https://github.com/cronologic-de/xhptdc8_babel/edit/main/ug_example/README.md#Project_Environments_and_Configurations).
+.
+└── xhptdc8_babel/
+    └── ug_example/
+        └── driver/
+            ├── include/
+            │   └── .h
+            ├── x64/
+            │   ├── .lib    (Windows only)
+            │   ├── .dll    (Windows only)
+            │   └── .a      (Linux only)
+            └── x86/        (Windows only)
+                ├── .lib
+                └── .dll
+```
+- When using the `Dummy Library`, copy the corresponding _platform_ DLL from the _Library Directory_ as per the [table above](https://github.com/cronologic-de/xhptdc8_babel/edit/main/ug_example/README.md#Project_Environments_and_Configurations) to the executable directory. For instance, for _x64 Release_ exe, just copy the DLL _xhptdc8_driver_64.dll_ from _..\\..\\..\\lib\\x64dummy_.
 
-## Running the sample
-### Using Dummy Library
-To run the executable file using _Dummy Library_: 
-- Copy the corresponding _platform_ DLL from the _Library Directory_ as per the [table above](https://github.com/cronologic-de/xhptdc8_babel/edit/main/ug_example/README.md#Project_Environments_and_Configurations) to the executable directory. For instance, for _x64 Release_ exe, just copy the DLL _xhptdc8_driver_64.dll_ from _..\\..\\..\\lib\\x64dummy_.
-- Run the exe from Windows command
+### Build Using Visual Studio for Windows
+It is mainly done using `CMakeSettings.json` file provided in [`tools` folder](/tools/CMakeSettings.json) package, that uses the projects [`CMakeLists.txt`](/tools/CMakeLists.tx).
 
-## Debugging the sample
-Nothing special about using MS Visual Studio in debugging the project, just go ahead using MS Visual Studio debugger.
+#### Prerequisites
+##### 1. Install Development Tools
+1. `Visual Studio 2019` or later is installed.
+2. In "Visual Studio Installer", under "Desktop development with C++", the option [`C++ CMake tools for Windows`](https://docs.microsoft.com/en-us/cpp/build/cmake-projects-in-visual-studio#installation) is installed.
 
-### Debug Dummy Library
-When using _Dummy Library_, you can build the _Debug Configuration_ of _xhptdc8_driver_64.dll_, and copy it in the executable file directory, you can then go into the _Dummy Library_ code as well while debugging the sample.
+##### Open the Project 
+1. Open Visual Studio.
+2. Select `Open a local folder`.
+3. Select the project folder, e.g. `xhptdc8_babel\ug_example`.
+4. If "CMake Integration" message _to enable Visual Studio's CMake support with this workspace_ is displayed
+   1. Select `Enable and set source directory` button.
+   2. In "Select CMakeLists.txt" Dialog, navigate to the <path\to\project\folder>\tools, and open our project `CMakeLists.txt` file, e.g. `ug_example\tools\CMakeLists.txt`
 
+##### Compile and Link
+Select `Build -> Build All` from menu, or any standard Visual Studio way to build the project.
 
+#### Project Environments and Configurations
+The Target Exectuable name is `xhptdc8_ugex.exe`.
+| Configuration     | `CMakeSettings` | `Build root`                     | `CMake generator`     | Output Folder          |
+| ----------------- | --------------- | -------------------------------- | --------------------- | ---------------------  |
+| **x86 Debug**     | x86-Debug       | `${projectDir}\..\build\bfvs32D` | Visual Studio 17 2022 | `driver\x86\Debug`   |
+| **x86 Release**   | x86-Release     | `${projectDir}\..\build\bfvs32R` | Visual Studio 17 2022 | `driver\x86\Release`   |
+| **x86_64 Debug**  | x64-Debug       | `${projectDir}\..\build\bfvsD`   | Visual Studio 17 2022 Win64 | `driver\x64\Release`   |
+| **x86_64 Release**| x64-Release     | `${projectDir}\..\build\bfvsR`   | Visual Studio 17 2022 Win64 | `driver\x64\Release`   |
+* The provided file builds the project using `Visual Studio 2022`, however, you can change `generator` in  `CMakeSettings.json` to any other Visual Studio generator you have on your machine.
+
+### Build Using `CMake`, for Windows and Linux
+
+Go to tools: `cd tools`, then run the following command:
+| Platform          | Configuration | Configur CMake ommand                                                           | Compile & Link Command                            | Output Folder          |
+| ----------------- | ------------- | -------------------------------------------------     | ------------------------------------------------- | ---------------------  |
+| **Windows x86_64**| Release       | `cmake -B ..\build\bfR -A x64`                                                  | `cmake --build ..\build\bfR --config Release`     | `driver\x64\Release`   |
+| **Windows x86_64**| Debug         | `cmake -B ..\build\bfD -A x64`                                                  | `cmake --build ..\build\bfD --config Debug`       | `driver\x64\Debug`     |
+| **Windows x86**   | Release       | `cmake -B ..\build\bf32R -A Win32`                                              | `cmake --build ..\build\bf32R --config Release`   | `driver\x86\Release`   |
+| **Windows x86**   | Debug         | `cmake -B ..\build\bf32D -A Win32`                                              | `cmake --build ..\build\bf32D --config Debug`     | `driver\x86\Debug`     |
+| **Linux x86_64**  | Release       | `cmake -B ..\build\bfR -DCMAKE_BUILD_TYPE=Release`                              | `cmake --build ..\build\bfR`                      | `driver\x64\Release`   |
+| **Linux x86_64**  | Debug         | `cmake -B ..\build\bfD -DCMAKE_BUILD_TYPE=Debug`                                | `cmake --build ..\build\bfD`                      | `driver\x64\Debug`     |
+
+* The default configuration is `Debug` on Windows, and `Release` on Linux.
+* Linux x86 is not supported.
+
+---
+
+## Run and Debug the sample
+- Run the exe in the _Output Folder_ from Windows command.
+- For Windows, there is nothing special about using MS Visual Studio in debugging the project, just go ahead using MS Visual Studio debugger.
