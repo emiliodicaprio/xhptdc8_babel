@@ -7,15 +7,24 @@ This directory contains a project to compile the C++ example shows in the user g
 
 You can download the user guide from the [product web page](https://www.cronologic.de/products/tdcs/xhptdc8-pcie).
 
+
+## Directory Structure
+```
+    .
+    ├── src/        # source code: .cpp files
+    ├── tools/      # files and scripts of the tools, e.g. building tools (CMake, etc...)
+    └── build/      # (default) compiled outbput for any OS, configuration, platform
+```
+
 ---
 
 ## Build the Project
 
 ### Overview
-- The project is a Console App.
+- The project is a `Console` App.
 - The Project can be mainly built using `CMake`, on both Windows and Linux. 
 - `CMake` also can be used on Windows by Microsoft Visual Studio 2019 or later for build and debug, [`CMakeSettings.json`](/tools/CMakeSetting.json) is provided to build the project using Visual Studio CMake Tools.
-- Every time the project is built, it copies the related driver files from `driver` folder to the 
+- Every time the project is built on Windows, it copies the related driver files from `driver` folder to the 
 
 ### Prerequisites
 
@@ -39,7 +48,7 @@ Copy the `driver` folder to the project folder as following:
                 ├── .lib
                 └── .dll
 ```
-- When using the `Dummy Library`, copy the corresponding _platform_ DLL from the _Library Directory_ as per the [table above](https://github.com/cronologic-de/xhptdc8_babel/edit/main/ug_example/README.md#Project_Environments_and_Configurations) to the executable directory. For instance, for _x64 Release_ exe, just copy the DLL _xhptdc8_driver_64.dll_ from _..\\..\\..\\lib\\x64dummy_.
+- When using the `Dummy Library`, copy the corresponding _platform_ DLL from the _Library Directory_ as per the [table above](https://github.com/cronologic-de/xhptdc8_babel/edit/main/ug_example/README.md#Project_Environments_and_Configurations) to the executable directory. For instance, for _x64 Release_ exe, just copy the DLL _xhptdc8_driver_64.dll_ from [x64dummy Folder](https://github.com/cronologic-de/xhptdc8_babel/tree/main/lib/x64dummy).
 
 ### Build Using Visual Studio for Windows
 It is mainly done using `CMakeSettings.json` file provided in [`tools` folder](/tools/CMakeSettings.json) package, that uses the projects [`CMakeLists.txt`](/tools/CMakeLists.tx).
@@ -87,6 +96,11 @@ Go to tools: `cd tools`, then run the following command:
 
 ---
 
-## Run and Debug the sample
-- Run the exe in the _Output Folder_ from Windows command.
+## Run/Debug the Sample
+
+**Prerequisites**
+- Cronologic Kernel Module is installed.
+
+**Steps**
+- Run the executable found in the _Output Folder_ from system command, you might need to use `sudo` in Linux.
 - For Windows, there is nothing special about using MS Visual Studio in debugging the project, just go ahead using MS Visual Studio debugger.
