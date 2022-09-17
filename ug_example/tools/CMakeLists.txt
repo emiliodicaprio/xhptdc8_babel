@@ -1,30 +1,10 @@
 cmake_minimum_required(VERSION 3.12) 
 set(CRONO_TARGET_NAME "xhptdc8_ugex")
 project(${CRONO_TARGET_NAME})
-# $$
+
 # _____________________________________________________________________________
 # Build Windows(x86/x86_64)/Linux(x86_64) `xhptdc8_ugex.exe/Linux` executable, 
 # for (Debug/Release) configurations.
-# Publish conan package to local cache as per `CRONO_PUBLISH_LOCAL_PKG` 
-# argument.
-# `conan install` is used to fetch, build, and deploy the dependency.
-#
-# Dependencies: 
-# - 'crono_project_tools'
-# - `xhptdc8_driver-bin` for Winodws.
-# - `xhptdc8_driver` for Linux.
-# 
-# Prequisites: 
-# - conan remote server(s) that have the traversal dependencies are added 
-#   and authenticated.
-# - Conan recipe is on the same folder.
-# 
-# Arguments:
-# `CRONO_PUBLISH_LOCAL_PKG`: Publish project packages to conan local cache
-# - Passed as `-DCRONO_PUBLISH_LOCAL_PKG=N`
-# - Values:
-#        `N` : Do not publish.
-#    Default : Publish
 # _____________________________________________________________________________
 
 # General Validations and Configurations ======================================
