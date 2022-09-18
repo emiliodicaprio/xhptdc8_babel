@@ -1,4 +1,3 @@
-
 # xHPTDC8 User Guide Example
 
 ## About
@@ -48,7 +47,7 @@ Copy the `driver` folder to the project folder as following:
                 ├── .lib
                 └── .dll
 ```
-- When using the `Dummy Library`, copy the corresponding _platform_ DLL from the _Library Directory_ as per the [table above](https://github.com/cronologic-de/xhptdc8_babel/edit/main/ug_example/README.md#Project_Environments_and_Configurations) to the executable directory. For instance, for _x64 Release_ exe, just copy the DLL _xhptdc8_driver_64.dll_ from [x64dummy Folder](https://github.com/cronologic-de/xhptdc8_babel/tree/main/lib/x64dummy).
+- When using the `Dummy Library`, copy the corresponding _platform_ DLL from the _Library Directory_ to the driver folder. For instance, for _x64 Release_ exe, just copy the DLL _xhptdc8_driver_64.dll_ from [x64dummy Folder](https://github.com/cronologic-de/xhptdc8_babel/tree/main/lib/x64dummy).
 
 ### Build Using Visual Studio for Windows
 It is mainly done using `CMakeSettings.json` file provided in [`tools` folder](/tools/CMakeSettings.json) package, that uses the projects [`CMakeLists.txt`](/tools/CMakeLists.tx).
