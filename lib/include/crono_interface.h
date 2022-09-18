@@ -32,6 +32,7 @@
 #define CRONO_INTERNAL_ERROR				15
 #define CRONO_CALIBRATION_FAILURE			16
 #define CRONO_INVALID_ARGUMENTS             17
+#define CRONO_INSUFFICIENT_DATA             18
 
 /**
 * Packet types supported by different cronologic boards
