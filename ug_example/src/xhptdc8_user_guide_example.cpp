@@ -187,7 +187,7 @@ int main(int argc, char* argv[]) {
 		"Could not start TiGer.");
 
 	//collect measured data
-//	read_hits_wrapper(10000);
+	read_hits_wrapper(10000);
 
 	exit_on_fail(
 		//stop measurement
