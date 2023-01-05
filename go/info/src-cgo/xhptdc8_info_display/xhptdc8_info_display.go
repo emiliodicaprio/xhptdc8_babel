@@ -6,6 +6,7 @@ package xhptdc8_info_display
 
 /*
 	#cgo CFLAGS: -Wall -g -I../../../../lib/include/
+	#cgo CPPFLAGS: -Wall -g -I../../../../lib/include/	
 	#cgo 386   LDFLAGS: -L./ -l:../../../../lib/x86dummy/xhptdc8_driver.lib
 	#cgo amd64 LDFLAGS: -L./ -l:../../../../lib/x64dummy/xhptdc8_driver_64.lib
 	#include "xhptdc8_interface.h"
