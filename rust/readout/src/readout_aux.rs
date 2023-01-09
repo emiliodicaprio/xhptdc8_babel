@@ -696,7 +696,7 @@ impl Default for xhptdc8_static_info {
 
 impl Default for TDCHit {
     fn default () -> TDCHit {
-        TDCHit{time:0, channel:0, type_:0, bin:0}
+        TDCHit{time:0, channel:0, type_:0, bin:0, reserved:0}
     }
 }
 
