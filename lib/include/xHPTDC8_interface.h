@@ -419,7 +419,7 @@ XHPTDC8_API int xhptdc8_software_trigger(int index);
  * Fixed length of calibration date string.
  * calibration date format: YYYY-MM-DD hh:mm
  */
-static const int XHPTDC8_CALIBARTION_DATE_LEN = 20;
+#define XHPTDC8_CALIBARTION_DATE_LEN 20
 
 /**
  * Structure contains static information.
