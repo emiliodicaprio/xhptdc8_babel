@@ -159,6 +159,7 @@ pub const XHPTDC8_DEVICE_OPEN_FAILED: u32 = 14;
 pub const XHPTDC8_INTERNAL_ERROR: u32 = 15;
 pub const XHPTDC8_CALIBRATION_FAILURE: u32 = 16;
 pub const XHPTDC8_INVALID_ARGUMENTS: u32 = 17;
+pub const XHPTDC8_INSUFFICIENT_DATA: u32 = 18;
 pub const XHPTDC8_DEVICE_STATE_CREATED: u32 = 0;
 pub const XHPTDC8_DEVICE_STATE_INITIALIZED: u32 = 1;
 pub const XHPTDC8_DEVICE_STATE_CONFIGURED: u32 = 2;
@@ -167,6 +168,7 @@ pub const XHPTDC8_DEVICE_STATE_PAUSED: u32 = 4;
 pub const XHPTDC8_DEVICE_STATE_CLOSED: u32 = 5;
 pub const XHPTDC8_USER_FLASH_SIZE: u32 = 65536;
 pub const XHPTDC8_NOF_CHANNELS_PER_CARD: u32 = 10;
+pub const XHPTDC8_CALIBARTION_DATE_LEN: u32 = 20;
 pub const XHPTDC8_GATE_OFF: u32 = 0;
 pub const XHPTDC8_GATE_ON: u32 = 1;
 pub const XHPTDC8_TIGER_OFF: u32 = 0;
@@ -690,6 +692,8 @@ pub struct TDCHit {
     #[doc = " For ADC hits this contains the sampled voltage. For TDC hits the"]
     #[doc = " content is undefined."]
     pub bin: u16,
+    #[doc = " Data reserved for internal usage."]
+    pub reserved: u32,
 }
 #[test]
 fn bindgen_test_layout_TDCHit() {
@@ -741,6 +745,16 @@ fn bindgen_test_layout_TDCHit() {
             stringify!(TDCHit),
             "::",
             stringify!(bin)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(::std::ptr::null::<TDCHit>())).reserved as *const _ as usize },
+        12usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(TDCHit),
+            "::",
+            stringify!(reserved)
         )
     );
 }
