@@ -1,6 +1,6 @@
 //
 // Header file containing structs and #defines specific for the xHPTDC8-PCIe
-// The current driver version for xHPTDC8-PCIe devices is 0.18.0.x
+// The current driver version for xHPTDC8-PCIe devices is %VERSION%
 //
 //
 
@@ -13,7 +13,10 @@
 
 #include "crono_interface.h"
 #include <stdint.h>
-
+#ifdef __linux__
+#include <stddef.h>
+#include <stdarg.h>
+#endif
 // current version of the API
 #define XHPTDC8_API_VERSION 1
 
@@ -42,10 +45,6 @@
 // The number of potential trigger sources for the timing generators and gating
 // blocks. One for each TDC input plus some specials.
 #define XHPTDC8_TRIGGER_COUNT 16
-
-#ifdef __linux__
-#include <stdarg.h>
-#endif
 
 /**
  * Type of memory used for the packet buffer.
@@ -161,6 +160,7 @@
 #define XHPTDC8_INTERNAL_ERROR CRONO_INTERNAL_ERROR
 #define XHPTDC8_CALIBRATION_FAILURE CRONO_CALIBRATION_FAILURE
 #define XHPTDC8_INVALID_ARGUMENTS CRONO_INVALID_ARGUMENTS
+#define XHPTDC8_INSUFFICIENT_DATA CRONO_INSUFFICIENT_DATA
 
 /**
  * Device states
@@ -205,92 +205,96 @@ extern "C" {
  * xhptdc8_get_default_init_parameters() will set sensible defaults.
  */
 typedef struct {
-        /**
-         * Version number of the xhptdc8_manager_init_parameters structure
-         * Is set to XHPTDC8_API_VERSION by
-         * xhptdc8_get_default_init_parameters(). Must be left unchanged.
-         */
-        int version;
+    /**
+     * Version number of the xhptdc8_manager_init_parameters structure
+     * Is set to XHPTDC8_API_VERSION by
+     * xhptdc8_get_default_init_parameters(). Must be left unchanged.
+     */
+    int version;
 
-        /**
-         * The minimum size of the DMA buffer.
-         * If set to 0, the default size of 16MB is used.
-         */
-        int64_t buffer_size;
+    /**
+     * The minimum size of the DMA buffer.
+     * If set to 0, the default size of 16MB is used.
+     */
+    int64_t buffer_size;
 
-        /**
-         * A variant, for reconfiguring the chip for future extension.
-         */
-        int variant;
+    /**
+     * A variant, for reconfiguring the chip for future extension.
+     */
+    int variant;
 
-        /**
-         * A constant for the different devices of cronologic CRONO_DEVICE_*.
-         * Initialized by xhptdc8_get_default_init_parameters().
-         * Must be left unchanged.
-         */
-        int device_type;
+    /**
+     * A constant for the different devices of cronologic CRONO_DEVICE_*.
+     * Initialized by xhptdc8_get_default_init_parameters().
+     * Must be left unchanged.
+     */
+    int device_type;
 
-        /**
-         * The update delay of the writing pointer after a packet has been send
-         * over PCIe. Specified in multiples of 16 ns. Should not be changed by
-         * the user. The base unit is 16 to 32 ns.
-         */
-        int dma_read_delay;
+    /**
+     * The update delay of the writing pointer after a packet has been send
+     * over PCIe. Specified in multiples of 16 ns. Should not be changed by
+     * the user. The base unit is 16 to 32 ns.
+     */
+    int dma_read_delay;
 
-        /**
-         * Several xHPTDC8-PCIe can be used in sync.
-         * If set to 1 enable multiboard operation. If set to 0 disable
-         * multiboard operation. Value is either 'true' or 'false'.
-         */
-        crono_bool_t multiboard;
+    /**
+     * Several xHPTDC8-PCIe can be used in sync.
+     * If set to 1 enable multiboard operation. If set to 0 disable
+     * multiboard operation. Value is either 'true' or 'false'.
+     */
+    crono_bool_t multiboard;
 
-        /**
-         * Select external 10 MHz reference.
-         * If set to 1 use external 10 MHz reference. If set to 0 use internal
-         * reference. Value is either 'true' or 'false'.
-         */
-        crono_bool_t use_ext_clock;
+    /**
+     * Select external 10 MHz reference.
+     * If set to 1 use external 10 MHz reference. If set to 0 use internal
+     * reference. Value is either 'true' or 'false'.
+     */
+    crono_bool_t use_ext_clock;
 
-        /**
-         * Ignore calibration values read from device flash.
-         * Value is either 'true' or 'false'.
-         */
-        crono_bool_t ignore_calibration;
+    /**
+     * Ignore calibration values read from device flash.
+     * Value is either 'true' or 'false'.
+     */
+    crono_bool_t ignore_calibration;
 
 } xhptdc8_manager_init_parameters;
 
 /**
  */
 typedef struct {
-        /**
-         * The time stamp of the hit in picoseconds.
-         * If grouping is enabled the timestamp is relative to the trigger or
-         * the separate zero reference of the group. Otherwise the timestampe is
-         * continuously counting up from the call to start_capture()
-         */
-        int64_t time;
+    /**
+     * The time stamp of the hit in picoseconds.
+     * If grouping is enabled the timestamp is relative to the trigger or
+     * the separate zero reference of the group. Otherwise the timestampe is
+     * continuously counting up from the call to start_capture()
+     */
+    int64_t time;
 
-        /**
-         * For the first board in the system this 0 to 7 for the TDC channels A
-         * to H. 8 or 9 for ADC data. Data from channels 8 and 9 should usually
-         * be treated as data from the same channel. For the other boards the
-         * channel number is incremented by board_id * 10
-         */
-        uint8_t channel;
+    /**
+     * For the first board in the system this 0 to 7 for the TDC channels A
+     * to H. 8 or 9 for ADC data. Data from channels 8 and 9 should usually
+     * be treated as data from the same channel. For the other boards the
+     * channel number is incremented by board_id * 10
+     */
+    uint8_t channel;
 
-        /**
-         * Additional information on the type of hit recorded.
-         * It is of one of the values XHPTDC8_TDCHIT_TYPE_* or'ed with error
-         * flags if required.
-         */
-        uint8_t type;
+    /**
+     * Additional information on the type of hit recorded.
+     * It is of one of the values XHPTDC8_TDCHIT_TYPE_* or'ed with error
+     * flags if required.
+     */
+    uint8_t type;
 
-        /**
-         * For ADC hits this contains the sampled voltage. For TDC hits the
-         * content is undefined.
-         */
-        uint16_t bin;
+    /**
+     * For ADC hits this contains the sampled voltage. For TDC hits the
+     * content is undefined.
+     */
+    uint16_t bin;
 
+    /**
+     * Data reserved for internal usage.
+     */
+    uint32_t reserved;
 } TDCHit;
 
 /**
@@ -412,122 +416,128 @@ XHPTDC8_API int xhptdc8_stop_capture();
 XHPTDC8_API int xhptdc8_software_trigger(int index);
 
 /**
+ * Fixed length of calibration date string.
+ * calibration date format: YYYY-MM-DD hh:mm
+ */
+static const int XHPTDC8_CALIBARTION_DATE_LEN = 20;
+
+/**
  * Structure contains static information.
  *
  * This structure contains information about the board that does not change
  * during run time. It is provided by the function xhptdc8_get_static_info().
  */
 typedef struct {
-        /**
-         * The number of bytes occupied by the structure.
-         */
-        int size;
+    /**
+     * The number of bytes occupied by the structure.
+     */
+    int size;
 
-        /**
-         * A version number that is increased when the definition of the
-         * structure is changed. Set to XHPTDC8_STATIC_INFO_VERSION.
-         */
-        int version;
+    /**
+     * A version number that is increased when the definition of the
+     * structure is changed. Set to XHPTDC8_STATIC_INFO_VERSION.
+     */
+    int version;
 
-        /**
-         * ID of the board.
-         * All xHPTDC8-PCIe boards in the system are numbered according in order
-         * of their serial numbers starting at zero.
-         */
-        int board_id;
+    /**
+     * ID of the board.
+     * All xHPTDC8-PCIe boards in the system are numbered according in order
+     * of their serial numbers starting at zero.
+     */
+    int board_id;
 
-        /**
-         * Encoded version number for the driver.
-         *
-         * The lower three bytes contain a triple level hierarchy of version
-         * numbers. E.g. 0x010103 codes version 1.1.3.
-         *
-         * A change in the first digit generally requires a recompilation of
-         * user applications. Change in the second digit denote significant
-         * improvements or changes that don't break compatibility and the third
-         * digit changes with minor bugfixes and the like.
-         */
-        int driver_revision;
+    /**
+     * Encoded version number for the driver.
+     *
+     * The lower three bytes contain a triple level hierarchy of version
+     * numbers. E.g. 0x010103 codes version 1.1.3.
+     *
+     * A change in the first digit generally requires a recompilation of
+     * user applications. Change in the second digit denote significant
+     * improvements or changes that don't break compatibility and the third
+     * digit changes with minor bugfixes and the like.
+     */
+    int driver_revision;
 
-        /**
-         * The build number of the driver according to cronologic�s internal
-         * versioning system.
-         */
-        int driver_build_revision;
+    /**
+     * The build number of the driver according to cronologic�s internal
+     * versioning system.
+     */
+    int driver_build_revision;
 
-        /**
-         * Revision number of the FPGA configuration
-         */
-        int firmware_revision;
+    /**
+     * Revision number of the FPGA configuration
+     */
+    int firmware_revision;
 
-        /**
-         * Board revision number.
-         *
-         * The board revision number can be read from a register. It is a four
-         * bit number that changes when the schematic of the board is changed.
-         * - 0: Experimental first board Version. Labeled "Rev. 1"
-         * - 2: First commercial Version. Labeled "Rev. 2"
-         */
-        int board_revision;
+    /**
+     * Board revision number.
+     *
+     * The board revision number can be read from a register. It is a four
+     * bit number that changes when the schematic of the board is changed.
+     * - 0: Experimental first board Version. Labeled "Rev. 1"
+     * - 2: First commercial Version. Labeled "Rev. 2"
+     */
+    int board_revision;
 
-        /**
-         * Describes the schematic configuration of the board.
-         *
-         * The same board schematic can be populated in multiple variants.
-         * This is a eight bit-code that can be read from a register.
-         */
-        int board_configuration;
+    /**
+     * Describes the schematic configuration of the board.
+     *
+     * The same board schematic can be populated in multiple variants.
+     * This is a eight bit-code that can be read from a register.
+     */
+    int board_configuration;
 
-        /**
-         * Subversion revision id of the FPGA configuration.
-         *
-         * A number to track builds of the firmware in more detail than the
-         * firmware revision. It changes with every change in the firmware, even
-         * if there is no visible effect for the user. The subversion revision
-         * number can be read from a register.
-         */
-        int subversion_revision;
+    /**
+     * Subversion revision id of the FPGA configuration.
+     *
+     * A number to track builds of the firmware in more detail than the
+     * firmware revision. It changes with every change in the firmware, even
+     * if there is no visible effect for the user. The subversion revision
+     * number can be read from a register.
+     */
+    int subversion_revision;
 
-        /**
-         * 16bit factory ID of the TDC chip.
-         *
-         * This is the chipID as read from the 16 bit TDC chip id register.
-         */
-        int chip_id[2];
+    /**
+     * 16bit factory ID of the TDC chip.
+     *
+     * This is the chipID as read from the 16 bit TDC chip id register.
+     */
+    int chip_id[2];
 
-        /**
-         * Serial number
-         *
-         * With year and running number in 8.24 format. The number is identical
-         * to the one printed on the silvery sticker on the board.
-         */
-        int board_serial;
+    /**
+     * Serial number
+     *
+     * With year and running number in 8.24 format. The number is identical
+     * to the one printed on the silvery sticker on the board.
+     */
+    int board_serial;
 
-        /**
-         * High 32 bits of 64 bit manufacturer serial number of the flash chip.
-         */
-        uint32_t flash_serial_high;
+    /**
+     * High 32 bits of 64 bit manufacturer serial number of the flash chip.
+     */
+    uint32_t flash_serial_high;
 
-        /**
-         * Low 32 bits of 64 bit manufacturer serial number of the flash chip.
-         */
-        uint32_t flash_serial_low;
+    /**
+     * Low 32 bits of 64 bit manufacturer serial number of the flash chip.
+     */
+    uint32_t flash_serial_low;
 
-        /**
-         * Calibration data read from flash is valid.
-         *
-         * If not 'false', the driver found valid calibration data in the flash
-         * on the board and is using it.
-         */
-        crono_bool_t flash_valid;
+    /**
+     * Calibration data read from flash is valid.
+     *
+     * If not 'false', the driver found valid calibration data in the flash
+     * on the board and is using it.
+     */
+    crono_bool_t flash_valid;
 
-        /**
-         * Calibration date
-         *
-         * DIN EN ISO 8601 string YYYY-MM-DD HH:DD describing the time when the
-         * card was calibrated.
-         */
-        char calibration_date[20];
+    /**
+     * Calibration date
+     *
+     * DIN EN ISO 8601 string YYYY-MM-DD HH:DD describing the time when the
+     * card was calibrated.
+     */
+    char calibration_date[XHPTDC8_CALIBARTION_DATE_LEN];
 } xhptdc8_static_info;
 
 /**
@@ -550,57 +560,57 @@ XHPTDC8_API int xhptdc8_get_static_info(int index, xhptdc8_static_info *info);
  * This structure is filled using function xhptdc8_get_fast_info().
  */
 typedef struct {
-        /**
-         * The number of bytes occupied by the structure
-         */
-        int size;
+    /**
+     * The number of bytes occupied by the structure
+     */
+    int size;
 
-        /**
-         * A version number that is increased when the definition of the
-         * structure is changed.
-         *
-         * Set to XHPTDC8_FAST_INFO_VERSION.
-         */
-        int version;
+    /**
+     * A version number that is increased when the definition of the
+     * structure is changed.
+     *
+     * Set to XHPTDC8_FAST_INFO_VERSION.
+     */
+    int version;
 
-        /**
-         * Speed of the FPGA fan in rounds per minute.
-         *
-         * Reports 0, if no fan is present.
-         */
-        int fpga_rpm;
+    /**
+     * Speed of the FPGA fan in rounds per minute.
+     *
+     * Reports 0, if no fan is present.
+     */
+    int fpga_rpm;
 
-        /**
-         * Alert bits from temperature sensor and the system monitor.
-         *
-         * Bit 0 is set if the TDC temperature exceeds 140 �C. In this case the
-         * TDC did shut down and the device needs to be reinitialized.
-         */
-        int alerts;
+    /**
+     * Alert bits from temperature sensor and the system monitor.
+     *
+     * Bit 0 is set if the TDC temperature exceeds 140 �C. In this case the
+     * TDC did shut down and the device needs to be reinitialized.
+     */
+    int alerts;
 
-        /**
-         * Reports power management confguration of PCIe lanes.
-         * Should always be 0.
-         */
-        int pcie_pwr_mgmt;
+    /**
+     * Reports power management confguration of PCIe lanes.
+     * Should always be 0.
+     */
+    int pcie_pwr_mgmt;
 
-        /**
-         * Number of PCIe lanes the card uses.
-         * Should always be 1 for the xHPTDC8-PCIe.
-         */
-        int pcie_link_width;
+    /**
+     * Number of PCIe lanes the card uses.
+     * Should always be 1 for the xHPTDC8-PCIe.
+     */
+    int pcie_link_width;
 
-        /**
-         * Maximum size for a single PCIe transaction in bytes. Depends on
-         * system configuration.
-         */
-        int pcie_max_payload;
+    /**
+     * Maximum size for a single PCIe transaction in bytes. Depends on
+     * system configuration.
+     */
+    int pcie_max_payload;
 
-        /**
-         * The current state of the device.
-         * Should be one of the values XHPTDC8_DEVICE_STATE_*
-         */
-        int state;
+    /**
+     * The current state of the device.
+     * Should be one of the values XHPTDC8_DEVICE_STATE_*
+     */
+    int state;
 } xhptdc8_fast_info;
 
 /**
@@ -624,45 +634,45 @@ XHPTDC8_API int xhptdc8_get_fast_info(int index, xhptdc8_fast_info *info);
  * configuration changes.
  */
 typedef struct {
-        /**
-         * The number of bytes occupied by the structure.
-         */
-        int size;
+    /**
+     * The number of bytes occupied by the structure.
+     */
+    int size;
 
-        /**
-         * A version number that is increased when the definition of the
-         * structure is changed.
-         *
-         * Set to XHPTDC8_PARAM_INFO_VERSION.
-         */
-        int version;
+    /**
+     * A version number that is increased when the definition of the
+     * structure is changed.
+     *
+     * Set to XHPTDC8_PARAM_INFO_VERSION.
+     */
+    int version;
 
-        /**
-         * Binsize (in ps) of the measured TDC data.
-         *
-         * The TDC main clk is running at a frequency of 76.8 GHz resulting in a
-         * binsize of ~13.0208 ps.
-         */
-        double binsize;
+    /**
+     * Binsize (in ps) of the measured TDC data.
+     *
+     * The TDC main clk is running at a frequency of 76.8 GHz resulting in a
+     * binsize of ~13.0208 ps.
+     */
+    double binsize;
 
-        /**
-         * Number of TDC channels of the board.
-         *
-         * It's currently fixed at 8.
-         */
-        int channels;
+    /**
+     * Number of TDC channels of the board.
+     *
+     * It's currently fixed at 8.
+     */
+    int channels;
 
-        /**
-         * Bit assignment of each enabled input channel.
-         *
-         * Bit 0 <= n < 8 is set if channel n is enabled.
-         */
-        int channel_mask;
+    /**
+     * Bit assignment of each enabled input channel.
+     *
+     * Bit 0 <= n < 8 is set if channel n is enabled.
+     */
+    int channel_mask;
 
-        /**
-         * The total amount of DMA buffer in bytes.
-         */
-        int64_t total_buffer;
+    /**
+     * The total amount of DMA buffer in bytes.
+     */
+    int64_t total_buffer;
 } xhptdc8_param_info;
 
 /**
@@ -686,23 +696,23 @@ XHPTDC8_API int xhptdc8_get_param_info(int index, xhptdc8_param_info *info);
  * xhptdc8_get_temperature_info()
  */
 typedef struct {
-        /**
-         * The number of bytes occupied by the structure
-         */
-        int size;
+    /**
+     * The number of bytes occupied by the structure
+     */
+    int size;
 
-        /**
-         * A version number that is increased when the definition of the
-         * structure is changed.
-         *
-         * Set to XHPTDC8_TEMP_INFO_VERSION.
-         */
-        int version;
+    /**
+     * A version number that is increased when the definition of the
+     * structure is changed.
+     *
+     * Set to XHPTDC8_TEMP_INFO_VERSION.
+     */
+    int version;
 
-        /**
-         * Temperature for each of the TDC chips in �C.
-         */
-        float tdc[2];
+    /**
+     * Temperature for each of the TDC chips in �C.
+     */
+    float tdc[2];
 } xhptdc8_temperature_info;
 
 /**
@@ -723,41 +733,41 @@ XHPTDC8_API int xhptdc8_get_temperature_info(int index,
  * Structure is filled by xhptdc8_clock_info().
  */
 typedef struct {
-        /**
-         * The number of bytes occupied by the structure.
-         */
-        int size;
+    /**
+     * The number of bytes occupied by the structure.
+     */
+    int size;
 
-        /**
-         * A version number that is increased when the definition of the
-         * structure is changed.
-         *
-         * Set to XHPTDC8_CLOCK_INFO_VERSION.
-         */
-        int version;
+    /**
+     * A version number that is increased when the definition of the
+     * structure is changed.
+     *
+     * Set to XHPTDC8_CLOCK_INFO_VERSION.
+     */
+    int version;
 
-        /**
-         * CDCE62005 PLL locked. Set if the jitter cleaning PLL clock
-         * synthesizer achieved lock. Value is either 'true' or 'false'.
-         */
-        crono_bool_t cdce_locked;
+    /**
+     * CDCE62005 PLL locked. Set if the jitter cleaning PLL clock
+     * synthesizer achieved lock. Value is either 'true' or 'false'.
+     */
+    crono_bool_t cdce_locked;
 
-        /**
-         * Version information from the CDCE62005 clock synthesizer.
-         */
-        int cdce_version;
+    /**
+     * Version information from the CDCE62005 clock synthesizer.
+     */
+    int cdce_version;
 
-        /**
-         * Source for the clock synthesizer is usually the 10MHz on board
-         * oscillator. Value: 'false': internal 10 MHz, 'true': LEMO clock
-         */
-        crono_bool_t use_ext_clock;
+    /**
+     * Source for the clock synthesizer is usually the 10MHz on board
+     * oscillator. Value: 'false': internal 10 MHz, 'true': LEMO clock
+     */
+    crono_bool_t use_ext_clock;
 
-        /**
-         * Set if the FPGA datapath PLLs achieved lock.
-         * Value is either 'true' or 'false'.
-         */
-        crono_bool_t fpga_locked;
+    /**
+     * Set if the FPGA datapath PLLs achieved lock.
+     * Value is either 'true' or 'false'.
+     */
+    crono_bool_t fpga_locked;
 } xhptdc8_clock_info;
 
 /**
@@ -790,17 +800,17 @@ XHPTDC8_API int xhptdc8_get_device_type(int index);
  * Contains TDC channel settings.
  */
 typedef struct {
-        /**
-         * Enable TDC channel.
-         * Value is either 'true' or 'false'.
-         */
-        crono_bool_t enable;
+    /**
+     * Enable TDC channel.
+     * Value is either 'true' or 'false'.
+     */
+    crono_bool_t enable;
 
-        /**
-         * Select which edge of the signal is measured by the TDC.
-         * Value is either 'true' or 'false'.
-         */
-        crono_bool_t rising;
+    /**
+     * Select which edge of the signal is measured by the TDC.
+     * Value is either 'true' or 'false'.
+     */
+    crono_bool_t rising;
 } xhptdc8_channel;
 
 // Gate deactivated
@@ -823,53 +833,53 @@ typedef struct {
  * Contains settings of timing generator.
  */
 typedef struct {
-        /**
-         * Enables the desired mode of operation for the TiGeR.
-         * It is of one of the values XHPTDC8_TIGER_*
-         */
-        int mode;
+    /**
+     * Enables the desired mode of operation for the TiGeR.
+     * It is of one of the values XHPTDC8_TIGER_*
+     */
+    int mode;
 
-        /**
-         * Inverts output polarity.
-         * For gating blocks, a value of 'false' enables inputs between start
-         * and stop, A value of 'true' enables outputs outside that interval.
-         * The TiGeR creates a high pulse from start to stop unless negated.
-         * Default value is 'false'.
-         */
-        crono_bool_t negate;
+    /**
+     * Inverts output polarity.
+     * For gating blocks, a value of 'false' enables inputs between start
+     * and stop, A value of 'true' enables outputs outside that interval.
+     * The TiGeR creates a high pulse from start to stop unless negated.
+     * Default value is 'false'.
+     */
+    crono_bool_t negate;
 
-        /**
-         * Enables retrigger setting.
-         * If enabled, the timer is reset to the value of the start parameter,
-         * whenever the input signal is set while waiting to reach the stop
-         * time. Value is either 'true' or 'false'. Default value is 'false'
-         */
-        crono_bool_t retrigger;
+    /**
+     * Enables retrigger setting.
+     * If enabled, the timer is reset to the value of the start parameter,
+     * whenever the input signal is set while waiting to reach the stop
+     * time. Value is either 'true' or 'false'. Default value is 'false'
+     */
+    crono_bool_t retrigger;
 
-        /**
-         * Not implemented.
-         */
-        crono_bool_t extend;
+    /**
+     * Not implemented.
+     */
+    crono_bool_t extend;
 
-        /**
-         * The start time at which the TiGeR or Gate output is set, relative to
-         * the trigger input. It is in multiples of 20 ns/3 = 6.6 ns. Must
-         * fullfil condition: 0 <= start <= stop <= (2^16 - 1)
-         */
-        int start;
+    /**
+     * The start time at which the TiGeR or Gate output is set, relative to
+     * the trigger input. It is in multiples of 20 ns/3 = 6.6 ns. Must
+     * fullfil condition: 0 <= start <= stop <= (2^16 - 1)
+     */
+    int start;
 
-        /**
-         * The duration from start time in which the TiGeR or Gate output is
-         * set, relative to the trigger input. It is in multiples of 20 ns/3
-         * = 6.6 ns. Must fullfil condition: 0 <= start <= stop <= (2^16 - 1)
-         */
-        int stop;
+    /**
+     * The duration from start time in which the TiGeR or Gate output is
+     * set, relative to the trigger input. It is in multiples of 20 ns/3
+     * = 6.6 ns. Must fullfil condition: 0 <= start <= stop <= (2^16 - 1)
+     */
+    int stop;
 
-        /**
-         * A bit mask with a bit set for all trigger sources that can trigger
-         * this TiGeR or Gate block. Default value is XHPTDC8_TRIGGER_SOURCE_A.
-         */
-        int sources;
+    /**
+     * A bit mask with a bit set for all trigger sources that can trigger
+     * this TiGeR or Gate block. Default value is XHPTDC8_TRIGGER_SOURCE_A.
+     */
+    int sources;
 } xhptdc8_tiger_block;
 
 /**
@@ -877,16 +887,16 @@ typedef struct {
  * the inputs create trigger events for the TiGeR and gating blocks.
  */
 typedef struct {
-        /**
-         * If set to 'true', a trigger event is created inside the FPGA at the
-         * falling edge. Value is either 'true' or 'false'.
-         */
-        crono_bool_t falling;
-        /**
-         * If set to 'true', a trigger event is created inside the FPGA at the
-         * rising edge. Value is either 'true' or 'false'.
-         */
-        crono_bool_t rising;
+    /**
+     * If set to 'true', a trigger event is created inside the FPGA at the
+     * falling edge. Value is either 'true' or 'false'.
+     */
+    crono_bool_t falling;
+    /**
+     * If set to 'true', a trigger event is created inside the FPGA at the
+     * rising edge. Value is either 'true' or 'false'.
+     */
+    crono_bool_t rising;
 } xhptdc8_trigger;
 
 /**
@@ -894,27 +904,27 @@ typedef struct {
  * Contains ADC channel settings
  */
 typedef struct {
-        /**
-         * Enable ADC measurements.
-         * Value is either 'true' or 'false'.
-         */
-        crono_bool_t enable;
+    /**
+     * Enable ADC measurements.
+     * Value is either 'true' or 'false'.
+     */
+    crono_bool_t enable;
 
-        /**
-         * Send watchdog measurements.
-         * Value is either 'true' or 'false'.
-         */
-        crono_bool_t watchdog_readout;
+    /**
+     * Send watchdog measurements.
+     * Value is either 'true' or 'false'.
+     */
+    crono_bool_t watchdog_readout;
 
-        /**
-         * Number of 150 MHz clock cycles between watchdog triggers.
-         */
-        int watchdog_interval;
+    /**
+     * Number of 150 MHz clock cycles between watchdog triggers.
+     */
+    int watchdog_interval;
 
-        /**
-         * Trigger threshold of ADC trigger input.
-         */
-        double trigger_threshold;
+    /**
+     * Trigger threshold of ADC trigger input.
+     */
+    double trigger_threshold;
 } xhptdc8_adc_channel;
 
 // do not use VETO function when building trigger groups
@@ -928,136 +938,136 @@ typedef struct {
  * This structure configures the behaviour of the grouping functionality.
  */
 typedef struct {
-        /*
-         * Enable grouping.
-         * Value is either 'true' or 'false'.
-         * Default value is 'false'.
-         */
-        crono_bool_t enabled;
+    /*
+     * Enable grouping.
+     * Value is either 'true' or 'false'.
+     * Default value is 'false'.
+     */
+    crono_bool_t enabled;
 
-        /**
-         * Channel number that is used to trigger the creation of a group.
-         *
-         * By default the trigger channels defines the zero point reference for
-         * the group event timestamps.
-         */
-        int trigger_channel;
+    /**
+     * Channel number that is used to trigger the creation of a group.
+     *
+     * By default the trigger channels defines the zero point reference for
+     * the group event timestamps.
+     */
+    int trigger_channel;
 
-        /**
-         * Use this to define additional trigger channels.
-         * There is an OR-disjuction with the trigger_channel.
-         *
-         */
-        uint64_t trigger_channel_bitmask;
+    /**
+     * Use this to define additional trigger channels.
+     * There is an OR-disjuction with the trigger_channel.
+     *
+     */
+    uint64_t trigger_channel_bitmask;
 
-        /**
-         * Start of group range relative to the trigger channel.
-         * Values in the interval from range_start to range_stop are included in
-         * the group. Either or both values can be negative to create
-         * common-stop behaviour. -2^63 <= range_start < range_stop < 2^63
-         * Intervals are always provided in picoseconds, independently of the
-         * bin size of the TDC.
-         */
-        int64_t range_start;
+    /**
+     * Start of group range relative to the trigger channel.
+     * Values in the interval from range_start to range_stop are included in
+     * the group. Either or both values can be negative to create
+     * common-stop behaviour. -2^63 <= range_start < range_stop < 2^63
+     * Intervals are always provided in picoseconds, independently of the
+     * bin size of the TDC.
+     */
+    int64_t range_start;
 
-        /**
-         * End of group range relative to the trigger channel.
-         * Intervals are always provided in picoseconds, independently of the
-         * bin size of the TDC.
-         */
-        int64_t range_stop;
+    /**
+     * End of group range relative to the trigger channel.
+     * Intervals are always provided in picoseconds, independently of the
+     * bin size of the TDC.
+     */
+    int64_t range_stop;
 
-        /**
-         * Dead time before new group start trigger is recognized.
-         * 0 <= trigger_deadtime < 2^63
-         * Intervals are always provided in picoseconds, independently of the
-         * bin size of the TDC.
-         */
-        int64_t trigger_deadtime;
+    /**
+     * Dead time before new group start trigger is recognized.
+     * 0 <= trigger_deadtime < 2^63
+     * Intervals are always provided in picoseconds, independently of the
+     * bin size of the TDC.
+     */
+    int64_t trigger_deadtime;
 
-        /**
-         * Optionally, a different channel can be used to calculate the relative
-         * timestamps in a group. This is disabled per default by setting this
-         * parameter to -1.
-         */
-        int zero_channel;
+    /**
+     * Optionally, a different channel can be used to calculate the relative
+     * timestamps in a group. This is disabled per default by setting this
+     * parameter to -1.
+     */
+    int zero_channel;
 
-        /**
-         * This offset in picoseconds is added to relative timestamps within a
-         * group.
-         */
-        int64_t zero_channel_offset;
+    /**
+     * This offset in picoseconds is added to relative timestamps within a
+     * group.
+     */
+    int64_t zero_channel_offset;
 
-        /**
-         * Set a bitmask of channels, a group is only created
-         * if there is at least one
-         * hit in the windows defined by windows_start and window_stop.
-         * Usage is equivalent to trigger_channel_bitmask.
-         */
-        uint64_t window_hit_channels;
+    /**
+     * Set a bitmask of channels, a group is only created
+     * if there is at least one
+     * hit in the windows defined by windows_start and window_stop.
+     * Usage is equivalent to trigger_channel_bitmask.
+     */
+    uint64_t window_hit_channels;
 
-        /**
-         * A group is only created if there is at least one hit in the window
-         * defined by window_start and window_stop, and when require_window_hit
-         * is set 'true'. -2^63 <= window_start < window_stop < 2^63 Intervals
-         * are always provided in picoseconds, independently of the bin size of
-         * the TDC.
-         */
-        int64_t window_start;
+    /**
+     * A group is only created if there is at least one hit in the window
+     * defined by window_start and window_stop, and when require_window_hit
+     * is set 'true'. -2^63 <= window_start < window_stop < 2^63 Intervals
+     * are always provided in picoseconds, independently of the bin size of
+     * the TDC.
+     */
+    int64_t window_start;
 
-        /**
-         * A group is only created if there is at least one hit in the window
-         * defined by window_start and window_stop, and when require_window_hit
-         * is set 'true'. -2^63 <= window_start < window_stop < 2^63 Intervals
-         * are always provided in picoseconds, independently of the bin size of
-         * the TDC.
-         */
-        int64_t window_stop;
+    /**
+     * A group is only created if there is at least one hit in the window
+     * defined by window_start and window_stop, and when require_window_hit
+     * is set 'true'. -2^63 <= window_start < window_stop < 2^63 Intervals
+     * are always provided in picoseconds, independently of the bin size of
+     * the TDC.
+     */
+    int64_t window_stop;
 
-        /**
-         * A window defined by veto_start and veto_stop can be used to suppress
-         * hits. The functionality is very similar to the gating blocks but is
-         * defined in software. This feature can not be used to improve FIFO
-         * usage or PCIe bandwidth usage. It is of one of the values
-         * XHPTDC8_GROUPING_VETO_*
-         */
-        int veto_mode;
+    /**
+     * A window defined by veto_start and veto_stop can be used to suppress
+     * hits. The functionality is very similar to the gating blocks but is
+     * defined in software. This feature can not be used to improve FIFO
+     * usage or PCIe bandwidth usage. It is of one of the values
+     * XHPTDC8_GROUPING_VETO_*
+     */
+    int veto_mode;
 
-        /**
-         * A window defined by veto_start and veto_stop can be used to suppress
-         * hits. -2^63 <= veto_start <= veto_stop < 2^63
-         */
-        int64_t veto_start;
+    /**
+     * A window defined by veto_start and veto_stop can be used to suppress
+     * hits. -2^63 <= veto_start <= veto_stop < 2^63
+     */
+    int64_t veto_start;
 
-        /**
-         * A window defined by veto_start and veto_stop can be used to suppress
-         * hits. -2^63 <= veto_start <= veto_stop < 2^63
-         */
-        int64_t veto_stop;
+    /**
+     * A window defined by veto_start and veto_stop can be used to suppress
+     * hits. -2^63 <= veto_start <= veto_stop < 2^63
+     */
+    int64_t veto_stop;
 
-        /**
-         *	If veto is enabled, veto filtering is active for channels
-         *	defined by a channel bitmask.
-         *	As default, filtering is active for all channels.
-         */
-        uint64_t veto_active_channels;
+    /**
+     *	If veto is enabled, veto filtering is active for channels
+     *	defined by a channel bitmask.
+     *	As default, filtering is active for all channels.
+     */
+    uint64_t veto_active_channels;
 
-        /*
-         * If set, the veto window is defined relative to the zero channel.
-         * Otherwise the window is defined relative to the group trigger.
-         * Value is either 'true' or 'false'.
-         */
-        crono_bool_t veto_relative_to_zero;
+    /*
+     * If set, the veto window is defined relative to the zero channel.
+     * Otherwise the window is defined relative to the group trigger.
+     * Value is either 'true' or 'false'.
+     */
+    crono_bool_t veto_relative_to_zero;
 
-        /*
-         *  discard groups which contained only a trigger signal
-         */
-        crono_bool_t ignore_empty_events;
+    /*
+     *  discard groups which contained only a trigger signal
+     */
+    crono_bool_t ignore_empty_events;
 
-        /*
-         * Unsupported, must remain 'false'.
-         */
-        crono_bool_t overlap;
+    /*
+     * Unsupported, must remain 'false'.
+     */
+    crono_bool_t overlap;
 
 } xhptdc8_grouping_configuration;
 
@@ -1076,104 +1086,104 @@ typedef struct {
  * It uses the multiple substructures to configure various aspects of the board.
  */
 typedef struct {
-        /**
-         * The number of bytes occupied by the structure.
-         */
-        int size;
+    /**
+     * The number of bytes occupied by the structure.
+     */
+    int size;
 
-        /**
-         * A version number that is increased when the definition of the
-         * structure is changed.
-         *
-         * Set to XHPTDC8_DEVICE_CONFIG_VERSION.
-         */
-        int version;
+    /**
+     * A version number that is increased when the definition of the
+     * structure is changed.
+     *
+     * Set to XHPTDC8_DEVICE_CONFIG_VERSION.
+     */
+    int version;
 
-        /**
-         * Create a trigger periodically.
-         *
-         * There are two parameters: M = auto_trigger_period
-         * and N = auto_trigger_random_exponent that result in a distance
-         * between triggers of T clock cycles. T = 1 + M + [1...2^N] clock
-         * cycles. 0 <= M < 2^32 0 <= N < 32 There is no enable or reset. The
-         * auto trigger is running continously. The usage of this trigger can be
-         * configured in the channels.
-         */
-        int auto_trigger_period;
+    /**
+     * Create a trigger periodically.
+     *
+     * There are two parameters: M = auto_trigger_period
+     * and N = auto_trigger_random_exponent that result in a distance
+     * between triggers of T clock cycles. T = 1 + M + [1...2^N] clock
+     * cycles. 0 <= M < 2^32 0 <= N < 32 There is no enable or reset. The
+     * auto trigger is running continously. The usage of this trigger can be
+     * configured in the channels.
+     */
+    int auto_trigger_period;
 
-        /**
-         * Create a trigger randomly.
-         *
-         * There are two parameters: M = auto_trigger_period
-         * and N = auto_trigger_random_exponent that result in a distance
-         * between triggers of T clock cycles. T = 1 + M + [1...2^N] clock
-         * cycles. 0 <= M < 2^32 0 <= N < 32 There is no enable or reset. The
-         * auto trigger is running continously. The usage of this trigger can be
-         * configured in the channels.
-         */
-        int auto_trigger_random_exponent;
+    /**
+     * Create a trigger randomly.
+     *
+     * There are two parameters: M = auto_trigger_period
+     * and N = auto_trigger_random_exponent that result in a distance
+     * between triggers of T clock cycles. T = 1 + M + [1...2^N] clock
+     * cycles. 0 <= M < 2^32 0 <= N < 32 There is no enable or reset. The
+     * auto trigger is running continously. The usage of this trigger can be
+     * configured in the channels.
+     */
+    int auto_trigger_random_exponent;
 
-        /**
-         * Set the threshold voltage for the input channels A . . .H.
-         * threshold[0 - 7] : threshold for channels A...H.
-         * Supported range is -1.32 V to +1.18 V. This should be close to 50% of
-         * the height of the input pulse. The inputs are AC coupled. Examples
-         * for various signaling standards are defined as XHPTDC8_THRESHOLD_*.
-         */
-        double trigger_threshold[XHPTDC8_TDC_CHANNEL_COUNT];
+    /**
+     * Set the threshold voltage for the input channels A . . .H.
+     * threshold[0 - 7] : threshold for channels A...H.
+     * Supported range is -1.32 V to +1.18 V. This should be close to 50% of
+     * the height of the input pulse. The inputs are AC coupled. Examples
+     * for various signaling standards are defined as XHPTDC8_THRESHOLD_*.
+     */
+    double trigger_threshold[XHPTDC8_TDC_CHANNEL_COUNT];
 
-        /**
-         * Configuration of the polarity of the external trigger sources.
-         */
-        xhptdc8_trigger trigger[XHPTDC8_TRIGGER_COUNT];
+    /**
+     * Configuration of the polarity of the external trigger sources.
+     */
+    xhptdc8_trigger trigger[XHPTDC8_TRIGGER_COUNT];
 
-        /**
-         * Configuration of the gating blocks.
-         */
-        xhptdc8_tiger_block gating_block[XHPTDC8_GATE_COUNT];
+    /**
+     * Configuration of the gating blocks.
+     */
+    xhptdc8_tiger_block gating_block[XHPTDC8_GATE_COUNT];
 
-        /**
-         * Configuration of the TiGeR timing generator blocks.
-         */
-        xhptdc8_tiger_block tiger_block[XHPTDC8_TIGER_COUNT];
+    /**
+     * Configuration of the TiGeR timing generator blocks.
+     */
+    xhptdc8_tiger_block tiger_block[XHPTDC8_TIGER_COUNT];
 
-        /**
-         * Configuration of the TDC channels.
-         */
-        xhptdc8_channel channel[XHPTDC8_TDC_CHANNEL_COUNT];
+    /**
+     * Configuration of the TDC channels.
+     */
+    xhptdc8_channel channel[XHPTDC8_TDC_CHANNEL_COUNT];
 
-        /**
-         * Configuration of ADC channel.
-         */
-        xhptdc8_adc_channel adc_channel;
+    /**
+     * Configuration of ADC channel.
+     */
+    xhptdc8_adc_channel adc_channel;
 
-        /**
-         * Configure TDC alignemet
-         * If set to 'true', the phase of the two TDC chips is not realigned
-         * when capturing is restartet. If set to 'false', it will be realigned
-         * on start_capture() (default). Should usually be left unchanged. Value
-         * is either 'true' or 'false'.
-         */
-        crono_bool_t skip_alignment;
+    /**
+     * Configure TDC alignemet
+     * If set to 'true', the phase of the two TDC chips is not realigned
+     * when capturing is restartet. If set to 'false', it will be realigned
+     * on start_capture() (default). Should usually be left unchanged. Value
+     * is either 'true' or 'false'.
+     */
+    crono_bool_t skip_alignment;
 
-        /**
-         * Define a signal source that is used for TDC alignment. Should usually
-         * be left unchanged. If set to XHPTDC8_ALIGN_TIGER use TiGeR pulse for
-         * alignment (pulses are present on LEMO inputs during alignment). If
-         * set to XHPTDC8_ALIGN_PIN use internal alignment pins for alignment
-         * (no pulses are present on LEMO inputs during alignment). If set to
-         * XHPTDC8_ALIGN_RESERVED use internal alignment pins for alignment and
-         * do not disable after alignment (internal use only).
-         */
-        int alignment_source;
+    /**
+     * Define a signal source that is used for TDC alignment. Should usually
+     * be left unchanged. If set to XHPTDC8_ALIGN_TIGER use TiGeR pulse for
+     * alignment (pulses are present on LEMO inputs during alignment). If
+     * set to XHPTDC8_ALIGN_PIN use internal alignment pins for alignment
+     * (no pulses are present on LEMO inputs during alignment). If set to
+     * XHPTDC8_ALIGN_RESERVED use internal alignment pins for alignment and
+     * do not disable after alignment (internal use only).
+     */
+    int alignment_source;
 
-        /**
-         * Select TDC alignment pin state when not in use.
-         * If set to 0 set to GND.
-         * If set to 1 set to VCCIO.
-         * If set to 2 set to high-Z.
-         */
-         int alignment_off_state;
+    /**
+     * Select TDC alignment pin state when not in use.
+     * If set to 0 set to GND.
+     * If set to 1 set to VCCIO.
+     * If set to 2 set to high-Z.
+     */
+    int alignment_off_state;
 
 } xhptdc8_device_configuration;
 
@@ -1181,36 +1191,35 @@ typedef struct {
  * Contains global configuration information.
  */
 typedef struct {
-        /**
-         * The number of bytes occupied by the structure.
-         */
-        int size;
+    /**
+     * The number of bytes occupied by the structure.
+     */
+    int size;
 
-        /**
-         * A version number that is increased when the definition of the
-         * structure is changed.
-         *
-         * Set to XHPTDC8_MANAGER_CONFIG_VERSION.
-         */
-        int version;
+    /**
+     * A version number that is increased when the definition of the
+     * structure is changed.
+     *
+     * Set to XHPTDC8_MANAGER_CONFIG_VERSION.
+     */
+    int version;
 
-        /**
-         * A structure with the configuration for an individual xHPTDC8-PCIe
-         * board. Use the function xhptdc8_count_devices() to query how many
-         * entries contain valid information.
-         */
-        xhptdc8_device_configuration
-            device_configs[XHPTDC8_MANAGER_DEVICES_MAX];
+    /**
+     * A structure with the configuration for an individual xHPTDC8-PCIe
+     * board. Use the function xhptdc8_count_devices() to query how many
+     * entries contain valid information.
+     */
+    xhptdc8_device_configuration device_configs[XHPTDC8_MANAGER_DEVICES_MAX];
 
-        /**
-         * Structure with the parameters for grouping.
-         */
-        xhptdc8_grouping_configuration grouping;
+    /**
+     * Structure with the parameters for grouping.
+     */
+    xhptdc8_grouping_configuration grouping;
 
-        /**
-         * Reserved for future use. Do not change!
-         */
-        int64_t (*bin_to_ps)(int64_t);
+    /**
+     * Reserved for future use. Do not change!
+     */
+    int64_t (*bin_to_ps)(int64_t);
 
 } xhptdc8_manager_configuration;
 
