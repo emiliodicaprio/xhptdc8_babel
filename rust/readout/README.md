@@ -165,7 +165,7 @@ cargo build
 ```
 
 ### github Building Action
-github [Building Action: Readout Tool Build](https://github.com/cronologic-de/xhptdc8_babel/edit/main/.github/workflows/readout_build.yml) is created to build `readout` project as following:
+github [Building Actions: `Check-Readout-Tool-Build` and `Readout-Tool-Build`](https://github.com/cronologic-de/xhptdc8_babel/edit/main/.github/workflows/build_all.yml) are created to build `readout` project as following:
 1. It builds the code automatically with relevant code update.
 2. It creates the following files:
 

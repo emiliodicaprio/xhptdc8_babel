@@ -47,7 +47,7 @@ Nothing special, just:
 3. Hit _Build util_, and check the .lib & .dll files in the corresponsing directory as per the table above.
 
 ### github Building Action
-github [Building Action: Util Library MSBuild](https://github.com/cronologic-de/xhptdc8_babel/blob/main/.github/workflows/util_msbuild.yml) is created to build `util` project as following:
+github [Building Actions: `Check-Util-Library-MSBuild` and `Util-Library-MSBuild`](https://github.com/cronologic-de/xhptdc8_babel/blob/main/.github/workflows/build_all.yml) is created to build `util` project as following:
 1. Using MSBuild.
 2. It builds the code automatically with relevant code update.
 3. It builds the `Release` configuration of both `x86` and `x64` environments.
@@ -457,7 +457,7 @@ Nothing special, just:
 3. Hit _Build util_, and check the .lib & .dll files are found in the corresponsing directory as per the table above.
 
 ### github Building Action
-github [Building Action: Util Test MSBuild](https://github.com/cronologic-de/xhptdc8_babel/blob/main/.github/workflows/util_test_msbuild.yml) is created to build `util_test` project as following:
+github [Building Actions: `Check-Util-Test-MSBuild` and `Util-Test-MSBuild`](https://github.com/cronologic-de/xhptdc8_babel/blob/main/.github/workflows/build_all.yml) are created to build `util_test` project as following:
 1. Using MSBuild.
 2. It builds the code automatically with relevant code update.
 3. It builds the `Release` configuration of both `x86` and `x64` environments.

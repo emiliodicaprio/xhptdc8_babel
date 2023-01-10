@@ -8,14 +8,15 @@ It's a program that provides _human readable output_ about the TDCs available in
 The project files are created as [Go](https://golang.org/) files.
 
 ### Project Environments and Configurations
-The current code is:
-1. Including the [xhptdc8_interface.h](https://github.com/cronologic-de/xhptdc8_babel/blob/main/lib/include/xHPTDC8_interface.h).
-2. Linked to x64 library (e.g. Dummy Library x64).
+The current code:
+1. Includes the [xhptdc8_interface.h](https://github.com/cronologic-de/xhptdc8_babel/blob/main/lib/include/xHPTDC8_interface.h).
+2. Links to x64 library (e.g. Dummy Library x64).
 
 xhptdc8 APIs are called using [CGO](https://golang.org/pkg/cmd/cgo/), as following:
 ```GO
 /*
 	#cgo CFLAGS: -Wall -g -I../../../../lib/include/
+	#cgo CPPFLAGS: -Wall -g -I../../../../lib/include/	
 	#cgo LDFLAGS: -L./ -l:../../../../lib/x64dummy/xhptdc8_driver_64.lib
 	#include "xhptdc8_interface.h"
 */
@@ -44,7 +45,7 @@ import "C"
 ```CMD
 \Path\To\Project\go\info\src-cgo>go build -o xhptdc8_info_64.exe .\xhptdc8_info.go .\info_aux.go
 ```
-2. Run `xhptdc8_info_64.exe` (generated from previous step)
+2. Run `xhptdc8_info_64.exe` (generated from previous step). N.B. Driver DLL should be on the path/same folder.
 
 N.B. I used go version go1.16.2 windows/amd64.
 
@@ -62,12 +63,12 @@ N.B. I used go version go1.16.2 windows/amd64.
 ```CMD
 go build -o xhptdc8_info.exe .\xhptdc8_info.go .\info_aux.go
 ```
-5. Run `xhptdc8_info.exe` (generated from previous step)
+5. Run `xhptdc8_info.exe` (generated from previous step). N.B. Driver DLL should be on the path/same folder.
 
-Please refer to [Building Action: Info Tool Build](https://github.com/cronologic-de/xhptdc8_babel/blob/main/.github/workflows/infoTool_build.yml) if you have any trouble building x86 version.
+Please refer to [Building Action: `Info-Tool-Build`](https://github.com/cronologic-de/xhptdc8_babel/blob/main/.github/workflows/build_all.yml) if you have any trouble building x86 version.
 
 ### github Building Action
-github [Building Action: Info Tool Build](https://github.com/cronologic-de/xhptdc8_babel/blob/main/.github/workflows/infoTool_build.yml) is created to build `info` project as following:
+github [Building Actions: `Check-Info-Tool-Build` and `Info-Tool-Build`](https://github.com/cronologic-de/xhptdc8_babel/blob/main/.github/workflows/build_all.yml) are created to build `info` project as following:
 1. It builds the code automatically with relevant code update.
 2. It builds the `x86` version and checks it into _/go/bin/x86/_, and the `x64` version and checks it into _/go/bin/x64/_
 
