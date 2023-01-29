@@ -62,8 +62,8 @@ jobs:
       id: check
       if: steps.changed-files-specific.outputs.any_changed == 'false'
       run: |
-        echo "No concerned files changed, suppressing processing."
-        echo "ok_to_proceed_val=N" >> $GITHUB_OUTPUT
+        echo "No concerned files changed, suppressing processing."       
+        # echo "ok_to_proceed_val=N" >> $GITHUB_OUTPUT
 
   # ___________________________________________________________________________
   #
@@ -150,7 +150,7 @@ jobs:
       if: steps.changed-files-specific.outputs.any_changed == 'false'
       run: |
         echo "No concerned files changed, suppressing processing."
-        echo "ok_to_proceed_val=N" >> $GITHUB_OUTPUT
+        # echo "ok_to_proceed_val=N" >> $GITHUB_OUTPUT
   
   # ___________________________________________________________________________
   #
@@ -245,7 +245,7 @@ jobs:
       if: steps.changed-files-specific.outputs.any_changed == 'false'
       run: |
         echo "No concerned files changed, suppressing processing."
-        echo "ok_to_proceed_val=N" >> $GITHUB_OUTPUT
+        # echo "ok_to_proceed_val=N" >> $GITHUB_OUTPUT
         
   # ___________________________________________________________________________
   #
@@ -355,7 +355,7 @@ jobs:
       if: steps.changed-files-specific.outputs.any_changed == 'false'
       run: |
         echo "No concerned files changed, suppressing processing."
-        echo "ok_to_proceed_val=N" >> $GITHUB_OUTPUT
+        # echo "ok_to_proceed_val=N" >> $GITHUB_OUTPUT
 
   # ___________________________________________________________________________
   #
@@ -470,7 +470,7 @@ jobs:
       if: steps.changed-files-specific.outputs.any_changed == 'false'
       run: |
         echo "No concerned files changed, suppressing processing."
-        echo "ok_to_proceed_val=N" >> $GITHUB_OUTPUT
+        # echo "ok_to_proceed_val=N" >> $GITHUB_OUTPUT
 
   # ___________________________________________________________________________
   # 
