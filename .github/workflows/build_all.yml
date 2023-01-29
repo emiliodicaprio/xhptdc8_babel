@@ -18,18 +18,17 @@ name: Build All Projects
 # if you need coverage of multiple configuration types.
 # https://docs.github.com/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
 
-on: workflow_dispatch
-  
-#   push:
-#     paths: # Collected from paths of all jobs below
-#     - 'lib/include/**'
-#     - 'dummy/**'
-#     - 'go/info/src-cgo/**'
-#     - 'rust/readout/**'
-#     - 'util/util/**'
-#     - 'util/util_test/**'
-#   pull_request:
-#     branches: ["main"]
+on: # workflow_dispatch
+  push:
+    paths: # Collected from paths of all jobs below
+    - 'lib/include/**'
+    - 'dummy/**'
+    - 'go/info/src-cgo/**'
+    - 'rust/readout/**'
+    - 'util/util/**'
+    - 'util/util_test/**'
+  pull_request:
+    branches: ["main"]
 
 jobs:
   # ===========================================================================
@@ -63,7 +62,7 @@ jobs:
       if: steps.changed-files-specific.outputs.any_changed == 'false'
       run: |
         echo "No concerned files changed, suppressing processing."       
-        # echo "ok_to_proceed_val=N" >> $GITHUB_OUTPUT
+        echo "ok_to_proceed_val=N" >> $GITHUB_OUTPUT
 
   # ___________________________________________________________________________
   #
@@ -150,7 +149,7 @@ jobs:
       if: steps.changed-files-specific.outputs.any_changed == 'false'
       run: |
         echo "No concerned files changed, suppressing processing."
-        # echo "ok_to_proceed_val=N" >> $GITHUB_OUTPUT
+        echo "ok_to_proceed_val=N" >> $GITHUB_OUTPUT
   
   # ___________________________________________________________________________
   #
@@ -245,7 +244,7 @@ jobs:
       if: steps.changed-files-specific.outputs.any_changed == 'false'
       run: |
         echo "No concerned files changed, suppressing processing."
-        # echo "ok_to_proceed_val=N" >> $GITHUB_OUTPUT
+        echo "ok_to_proceed_val=N" >> $GITHUB_OUTPUT
         
   # ___________________________________________________________________________
   #
@@ -355,7 +354,7 @@ jobs:
       if: steps.changed-files-specific.outputs.any_changed == 'false'
       run: |
         echo "No concerned files changed, suppressing processing."
-        # echo "ok_to_proceed_val=N" >> $GITHUB_OUTPUT
+        echo "ok_to_proceed_val=N" >> $GITHUB_OUTPUT
 
   # ___________________________________________________________________________
   #
@@ -470,7 +469,7 @@ jobs:
       if: steps.changed-files-specific.outputs.any_changed == 'false'
       run: |
         echo "No concerned files changed, suppressing processing."
-        # echo "ok_to_proceed_val=N" >> $GITHUB_OUTPUT
+        echo "ok_to_proceed_val=N" >> $GITHUB_OUTPUT
 
   # ___________________________________________________________________________
   # 
