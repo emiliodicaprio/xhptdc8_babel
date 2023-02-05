@@ -46,14 +46,14 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>..\..\..\lib\include;..\..\include;$(IncludePath)</IncludePath>
+    <IncludePath>..\..\..\include;..\..\include;$(IncludePath)</IncludePath>
     <LibraryPath>..\..\..\lib\x64dummy;..\..\lib\x64;$(LibraryPath)</LibraryPath>
     <ExecutablePath>$(ExecutablePath)</ExecutablePath>
     <TargetName>xhptdc8_util_test_64</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>..\..\..\lib\include;..\..\include;$(IncludePath)</IncludePath>
+    <IncludePath>..\..\..\include;..\..\include;$(IncludePath)</IncludePath>
     <LibraryPath>..\..\..\lib\x64dummy;..\..\lib\x64;$(LibraryPath)</LibraryPath>
     <TargetName>xhptdc8_util_test_64</TargetName>
   </PropertyGroup>

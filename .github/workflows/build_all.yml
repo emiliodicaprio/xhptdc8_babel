@@ -22,7 +22,7 @@ on: workflow_dispatch
   
 #   push:
 #     paths: # Collected from paths of all jobs below
-#     - 'lib/include/**'
+#     - 'include/**'
 #     - 'dummy/**'
 #     - 'go/info/src-cgo/**'
 #     - 'rust/readout/**'
@@ -54,7 +54,7 @@ jobs:
       uses: tj-actions/changed-files@v35
       with:
         files: |
-          lib/include/**
+          include/**
           dummy/**
           
     # Check if any file(s) in the concerned folder changed
@@ -141,7 +141,7 @@ jobs:
       uses: tj-actions/changed-files@v35
       with:
         files: |
-          lib/include/**
+          include/**
           go/info/src-cgo/** 
         
     # Check if any file(s) in the concerned folder changed
@@ -236,7 +236,7 @@ jobs:
       uses: tj-actions/changed-files@v35
       with:
         files: |
-          lib/include/**
+          include/**
           rust/readout/**
         
     # Check if any file(s) in the concerned folder changed
@@ -346,7 +346,7 @@ jobs:
       uses: tj-actions/changed-files@v35
       with:
         files: |
-          lib/include/**
+          include/**
           util/util/**
         
     # Check if any file(s) in the concerned folder changed
@@ -461,7 +461,7 @@ jobs:
       uses: tj-actions/changed-files@v35
       with:
         files: |
-          lib/include/**
+          include/**
           util/util_test/**
         
     # Check if any file(s) in the concerned folder changed

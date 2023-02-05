@@ -48,13 +48,13 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>..\..\lib\include;..\include;$(IncludePath)</IncludePath>
+    <IncludePath>..\..\include;..\include;$(IncludePath)</IncludePath>
     <LibraryPath>..\..\lib\x64dummy;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>..\..\lib\include;..\include;$(IncludePath)</IncludePath>
+    <IncludePath>..\..\include;..\include;$(IncludePath)</IncludePath>
     <LibraryPath>..\..\lib\x64dummy;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
   </PropertyGroup>

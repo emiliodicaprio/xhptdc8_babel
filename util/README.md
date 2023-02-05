@@ -9,7 +9,7 @@ The Solution and Project are created using Microsoft Visual Studio 2019.</br>
 The project structure follows [our standard project folder structure](https://github.com/cronologic-de/xhptdc8_babel/wiki/project_folder_structure).
 
 ### Project Environments and Configurations
-- Project Settings -> Include Directories : `..\..\include;..\..\..\lib\include;.\ryml_src;` is added.
+- Project Settings -> Include Directories : `..\..\include;..\..\..\include;.\ryml_src;` is added.
 - Project Settings -> Preprocessor Definitions: `XHPTDC8_UTIL_EXPORTS` is defined.
 - Project Settings -> Preprocessor Definitions: `XHPTDC8_VERBOSE_DEBUG` is defined for _Debug Configurations_ only.
 - `Output Directory` is left as the Visual Studio _Default_ Project Settings.
@@ -55,7 +55,7 @@ github [Building Actions: `Check-Util-Library-MSBuild` and `Util-Library-MSBuild
 
 ### Compile & Link Settings
 In order to call functions from the utility library, you need to do the following:
-1. Include `/lib/include/xhptdc8_util.h`
+1. Include `/include/xhptdc8_util.h`
 2. Link to the corresponsing library version on `/lib/x64`
 
 ### xhptdc8_apply_yaml
@@ -85,7 +85,7 @@ int xhptdc8_apply_yaml(xhptdc8_manager_configuration* cfg, const char* yaml_stri
 ##### xHPTDC8-Specific
 `manager_config` Arrays shall be implemented as maps not as sequences. The reason is that it shall be possible to assign only part of the array, which is not possible for sequences.
 
-Array index starts with 0 (or -1), and should be less than the maximum array size defined in [xHPTDC8_interface.h](../lib/include/xHPTDC8_interface.h).</br>
+Array index starts with 0 (or -1), and should be less than the maximum array size defined in [xHPTDC8_interface.h](../include/xHPTDC8_interface.h).</br>
 _For example_: `trigger` array could have trigger index starting -1 to 15 (`XHPTDC8_TRIGGER_COUNT` - 1)
 ```YAML
 manager_config:
@@ -173,7 +173,7 @@ manager_config:
     2: *rising_trigger
 ```
 
-Values that do not match both the element data type (defined in [xHPTDC8_interface.h](../lib/include/xHPTDC8_interface.h)) and the value reange (defined in the User Guide) will generate error and stop processing.</br>
+Values that do not match both the element data type (defined in [xHPTDC8_interface.h](../include/xHPTDC8_interface.h)) and the value reange (defined in the User Guide) will generate error and stop processing.</br>
 _For example_: in the following YAML, an error will be generated because of the value `mode` of `tiger_block`, as it accepts only values [0, 1, 2, 3].
 ```YAML
 manager_config:
@@ -210,7 +210,7 @@ manager_config:
 #### Samples
 
 ##### All Elements YAML
-Here is the complete elements of the manager configuration sturcture, including sample values; you can copy your YAML elements from the YAML below, just keep the spaces before the elements, and refer to both the user guide and the [xHPTDC8_interface.h](/lib/include/xHPTDC8_interface.h "xHPTDC8_interface.h") xhptdc8_interface.h for the members specifications:
+Here is the complete elements of the manager configuration sturcture, including sample values; you can copy your YAML elements from the YAML below, just keep the spaces before the elements, and refer to both the user guide and the [xHPTDC8_interface.h](/include/xHPTDC8_interface.h "xHPTDC8_interface.h") xhptdc8_interface.h for the members specifications:
 
 ```YAML
 manager_config:
@@ -356,7 +356,7 @@ The project structure follows [our standard project folder structure](https://gi
 
 ### Project Environments and Configurations
 - `util` DLL is added as `Reference`
-- Project Settings -> Include Directories : `..\..\lib\include` is added.
+- Project Settings -> Include Directories : `..\..\include` is added.
 - `Output Directory` is left as the Visual Studio _Default_ Project Settings.
 
 | Config. | Env.  | Library Directory                       | Linker Input    |
@@ -431,7 +431,7 @@ The Solution and Project are created using Microsoft Visual Studio 2019. </br>
 The project structure follows [our standard project folder structure](https://github.com/cronologic-de/xhptdc8_babel/wiki/project_folder_structure).
 
 ### Project Environments and Configurations
-- Project Settings -> Include Directories : `..\..\..\lib\include;..\..\include;` is added.
+- Project Settings -> Include Directories : `..\..\..\include;..\..\include;` is added.
 - `Output Directory` is left as the Visual Studio _Default_ Project Settings.
 
 | Config. | Env.   | Library Directory                       | Linker Input                           | Target Name              |

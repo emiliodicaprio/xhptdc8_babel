@@ -9,14 +9,14 @@ The project files are created as [Go](https://golang.org/) files.
 
 ### Project Environments and Configurations
 The current code:
-1. Includes the [xhptdc8_interface.h](https://github.com/cronologic-de/xhptdc8_babel/blob/main/lib/include/xHPTDC8_interface.h).
+1. Includes the [xhptdc8_interface.h](https://github.com/cronologic-de/xhptdc8_babel/blob/main/include/xHPTDC8_interface.h).
 2. Links to x64 library (e.g. Dummy Library x64).
 
 xhptdc8 APIs are called using [CGO](https://golang.org/pkg/cmd/cgo/), as following:
 ```GO
 /*
-	#cgo CFLAGS: -Wall -g -I../../../../lib/include/
-	#cgo CPPFLAGS: -Wall -g -I../../../../lib/include/	
+	#cgo CFLAGS: -Wall -g -I../../../../include/
+	#cgo CPPFLAGS: -Wall -g -I../../../../include/	
 	#cgo LDFLAGS: -L./ -l:../../../../lib/x64dummy/xhptdc8_driver_64.lib
 	#include "xhptdc8_interface.h"
 */
@@ -38,7 +38,7 @@ import "C"
 ### Building the Code (64-bit)
 #### Prerequisites
 1. `Go` is installed on your local machine.
-2. Just make sure you have the latest files of `\lib\include\` and `\lib\x64dummy\` on your local machine.
+2. Just make sure you have the latest files of `\include\` and `\lib\x64dummy\` on your local machine.
 
 #### Steps
 1. Using `cmd`, 

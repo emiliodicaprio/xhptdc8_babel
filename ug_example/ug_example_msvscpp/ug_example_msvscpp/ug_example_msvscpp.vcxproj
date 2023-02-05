@@ -73,24 +73,24 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <LibraryPath>..\..\..\lib\x64;$(LibraryPath)</LibraryPath>
-    <IncludePath>..\..\..\lib\include;$(IncludePath)</IncludePath>
+    <IncludePath>..\..\..\include;$(IncludePath)</IncludePath>
     <TargetName>xhptdc8_ugex</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugDummy|x64'">
     <LinkIncremental>true</LinkIncremental>
     <LibraryPath>..\..\..\lib\x64dummy;$(LibraryPath)</LibraryPath>
-    <IncludePath>..\..\..\lib\include;$(IncludePath)</IncludePath>
+    <IncludePath>..\..\..\include;$(IncludePath)</IncludePath>
     <TargetName>xhptdc8_ugex</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>..\..\..\lib\include;$(IncludePath)</IncludePath>
+    <IncludePath>..\..\..\include;$(IncludePath)</IncludePath>
     <LibraryPath>..\..\..\lib\x64;$(LibraryPath)</LibraryPath>
     <TargetName>xhptdc8_ugex</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseDummy|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>..\..\..\lib\include;$(IncludePath)</IncludePath>
+    <IncludePath>..\..\..\include;$(IncludePath)</IncludePath>
     <LibraryPath>..\..\..\lib\x64dummy;$(LibraryPath)</LibraryPath>
     <TargetName>xhptdc8_ugex</TargetName>
   </PropertyGroup>

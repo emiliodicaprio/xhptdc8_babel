@@ -61,7 +61,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>..\..\..\lib\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -79,7 +79,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>..\..\..\lib\include;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\include;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -93,8 +93,8 @@
     <None Include="..\..\build_ms.ps1" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\lib\include\crono_interface.h" />
-    <ClInclude Include="..\..\..\lib\include\xHPTDC8_interface.h" />
+    <ClInclude Include="..\..\..\include\crono_interface.h" />
+    <ClInclude Include="..\..\..\include\xHPTDC8_interface.h" />
     <ClInclude Include="..\..\xHPTDC8_dummy_interface.h" />
     <ClInclude Include="..\..\xHPTDC8_RC.h" />
     <ClInclude Include="framework.h" />
