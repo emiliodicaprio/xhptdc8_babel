@@ -27,8 +27,6 @@ on: # workflow_dispatch
     - 'rust/readout/**'
     - 'util/util/**'
     - 'util/util_test/**'
-  pull_request:
-    branches: ["main"]
 
 jobs:
   # ===========================================================================
