@@ -184,12 +184,6 @@ jobs:
       run: |
         git pull
         
-    - name: Install Go
-      if: ${{needs.Check-Info-Tool-Build.outputs.ok_to_proceed != 'N' }}
-      uses: actions/setup-go@v2
-      with:
-        go-version: '1.16.x' # The Go version to download (if necessary) and use.
-
     - name: Display Versions 
       if: ${{needs.Check-Info-Tool-Build.outputs.ok_to_proceed != 'N' }}
       run: |
