@@ -3,7 +3,7 @@ $Script_Path = Get-Location
 $Babel_Path = (get-item $Script_Path).parent.FullName
 
 Write-Host "Checking MS Visual Studio installation folder on C:\"
-$C_Path = “C:\”
+$C_Path = ï¿½C:\ï¿½
 if(!(Test-Path -Path $C_Path))
 {
     Write-Host -ForegroundColor RED "C:\ Is Not Found"
@@ -35,47 +35,6 @@ else
     Write-Host -ForegroundColor GREEN "Found MSBuild Installation: " $MSBuild_Installation_Path
     cd $MSBuild_Installation_Path
 }
-
-# _____________
-# Build x86 DLL
-#
-Write-Host ""
-Write-Host -BackgroundColor GREEN "Building x86 DLL          "  
-
-[String]$x86_Release_Path = [String]$Script_Path + "\msvscpp\msvscpp\Release"
-if(!(Test-Path -Path $x86_Release_Path))
-{
-    mkdir $x86_Release_Path | out-null
-}
-
-[String]$Log_File_Path =
-    [String]$Script_Path + "\msvscpp\msvscpp\Release\Build_Output_" + [DateTime]::Now.ToString("yyyyMMdd-HHmmss") + ".log"
-
-[String]$MSBuild_Cmd = 
-    (".\MSBuild ") + 
-    ([String]$Script_Path + "\msvscpp\msvscpp\msvscpp.vcxproj" + " /property:Configuration=Release /property:Platform=x86") + 
-    ("  >  " + [String]$Log_File_Path)
-
-Invoke-expression $MSBuild_Cmd
-Write-Host "Build is done, log file is found in: "$Log_File_Path
-
-Write-Host "Checking build results"
-#Select-String -Path $Log_File_Path -Pattern 'Error'
-
-[String]$x86_DLL_Path = [String]$x86_Release_Path + "\xhptdc8_driver.dll"
-[String]$x86_Lib_Path = [String]$x86_Release_Path + "\xhptdc8_driver.lib"
-if(!(Test-Path -Path $x86_DLL_Path))
-{
-    Write-Host -ForegroundColor RED "Error generating DLL"
-}
-else
-{
-    [String]$Babel_Libx86_Path = $Babel_Path + "\lib\x86dummy"
-    Copy-Item $x86_DLL_Path -Destination $Babel_Libx86_Path
-    Copy-Item $x86_Lib_Path -Destination $Babel_Libx86_Path
-    Write-Host -ForegroundColor GREEN "DLL and Lib are copied successfully to the corresponding lib folder: " $Babel_Libx86_Path
-}
-
 
 # _____________
 # Build x64 DLL

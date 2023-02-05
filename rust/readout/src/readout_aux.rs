@@ -3,9 +3,6 @@
 #![allow(non_snake_case)]
 #![allow(dead_code)]
 
-#[cfg(target_arch="x86")]
-include!("./bindings/x86/bindings.rs"); // Must = corresponding BINDINGS_FILE_NAME 
-
 #[cfg(target_arch="x86_64")]
 include!("./bindings/x64/bindings_64.rs");  // Must = corresponding BINDINGS_FILE_NAME 
 
@@ -25,9 +22,6 @@ use std::str;
 
 static mut ENABLE_LOG : bool = false ; 
 const DEFAULT_HITS_NO : u32 = 10000 ;
-
-#[cfg(target_arch="x86")]
-const DEFAULT_BUFFER_CAPACITY : u32 = 5000 ;
 
 #[cfg(target_arch="x86_64")]
 const DEFAULT_BUFFER_CAPACITY : u64 = 5000 ;

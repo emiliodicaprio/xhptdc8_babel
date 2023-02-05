@@ -39,13 +39,10 @@ Copy the `driver` folder to the project folder as following:
         └── driver/
             ├── include/
             │   └── .h
-            ├── x64/
-            │   ├── .lib    (Windows only)
-            │   ├── .dll    (Windows only)
-            │   └── .a      (Linux only)
-            └── x86/        (Windows only)
-                ├── .lib
-                └── .dll
+            └── x64/
+                ├── .lib    (Windows only)
+                ├── .dll    (Windows only)
+                └── .a      (Linux only)
 ```
 - When using the `Dummy Library`, copy the corresponding _platform_ DLL from the _Library Directory_ to the driver folder. For instance, for _x64 Release_ exe, just copy the DLL _xhptdc8_driver_64.dll_ from [x64dummy Folder](https://github.com/cronologic-de/xhptdc8_babel/tree/main/lib/x64dummy).
 
@@ -72,8 +69,6 @@ Select `Build -> Build All` from menu, or any standard Visual Studio way to buil
 The Target Exectuable name is `xhptdc8_ugex.exe`.
 | Configuration     | `CMakeSettings` | `Build root`                     | `CMake generator`     | Output Folder          |
 | ----------------- | --------------- | -------------------------------- | --------------------- | ---------------------  |
-| **x86 Debug**     | x86-Debug       | `${projectDir}\..\build\bfvs32D` | Visual Studio 17 2022 | `driver\x86\Debug`   |
-| **x86 Release**   | x86-Release     | `${projectDir}\..\build\bfvs32R` | Visual Studio 17 2022 | `driver\x86\Release`   |
 | **x86_64 Debug**  | x64-Debug       | `${projectDir}\..\build\bfvsD`   | Visual Studio 17 2022 Win64 | `driver\x64\Release`   |
 | **x86_64 Release**| x64-Release     | `${projectDir}\..\build\bfvsR`   | Visual Studio 17 2022 Win64 | `driver\x64\Release`   |
 * The provided file builds the project using `Visual Studio 2022`, however, you can change `generator` in  `CMakeSettings.json` to any other Visual Studio generator you have on your machine.
@@ -85,8 +80,6 @@ Go to tools: `cd tools`, then run the following command:
 | ----------------- | ------------- | -------------------------------------------------     | ------------------------------------------------- | ---------------------  |
 | **Windows x86_64**| Release       | `cmake -B ..\build\bfR -A x64`                                                  | `cmake --build ..\build\bfR --config Release`     | `driver\x64\Release`   |
 | **Windows x86_64**| Debug         | `cmake -B ..\build\bfD -A x64`                                                  | `cmake --build ..\build\bfD --config Debug`       | `driver\x64\Debug`     |
-| **Windows x86**   | Release       | `cmake -B ..\build\bf32R -A Win32`                                              | `cmake --build ..\build\bf32R --config Release`   | `driver\x86\Release`   |
-| **Windows x86**   | Debug         | `cmake -B ..\build\bf32D -A Win32`                                              | `cmake --build ..\build\bf32D --config Debug`     | `driver\x86\Debug`     |
 | **Linux x86_64**  | Release       | `cmake -B ../build/bfR -DCMAKE_BUILD_TYPE=Release`                              | `cmake --build ../build/bfR`                      | `driver/x64/Release`   |
 | **Linux x86_64**  | Debug         | `cmake -B ../build/bfD -DCMAKE_BUILD_TYPE=Debug`                                | `cmake --build ../build/bfD`                      | `driver/x64/Debug`     |
 
