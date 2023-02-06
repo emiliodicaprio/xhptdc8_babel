@@ -41,9 +41,9 @@ import "C"
 2. Just make sure you have the latest files of `\include\` and `\lib\x64dummy\` on your local machine.
 
 #### Steps
-1. Using `cmd`, 
+1. Using `cmd`, cd to `\Path\To\Project\go\info\src-cgo`, and run:
 ```CMD
-\Path\To\Project\go\info\src-cgo>go build -o xhptdc8_info_64.exe .\xhptdc8_info.go .\info_aux.go
+go build -o xhptdc8_info_64.exe .\xhptdc8_info.go .\info_aux.go
 ```
 2. Run `xhptdc8_info_64.exe` (generated from previous step). N.B. Driver DLL should be on the path/same folder.
 
