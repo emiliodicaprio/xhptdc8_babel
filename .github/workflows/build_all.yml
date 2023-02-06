@@ -21,14 +21,12 @@ name: Build All Projects
 on: # workflow_dispatch
   push:
     paths: # Collected from paths of all jobs below
-    - 'lib/include/**'
+    - 'include/**'
     - 'dummy/**'
     - 'go/info/src-cgo/**'
     - 'rust/readout/**'
     - 'util/util/**'
     - 'util/util_test/**'
-  pull_request:
-    branches: ["main"]
 
 jobs:
   # ===========================================================================
@@ -53,7 +51,7 @@ jobs:
       uses: tj-actions/changed-files@v35
       with:
         files: |
-          lib/include/**
+          include/**
           dummy/**
           
     # Check if any file(s) in the concerned folder changed
@@ -140,7 +138,7 @@ jobs:
       uses: tj-actions/changed-files@v35
       with:
         files: |
-          lib/include/**
+          include/**
           go/info/src-cgo/** 
         
     # Check if any file(s) in the concerned folder changed
@@ -183,12 +181,6 @@ jobs:
       run: |
         git pull
         
-    - name: Install Go
-      if: ${{needs.Check-Info-Tool-Build.outputs.ok_to_proceed != 'N' }}
-      uses: actions/setup-go@v2
-      with:
-        go-version: '1.16.x' # The Go version to download (if necessary) and use.
-
     - name: Display Versions 
       if: ${{needs.Check-Info-Tool-Build.outputs.ok_to_proceed != 'N' }}
       run: |
@@ -235,7 +227,7 @@ jobs:
       uses: tj-actions/changed-files@v35
       with:
         files: |
-          lib/include/**
+          include/**
           rust/readout/**
         
     # Check if any file(s) in the concerned folder changed
@@ -345,7 +337,7 @@ jobs:
       uses: tj-actions/changed-files@v35
       with:
         files: |
-          lib/include/**
+          include/**
           util/util/**
         
     # Check if any file(s) in the concerned folder changed
@@ -460,7 +452,7 @@ jobs:
       uses: tj-actions/changed-files@v35
       with:
         files: |
-          lib/include/**
+          include/**
           util/util_test/**
         
     # Check if any file(s) in the concerned folder changed

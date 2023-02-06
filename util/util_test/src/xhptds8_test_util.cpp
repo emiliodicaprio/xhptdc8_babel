@@ -80,7 +80,7 @@ int main(int argc,  char* argv[])
 			{
 				printf("Function returned error code <%d>.\n", result);
 				printf("Please refer to driver utility header file for code values meaning: \n");
-				printf("https://github.com/cronologic-de/xhptdc8_babel/blob/main/lib/include/xhptdc8_util.h \n");
+				printf("https://github.com/cronologic-de/xhptdc8_babel/blob/main/include/xhptdc8_util.h \n");
 			}
 		}
 		else

@@ -9,7 +9,7 @@ The Solution and Project are created using Microsoft Visual Studio 2019.</br>
 The project structure follows [our standard project folder structure](https://github.com/cronologic-de/xhptdc8_babel/wiki/project_folder_structure).
 
 ### Project Environments and Configurations
-- Project Settings -> Include Directories : `..\..\include;..\..\..\lib\include;.\ryml_src;` is added.
+- Project Settings -> Include Directories : `..\..\include;..\..\..\include;.\ryml_src;` is added.
 - Project Settings -> Preprocessor Definitions: `XHPTDC8_UTIL_EXPORTS` is defined.
 - Project Settings -> Preprocessor Definitions: `XHPTDC8_VERBOSE_DEBUG` is defined for _Debug Configurations_ only.
 - `Output Directory` is left as the Visual Studio _Default_ Project Settings.
@@ -18,8 +18,6 @@ The project structure follows [our standard project folder structure](https://gi
 | ------- |------ | -----------------------------------------       | --------------  |
 | Debug   | x64   | ..\\..\\..\\lib\x64dummy\; ..\\..\\..\\lib\x64\ | xhptdc8_util_64.dll |
 | Release | x64   | ..\\..\\..\\lib\x64dummy\; ..\\..\\..\\lib\x64\ | xhptdc8_util_64.dll |
-| Debug   | Win32 | ..\\..\\..\\lib\x86dummy\; ..\\..\\..\\lib\x86\ | xhptdc8_util.dll    |
-| Release | Win32 | ..\\..\\..\\lib\x86dummy\; ..\\..\\..\\lib\x86\ | xhptdc8_util.dll    |
 * You can change the output directory if you want to keep both the release and debug versions of the DLL concurrently
 
 ### External Libraries
@@ -50,15 +48,15 @@ Nothing special, just:
 github [Building Actions: `Check-Util-Library-MSBuild` and `Util-Library-MSBuild`](https://github.com/cronologic-de/xhptdc8_babel/blob/main/.github/workflows/build_all.yml) is created to build `util` project as following:
 1. Using MSBuild.
 2. It builds the code automatically with relevant code update.
-3. It builds the `Release` configuration of both `x86` and `x64` environments.
+3. It builds the `Release` configuration of `x64` environments.
 4. It copies and checkin the output DLL and LIB files to _folder Output Directory on github_ mentioned in section _Project Environments and Configurations_.
 
 ## Using the Utility Library
 
 ### Compile & Link Settings
 In order to call functions from the utility library, you need to do the following:
-1. Include `/lib/include/xhptdc8_util.h`
-2. Link to the corresponsing library version on `/lib/x86` or `/lib/x64`
+1. Include `/include/xhptdc8_util.h`
+2. Link to the corresponsing library version on `/lib/x64`
 
 ### xhptdc8_apply_yaml
 The purpose of this repository is to make using the [xHPTDC8 time-to-digital converter](https://www.cronologic.de/products/tdcs/xhptdc8-pcie) simpler to use for end users.
@@ -87,7 +85,7 @@ int xhptdc8_apply_yaml(xhptdc8_manager_configuration* cfg, const char* yaml_stri
 ##### xHPTDC8-Specific
 `manager_config` Arrays shall be implemented as maps not as sequences. The reason is that it shall be possible to assign only part of the array, which is not possible for sequences.
 
-Array index starts with 0 (or -1), and should be less than the maximum array size defined in [xHPTDC8_interface.h](../lib/include/xHPTDC8_interface.h).</br>
+Array index starts with 0 (or -1), and should be less than the maximum array size defined in [xHPTDC8_interface.h](../include/xHPTDC8_interface.h).</br>
 _For example_: `trigger` array could have trigger index starting -1 to 15 (`XHPTDC8_TRIGGER_COUNT` - 1)
 ```YAML
 manager_config:
@@ -175,7 +173,7 @@ manager_config:
     2: *rising_trigger
 ```
 
-Values that do not match both the element data type (defined in [xHPTDC8_interface.h](../lib/include/xHPTDC8_interface.h)) and the value reange (defined in the User Guide) will generate error and stop processing.</br>
+Values that do not match both the element data type (defined in [xHPTDC8_interface.h](../include/xHPTDC8_interface.h)) and the value reange (defined in the User Guide) will generate error and stop processing.</br>
 _For example_: in the following YAML, an error will be generated because of the value `mode` of `tiger_block`, as it accepts only values [0, 1, 2, 3].
 ```YAML
 manager_config:
@@ -212,7 +210,7 @@ manager_config:
 #### Samples
 
 ##### All Elements YAML
-Here is the complete elements of the manager configuration sturcture, including sample values; you can copy your YAML elements from the YAML below, just keep the spaces before the elements, and refer to both the user guide and the [xHPTDC8_interface.h](/lib/include/xHPTDC8_interface.h "xHPTDC8_interface.h") xhptdc8_interface.h for the members specifications:
+Here is the complete elements of the manager configuration sturcture, including sample values; you can copy your YAML elements from the YAML below, just keep the spaces before the elements, and refer to both the user guide and the [xHPTDC8_interface.h](/include/xHPTDC8_interface.h "xHPTDC8_interface.h") xhptdc8_interface.h for the members specifications:
 
 ```YAML
 manager_config:
@@ -358,21 +356,19 @@ The project structure follows [our standard project folder structure](https://gi
 
 ### Project Environments and Configurations
 - `util` DLL is added as `Reference`
-- Project Settings -> Include Directories : `..\..\lib\include` is added.
+- Project Settings -> Include Directories : `..\..\include` is added.
 - `Output Directory` is left as the Visual Studio _Default_ Project Settings.
 
 | Config. | Env.  | Library Directory                       | Linker Input    |
 | ------- |-----  |-----------------                        | --------------- |
 | Debug   | x64   | ..\\..\\..\lib\x64dummy;..\\..\lib\x64; | xhptdc8_util_64.lib;xhptdc8_driver_64.lib |
 | Release | x64   | ..\\..\\..\lib\x64dummy;..\\..\lib\x64; | xhptdc8_util_64.lib;xhptdc8_driver_64.lib |
-| Debug   | Win32 | ..\\..\\..\lib\x86dummy;..\\..\lib\x86; | xhptdc8_util.lib;xhptdc8_driver.lib    |
-| Release | Win32 | ..\\..\\..\lib\x86dummy;..\\..\lib\x86; | xhptdc8_util.lib;xhptdc8_driver.lib    |
 
 ### Building Using MS Visual Studio
 Nothing special, just:
 1. Using MS Visual Studio compatible version, open the solution file: `/util/util_msvscpp/util_msvscpp.sln`
 2. Select the needed _Configuration_ and _Environment_ to build.
-3. Hit _Build util_, and check the .lib files are found in the corresponsing directory as per the table above.
+3. Hit *Build util_unit_test*, and check the .lib files are found in the corresponsing directory as per the table above.
 
 ## Running the test
 ### Prereuiqistes
@@ -435,15 +431,13 @@ The Solution and Project are created using Microsoft Visual Studio 2019. </br>
 The project structure follows [our standard project folder structure](https://github.com/cronologic-de/xhptdc8_babel/wiki/project_folder_structure).
 
 ### Project Environments and Configurations
-- Project Settings -> Include Directories : `..\..\..\lib\include;..\..\include;` is added.
+- Project Settings -> Include Directories : `..\..\..\include;..\..\include;` is added.
 - `Output Directory` is left as the Visual Studio _Default_ Project Settings.
 
 | Config. | Env.   | Library Directory                       | Linker Input                           | Target Name              |
 | ------- |------  | --------------------------------------- | -------------------------------------- | ------------------------ |
 | Debug   | x64    | ..\\..\\..\lib\x64dummy;..\\..\lib\x64; | xhptdc8_util.lib;xhptdc8_driver_64.lib | xhptdc8_util_test_64.exe |
 | Release | x64    | ..\\..\\..\lib\x64dummy;..\\..\lib\x64; | xhptdc8_util.lib;xhptdc8_driver_64.lib | xhptdc8_util_test_64.exe |
-| Debug   | Win32  | ..\\..\\..\lib\x86dummy;..\\..\lib\x86; | xhptdc8_util.lib;xhptdc8_driver.lib    | xhptdc8_util_test.exe    |
-| Release | Win32  | ..\\..\\..\lib\x86dummy;..\\..\lib\x86; | xhptdc8_util.lib;xhptdc8_driver.lib    | xhptdc8_util_test.exe    |
 
 ### Building Using MS Visual Studio
 Project can be built using the following MSVS files:
@@ -454,14 +448,14 @@ Project can be built using the following MSVS files:
 Nothing special, just:
 1. Using MS Visual Studio compatible version, open the solution file: `/util/util_msvscpp/util_msvscpp.sln`
 2. Select the needed _Configuration_ and _Environment_ to build.
-3. Hit _Build util_, and check the .lib & .dll files are found in the corresponsing directory as per the table above.
+3. Hit *Build util_test*, and check the .lib & .dll files are found in the corresponsing directory as per the table above.
 
 ### github Building Action
 github [Building Actions: `Check-Util-Test-MSBuild` and `Util-Test-MSBuild`](https://github.com/cronologic-de/xhptdc8_babel/blob/main/.github/workflows/build_all.yml) are created to build `util_test` project as following:
 1. Using MSBuild.
 2. It builds the code automatically with relevant code update.
-3. It builds the `Release` configuration of both `x86` and `x64` environments.
-4. It copies and checkin the output EXE files to './util/bin/x86' or './util/bin/x64' corresponding directory.
+3. It builds the `Release` configuration of `x64` environments.
+4. It copies and checkin the output EXE files to './util/bin/x64' corresponding directory.
 
 ### Running the Application
 * Make sure you have both `xhptdc8_util.dll/xhptdc8_util_64.dll` and `xhptdc8_driver.dll/xhptdc8_driver_64.dll` _corresponding Platform DLL_ in the application output directory.

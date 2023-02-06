@@ -20,13 +20,6 @@ crate-type = ["cdylib"]
 #### x64
 Using `cargo build` will build the dll and lib on the folder "/rust/poclib/target/debug".
 
-#### x86
-Use the following command, as the test application uses the same target directory as well:
-```CMD
-rustup run stable-i686-pc-windows-msvc cargo build --target-dir=x86
-```
-It will build the DLL and lib on "/rust/poclib/x86/debug".
-
 ### Test_POCLib Project Environments and Configurations
 #### x64 
 The Solution and Project are created using Microsoft Visual Studio 2019.

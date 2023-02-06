@@ -9,14 +9,14 @@ The project files are created as [Go](https://golang.org/) files.
 
 ### Project Environments and Configurations
 The current code:
-1. Includes the [xhptdc8_interface.h](https://github.com/cronologic-de/xhptdc8_babel/blob/main/lib/include/xHPTDC8_interface.h).
+1. Includes the [xhptdc8_interface.h](https://github.com/cronologic-de/xhptdc8_babel/blob/main/include/xHPTDC8_interface.h).
 2. Links to x64 library (e.g. Dummy Library x64).
 
 xhptdc8 APIs are called using [CGO](https://golang.org/pkg/cmd/cgo/), as following:
 ```GO
 /*
-	#cgo CFLAGS: -Wall -g -I../../../../lib/include/
-	#cgo CPPFLAGS: -Wall -g -I../../../../lib/include/	
+	#cgo CFLAGS: -Wall -g -I../../../../include/
+	#cgo CPPFLAGS: -Wall -g -I../../../../include/	
 	#cgo LDFLAGS: -L./ -l:../../../../lib/x64dummy/xhptdc8_driver_64.lib
 	#include "xhptdc8_interface.h"
 */
@@ -38,7 +38,7 @@ import "C"
 ### Building the Code (64-bit)
 #### Prerequisites
 1. `Go` is installed on your local machine.
-2. Just make sure you have the latest files of `\lib\include\` and `\lib\x64dummy\` on your local machine.
+2. Just make sure you have the latest files of `\include\` and `\lib\x64dummy\` on your local machine.
 
 #### Steps
 1. Using `cmd`, 
@@ -48,30 +48,6 @@ import "C"
 2. Run `xhptdc8_info_64.exe` (generated from previous step). N.B. Driver DLL should be on the path/same folder.
 
 N.B. I used go version go1.16.2 windows/amd64.
-
-### Building the Code (32-bit)
-#### Prerequisites
-1. Go installed on your local machine.
-2. Just make sure you have the latest files of `\lib\include\` and `\lib\x86dummy\` on your local machine.
-3. MinGW x86 (gcc i686) or equivalent is installed on your local machine, and its `bin` is on the path.
-
-#### Steps
-1. set GOARCH=386
-2. set CGO_ENABLED=1
-3. set GOGCCFLAGS=-m32
-4. 
-```CMD
-go build -o xhptdc8_info.exe .\xhptdc8_info.go .\info_aux.go
-```
-5. Run `xhptdc8_info.exe` (generated from previous step). N.B. Driver DLL should be on the path/same folder.
-
-Please refer to [Building Action: `Info-Tool-Build`](https://github.com/cronologic-de/xhptdc8_babel/blob/main/.github/workflows/build_all.yml) if you have any trouble building x86 version.
-
-### github Building Action
-github [Building Actions: `Check-Info-Tool-Build` and `Info-Tool-Build`](https://github.com/cronologic-de/xhptdc8_babel/blob/main/.github/workflows/build_all.yml) are created to build `info` project as following:
-1. It builds the code automatically with relevant code update.
-2. It builds the `x86` version and checks it into _/go/bin/x86/_, and the `x64` version and checks it into _/go/bin/x64/_
-
 
 ## Using the Info Tool
 All details are found [on wiki](https://github.com/cronologic-de/xhptdc8_babel/wiki/using_info_tool)

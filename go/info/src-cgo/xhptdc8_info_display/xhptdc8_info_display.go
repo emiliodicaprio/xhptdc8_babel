@@ -5,9 +5,8 @@ Functions that wrap and call the xhptdc8_driver APIs
 package xhptdc8_info_display
 
 /*
-	#cgo CFLAGS: -Wall -g -I../../../../lib/include/
-	#cgo CPPFLAGS: -Wall -g -I../../../../lib/include/	
-	#cgo 386   LDFLAGS: -L./ -l:../../../../lib/x86dummy/xhptdc8_driver.lib
+	#cgo CFLAGS: -Wall -g -I../../../../include/
+	#cgo CPPFLAGS: -Wall -g -I../../../../include/
 	#cgo amd64 LDFLAGS: -L./ -l:../../../../lib/x64dummy/xhptdc8_driver_64.lib
 	#include "xhptdc8_interface.h"
 */

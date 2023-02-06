@@ -2,21 +2,6 @@ extern crate bindgen;
 
 use std::path::PathBuf;
 
-#[cfg(target_arch="x86")]
-static RUSTC_LINK_SEARCH : &str = "cargo:rustc-link-search=../../lib/x86dummy/" ;
-
-#[cfg(target_arch="x86")]
-static RUSTC_DRIVER_LIB : &str = "cargo:rustc-link-lib=xhptdc8_driver" ;
-
-#[cfg(target_arch="x86")]
-static RUSTC_UTIL_LIB : &str = "cargo:rustc-link-lib=xhptdc8_util" ;
-
-#[cfg(target_arch="x86")]
-static BINDINGS_FILE_NAME : &str = "bindings.rs" ;
-
-#[cfg(target_arch="x86")]
-static BINDINGS_DIR_NAME : &str = "./src/bindings/x86/" ;
-
 #[cfg(target_arch="x86_64")]
 static RUSTC_LINK_SEARCH : &str = "cargo:rustc-link-search=../../lib/x64dummy/" ;
 

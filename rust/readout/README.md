@@ -18,14 +18,13 @@ The project files include `binding.rs` file that is generated using `bindgen`. `
 
 `binding.rs` has all xhptdc8 APIs and structures definitions needed by the readout tool.
 
-The project is developed on Windows 10, and is built for both `x86` and `x64` platforms:
+The project is developed on Windows 10, and is built for `x64` platform:
 ```CMD
 cargo 1.52.0 (69767412a 2021-04-21)
 
 clang version 12.0.0
 Target: x86_64-pc-windows-msvc
-&
-Target: i686-pc-windows-msvc
+
 ```
 
 ### Project Environments and Configurations
@@ -48,14 +47,6 @@ _Note_: using `mingw64` or `mingw32` to build `bindgen` generates the following 
   note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
 ```
 
-#### Cross-platform Compilation
-Make sure a proper `rustup target`, corresponding to the platform you want to buil the readout tool for, is installed and set to default. e.g.
-```CMD
-rustup install stable-i686-pc-windows-gnu
-rustup default stable-i686-pc-windows-gnu
-cargo build
-```
-
 ### Packages
 #### main
 * The main file `main.rs` is responsible for the main flow of the application.
@@ -74,21 +65,15 @@ bindgen = "0.58.1"
 * Created [build.rs](https://github.com/cronologic-de/xhptdc8_babel/blob/main/rust/readout/build.rs) on the project folder.
    - Used `#cfg` to define parameters of every platform
    ```RUST
-   #[cfg(target_arch="x86")]
-   static RUSTC_LINK_SEARCH : &str = "cargo:rustc-link-search=../../lib/x86dummy/" ;
-   
    #[cfg(target_arch="x86_64")]
    static RUSTC_LINK_SEARCH : &str = "cargo:rustc-link-search=../../lib/x64dummy/" ;
    ```
    - Used [wrapper.h](https://github.com/cronologic-de/xhptdc8_babel/blob/main/rust/readout/wrapper.h) to include the needed headers.
-   - Saves `bindings.rs` (x86) and `bindings_64.rs`(x64) on [.\rust\readout\src\bindings](https://github.com/cronologic-de/xhptdc8_babel/tree/main/rust/readout/src/bindings). 
+   - Saves `bindings_64.rs`(x64) on [.\rust\readout\src\bindings](https://github.com/cronologic-de/xhptdc8_babel/tree/main/rust/readout/src/bindings). 
    - When updating APIs in any other DLLs (e.g. util, driver), you need to make sure both the updated .dll and .lib are copied to `RUSTC_LINK_SEARCH` path, and you do `cargo clean` before building.
   
 * Included the generated `bingings.rs` file in the code, in [readout_aux](https://github.com/cronologic-de/xhptdc8_babel/blob/main/rust/readout/src/readout_aux.rs).
 ```RUST
-#[cfg(target_arch="x86")]
-include!("./bindings/bindings.rs"); // Must = corresponding BINDINGS_FILE_NAME 
-
 #[cfg(target_arch="x86_64")]
 include!("./bindings/bindings_64.rs");  // Must = corresponding BINDINGS_FILE_NAME 
 ```
@@ -156,7 +141,7 @@ cargo build
 2. `LLVM` for 32 bit is installed.
 3. LLVM `bin` directory on the PATH.
 4. `LIBCLANG_PATH` is set to LLVM `bin`.
-5. `rustup target`, e.g. `stable-i686-pc-windows-msvc`, is installed and set as default.
+5. `rustup target`.
 
 #### Steps
 just use the usual

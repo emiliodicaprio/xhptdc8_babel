@@ -2,3 +2,12 @@ build
 ug_example/driver
 .vs
 driver
+dummy/msvscpp/msvscpp/x64
+dummy/msvscpp/x64
+util/util/msvscpp/x64
+util/msvscpp/x64
+util/util_test/msvscpp/x64
+util/util_unit_test/x64
+go/info/src-cgo/*.exe
+rust/readout/target/
+rust/readout/Cargo.lock
