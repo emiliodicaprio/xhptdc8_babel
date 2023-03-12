@@ -11,3 +11,6 @@ util/util_unit_test/x64
 go/info/src-cgo/*.exe
 rust/readout/target/
 rust/readout/Cargo.lock
+lib/x64/Debug
+lib/x64/Release
+ug_example/bulid
