@@ -50,42 +50,42 @@ int configure_xhptdc8(int device_count) {
 
 	// configure all devices with an identical configuration
 	for (int device_index = 0; device_index < device_count; device_index++) {
+		xhptdc8_device_configuration* device_config = &(mgr_cfg->device_configs[device_index]);
 		for (int channel_index = 0; channel_index < XHPTDC8_TDC_CHANNEL_COUNT; channel_index++)
 		{
-			mgr_cfg->device_configs[device_index].trigger_threshold[channel_index] 
+			device_config->trigger_threshold[channel_index] 
 				= XHPTDC8_THRESHOLD_N_NIM;
-			mgr_cfg->device_configs[device_index].channel[channel_index].enable = true;
+			device_config->channel[channel_index].enable = true;
 		}
-		mgr_cfg->device_configs[device_index].adc_channel.enable = 1;
-		mgr_cfg->device_configs[device_index].adc_channel.watchdog_readout = 0;
-		mgr_cfg->device_configs[device_index].adc_channel.trigger_threshold 
-			= XHPTDC8_THRESHOLD_N_NIM;
+		device_config->adc_channel.enable = 1;
+		device_config->adc_channel.watchdog_readout = 0;
+		device_config->adc_channel.trigger_threshold = XHPTDC8_THRESHOLD_N_NIM;
 
 		// configure an auto trigger at 150 kHz
-		mgr_cfg->device_configs[device_index].auto_trigger_period = 1000;
-		mgr_cfg->device_configs[device_index].auto_trigger_random_exponent = 0;
+		device_config->auto_trigger_period = 1000;
+		device_config->auto_trigger_random_exponent = 0;
 
 		// set all TiGers to create a short pulse for every auto trigger 
 		for (int block_index = 0; block_index < XHPTDC8_TDC_CHANNEL_COUNT; block_index++)
 		{
 			int channel_offset = block_index * 2;
-			mgr_cfg->device_configs[device_index].tiger_block[block_index].extend = false;
-			mgr_cfg->device_configs[device_index].tiger_block[block_index].negate = false;
-			mgr_cfg->device_configs[device_index].tiger_block[block_index].retrigger = false;
-			mgr_cfg->device_configs[device_index].tiger_block[block_index].sources
+			device_config->tiger_block[block_index].extend = false;
+			device_config->tiger_block[block_index].negate = false;
+			device_config->tiger_block[block_index].retrigger = false;
+			device_config->tiger_block[block_index].sources
 				= XHPTDC8_TRIGGER_SOURCE_AUTO;
-			mgr_cfg->device_configs[device_index].tiger_block[block_index].mode = XHPTDC8_TIGER_BIPOLAR;
+			device_config->tiger_block[block_index].mode = XHPTDC8_TIGER_BIPOLAR;
 
 			// every channel pulses a little later than the previous channel, for one clock cycle
-			mgr_cfg->device_configs[device_index].tiger_block[block_index].start = general_offset +  channel_offset;
-			mgr_cfg->device_configs[device_index].tiger_block[block_index].stop = general_offset + channel_offset + 1;
+			device_config->tiger_block[block_index].start = general_offset +  channel_offset;
+			device_config->tiger_block[block_index].stop = general_offset + channel_offset + 1;
 
 			// block trigger that is outside start-stop range
-			mgr_cfg->device_configs[device_index].gating_block[block_index].negate = false;
-			mgr_cfg->device_configs[device_index].gating_block[block_index].sources = XHPTDC8_TRIGGER_SOURCE_AUTO;
-			mgr_cfg->device_configs[device_index].gating_block[block_index].mode = XHPTDC8_GATE_ON;
-			mgr_cfg->device_configs[device_index].gating_block[block_index].start = general_offset + channel_offset - epsilon;
-			mgr_cfg->device_configs[device_index].gating_block[block_index].stop = general_offset + channel_offset + epsilon + 1;
+			device_config->gating_block[block_index].negate = false;
+			device_config->gating_block[block_index].sources = XHPTDC8_TRIGGER_SOURCE_AUTO;
+			device_config->gating_block[block_index].mode = XHPTDC8_GATE_ON;
+			device_config->gating_block[block_index].start = general_offset + channel_offset - epsilon;
+			device_config->gating_block[block_index].stop = general_offset + channel_offset + epsilon + 1;
 		}
 	}
 	return xhptdc8_configure(mgr_cfg);
