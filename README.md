@@ -10,10 +10,13 @@ Eventually you will also find utility functions such as default configurations f
 ## Directory Structure
 
     .
+    ├── dummy/      # source of dummy library to enable development in this repository without access to the hardware
+    ├── go/         # utility to list information about installed devices, writtin in golang
+    ├── include/    # the header files for the C driver API
     ├── lib/        # real and dummy driver libraries and header files
-    ├── dummy/      # dummy library to enable development in this repository without access to the hardware
-    ├── util/       # utility functions common to all wrappers
-    └── ug_example/ # c++ example of how to use the driver
+    ├── rust/       # utility to capture data into a file, written in Rust
+    ├── ug_example/ # c++ example of how to use the driver
+    └── util/       # utility functions common to all wrappers
 
 ## License
 
