@@ -9,6 +9,44 @@ The readout tool enables the user to provide YAML configuration file(s) to confi
 
 Output format could be either cvs or binary.
 
+## Using the Readout Tool
+All details are found [on wiki](https://github.com/cronologic-de/xhptdc8_babel/wiki/using_readout_tool)
+
+### Usage
+
+```CMD
+USAGE:
+    xhptdc8_readout.exe [FLAGS] [OPTIONS]
+
+FLAGS:
+    -b, --binary     The content of the TDCHit structure bit by bit, so 96 bits per hit. Default is csv.
+        --csv        (Default) One line of text per hit, seperated by commas, "time, channel, type, bin"
+    -l, --log        Enable to display log message.
+    -h, --help       Prints help information
+    -V, --version    Prints version information
+
+OPTIONS:
+    -c, --config <YAML_FILE>...    A list of YAML files for the configuration.
+    -f, --filesno <NUMBER>         The number of files to be written. Default is 0.
+    -n, --hitsno <HITS_NUMBER>     The number of hits per file. Default is 10,000.
+    -o, --output <FILE>            The file to which the output will be written. Default is "output.csv"
+```
+
+### Output Format
+The readout output files are generated in one of two formats: `csv` or `binary`.
+#### csv 
+The output files will be in csv format when either _no format is specified in command line_ or _--csv_ is specified.
+Format is: One line of text per hit, seperated by commas: `time, channel, type, bin`
+
+#### binary
+The output files will be in binary format when either _-b_ or _--binary_ is specified in the command line parameters.
+Format is: Just the content of the `TDCHit` structure bit by bit. So `96 bits per hit`, in the following order: _time, channel, type, bin_.
+
+Note that _the representation of every value is set as a byte array in big-endian (network) byte order_.
+
+### Notes
+* With `-l` option, using a debug version of `xhptdc8_util` will provide richer information.
+
 
 ## Source Code Project 
 The project is created using Rust.
@@ -202,40 +240,6 @@ and
     C:\Temp\LLVM_Win32.exe /S
 ```
 
-## Using the Readout Tool
-All details are found [on wiki](https://github.com/cronologic-de/xhptdc8_babel/wiki/using_readout_tool)
+## License
 
-### Usage
-
-```CMD
-USAGE:
-    xhptdc8_readout.exe [FLAGS] [OPTIONS]
-
-FLAGS:
-    -b, --binary     The content of the TDCHit structure bit by bit, so 96 bits per hit. Default is csv.
-        --csv        (Default) One line of text per hit, seperated by commas, "time, channel, type, bin"
-    -l, --log        Enable to display log message.
-    -h, --help       Prints help information
-    -V, --version    Prints version information
-
-OPTIONS:
-    -c, --config <YAML_FILE>...    A list of YAML files for the configuration.
-    -f, --filesno <NUMBER>         The number of files to be written. Default is 0.
-    -n, --hitsno <HITS_NUMBER>     The number of hits per file. Default is 10,000.
-    -o, --output <FILE>            The file to which the output will be written. Default is "output.csv"
-```
-
-### Output Format
-The readout output files are generated in one of two formats: `csv` or `binary`.
-#### csv 
-The output files will be in csv format when either _no format is specified in command line_ or _--csv_ is specified.
-Format is: One line of text per hit, seperated by commas: `time, channel, type, bin`
-
-#### binary
-The output files will be in binary format when either _-b_ or _--binary_ is specified in the command line parameters.
-Format is: Just the content of the `TDCHit` structure bit by bit. So `96 bits per hit`, in the following order: _time, channel, type, bin_.
-
-Note that _the representation of every value is set as a byte array in big-endian (network) byte order_.
-
-### Notes
-* With `-l` option, using a debug version of `xhptdc8_util` will provide richer information.
+See the top level Readme.md for licensing details.

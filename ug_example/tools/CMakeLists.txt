@@ -68,5 +68,5 @@ ELSEIF (CRONO_GEN_PLATFORM STREQUAL "linux")
         add_compile_definitions($<$<CONFIG:Debug>:CRONO_DEBUG_ENABLED>)
 
         # Link to xtdc4_driver library ________________________________________
-        target_link_libraries(${CRONO_TARGET_NAME} libxhptdc8_driver_64.a)
+        target_link_libraries(${CRONO_TARGET_NAME} libxhptdc8_driver.a)
 ENDIF()
