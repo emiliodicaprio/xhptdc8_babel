@@ -2,7 +2,6 @@
 // Header file containing structs and #defines specific for the xHPTDC8-PCIe
 // The current driver version for xHPTDC8-PCIe devices is %VERSION%
 //
-//
 
 /**
  * The functions provided by the API are declared in xHPTDC8_interface.h.
@@ -14,8 +13,8 @@
 #include "crono_interface.h"
 #include <stdint.h>
 #ifdef __linux__
-#include <stddef.h>
 #include <stdarg.h>
+#include <stddef.h>
 #endif
 // current version of the API
 #define XHPTDC8_API_VERSION 1
@@ -142,10 +141,10 @@
  * All errors are positive integers.
  */
 #define XHPTDC8_OK CRONO_OK
-//#define XHPTDC8_WINDRIVER_NOT_FOUND CRONO_WINDRIVER_NOT_FOUND
+// #define XHPTDC8_WINDRIVER_NOT_FOUND CRONO_WINDRIVER_NOT_FOUND
 #define XHPTDC8_DEVICE_NOT_FOUND CRONO_DEVICE_NOT_FOUND
-//#define XHPTDC8_NOT_INITIALIZED
-// CRONO_NOT_INITIALIZED
+// #define XHPTDC8_NOT_INITIALIZED
+//  CRONO_NOT_INITIALIZED
 #define XHPTDC8_WRONG_STATE CRONO_WRONG_STATE
 #define XHPTDC8_INVALID_DEVICE CRONO_INVALID_DEVICE
 #define XHPTDC8_BUFFER_ALLOC_FAILED CRONO_BUFFER_ALLOC_FAILED
@@ -923,6 +922,8 @@ typedef struct {
 
     /**
      * Trigger threshold of ADC trigger input.
+     * Always triggers at the falling edge of the TRG input when set threshold
+     * is crossed.
      */
     double trigger_threshold;
 } xhptdc8_adc_channel;
@@ -1161,7 +1162,7 @@ typedef struct {
      * Configure TDC alignemet
      * If set to 'true', the phase of the two TDC chips is not realigned
      * when capturing is restartet. If set to 'false', it will be realigned
-     * on start_capture() (default). Should usually be left unchanged. Value
+     * on xhptdc8_configure() (default). Should usually be left unchanged. Value
      * is either 'true' or 'false'.
      */
     crono_bool_t skip_alignment;

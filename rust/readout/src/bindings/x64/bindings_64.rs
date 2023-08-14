@@ -1833,6 +1833,8 @@ pub struct xhptdc8_adc_channel {
     #[doc = " Number of 150 MHz clock cycles between watchdog triggers."]
     pub watchdog_interval: ::std::os::raw::c_int,
     #[doc = " Trigger threshold of ADC trigger input."]
+    #[doc = " Always triggers at the falling edge of the TRG input when set threshold"]
+    #[doc = " is crossed."]
     pub trigger_threshold: f64,
 }
 #[test]
@@ -2262,7 +2264,7 @@ pub struct xhptdc8_device_configuration {
     #[doc = " Configure TDC alignemet"]
     #[doc = " If set to 'true', the phase of the two TDC chips is not realigned"]
     #[doc = " when capturing is restartet. If set to 'false', it will be realigned"]
-    #[doc = " on start_capture() (default). Should usually be left unchanged. Value"]
+    #[doc = " on xhptdc8_configure() (default). Should usually be left unchanged. Value"]
     #[doc = " is either 'true' or 'false'."]
     pub skip_alignment: crono_bool_t,
     #[doc = " Define a signal source that is used for TDC alignment. Should usually"]
