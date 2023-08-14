@@ -55,7 +55,12 @@ IF ( CRONO_GEN_PLATFORM  STREQUAL "windows")
         set_target_properties(xhptdc8_driver_64 PROPERTIES IMPORTED_IMPLIB 
                 xhptdc8_driver_64.lib)  
         target_link_libraries(${CRONO_TARGET_NAME} xhptdc8_driver_64)
-
+        message("${CMAKE_BUILD_TYPE}")
+        add_custom_command(
+        TARGET ${CRONO_TARGET_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CRONO_DEP_PKG_LIB_DIR}/xhptdc8_driver_64.dll" "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Debug"
+        COMMAND_EXPAND_LISTS
+        )
 # Linux-specific Configurations _______________________________________________
 ELSEIF (CRONO_GEN_PLATFORM STREQUAL "linux") 
         # Compilation options _________________________________________________

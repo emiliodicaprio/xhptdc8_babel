@@ -1,25 +1,27 @@
 // xhptdc8_user_guide_example.cpp : Example application for the xHPTDC8
-
+#include <chrono>
+#include <thread>
 #include <stdio.h>
 #include <stdlib.h>
-#if defined(_WIN32) || defined(_WIN64)
-#include <windows.h>
-#endif
 #include "crono_interface.h"
 #include "xHPTDC8_interface.h"
 
-typedef unsigned int uint32;
-#if defined(_WIN32) || defined(_WIN64)
-typedef unsigned __int64 uint64;
-#define crono_sleep(x) Sleep(x)
-#else
-#include <unistd.h>
-#define crono_sleep(x) usleep(1000 * x)
-#endif
-int exit_on_fail(int status, const char* message);
 const int MAX_TRYS_TO_READ_HITS = 1000;
+int64_t* last_hit = nullptr;
 
-// create a manager object that provides access to all xHPTDC8 in the system
+// utility function to check for error, print error message and exit
+int exit_on_fail(int status, const char* message) {
+	if (status == XHPTDC8_OK)
+		return status;
+	printf("%s: %s\n", message, xhptdc8_get_last_error_message(0));
+	if (last_hit != nullptr) {
+		delete[] last_hit;
+	}
+	exit(1);
+}
+
+
+// create a manager object that provides access to all xHPTDC8s in the system
 int initialize_xhptdc8(int buffer_size) {
 	// prepare initialization
 	xhptdc8_manager_init_parameters params;
@@ -53,8 +55,9 @@ int configure_xhptdc8(int device_count) {
 		xhptdc8_device_configuration* device_config = &(mgr_cfg->device_configs[device_index]);
 		for (int channel_index = 0; channel_index < XHPTDC8_TDC_CHANNEL_COUNT; channel_index++)
 		{
-			device_config->trigger_threshold[channel_index] 
-				= XHPTDC8_THRESHOLD_N_NIM;
+			// currently a negative pulse with -0.1 V is expected
+			//please change this if you have a different signal
+			device_config->trigger_threshold[channel_index] = XHPTDC8_THRESHOLD_N_NIM;
 			device_config->channel[channel_index].enable = true;
 		}
 		device_config->adc_channel.enable = 1;
@@ -74,6 +77,8 @@ int configure_xhptdc8(int device_count) {
 			device_config->tiger_block[block_index].retrigger = false;
 			device_config->tiger_block[block_index].sources
 				= XHPTDC8_TRIGGER_SOURCE_AUTO;
+			// the TiGer generates a plus +1 V with a length of 13.2 ns per cycle in stop,
+			// immediately followed by -1 V (same length as start)
 			device_config->tiger_block[block_index].mode = XHPTDC8_TIGER_BIPOLAR;
 
 			// every channel pulses a little later than the previous channel, for one clock cycle
@@ -106,12 +111,17 @@ void print_device_information() {
 	}
 }
 
+
 void print_hit(TDCHit* hit) {
-	bool adc_data = ((hit->channel % 10) == 8) || ((hit->channel % 10) == 9);
+	int channel = hit->channel;
+	bool adc_data = ((channel % 10) == 8) || ((channel % 10) == 9);
 	if (hit->type & XHPTDC8_TDCHIT_TYPE_ERROR)
 		printf("Error:\n");
 
-	printf("Channel %u - Time %llu - Type %x", hit->channel, hit->time, hit->type);
+	int64_t diff = last_hit[channel] > 0 ? hit->time - last_hit[channel] : 0;
+	printf("Channel %u - Time %lld - Type 0x%x - Diff %lld", hit->channel, hit->time, hit->type, diff);
+	last_hit[channel] = hit->time;
+
 	if (adc_data)
 		printf(" - ADC Data : %d", (int)(hit->bin));
 
@@ -125,7 +135,7 @@ int poll_for_hits(TDCHit* hit_buffer, size_t events_per_read) {
 		unsigned long hit_count = xhptdc8_read_hits(hit_buffer, events_per_read);
 		if (hit_count)
 			return hit_count;
-		crono_sleep(1);
+		std::this_thread::sleep_for(std::chrono::milliseconds(1));
 		trys_to_read_hits++;
 	}
 	if (trys_to_read_hits == MAX_TRYS_TO_READ_HITS)
@@ -148,56 +158,45 @@ void read_hits_wrapper(int events_per_read) {
 		{
 			TDCHit* hit = &(hit_buffer[i]);
 			print_hit(hit);
-			if ((total_events++ % 100) == 0)
-				printf("Sum: %d - Packet events: %d\n", total_events, hit_count);
+			if ((++total_events % 100) == 0)
+				printf("Count: %d - events: %d\n", total_events, hit_count);
 		}
 	}
 
 	delete[] hit_buffer;
 }
 
-// utility function to check for error, print error message and exit
-int exit_on_fail(int status, const char* message) {
-	if (status == XHPTDC8_OK)
-		return status;
-	printf("%s: %s\n", message, xhptdc8_get_last_error_message(0));
-	exit(1);
-}
+
 
 int main(int argc, char* argv[]) {
 	printf("cronologic xhptdc8_user_guide_example using driver: %s\n", xhptdc8_get_driver_revision_str());
-	printf("\n\nThis is illustrating the usage of an xHPTDC8 examplary with internal triggering\n");
+	printf("\n\nThis is illustrating the usage of an xHPTDC8 exemplary with internal triggering,"
+		" no inputs should be connected\n");
 	int error_code = initialize_xhptdc8(8 * 1024 * 1024);
     
-	exit_on_fail(
-		//configure all devices with that manager
-		configure_xhptdc8(get_device_count()),
-		"Could not configure.");
-
+	int device_count = get_device_count();
+	//configure all devices with that manager
+	exit_on_fail(configure_xhptdc8(device_count), 	"Could not configure.");
 	print_device_information();
 
-	exit_on_fail(
-		//start measurement
-		xhptdc8_start_capture(),
-		"Could not start capturing.");
+	last_hit = new int64_t[device_count * 10];
+	std::fill_n(last_hit, device_count * 10, 0);
+	
 
-	exit_on_fail(
-		//start TiGer-functionality
-		xhptdc8_start_tiger(0),
-		"Could not start TiGer.");
+	//start measurement
+	exit_on_fail(xhptdc8_start_capture(), "Could not start capturing.");
+
+	//start TiGer-functionality
+	exit_on_fail(xhptdc8_start_tiger(0),	"Could not start TiGer.");
 
 	//collect measured data
 	read_hits_wrapper(10000);
 
-	exit_on_fail(
-		//stop measurement
-		xhptdc8_stop_capture(),
-		"Could not stop capturing.");
+	//stop measurement
+	exit_on_fail(xhptdc8_stop_capture(),"Could not stop capturing.");
 
-	exit_on_fail(
-		//close manager
-		xhptdc8_close(),
-		"Could not close devices-manager.");
+	//close manager
+	exit_on_fail(xhptdc8_close(),	"Could not close devices-manager.");
 
 	return 0;
 }
