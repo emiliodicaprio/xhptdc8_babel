@@ -14,6 +14,7 @@ Eventually you will also find utility functions such as default configurations f
     ├── go/         # utility to list information about installed devices, writtin in golang
     ├── include/    # the header files for the C driver API
     ├── lib/        # real and dummy driver libraries and header files
+    ├── bin/        # driver runtime files
     ├── rust/       # utility to capture data into a file, written in Rust
     ├── ug_example/ # c++ example of how to use the driver
     └── util/       # utility functions common to all wrappers
@@ -23,3 +24,6 @@ Eventually you will also find utility functions such as default configurations f
 The code in this repository is licensed under the [Mozilla Public License 2.0](LICENSE). This more or less means that you can do with this code whatever you want, but if you improve the code you shall make your changes available ot others upon request. Please read the license for additional details. 
 
 We encourage you to contribute to this repository. By uploading to this repository you agree to make your changes available under the beforementioned license.
+
+## Notes
+- The provided `/bin/xhptdc8_update_firmware` file is used only for Linux. To update firmware under Windows, please use `FirmwareGUI` supplied with the driver.
