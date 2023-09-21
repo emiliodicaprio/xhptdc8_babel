@@ -94,6 +94,11 @@ To build the C user guide example, please use `g++` as per the following example
 cd ug_example/src
 g++ xhptdc8_user_guide_example.c -o ug_example_c -L ../../lib/x64 -lxhptdc8_driver
 ```
+Or,
+```
+cd ug_example/src
+gcc xhptdc8_user_guide_example.c -o ug_example_c -L ../../lib/x64 -lxhptdc8_driver -lstdc++ -shared-libgcc
+```
 
 ---
 
