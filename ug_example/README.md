@@ -86,6 +86,15 @@ Go to tools: `cd tools`, then run the following command:
 * The default configuration is `Debug` on Windows, and `Release` on Linux.
 * Linux x86 is not supported.
 
+
+## Build the Project - C
+
+To build the C user guide example, please use `g++` as per the following exmample in Linux:
+```
+cd ug_example/src
+g++ xhptdc8_user_guide_example.c -o ug_example_c -L ../../lib/x64 -lxhptdc8_driver
+```
+
 ---
 
 ## Run/Debug the Sample
