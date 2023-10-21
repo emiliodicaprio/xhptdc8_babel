@@ -23,27 +23,12 @@ You can download the user guide from the [product web page](https://www.cronolog
 - The project is a `Console` App.
 - The Project can be mainly built using `CMake`, on both Windows and Linux. 
 - `CMake` also can be used on Windows by Microsoft Visual Studio 2019 or later for build and debug, [`CMakeSettings.json`](/tools/CMakeSetting.json) is provided to build the project using Visual Studio CMake Tools.
-- Every time the project is built on Windows, it copies the related driver files from `driver` folder to the 
 
 ### Prerequisites
 
 ##### 1. Install `CMake`
 To check if `CMake` is installed, run `cmake --version`; if not installed, please refer to [Installing CMake](https://cmake.org/install/).
 
-##### 2. Copy Driver Files
-Copy the `driver` folder to the project folder as following:
-```
-.
-└── xhptdc8_babel/
-    └── ug_example/
-        └── driver/
-            ├── include/
-            │   └── .h
-            └── x64/
-                ├── .lib    (Windows only)
-                ├── .dll    (Windows only)
-                └── .a      (Linux only)
-```
 - When using the `Dummy Library`, copy the corresponding _platform_ DLL from the _Library Directory_ to the driver folder. For instance, for _x64 Release_ exe, just copy the DLL _xhptdc8_driver_64.dll_ from [x64dummy Folder](https://github.com/cronologic-de/xhptdc8_babel/tree/main/lib/x64dummy).
 
 ### Build Using Visual Studio for Windows
@@ -69,8 +54,8 @@ Select `Build -> Build All` from menu, or any standard Visual Studio way to buil
 The Target Exectuable name is `xhptdc8_ugex.exe`.
 | Configuration     | `CMakeSettings` | `Build root`                     | `CMake generator`     | Output Folder          |
 | ----------------- | --------------- | -------------------------------- | --------------------- | ---------------------  |
-| **x86_64 Debug**  | x64-Debug       | `${projectDir}\..\build\bfvsD`   | Visual Studio 17 2022 Win64 | `driver\x64\Release`   |
-| **x86_64 Release**| x64-Release     | `${projectDir}\..\build\bfvsR`   | Visual Studio 17 2022 Win64 | `driver\x64\Release`   |
+| **x86_64 Debug**  | x64-Debug       | `${projectDir}\..\build\bfvsD`   | Visual Studio 17 2022 Win64 | `lib\x64\Release`   |
+| **x86_64 Release**| x64-Release     | `${projectDir}\..\build\bfvsR`   | Visual Studio 17 2022 Win64 | `lib\x64\Debug`   |
 * The provided file builds the project using `Visual Studio 2022`, however, you can change `generator` in  `CMakeSettings.json` to any other Visual Studio generator you have on your machine.
 
 ### Build Using `CMake`, for Windows and Linux
@@ -78,28 +63,25 @@ The Target Exectuable name is `xhptdc8_ugex.exe`.
 Go to tools: `cd tools`, then run the following command:
 | Platform          | Configuration | Configur CMake ommand                                                           | Compile & Link Command                            | Output Folder          |
 | ----------------- | ------------- | -------------------------------------------------     | ------------------------------------------------- | ---------------------  |
-| **Windows x86_64**| Release       | `cmake -B ..\build\bfR -A x64`                                                  | `cmake --build ..\build\bfR --config Release`     | `driver\x64\Release`   |
-| **Windows x86_64**| Debug         | `cmake -B ..\build\bfD -A x64`                                                  | `cmake --build ..\build\bfD --config Debug`       | `driver\x64\Debug`     |
-| **Linux x86_64**  | Release       | `cmake -B ../build/bfR -DCMAKE_BUILD_TYPE=Release`                              | `cmake --build ../build/bfR`                      | `driver/x64`   |
-| **Linux x86_64**  | Debug         | `cmake -B ../build/bfD -DCMAKE_BUILD_TYPE=Debug`                                | `cmake --build ../build/bfD`                      | `driver/x64`     |
+| **Windows x86_64**| Release       | `cmake -B ..\build\bfR -A x64`                                                  | `cmake --build ..\build\bfR --config Release`     | `lib\x64\Release`   |
+| **Windows x86_64**| Debug         | `cmake -B ..\build\bfD -A x64`                                                  | `cmake --build ..\build\bfD --config Debug`       | `lib\x64\Debug`     |
+| **Linux x86_64**  | Release       | `cmake -B ../build/bfR -DCMAKE_BUILD_TYPE=Release`                              | `cmake --build ../build/bfR`                      | `lib/x64`   |
+| **Linux x86_64**  | Debug         | `cmake -B ../build/bfD -DCMAKE_BUILD_TYPE=Debug`                                | `cmake --build ../build/bfD`                      | `lib/x64`     |
 
 * The default configuration is `Debug` on Windows, and `Release` on Linux.
 * Linux x86 is not supported.
 
+## Build the Project - `.c` Example
 
-## Build the Project - C
+To build the C user guide example, you can use `gcc` or `g++` as following:
 
-To build the C user guide example, please use `g++` as per the following example in Linux:
-```
-cd ug_example/src
-g++ xhptdc8_user_guide_example.c -o ug_example_c -L ../../lib/x64 -lxhptdc8_driver
-```
-Or,
-```
-cd ug_example/src
-gcc xhptdc8_user_guide_example.c -o ug_example_c -L ../../lib/x64 -lxhptdc8_driver -lstdc++ -shared-libgcc
-```
+| Platform          | Configur CMake ommand                               
+| ----------------- | -------------------------------------------------     
+| **Windows x86_64**| `cd ug_example\src`<br>`gcc xhptdc8_user_guide_example.c -o ug_example_c -L ..\..\lib\x64 -lxhptdc8_driver_64 -lstdc++ -shared-libgcc`<br>or,<br>`g++ xhptdc8_user_guide_example.c -o ug_example_c -L ..\..\lib\x64 -lxhptdc8_driver_64`
+| **Linux x86_64**| `cd ug_example/src`<br>`gcc xhptdc8_user_guide_example.c -o ug_example_c -L ../../lib/x64 -lxhptdc8_driver -lstdc++ -shared-libgcc`<br>or,<br>`g++ xhptdc8_user_guide_example.c -o ug_example_c -L ../../lib/x64 -lxhptdc8_driver`
 
+* For _Windows_, please copy the driver dll from `.\lib\x64\xhptdc8_driver_64.dll` to `ug_example\src` to be able to run `ug_example_c.exe`.
+* For _Linux_, to be able to run `ug_example_c` that uses `./lib/x64/xhptdc8_driver.so`, either add `./lib/x64` folder to path, e.g. `export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/path/to/lib/x64`, or to copy `xhptdc8_driver.so` to `/usr/lib` (needs `sudo`).
 ---
 
 ## Run/Debug the Sample
