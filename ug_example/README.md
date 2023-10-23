@@ -10,14 +10,16 @@ You can download the user guide from the [product web page](https://www.cronolog
 ## Directory Structure
 ```
     .
-    ├── src/        # source code: .cpp files
+    ├── src/        # source code: .cpp file (or alternate .c file)
     ├── tools/      # files and scripts of the tools, e.g. building tools (CMake, etc...)
     └── build/      # (default) compiled outbput for any OS, configuration, platform
 ```
 
 ---
 
-## Build the Project
+## Build the C++ Project
+In most cases we recommend to use the C++ version of the example in ```xhptdc8_user_guide_example.cpp```.
+There is an alternative C version described below, use the source file ending in `.c` instead .
 
 ### Overview
 - The project is a `Console` App.
@@ -73,7 +75,7 @@ Go to tools: `cd tools`, then run the following command:
 
 ## Build the Project - `.c` Example
 
-To build the C user guide example, you can use `gcc` or `g++` as following:
+To build the alternative C user guide example ```xhptdc8_user_guide_example.c```, you can use `gcc` or `g++` as following:
 
 | Platform          | Configur CMake ommand                               
 | ----------------- | -------------------------------------------------     
