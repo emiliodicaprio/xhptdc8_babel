@@ -1,4 +1,5 @@
-// xhptdc8_user_guide_example.cpp : Example application for the xHPTDC8
+// xhptdc8_user_guide_example.cpp : Example application for the xHPTDC8-PCIe
+
 #include <chrono>
 #include <thread>
 #include <stdio.h>
@@ -8,6 +9,7 @@
 
 const int MAX_TRYS_TO_READ_HITS = 1000;
 int64_t* last_hit = nullptr;
+
 
 // utility function to check for error, print error message and exit
 int exit_on_fail(int status, const char* message) {
@@ -36,6 +38,7 @@ int initialize_xhptdc8(int buffer_size) {
 	return error_code;
 }
 
+
 int get_device_count() {
 	int error_code;
 	char* error_msg;
@@ -44,6 +47,7 @@ int get_device_count() {
 	exit_on_fail(error_code, error_msg);
 	return device_count;
 }
+
 
 int configure_xhptdc8(int device_count) {
 	xhptdc8_manager_configuration* mgr_cfg = new xhptdc8_manager_configuration;
@@ -102,12 +106,12 @@ void print_device_information() {
 	printf("-------------------------\n");
 	for (int i = 0; i < get_device_count(); i++) {
 		xhptdc8_get_static_info(i, &staticinfo);
-		printf("Board Serial         : %d.%d\n", staticinfo.board_serial >> 24, staticinfo.board_serial & 0xffffff);
-		printf("Board Configuration  : %d\n", staticinfo.board_configuration);
-		printf("Board Revision       : %d\n", staticinfo.board_revision);
-		printf("Firmware Revision    : %d.%d\n", staticinfo.firmware_revision, staticinfo.subversion_revision);
-		printf("Driver Revision      : %d.%d.%d\n", ((staticinfo.driver_revision >> 16) & 255), ((staticinfo.driver_revision >> 8) & 255), (staticinfo.driver_revision & 255));
-		printf("Driver SVN Revision  : %d\n", staticinfo.driver_build_revision);
+		printf("Board Serial        : %d.%d\n", staticinfo.board_serial >> 24, staticinfo.board_serial & 0xffffff);
+		printf("Board Configuration : %d\n", staticinfo.board_configuration);
+		printf("Board Revision      : %d\n", staticinfo.board_revision);
+		printf("Firmware Revision   : %d.%d\n", staticinfo.firmware_revision, staticinfo.subversion_revision);
+		printf("Driver Revision     : %d.%d.%d\n", ((staticinfo.driver_revision >> 16) & 255), ((staticinfo.driver_revision >> 8) & 255), (staticinfo.driver_revision & 255));
+		printf("Driver SVN Revision : %d\n", staticinfo.driver_build_revision);
 	}
 }
 
@@ -127,6 +131,7 @@ void print_hit(TDCHit* hit) {
 
 	printf("\n");
 }
+
 
 // call read_hits() once per millisecond until there is some data or max count of trials
 int poll_for_hits(TDCHit* hit_buffer, size_t events_per_read) {
@@ -167,36 +172,34 @@ void read_hits_wrapper(int events_per_read) {
 }
 
 
-
 int main(int argc, char* argv[]) {
 	printf("cronologic xhptdc8_user_guide_example using driver: %s\n", xhptdc8_get_driver_revision_str());
 	printf("\n\nThis is illustrating the usage of an xHPTDC8 exemplary with internal triggering,"
 		" no inputs should be connected\n");
 	int error_code = initialize_xhptdc8(8 * 1024 * 1024);
-    
+
 	int device_count = get_device_count();
 	//configure all devices with that manager
-	exit_on_fail(configure_xhptdc8(device_count), 	"Could not configure.");
+	exit_on_fail(configure_xhptdc8(device_count), "Could not configure.");
 	print_device_information();
 
 	last_hit = new int64_t[device_count * 10];
 	std::fill_n(last_hit, device_count * 10, 0);
-	
 
 	//start measurement
 	exit_on_fail(xhptdc8_start_capture(), "Could not start capturing.");
 
 	//start TiGer-functionality
-	exit_on_fail(xhptdc8_start_tiger(0),	"Could not start TiGer.");
+	exit_on_fail(xhptdc8_start_tiger(0), "Could not start TiGer.");
 
 	//collect measured data
 	read_hits_wrapper(10000);
 
 	//stop measurement
-	exit_on_fail(xhptdc8_stop_capture(),"Could not stop capturing.");
+	exit_on_fail(xhptdc8_stop_capture(), "Could not stop capturing.");
 
 	//close manager
-	exit_on_fail(xhptdc8_close(),	"Could not close devices-manager.");
+	exit_on_fail(xhptdc8_close(), "Could not close devices-manager.");
 
 	return 0;
 }
