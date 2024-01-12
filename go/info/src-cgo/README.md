@@ -75,14 +75,12 @@ type Xhptdc8_temperature_info struct {
 	Size    Crono_int_t
 	Version Crono_int_t
 	Tdc     [2]Crono_float_t
-	Fpga    Crono_int_t
 }
 
 type Xhptdc8_temperature_info_brief struct {
 	Size    Crono_int_t `json:"-"`
 	Version Crono_int_t `json:"-"`
 	Tdc     [2]Crono_float_t
-	Fpga    Crono_int_t
 }
 ```
 
