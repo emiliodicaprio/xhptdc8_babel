@@ -175,11 +175,20 @@ jobs:
     - name: Checkout Code
       if: ${{needs.Check-Info-Tool-Build.outputs.ok_to_proceed != 'N' }}
       uses: actions/checkout@v3
-              
-    - name: Pull Latest 
+
+    # Handle both a normal commit and a merge request
+    # As repository is in a detached HEAD state in merge request.
+    - name: Determine branch name
+      if: ${{needs.Check-Info-Tool-Build.outputs.ok_to_proceed != 'N' }}
+      id: branch_name
+      run: echo "BRANCH_NAME=$(echo ${GITHUB_REF#refs/heads/} | sed 's/\/merge$//')" >> $GITHUB_ENV
+
+    - name: Pull changes
       if: ${{needs.Check-Info-Tool-Build.outputs.ok_to_proceed != 'N' }}
       run: |
-        git pull
+        git fetch origin
+        git checkout ${{ env.BRANCH_NAME }}
+        git pull origin ${{ env.BRANCH_NAME }}
         
     - name: Display Versions 
       if: ${{needs.Check-Info-Tool-Build.outputs.ok_to_proceed != 'N' }}
