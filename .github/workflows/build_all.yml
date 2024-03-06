@@ -23,6 +23,7 @@ on: # workflow_dispatch
     paths: # Collected from paths of all jobs below
     - 'include/**'
     - 'dummy/**'
+    - 'lib/x64/**'
     - 'go/info/src-cgo/**'
     - 'rust/readout/**'
     - 'util/util/**'
@@ -139,6 +140,7 @@ jobs:
       with:
         files: |
           include/**
+          lib/x64/**
           go/info/src-cgo/** 
         
     # Check if any file(s) in the concerned folder changed
@@ -237,6 +239,7 @@ jobs:
       with:
         files: |
           include/**
+          lib/x64/**
           rust/readout/**
         
     # Check if any file(s) in the concerned folder changed
@@ -347,6 +350,7 @@ jobs:
       with:
         files: |
           include/**
+          lib/x64/**
           util/util/**
         
     # Check if any file(s) in the concerned folder changed
@@ -462,6 +466,7 @@ jobs:
       with:
         files: |
           include/**
+          lib/x64/**
           util/util_test/**
         
     # Check if any file(s) in the concerned folder changed
