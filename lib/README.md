@@ -3,6 +3,8 @@
 This directory contains the windows C libraries that the projects in the other directories link to.
 These files are provided here for more convenient development and might be out of date. For production use please use the files provided with the latest driver download provided on the [xHPTDC8 product page](https://www.cronologic.de/products/tdcs/xhptdc8-pcie).
 
+Files are automatically updated when creating a new driver release.
+
 ## Files
 
 <dl>
