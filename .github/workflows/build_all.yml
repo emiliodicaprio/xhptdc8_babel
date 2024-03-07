@@ -402,7 +402,7 @@ jobs:
         
     - name: Add MSBuild to PATH
       if: ${{needs.Check-Util-Library-MSBuild.outputs.ok_to_proceed != 'N' }}
-      uses: microsoft/setup-msbuild@v1.1
+      uses: microsoft/setup-msbuild@v2
 
     - name: Build Release x64
       if: ${{needs.Check-Util-Library-MSBuild.outputs.ok_to_proceed != 'N' }}
