@@ -400,6 +400,16 @@ jobs:
       run: |
         git pull
         
+    # For some reason, EOF is not got in the file from original file
+    - name: Add newline to .\include\xHPTDC8_interface.h
+      run: |
+        $file = ".\include\xHPTDC8_interface.h"
+        $content = Get-Content -Path $file -Raw
+        if (-not $content.EndsWith("`n")) {
+          $content += "`n"
+          Set-Content -Path $file -Value $content
+        }
+      
     - name: Add MSBuild to PATH
       if: ${{needs.Check-Util-Library-MSBuild.outputs.ok_to_proceed != 'N' }}
       uses: microsoft/setup-msbuild@v2
