@@ -298,13 +298,16 @@ pub type uint_fast32_t = ::std::os::raw::c_uint;
 pub type uint_fast64_t = ::std::os::raw::c_ulonglong;
 pub type intmax_t = ::std::os::raw::c_longlong;
 pub type uintmax_t = ::std::os::raw::c_ulonglong;
+#[doc = " @brief Data type used for boolean values in data structures"]
 pub type crono_bool_t = u8;
-#[doc = " Basic device data structure for synchronizing cronologic Ndigo5G and HPTDC8 devices"]
+#[doc = " @brief Basic device data structure for synchronizing cronologic Ndigo5G and"]
+#[doc = "        HPTDC8 devices."]
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct crono_device {
+    #[doc = " @brief @ref cronodevicetypes \"CRONO_DEVICE_*\"."]
     pub device_type: ::std::os::raw::c_int,
-    #[doc = " For HPTDC use this board id, Ndigo uses configured board id"]
+    #[doc = " @details For HPTDC use this board ID. Ndigo uses configured board ID."]
     pub board_id: ::std::os::raw::c_int,
     pub device: *mut ::std::os::raw::c_void,
 }
@@ -351,18 +354,30 @@ fn bindgen_test_layout_crono_device() {
         )
     );
 }
-#[doc = " Packet data structure in ring buffer for packets carrying varying amounts of data."]
-#[doc = ""]
-#[doc = " The size of the data[] array is given in the length field."]
+#[doc = " @brief   Packet data structure in ring buffer for packets carrying varying"]
+#[doc = "          amounts of data."]
+#[doc = " @details The size of the data[] array is given in the length field."]
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct crono_packet {
+    #[doc = " @brief   Number of the source channel of the data."]
     pub channel: u8,
+    #[doc = " @brief   ID of the card."]
     pub card: u8,
+    #[doc = " @brief   Type of packet."]
+    #[doc = " @details One of @ref packettypes \"CRONO_PACKET_TYPE_*\"."]
     pub type_: u8,
+    #[doc = " @brief   Bit field of @ref packetflags \"CRONO_PACKET_FLAG_*\" bits."]
     pub flags: u8,
+    #[doc = " @brief   Length of data array in multiples of 8 bytes."]
     pub length: u32,
+    #[doc = " @brief   Timestamp of packet creation."]
+    #[doc = " @details It may be the start or the end of the data, depending on"]
+    #[doc = "          the packet source."]
     pub timestamp: i64,
+    #[doc = " @brief   Payload of the packet."]
+    #[doc = " @details Data type must be cast according to"]
+    #[doc = "          @ref packettypes \"CRONO_PACKET_TYPE_*\"."]
     pub data: [u64; 1usize],
 }
 #[test]
@@ -452,11 +467,17 @@ fn bindgen_test_layout_crono_packet() {
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct crono_packet_only_timestamp {
+    #[doc = " Number of the source channel"]
     pub channel: u8,
+    #[doc = " ID of the card"]
     pub card: u8,
+    #[doc = " Type of packet. Must be CRONO_PACKET_TYPE_TIMESTAMP_ONLY"]
     pub type_: u8,
+    #[doc = " Bit field of CRONO_PACKET_FLAG_* bits"]
     pub flags: u8,
+    #[doc = " either 0 or a bit field carrying data"]
     pub length: u32,
+    #[doc = " timestamp of packet creation"]
     pub timestamp: i64,
 }
 #[test]
@@ -544,37 +565,39 @@ fn bindgen_test_layout_crono_packet_only_timestamp() {
         )
     );
 }
+#[doc = " @brief Structure containing PCIe information"]
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct crono_pcie_info {
-    #[doc = " \\brief organizes power supply of PCIe lanes"]
+    #[doc = " @brief   Organizes power supply of PCIe lanes."]
     pub pwr_mgmt: u32,
-    #[doc = " \\brief Number of PCIe lanes that the card uses."]
-    #[doc = ""]
-    #[doc = " Should be 4 for Ndigo5G"]
+    #[doc = " @brief   Number of PCIe lanes that the card uses."]
+    #[doc = " @details Should be 1, 2, or 4 for Ndigo5G and"]
+    #[doc = "          1, 2, 4, or 8 for the Ndigo6G-12. Ideally, should be the"]
+    #[doc = "          respective maximum."]
     pub link_width: u32,
-    #[doc = " \\brief Maximum size in bytes for one PCIe transaction"]
-    #[doc = ""]
-    #[doc = " depends on system configuration."]
+    #[doc = " @brief   Maximum size in bytes for one PCIe transaction."]
+    #[doc = " @details Depends on the system configuration."]
     pub max_payload: u32,
-    #[doc = " \\brief Data rate of the PCIe card."]
-    #[doc = ""]
-    #[doc = " depends on system configuration."]
+    #[doc = " @brief   Data rate of the PCIe card."]
+    #[doc = " @details Depends on the system configuration."]
     pub link_speed: u32,
-    #[doc = " \\brief != 0 if the PCIe error status is supported for this"]
-    #[doc = " device"]
+    #[doc = " @brief   Different from 0 if the PCIe error status is supported for"]
+    #[doc = "          this device"]
     pub error_status_supported: u32,
-    #[doc = " \\brief Correctable error status flags, directly from PCIe config"]
-    #[doc = " register"]
-    #[doc = ""]
-    #[doc = " Useful for debugging PCIe problems"]
+    #[doc = " @brief   Correctable error status flags, directly from the PCIe config"]
+    #[doc = "          register."]
+    #[doc = " @details Useful for debugging PCIe problems. 0, if no error is present,"]
+    #[doc = "          otherwise one of @link pciecorrectableerrors CRONO_PCIE_*"]
+    #[doc = "          @endlink."]
     pub correctable_error_status: u32,
-    #[doc = " \\brief Uncorrectable error status flags, directly from PCIe"]
-    #[doc = " config register"]
-    #[doc = ""]
-    #[doc = " Useful for debugging PCIe problems"]
+    #[doc = " @brief   Uncorrectable error status flags, directly from the PCIe"]
+    #[doc = "          config register."]
+    #[doc = " @details Useful for debugging PCIe problems. 0, if no error is present,"]
+    #[doc = "          otherwise one of"]
+    #[doc = "          @link pcieuncorrectableerrors CRONO_PCIE_UNC_* @endlink."]
     pub uncorrectable_error_status: u32,
-    #[doc = " \\brief for future extension"]
+    #[doc = " @brief   For future extension."]
     pub reserved: u32,
 }
 #[test]
@@ -2847,6 +2870,13 @@ extern "C" {
     pub fn xhptdc8_clear_pcie_errors(
         index: ::std::os::raw::c_int,
         flags: ::std::os::raw::c_int,
+    ) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    #[doc = " Return current internal timestamp counter value of selected xHPTDC8 device in picoseconds."]
+    pub fn xhptdc8_get_current_timestamp(
+        index: ::std::os::raw::c_int,
+        timestamp: *mut i64,
     ) -> ::std::os::raw::c_int;
 }
 extern "C" {
