@@ -37,17 +37,9 @@ link_directories(${CRONO_DEP_PKG_LIB_DIR})
 # Set output directory_________________________________________________________
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CRONO_DEP_PKG_LIB_DIR})
 
-# Validate that directories exist _____________________________________________
-IF(     NOT EXISTS "${CRONO_DEP_PKG_LIB_DIR}" 
-     OR NOT EXISTS "${CRONO_DEP_PKG_INC_DIR}"
-) 
-        message(FATAL_ERROR 
-                "Crono: Please copy driver installation folder <TimeTagger4/driver> to the project root.")
-ENDIF()
-
 # Add the EXE ytarget  ________________________________________________________
 add_executable(${CRONO_TARGET_NAME} 
-        ${PROJ_SRC_INDIR}/src/xhptdc8_user_guide_example.cpp)
+        ../src/xhptdc8_user_guide_example.cpp)
 
 # Windows-specific Configurations _____________________________________________
 IF ( CRONO_GEN_PLATFORM  STREQUAL "windows")
