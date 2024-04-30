@@ -1,9 +1,9 @@
 # xhptdc8_babel
 Wrappers, Utilities and Examples for using the xHPTDC8 with various programming languages.
 
-The windows driver for the  [xHPTDC8](https://www.cronologic.de/products/tdcs/xhptdc8-pcie)  time-to-digital converter (TDC) is a DLL with C linkage. Not because C would be a particularily good choice to write your TDC application in, but because it ensures the best compatibility with different programming languages and compilers.
+The Windows driver for the [xHPTDC8](https://www.cronologic.de/products/tdcs/xhptdc8-pcie) time-to-digital converter (TDC) is a DLL with C linkage.  C offers particularly good compatibility with different programming languages and compilers.
 
-This repository is intended to host wrappers to make the driver avilable in various programming languages. 
+This repository is intended to host wrappers to make the driver available in various programming languages. 
 
 Eventually you will also find utility functions such as default configurations for different use cases in this repository as well as example code.
 
@@ -21,9 +21,16 @@ Eventually you will also find utility functions such as default configurations f
 
 ## License
 
-The code in this repository is licensed under the [Mozilla Public License 2.0](LICENSE). This more or less means that you can do with this code whatever you want, but if you improve the code you shall make your changes available ot others upon request. Please read the license for additional details. 
+The code in this repository is licensed under the [Mozilla Public License 2.0](LICENSE). This more or less means that you can do with this code whatever you want, but if you improve the code you shall make your changes available to others upon request. Please read the license for additional details. 
 
-We encourage you to contribute to this repository. By uploading to this repository you agree to make your changes available under the beforementioned license.
+We encourage you to contribute to this repository. By uploading to this repository you agree to make your changes available under the before-mentioned license.
+
+## User Guide Example
+
+A User Guide Example is provided in [./ug_example/](./ug_example/).
+
+Follow the instructions within the directory on how to compile and run the example on Windows or Linux.
+
 
 ## Notes
-- The provided `/bin/xhptdc8_update_firmware` file is used only for Linux. To update firmware under Windows, please use `FirmwareGUI` supplied with the driver.
+The provided `/bin/xhptdc8_update_firmware` file is used only for Linux. To update firmware under Windows, please use `FirmwareGUI` supplied with the driver.
