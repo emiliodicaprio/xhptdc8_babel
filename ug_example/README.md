@@ -18,8 +18,8 @@ You can download the user guide from the [product web page](https://www.cronolog
 ---
 
 ## Build the C++ Project
-In most cases we recommend to use the C++ version of the example in ```xhptdc8_user_guide_example.cpp```.
-There is an alternative C version described below, use the source file ending in `.c` instead .
+In most cases we recommend using the C++ version of the example in ```xhptdc8_user_guide_example.cpp```.
+There is an alternative C version described below, use the source file ending in `.c` instead.
 
 ### Overview
 - The project is a `Console` App.
@@ -89,7 +89,7 @@ To build the alternative C user guide example ```xhptdc8_user_guide_example.c```
 ## Run/Debug the Sample
 
 **Prerequisites**
-- Cronologic Kernel Module is installed.
+- cronologic Kernel Module is installed.
 
 **Steps**
 - Run the executable found in the _Output Folder_ from system command, you might need to use `sudo` in Linux.
