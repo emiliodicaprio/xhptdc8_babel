@@ -27,7 +27,7 @@ The project is build using `CMake`.
 If you don't have `CMake` installed, refer to [Installing CMake](https://cmake.org/install/) for instructions. You can check if `CMake` is installed by
 running `cmake --version`.
 
-On **Windows**, you can build the project using either `CMake` directly, or using Visual Studio 2019 (or later), see [Build Using Visual Studio](#build-using-visual-studio) or [Build Using `CMake`](#build-using-cmake), respectively.
+On **Windows**, you can build the project using either `CMake` directly, or using Visual Studio 2019 (or later), see [Build Using `CMake`](#build-using-cmake) or [Build Using Visual Studio](#build-using-visual-studio), respectively.
 
 On **Linux**, you can build the project using `CMake`, see [Build Using `CMake`](#build-using-cmake).
 
