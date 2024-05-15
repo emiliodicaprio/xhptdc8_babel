@@ -1,7 +1,7 @@
-#include "pch.h"
-#include "xhptdc8_interface.h"
+#include "xHPTDC8_interface.h"
 #include "xhptdc8_util.h"
 #include <stdio.h>
+#include <cstring> 
 
 const static size_t MaxErrorMessageSize = 10000;
 static char lastErrorMessage[MaxErrorMessageSize];

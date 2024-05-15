@@ -1,4 +1,3 @@
-#include "pch.h"
 #include "xhptdc8_util_yaml.h"
 
 using namespace std;
@@ -23,7 +22,7 @@ void list_ryml_children(const ryml::NodeRef* node)
         else
             val_buff.assign("N/A");
         
-        sprintf_s(buff, 1024, "Key=<%s>, Val=<%s>", key_buff.c_str(), val_buff.c_str());
+        snprintf(buff, 1024, "Key=<%s>, Val=<%s>", key_buff.c_str(), val_buff.c_str());
     }
 }
 

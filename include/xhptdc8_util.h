@@ -4,7 +4,7 @@
 #ifndef XHPTDC8_UTIL_H
 #define XHPTDC8_UTIL_H
 
-#include "xhptdc8_interface.h"
+#include "xHPTDC8_interface.h"
 
 #ifdef __cplusplus
 extern "C" {
