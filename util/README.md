@@ -1,5 +1,5 @@
 
-# util Project
+# `util` Project
 
 ## About
 Windows DLL that provides utility functionalities for xHPTDC8 Driver
@@ -343,8 +343,7 @@ library.
 
 ___________________________
 
-
-# util_unit_test Project
+# `util_unit_test` Project
 
 ## About
 Microsoft Visual Studio C++ Test Project to test the util library functionalities.
