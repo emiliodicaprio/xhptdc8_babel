@@ -379,6 +379,7 @@ jobs:
       BUILD_TYPE: Release
       BUILD_PATH: '../build/bfR'  # Relative to 'UTIL_TOOLS_SUB_DIR'
       UTIL_TOOLS_SUB_DIR: './util/util/tools'
+      X64_DUMMY_REPO_LIB_PTH: .\lib\x64dummy\
 
     steps:
     - name: echo Suppress Status if Needed
@@ -514,6 +515,7 @@ jobs:
       COMMIT_MSG: 'Internal build due to Util Test code change' 
       BUILD_PATH: '../build/bfR'  # Relative to 'UTIL_TEST_TOOLS_SUB_DIR'
       UTIL_TEST_TOOLS_SUB_DIR: './util/util_test/tools'
+      X64_DUMMY_REPO_LIB_PTH: .\lib\x64dummy\
 
     steps:
     - name: echo Suppress Status if Needed
@@ -538,6 +540,7 @@ jobs:
         cd ${{env.UTIL_TEST_TOOLS_SUB_DIR}}
         cmake -B ${{env.BUILD_PATH}}
         cmake --build ${{env.BUILD_PATH}} --config ${{env.BUILD_TYPE}}
+        Copy-Item ${{env.X64_REPO_EXE_PTH_COMMIT}}${{env.X64_EXE_NAME}} -Destination ${{env.X64_DUMMY_REPO_LIB_PTH}}
   
     - name: Commit x64 EXE
       if: ${{needs.Check-Util-Test.outputs.ok_to_proceed != 'N' }}
@@ -576,7 +579,7 @@ jobs:
       run: |
         git pull
         
-    # Build release, output by CMake to `X64_REPO_LIB_PTH`, copy to `X64_DUMMY_REPO_LIB_PTH`
+    # Build release, output by CMake to `X64_REPO_LIB_PTH`
     - name: Configure CMake and Build Release x64
       if: ${{needs.Check-Util-Library.outputs.ok_to_proceed != 'N' }}
       run: |
