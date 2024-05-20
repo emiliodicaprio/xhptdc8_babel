@@ -591,7 +591,7 @@ jobs:
         
     # Build release, output by CMake to `X64_REPO_LIB_PTH`
     - name: Configure CMake and Build Release x64
-      if: ${{needs.Check-Util-Library.outputs.ok_to_proceed != 'N' }}
+      if: ${{needs.Check-Util-Test.outputs.ok_to_proceed != 'N' }}
       run: |
         cd ${{env.UTIL_TEST_TOOLS_SUB_DIR}}
         cmake -B ${{env.BUILD_PATH}} -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
