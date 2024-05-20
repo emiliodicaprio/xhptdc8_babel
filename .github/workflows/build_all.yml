@@ -407,8 +407,8 @@ jobs:
     - name: Copy output to Dummy Library Path
       if: ${{needs.Check-Util-Library.outputs.ok_to_proceed != 'N' }}
       run: |
-        Copy-Item ${{env.X64_REPO_LIB_PTH}}${{env.X64_DLL_NAME}} -Destination ${{env.X64_DUMMY_REPO_LIB_PTH}}
-        Copy-Item ${{env.X64_REPO_LIB_PTH}}${{env.X64_LIB_NAME}} -Destination ${{env.X64_DUMMY_REPO_LIB_PTH}}
+        Copy-Item ${{env.X64_REPO_LIB_PTH_COMMIT}}${{env.X64_DLL_NAME}} -Destination ${{env.X64_DUMMY_REPO_LIB_PTH}}
+        Copy-Item ${{env.X64_REPO_LIB_PTH_COMMIT}}${{env.X64_LIB_NAME}} -Destination ${{env.X64_DUMMY_REPO_LIB_PTH}}
  
     - name: Commit x64 DLL
       if: ${{needs.Check-Util-Library.outputs.ok_to_proceed != 'N' }}
