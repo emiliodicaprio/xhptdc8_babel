@@ -34,12 +34,10 @@ set(CRONO_DEP_PKG_LIB_DIR ${CMAKE_CURRENT_SOURCE_DIR}/${PROJ_SRC_INDIR}/../../li
 link_directories(${CRONO_DEP_PKG_LIB_DIR})
 
 # Set output directory_________________________________________________________
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CRONO_DEP_PKG_LIB_DIR})
-       
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../../bin/x64)
+
 # Add the target  _____________________________________________________________
-set(SOURCE 
-        ${PROJ_SRC_INDIR}/src/xhptds8_test_util.cpp
-)
+set(SOURCE ${PROJ_SRC_INDIR}/src/xhptds8_test_util.cpp)
 add_executable(${CRONO_TARGET_NAME} "${SOURCE}")
 
 # Windows-specific Configurations _____________________________________________
@@ -52,6 +50,18 @@ IF ( CRONO_GEN_PLATFORM  STREQUAL "windows")
         xhptdc8_util_64.lib)  
     target_link_libraries(${CRONO_TARGET_NAME} xhptdc8_util_64 xhptdc8_driver_64)
 
+    # Create exe directly on `CMAKE_RUNTIME_OUTPUT_DIRECTORY` without `Debug`
+    # /`Release` sub-folder
+    set_target_properties(${CRONO_TARGET_NAME} PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
+        RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
+        RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
+    )
+
+    # Copy DLLs to be able to run exe directly
+    file(COPY ${CRONO_DEP_PKG_LIB_DIR}/xhptdc8_driver_64.dll DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+    file(COPY ${CRONO_DEP_PKG_LIB_DIR}/xhptdc8_util_64.dll DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+
 # Linux-specific Configurations _______________________________________________
 ELSEIF (CRONO_GEN_PLATFORM STREQUAL "linux") 
     # Compilation options _____________________________________________________
@@ -60,4 +70,7 @@ ELSEIF (CRONO_GEN_PLATFORM STREQUAL "linux")
 
     # Link to xhptdc8_driver library __________________________________________
     target_link_libraries(${CRONO_TARGET_NAME} libutil.so)
+
+    # Copy library to be able to run exe directly
+    file(COPY ${CRONO_DEP_PKG_LIB_DIR}/libutil.so DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 ENDIF()

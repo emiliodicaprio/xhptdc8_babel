@@ -4,6 +4,8 @@
 #include <iostream>
 #include <cstring>
 #include <vector>
+#include <string>
+#include <istream>
 #include "xhptdc8_util.h"
 #include "xHPTDC8_interface.h"
 using namespace std;
