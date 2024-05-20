@@ -530,8 +530,6 @@ jobs:
       run: |
         git pull
         
-      if: ${{needs.Check-Util-Library.outputs.ok_to_proceed != 'N' }}
-
     # Build release, output by CMake to `X64_REPO_LIB_PTH`, copy to `X64_DUMMY_REPO_LIB_PTH`
     - name: Configure CMake and Build Release x64
       env:
