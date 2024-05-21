@@ -26,14 +26,15 @@ IF(CMAKE_SYSTEM_PROCESSOR IN_LIST x64_archs)
 ENDIF()
 
 # Include directories paths ___________________________________________________
-include_directories(${CRONO_TARGET_NAME} PRIVATE
-    ${CMAKE_CURRENT_SOURCE_DIR}/${PROJ_SRC_INDIR}/../../include
+include_directories(${CRONO_TARGET_NAME} PRIVATE    
+    ${CMAKE_CURRENT_SOURCE_DIR}/${PROJ_SRC_INDIR}/../../include # On repository `./include`
     ${CMAKE_CURRENT_SOURCE_DIR}/${PROJ_SRC_INDIR}/src/ryml_src
     ${CMAKE_CURRENT_SOURCE_DIR}/${PROJ_SRC_INDIR}/src/ryml_src/c4/ext
     ${CMAKE_CURRENT_SOURCE_DIR}/${PROJ_SRC_INDIR}/src/ryml_src/c4/ext/fast_float/include/fast_float
 )
 
 # Link to driver library ______________________________________________________
+# On repository `./lib/x64`
 set(CRONO_DEP_PKG_LIB_DIR ${CMAKE_CURRENT_SOURCE_DIR}/${PROJ_SRC_INDIR}/../../lib/x64)
 link_directories(${CRONO_DEP_PKG_LIB_DIR})
 
@@ -57,9 +58,7 @@ set(SOURCE
         ${PROJ_SRC_INDIR}/src/xhptdc8_util.cpp
         ${PROJ_SRC_INDIR}/src/xhptdc8_util_yaml.cpp
 )
-set(HEADERS
-        ${PROJ_SRC_INDIR}/src/xhptdc8_util_yaml.h
-)
+set(HEADERS ${PROJ_SRC_INDIR}/src/xhptdc8_util_yaml.h)
 add_library(${CRONO_TARGET_NAME} SHARED "${SOURCE}" "${HEADERS}")
 
 # Windows-specific Configurations _____________________________________________

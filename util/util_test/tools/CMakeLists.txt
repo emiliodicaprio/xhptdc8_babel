@@ -26,11 +26,13 @@ IF(CMAKE_SYSTEM_PROCESSOR IN_LIST x64_archs)
 ENDIF()
 
 # Include directories paths ___________________________________________________
+# On repository `./include`
 include_directories(${CRONO_TARGET_NAME} PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/${PROJ_SRC_INDIR}/../../include
 )
 
 # Link to driver library ______________________________________________________
+# On repository `./lib/x64`
 set(CRONO_DEP_PKG_LIB_DIR ${CMAKE_CURRENT_SOURCE_DIR}/${PROJ_SRC_INDIR}/../../lib/x64)
 link_directories(${CRONO_DEP_PKG_LIB_DIR})
 
