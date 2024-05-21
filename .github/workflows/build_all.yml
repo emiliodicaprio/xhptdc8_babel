@@ -371,8 +371,8 @@ jobs:
        run:
          shell: powershell
     env: 
-      X64_DLL_NAME: xhptdc8_util_64.dll
-      X64_LIB_NAME: xhptdc8_util_64.lib
+      X64_DLL_NAME: xhptdc8_util.dll
+      X64_LIB_NAME: xhptdc8_util.lib
       X64_REPO_LIB_PTH_COMMIT: ./lib/x64/             # Equal to X64_REPO_LIB_PTH, with '/' instead of '\'
       COMMIT_MSG: 'Internal build due to code change' 
       BUILD_TYPE: Release
@@ -435,7 +435,7 @@ jobs:
       #  Util-Library-Win                   # Guarnatee Sequential Build
 
     env: 
-      X64_LIB_NAME: libutil.so
+      X64_LIB_NAME: libxhptdc8_util.so
       X64_REPO_LIB_PTH_COMMIT: ./lib/x64/             # Equal to X64_REPO_LIB_PTH, with '/' instead of '\'
       COMMIT_MSG: 'Internal build due to code change' 
       BUILD_TYPE: Release
@@ -514,8 +514,8 @@ jobs:
          shell: powershell
     env: 
       BUILD_TYPE: Release
-      X64_EXE_NAME: xhptdc8_util_test_64.exe
-      X64_REPO_EXE_PTH_COMMIT: ./util/bin/x64/
+      X64_EXE_NAME: xhptdc8_util_test.exe
+      X64_REPO_EXE_PTH_COMMIT: ./util/bin/
       COMMIT_MSG: 'Internal build due to Util Test code change' 
       BUILD_PATH: '../build/bfR'  # Relative to 'UTIL_TEST_TOOLS_SUB_DIR'
       UTIL_TEST_TOOLS_SUB_DIR: './util/util_test/tools'

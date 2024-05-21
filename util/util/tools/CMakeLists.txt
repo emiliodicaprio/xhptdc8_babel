@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.12) 
-set(CRONO_TARGET_NAME "util")
+set(CRONO_TARGET_NAME "xhptdc8_util")
 project(${CRONO_TARGET_NAME})
+
 # _____________________________________________________________________________
 # Build Windows/Linux library for (Debug/Release) configurations.
 # _____________________________________________________________________________
@@ -32,13 +33,13 @@ include_directories(${CRONO_TARGET_NAME} PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/${PROJ_SRC_INDIR}/src/ryml_src/c4/ext/fast_float/include/fast_float
 )
 
-# Link to xtdc4_driver library ________________________________________
+# Link to driver library ______________________________________________________
 set(CRONO_DEP_PKG_LIB_DIR ${CMAKE_CURRENT_SOURCE_DIR}/${PROJ_SRC_INDIR}/../../lib/x64)
 link_directories(${CRONO_DEP_PKG_LIB_DIR})
 
 # Set output directory_________________________________________________________
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CRONO_DEP_PKG_LIB_DIR})
-       
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CRONO_DEP_PKG_LIB_DIR})   # .so, .lib
+
 # Add the target  _____________________________________________________________
 set(SOURCE 
         ${PROJ_SRC_INDIR}/src/ryml_src/c4/base64.cpp
@@ -64,12 +65,19 @@ add_library(${CRONO_TARGET_NAME} SHARED "${SOURCE}" "${HEADERS}")
 # Windows-specific Configurations _____________________________________________
 IF ( CRONO_GEN_PLATFORM  STREQUAL "windows")
     add_library(xhptdc8_driver_64 SHARED IMPORTED GLOBAL)
-    set_target_properties(xhptdc8_driver_64 PROPERTIES IMPORTED_IMPLIB 
-        xhptdc8_driver_64.lib)  
+    set_target_properties(xhptdc8_driver_64 PROPERTIES IMPORTED_IMPLIB xhptdc8_driver_64.lib)  
     target_link_libraries(${CRONO_TARGET_NAME} xhptdc8_driver_64)
 
+    # Create lib directly on `CRONO_DEP_PKG_LIB_DIR` without Debug/Release sub-folder
+    set_target_properties(${CRONO_TARGET_NAME} PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CRONO_DEP_PKG_LIB_DIR} # for .dll
+        RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CRONO_DEP_PKG_LIB_DIR}
+        ARCHIVE_OUTPUT_DIRECTORY_DEBUG ${CRONO_DEP_PKG_LIB_DIR} # for .lib
+        ARCHIVE_OUTPUT_DIRECTORY_RELEASE ${CRONO_DEP_PKG_LIB_DIR}
+    )
+
 # Linux-specific Configurations _______________________________________________
-ELSEIF (CRONO_GEN_PLATFORM STREQUAL "linux") 
+ELSEIF (CRONO_GEN_PLATFORM STREQUAL "linux")   
     # Compilation options _____________________________________________________
     add_compile_options(-fPIC -Wall $<$<CONFIG:Debug>:-g>)
     add_compile_definitions($<$<CONFIG:Debug>:CRONO_DEBUG_ENABLED>)

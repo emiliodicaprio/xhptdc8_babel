@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.12) 
-set(CRONO_TARGET_NAME "util_test")
+set(CRONO_TARGET_NAME "xhptdc8_util_test")
 project(${CRONO_TARGET_NAME})
 
 # _____________________________________________________________________________
@@ -30,12 +30,13 @@ include_directories(${CRONO_TARGET_NAME} PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/${PROJ_SRC_INDIR}/../../include
 )
 
-# Link to xtdc4_driver library ________________________________________
+# Link to driver library ______________________________________________________
 set(CRONO_DEP_PKG_LIB_DIR ${CMAKE_CURRENT_SOURCE_DIR}/${PROJ_SRC_INDIR}/../../lib/x64)
 link_directories(${CRONO_DEP_PKG_LIB_DIR})
 
 # Set output directory_________________________________________________________
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../../bin/x64)
+# On `./util/bin` folder
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../../bin)
 
 # Add the target  _____________________________________________________________
 set(SOURCE ${PROJ_SRC_INDIR}/src/xhptds8_test_util.cpp)
@@ -45,9 +46,9 @@ add_executable(${CRONO_TARGET_NAME} "${SOURCE}")
 IF ( CRONO_GEN_PLATFORM  STREQUAL "windows")
     add_library(xhptdc8_driver_64 SHARED IMPORTED GLOBAL)
     set_target_properties(xhptdc8_driver_64 PROPERTIES IMPORTED_IMPLIB xhptdc8_driver_64.lib)  
-    add_library(xhptdc8_util_64 SHARED IMPORTED GLOBAL)
-    set_target_properties(xhptdc8_util_64 PROPERTIES IMPORTED_IMPLIB xhptdc8_util_64.lib)  
-    target_link_libraries(${CRONO_TARGET_NAME} xhptdc8_util_64 xhptdc8_driver_64)
+    add_library(xhptdc8_util SHARED IMPORTED GLOBAL)
+    set_target_properties(xhptdc8_util PROPERTIES IMPORTED_IMPLIB xhptdc8_util.lib)  
+    target_link_libraries(${CRONO_TARGET_NAME} xhptdc8_util xhptdc8_driver_64)
 
     # Create exe directly on `CMAKE_RUNTIME_OUTPUT_DIRECTORY` without `Debug`
     # /`Release` sub-folder
@@ -57,9 +58,9 @@ IF ( CRONO_GEN_PLATFORM  STREQUAL "windows")
         RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
     )
 
-    # Copy DLLs to be able to run exe directly
+    # Copy library to be able to run exe directly
     file(COPY ${CRONO_DEP_PKG_LIB_DIR}/xhptdc8_driver_64.dll DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
-    file(COPY ${CRONO_DEP_PKG_LIB_DIR}/xhptdc8_util_64.dll DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+    file(COPY ${CRONO_DEP_PKG_LIB_DIR}/xhptdc8_util.dll DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 
 # Linux-specific Configurations _______________________________________________
 ELSEIF (CRONO_GEN_PLATFORM STREQUAL "linux") 
@@ -67,9 +68,9 @@ ELSEIF (CRONO_GEN_PLATFORM STREQUAL "linux")
     add_compile_options(-fPIC -Wall $<$<CONFIG:Debug>:-g>)
     add_compile_definitions($<$<CONFIG:Debug>:CRONO_DEBUG_ENABLED>)
 
-    # Link to xhptdc8_driver library __________________________________________
-    target_link_libraries(${CRONO_TARGET_NAME} libutil.so)
+    # Link to util library ____________________________________________________
+    target_link_libraries(${CRONO_TARGET_NAME} libxhptdc8_util.so)
 
     # Copy library to be able to run exe directly
-    file(COPY ${CRONO_DEP_PKG_LIB_DIR}/libutil.so DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+    file(COPY ${CRONO_DEP_PKG_LIB_DIR}/libxhptdc8_util.so DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 ENDIF()
