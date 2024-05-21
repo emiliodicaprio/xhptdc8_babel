@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.12) 
 set(CRONO_TARGET_NAME "util_test")
 project(${CRONO_TARGET_NAME})
+
 # _____________________________________________________________________________
 # Build Windows/Linux library for (Debug/Release) configurations.
 # _____________________________________________________________________________
@@ -43,11 +44,9 @@ add_executable(${CRONO_TARGET_NAME} "${SOURCE}")
 # Windows-specific Configurations _____________________________________________
 IF ( CRONO_GEN_PLATFORM  STREQUAL "windows")
     add_library(xhptdc8_driver_64 SHARED IMPORTED GLOBAL)
-    set_target_properties(xhptdc8_driver_64 PROPERTIES IMPORTED_IMPLIB 
-        xhptdc8_driver_64.lib)  
+    set_target_properties(xhptdc8_driver_64 PROPERTIES IMPORTED_IMPLIB xhptdc8_driver_64.lib)  
     add_library(xhptdc8_util_64 SHARED IMPORTED GLOBAL)
-    set_target_properties(xhptdc8_util_64 PROPERTIES IMPORTED_IMPLIB 
-        xhptdc8_util_64.lib)  
+    set_target_properties(xhptdc8_util_64 PROPERTIES IMPORTED_IMPLIB xhptdc8_util_64.lib)  
     target_link_libraries(${CRONO_TARGET_NAME} xhptdc8_util_64 xhptdc8_driver_64)
 
     # Create exe directly on `CMAKE_RUNTIME_OUTPUT_DIRECTORY` without `Debug`

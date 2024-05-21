@@ -36,7 +36,7 @@ extern "C" {
 	XHPTDC8_UTIL_API int xhptdc8_apply_yaml(xhptdc8_manager_configuration* cfg, 
 		const char* yaml_string);	
 
-	// xhptdc8_apply_yaml returned errors, all Errors should be -ve, and should be added to util.rc 
+	// xhptdc8_apply_yaml returned errors, all Errors should be -ve
 	#define XHPTDC8_APPLY_YAML_INVALID_ARGUMENT			-01		// Invalid argument to the APIS
 	#define XHPTDC8_APPLY_YAML_ERR_NO_CONF_MNGR			-10		// Element "manager_config" is not found in YAML 
 	#define XHPTDC8_APPLY_YAML_ERR_EMPTY_CONF_MNGR		-11		// Element "device_configs" is not found in YAML
