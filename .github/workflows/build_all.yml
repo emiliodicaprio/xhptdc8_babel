@@ -253,9 +253,8 @@ jobs:
   #
   Util-Library-Win:
     runs-on: windows-latest
-    needs: [ Check-Util-Library, Info-Tool-Build ]
+    needs: [ Check-Util-Library ]
       #  Check-Util-Library   # To check need to build
-      #  Info-Tool-Build      # Guarnatee Sequential Build
     defaults:
        run:
          shell: powershell
@@ -524,8 +523,9 @@ jobs:
   #
   Readout-Tool-Build:
     runs-on: windows-latest
-    needs: [ Check-Readout-Tool-Build ]
+    needs: [ Check-Readout-Tool-Build, Util-Library-Win ]
       # Check-Readout-Tool-Build   # To check need to build
+      # Util-Library-Win           # Dependency
     defaults:
       run:
         shell: cmd
