@@ -222,117 +222,6 @@ jobs:
 
   # ===========================================================================
   #
-  Check-Readout-Tool-Build:
-    runs-on: ubuntu-latest
-    # Map a step output to a job output
-    outputs:
-      ok_to_proceed: ${{ steps.check.outputs.ok_to_proceed_val }}
-      
-    steps:
-    - name: Checkout Code
-      uses: actions/checkout@v3
-      
-    - name: Get changed files in concerned folder(s)
-      id: changed-files-specific
-      uses: tj-actions/changed-files@v35
-      with:
-        files: |
-          include/**
-          lib/x64/**
-          rust/readout/**
-        
-    # Check if any file(s) in the concerned folder changed
-    - name: Check
-      id: check
-      if: steps.changed-files-specific.outputs.any_changed == 'false'
-      run: |
-        echo "No concerned files changed, suppressing processing."
-        echo "ok_to_proceed_val=N" >> $GITHUB_OUTPUT
-        
-  # ___________________________________________________________________________
-  #
-  Readout-Tool-Build:
-    runs-on: windows-latest
-    needs: [ Check-Readout-Tool-Build, Info-Tool-Build ]
-      # Check-Readout-Tool-Build   # To check need to build
-      # Info-Tool-Build            # Guarnatee Sequential Build
-    defaults:
-      run:
-        shell: cmd
-    env: 
-      CARGO_TERM_COLOR: always
-      SOLUTION_FILE_PATH: .\rust\readout
-      
-      X64_OUTPUT_DIR_NAME: Build_x64
-      X64_OUTPUT_DIR: .\Build_x64\release\
-      X64_EXE_REPO_DIR: .\rust\bin\x64\
-      X64_BINDINGS_REPO_DIR: .\rust\readout\src\bindings\x64\
-      X64_EXE_NAME: xhptdc8_readout.exe
-      X64_EXE_REPO_NAME: xhptdc8_readout_64.exe
-      X64_BINDINGS_RS_NAME: bindings.rs
-      X64_BINDINGS_RS_REPO_NAME: bindings_64.rs
-      COMMIT_MSG: 'Internal build due to code change' 
-        
-    steps:
-    - name: echo Suppress Status if Needed
-      if: ${{needs.Check-Readout-Tool-Build.outputs.ok_to_proceed == 'N' }}
-      run: |
-        echo "Job execution processing is suppressed for no cencerned files are changed."
-        
-    - name: Checkout Code
-      if: ${{needs.Check-Readout-Tool-Build.outputs.ok_to_proceed != 'N' }}
-      uses: actions/checkout@v3
-    
-    - name: Pull Latest 
-      if: ${{needs.Check-Readout-Tool-Build.outputs.ok_to_proceed != 'N' }}
-      run: |
-        git pull
-        
-    - name: Install LLVM and Clang, x64
-      if: ${{needs.Check-Readout-Tool-Build.outputs.ok_to_proceed != 'N' }}
-      uses: KyleMayes/install-llvm-action@v1
-      with:
-        version: "10.0"
-        directory: ${{ runner.temp }}/llvm    
-        
-#    Uncomment the following item if you need to display more information
-#    - name: Display Environment Settings
-#      run: |
-#        rustup show
-         
-    # Assuming that 'stable-x86_64-pc-windows-msvc' is default
-    - name: Build x64 Release
-      if: ${{needs.Check-Readout-Tool-Build.outputs.ok_to_proceed != 'N' }}
-      run: | 
-        clang --version
-        SET LIBCLANG_PATH=%LD_LIBRARY_PATH:~0,-1%
-        cd ${{env.SOLUTION_FILE_PATH}}
-        cargo build --target-dir=${{env.X64_OUTPUT_DIR_NAME}} --release --verbose
-        
-    # Copy EXE 
-    - name: Copy x64 Files to Repository
-      if: ${{needs.Check-Readout-Tool-Build.outputs.ok_to_proceed != 'N' }}
-      run: |
-        copy ${{env.SOLUTION_FILE_PATH}}\${{env.X64_OUTPUT_DIR}}${{env.X64_EXE_NAME}} ${{env.X64_EXE_REPO_DIR}}${{env.X64_EXE_REPO_NAME}}
-        
-    - name: Commit x64 EXE
-      if: ${{needs.Check-Readout-Tool-Build.outputs.ok_to_proceed != 'N' }}
-      uses: EndBug/add-and-commit@v9
-      with:
-          author_name: Internal Workflow Action
-          message: ${{env.COMMIT_MSG}}
-          add: ${{env.X64_EXE_REPO_DIR}}${{env.X64_EXE_REPO_NAME}} --force
-
-    - name: Commit x64 bindings
-      if: ${{needs.Check-Readout-Tool-Build.outputs.ok_to_proceed != 'N' }}
-      uses: EndBug/add-and-commit@v9
-      with:
-          author_name: Internal Workflow Action
-          message: ${{env.COMMIT_MSG}}
-          add: ${{env.X64_BINDINGS_REPO_DIR}}${{env.X64_BINDINGS_RS_REPO_NAME}} --force
-
-  # ===========================================================================
-  #
   Check-Util-Library:
     runs-on: ubuntu-latest
     # Map a step output to a job output
@@ -364,9 +253,9 @@ jobs:
   #
   Util-Library-Win:
     runs-on: windows-latest
-    needs: [ Check-Util-Library, Readout-Tool-Build ]
-      #  Check-Util-Library                 # To check need to build
-      #  Readout-Tool-Build                 # Guarnatee Sequential Build
+    needs: [ Check-Util-Library, Info-Tool-Build ]
+      #  Check-Util-Library   # To check need to build
+      #  Info-Tool-Build      # Guarnatee Sequential Build
     defaults:
        run:
          shell: powershell
@@ -427,9 +316,8 @@ jobs:
   #
   Util-Library-Linux:
     runs-on: ubuntu-latest
-    needs: [ Check-Util-Library, Util-Library-Win ]
+    needs: [ Check-Util-Library ]
       #  Check-Util-Library                 # To check need to build
-      #  Util-Library-Win                   # Guarnatee Sequential Build
 
     env: 
       X64_LIB_NAME: libxhptdc8_util.so
@@ -601,3 +489,114 @@ jobs:
           author_name: Internal Workflow Action
           message: ${{env.COMMIT_MSG}}
           add: ${{env.X64_REPO_EXE_PTH_COMMIT}}${{env.X64_EXE_NAME}} --force        
+
+  # ===========================================================================
+  #
+  Check-Readout-Tool-Build:
+    runs-on: ubuntu-latest
+    # Map a step output to a job output
+    outputs:
+      ok_to_proceed: ${{ steps.check.outputs.ok_to_proceed_val }}
+      
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v3
+      
+    - name: Get changed files in concerned folder(s)
+      id: changed-files-specific
+      uses: tj-actions/changed-files@v35
+      with:
+        files: |
+          include/**
+          lib/x64/**
+          rust/readout/**
+          util/util/**
+        
+    # Check if any file(s) in the concerned folder changed
+    - name: Check
+      id: check
+      if: steps.changed-files-specific.outputs.any_changed == 'false'
+      run: |
+        echo "No concerned files changed, suppressing processing."
+        echo "ok_to_proceed_val=N" >> $GITHUB_OUTPUT
+        
+  # ___________________________________________________________________________
+  #
+  Readout-Tool-Build:
+    runs-on: windows-latest
+    needs: [ Check-Readout-Tool-Build ]
+      # Check-Readout-Tool-Build   # To check need to build
+    defaults:
+      run:
+        shell: cmd
+    env: 
+      CARGO_TERM_COLOR: always
+      SOLUTION_FILE_PATH: .\rust\readout
+      
+      X64_OUTPUT_DIR_NAME: Build_x64
+      X64_OUTPUT_DIR: .\Build_x64\release\
+      X64_EXE_REPO_DIR: .\rust\bin\x64\
+      X64_BINDINGS_REPO_DIR: .\rust\readout\src\bindings\x64\
+      X64_EXE_NAME: xhptdc8_readout.exe
+      X64_EXE_REPO_NAME: xhptdc8_readout_64.exe
+      X64_BINDINGS_RS_NAME: bindings.rs
+      X64_BINDINGS_RS_REPO_NAME: bindings_64.rs
+      COMMIT_MSG: 'Internal build due to code change' 
+        
+    steps:
+    - name: echo Suppress Status if Needed
+      if: ${{needs.Check-Readout-Tool-Build.outputs.ok_to_proceed == 'N' }}
+      run: |
+        echo "Job execution processing is suppressed for no cencerned files are changed."
+        
+    - name: Checkout Code
+      if: ${{needs.Check-Readout-Tool-Build.outputs.ok_to_proceed != 'N' }}
+      uses: actions/checkout@v3
+    
+    - name: Pull Latest 
+      if: ${{needs.Check-Readout-Tool-Build.outputs.ok_to_proceed != 'N' }}
+      run: |
+        git pull
+        
+    - name: Install LLVM and Clang, x64
+      if: ${{needs.Check-Readout-Tool-Build.outputs.ok_to_proceed != 'N' }}
+      uses: KyleMayes/install-llvm-action@v1
+      with:
+        version: "10.0"
+        directory: ${{ runner.temp }}/llvm    
+        
+#    Uncomment the following item if you need to display more information
+#    - name: Display Environment Settings
+#      run: |
+#        rustup show
+         
+    # Assuming that 'stable-x86_64-pc-windows-msvc' is default
+    - name: Build x64 Release
+      if: ${{needs.Check-Readout-Tool-Build.outputs.ok_to_proceed != 'N' }}
+      run: | 
+        clang --version
+        SET LIBCLANG_PATH=%LD_LIBRARY_PATH:~0,-1%
+        cd ${{env.SOLUTION_FILE_PATH}}
+        cargo build --target-dir=${{env.X64_OUTPUT_DIR_NAME}} --release --verbose
+        
+    # Copy EXE 
+    - name: Copy x64 Files to Repository
+      if: ${{needs.Check-Readout-Tool-Build.outputs.ok_to_proceed != 'N' }}
+      run: |
+        copy ${{env.SOLUTION_FILE_PATH}}\${{env.X64_OUTPUT_DIR}}${{env.X64_EXE_NAME}} ${{env.X64_EXE_REPO_DIR}}${{env.X64_EXE_REPO_NAME}}
+        
+    - name: Commit x64 EXE
+      if: ${{needs.Check-Readout-Tool-Build.outputs.ok_to_proceed != 'N' }}
+      uses: EndBug/add-and-commit@v9
+      with:
+          author_name: Internal Workflow Action
+          message: ${{env.COMMIT_MSG}}
+          add: ${{env.X64_EXE_REPO_DIR}}${{env.X64_EXE_REPO_NAME}} --force
+
+    - name: Commit x64 bindings
+      if: ${{needs.Check-Readout-Tool-Build.outputs.ok_to_proceed != 'N' }}
+      uses: EndBug/add-and-commit@v9
+      with:
+          author_name: Internal Workflow Action
+          message: ${{env.COMMIT_MSG}}
+          add: ${{env.X64_BINDINGS_REPO_DIR}}${{env.X64_BINDINGS_RS_REPO_NAME}} --force
