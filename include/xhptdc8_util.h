@@ -61,4 +61,4 @@ XHPTDC8_UTIL_API int xhptdc8_updage_config_for_grouping_mode(int index, xhptdc8_
 }
 #endif
 
-#endif
+#endif  // #ifndef XHPTDC8_UTIL_H
