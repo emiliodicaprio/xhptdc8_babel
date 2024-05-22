@@ -255,6 +255,7 @@ jobs:
     runs-on: windows-latest
     needs: [ Check-Util-Library ]
       #  Check-Util-Library   # To check need to build
+      #  Info-Tool-Build      # Guarnatee Sequential Build
     defaults:
        run:
          shell: powershell
