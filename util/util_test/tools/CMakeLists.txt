@@ -51,7 +51,7 @@ IF ( CRONO_GEN_PLATFORM  STREQUAL "windows")
     add_library(xhptdc8_util SHARED IMPORTED GLOBAL)
     set_target_properties(xhptdc8_util PROPERTIES IMPORTED_IMPLIB xhptdc8_util.lib)  
     target_link_libraries(${CRONO_TARGET_NAME} xhptdc8_util xhptdc8_driver_64)
-
+    
     # Create exe directly on `CMAKE_RUNTIME_OUTPUT_DIRECTORY` without `Debug`
     # /`Release` sub-folder
     set_target_properties(${CRONO_TARGET_NAME} PROPERTIES
@@ -68,7 +68,8 @@ IF ( CRONO_GEN_PLATFORM  STREQUAL "windows")
 ELSEIF (CRONO_GEN_PLATFORM STREQUAL "linux") 
     # Compilation options _____________________________________________________
     add_compile_options(-fPIC -Wall $<$<CONFIG:Debug>:-g>)
-    add_compile_definitions($<$<CONFIG:Debug>:CRONO_DEBUG_ENABLED>)
+    target_compile_definitions(${CRONO_TARGET_NAME} PRIVATE 
+        $<$<CONFIG:Debug>:CRONO_DEBUG_ENABLED>)
 
     # Link to util library ____________________________________________________
     target_link_libraries(${CRONO_TARGET_NAME} libxhptdc8_util.so)

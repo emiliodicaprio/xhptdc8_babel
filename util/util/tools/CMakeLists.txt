@@ -9,6 +9,7 @@ project(${CRONO_TARGET_NAME})
 # General Validations and Configurations ______________________________________
 # cd indirection from /tools to the project source code, "." if no shift
 set(PROJ_SRC_INDIR ..)  
+add_compile_definitions(XHPTDC8_UTIL_EXPORTS)
 
 # Get the platform and architecure ____________________________________________
 # Check supported architecture, and set `CRONO_GEN_ARCH` to `x86_64` for all
@@ -60,6 +61,8 @@ set(SOURCE
 )
 set(HEADERS ${PROJ_SRC_INDIR}/src/xhptdc8_util_yaml.h)
 add_library(${CRONO_TARGET_NAME} SHARED "${SOURCE}" "${HEADERS}")
+target_compile_definitions(${CRONO_TARGET_NAME} PRIVATE 
+    $<$<CONFIG:Debug>:CRONO_DEBUG_ENABLED XHPTDC8_VERBOSE_DEBUG>)
 
 # Windows-specific Configurations _____________________________________________
 IF ( CRONO_GEN_PLATFORM  STREQUAL "windows")
@@ -79,7 +82,6 @@ IF ( CRONO_GEN_PLATFORM  STREQUAL "windows")
 ELSEIF (CRONO_GEN_PLATFORM STREQUAL "linux")   
     # Compilation options _____________________________________________________
     add_compile_options(-fPIC -Wall $<$<CONFIG:Debug>:-g>)
-    add_compile_definitions($<$<CONFIG:Debug>:CRONO_DEBUG_ENABLED>)
 
     # Link to xhptdc8_driver library __________________________________________
     target_link_libraries(${CRONO_TARGET_NAME} libxhptdc8_driver.a)
