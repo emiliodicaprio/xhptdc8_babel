@@ -4,7 +4,7 @@ using namespace std;
 
 void list_ryml_children(const ryml::NodeRef* node)
 {
-    int children_count = node->num_children();
+    int children_count = static_cast<int>(node->num_children());
     std::string key_buff;
     std::string val_buff;
     char buff[1024];
@@ -81,7 +81,7 @@ crono_bool_t _is_node_array_map(const ryml::NodeRef* pNode)
 */
 int _get_node_key_name_internal(const ryml::NodeRef* pNode, std::string* key_name)
 {
-    int key_len = pNode->key().len;
+    int key_len = static_cast<int>(pNode->key().len);
     std::string undelimited_key_name = pNode->key().data();
     *key_name = undelimited_key_name.substr(0, key_len);
     return 1;
@@ -94,7 +94,7 @@ int _get_node_key_name_internal(const ryml::NodeRef* pNode, std::string* key_nam
 */
 int _get_node_key_name_toi_internal(const ryml::NodeRef* pNode)
 {
-    int key_len = pNode->key().len;
+    int key_len = static_cast<int>(pNode->key().len);
     std::string undelimited_key_name = pNode->key().data();
     std::string key_name = undelimited_key_name.substr(0, key_len);
     try {
@@ -114,7 +114,7 @@ int _get_node_key_name_toi_internal(const ryml::NodeRef* pNode)
 */
 int _get_node_val_internal(const ryml::NodeRef* pNode, std::string* val)
 {
-    int val_len = pNode->val().len;
+    int val_len = static_cast<int>(pNode->val().len);
     std::string undilimited_val = pNode->val().data();
     *val = undilimited_val.substr(0, val_len);
     return 1;
@@ -204,7 +204,7 @@ int xhptdc8_yaml_get_configs_count(const ryml::NodeRef* config_mngr_node, ryml::
     {
         return 0; // Allow for not providing device_configs in the yaml 
     }
-    int configs_count = device_configs_node->num_children();
+    int configs_count = static_cast<int>(device_configs_node->num_children());
     if (0 == configs_count)
     {
         return 0; // Allow for not providing device_configs in the yaml 
@@ -239,7 +239,7 @@ int xhptdc8_apply_trigger_threshold_yaml(const ryml::NodeRef* device_config_node
         return 0;
     }
     int trigger_threshold_children_count = 0;
-    trigger_threshold_children_count = trigger_threshold_node.num_children();
+    trigger_threshold_children_count = static_cast<int>(trigger_threshold_node.num_children());
     VALIDATE_CHILDREN_COUNT(trigger_threshold_children_count, XHPTDC8_TDC_CHANNEL_COUNT,
         XHPTDC8_APPLY_YAML_THRESHOLDS_EXCEED_MAX);
 
@@ -340,7 +340,7 @@ int xhptdc8_apply_trigger_yaml(const ryml::NodeRef* device_config_node,
 
     // Get node children count (array element size) and validate it
     int trigger_children_count = 0;
-    trigger_children_count = trigger_node.num_children();
+    trigger_children_count = static_cast<int>(trigger_node.num_children());
     VALIDATE_CHILDREN_COUNT(trigger_children_count, XHPTDC8_TRIGGER_COUNT, 
         XHPTDC8_APPLY_YAML_ERR_TRIGGER_EXCEED_MAX);
 
@@ -431,7 +431,7 @@ int xhptdc8_apply_channel_yaml(const ryml::NodeRef* device_config_node,
 
     // Get node children count (array element size) and validate it
     int channel_children_count = 0;
-    channel_children_count = channel_node.num_children();
+    channel_children_count = static_cast<int>(channel_node.num_children());
     VALIDATE_CHILDREN_COUNT(channel_children_count, XHPTDC8_TDC_CHANNEL_COUNT,
         XHPTDC8_APPLY_YAML_ERR_CHANNELS_EXCEED_MAX);
 
@@ -556,7 +556,7 @@ int xhptdc8_apply_gating_block_yaml(const ryml::NodeRef* device_config_node,
 
     // Get node children count (array element size) and validate it
     int gating_block_children_count = 0;
-    gating_block_children_count = gating_block_node.num_children();
+    gating_block_children_count = static_cast<int>(gating_block_node.num_children());
     VALIDATE_CHILDREN_COUNT(gating_block_children_count, XHPTDC8_GATE_COUNT,
         XHPTDC8_APPLY_YAML_ERR_GTBLCK_EXCEED_MAX);
 
@@ -707,7 +707,7 @@ int xhptdc8_apply_tiger_block_yaml(const ryml::NodeRef* device_config_node,
 
     // Get node children count (array element size) and validate it
     int tiger_block_children_count = 0;
-    tiger_block_children_count = tiger_block_node.num_children();
+    tiger_block_children_count = static_cast<int>(tiger_block_node.num_children());
     VALIDATE_CHILDREN_COUNT(tiger_block_children_count, XHPTDC8_TIGER_COUNT,
         XHPTDC8_APPLY_YAML_ERR_TGRBLCKS_EXCEED_MAX);
 
@@ -875,7 +875,7 @@ int xhptdc8_apply_grouping_yaml(const ryml::NodeRef* config_mngr_node,
         manager_config->grouping.zero_channel, XHPTDC8_APPLY_YAML_INVALID_GROUPING_ZEROCH);
 
     // zero_channel_offset
-    APPLY_CHILD_DOUBLE_VALUE(grouping_node, "zero_channel_offset",
+    APPLY_CHILD_LONGLONG_VALUE(grouping_node, "zero_channel_offset",
         (val >= 0), manager_config->grouping.zero_channel_offset, XHPTDC8_APPLY_YAML_INVALID_GROUPING_ZEROCHOFF);
 
     // range_start
@@ -1003,7 +1003,7 @@ int xhptdc8_apply_device_config_yaml(const ryml::NodeRef* device_config_node,
 * Return N  : Count of device configurations updated
 *       -ve : Error
 */
-int xhptdc8_apply_yaml(xhptdc8_manager_configuration* manager_config, const char* yaml_string)
+extern "C" int xhptdc8_apply_yaml(xhptdc8_manager_configuration* manager_config, const char* yaml_string)
 {
     int device_config_children_count = 0;
 
