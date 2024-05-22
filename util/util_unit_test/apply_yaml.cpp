@@ -22,9 +22,7 @@ namespace apply_yaml
 		hMgr_INIT_BLOCK;
 		int apply_yaml_result = xhptdc8_apply_yaml(cfg, yaml_string.c_str());
 		if (apply_yaml_result < 0) {
-			char buff[256];
-			snprintf(buff, sizeof(buff), "Error is %d", apply_yaml_result);
-			Logger::WriteMessage(buff);
+			Logger::WriteMessage(xhptdc8_get_err_message(apply_yaml_result));
 		}
 		delete cfg;
 		hMgr_CLEANUP_BLOCK;

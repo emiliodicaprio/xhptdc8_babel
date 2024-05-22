@@ -1,4 +1,5 @@
 #include "xhptdc8_util_yaml.h"
+#include "errors.h"
 
 using namespace std;
 

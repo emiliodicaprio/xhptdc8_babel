@@ -58,6 +58,8 @@ set(SOURCE
         ${PROJ_SRC_INDIR}/src/ryml_src/c4/yml/tree.cpp
         ${PROJ_SRC_INDIR}/src/xhptdc8_util.cpp
         ${PROJ_SRC_INDIR}/src/xhptdc8_util_yaml.cpp
+        ${PROJ_SRC_INDIR}/src/errors.h
+        ${PROJ_SRC_INDIR}/src/errors.cpp
 )
 set(HEADERS ${PROJ_SRC_INDIR}/src/xhptdc8_util_yaml.h)
 add_library(${CRONO_TARGET_NAME} SHARED "${SOURCE}" "${HEADERS}")
