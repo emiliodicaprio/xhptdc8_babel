@@ -3,6 +3,7 @@
 #include "CppUnitTest.h"
 #include "xhptdc8_util.h"
 #include "xhptdc8_interface.h"
+#include "..\util\src\errors.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
