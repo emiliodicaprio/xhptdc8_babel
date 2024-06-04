@@ -2862,7 +2862,7 @@ extern "C" {
 }
 extern "C" {
     #[doc = " Modifiy config sturcture to use grouping mode"]
-    pub fn xhptdc8_updage_config_for_grouping_mode(
+    pub fn xhptdc8_update_config_for_grouping_mode(
         index: ::std::os::raw::c_int,
         mgr_cfg: *mut xhptdc8_manager_configuration,
         threshold: f32,
