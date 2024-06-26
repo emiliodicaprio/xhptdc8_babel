@@ -43,7 +43,7 @@ int get_device_count() {
 	int error_code;
 	char* error_msg;
 
-	int device_count = xhptdc8_count_devices(&error_code, (const char**)&error_msg); 
+	int device_count = xhptdc8_count_devices(&error_code, (const char**)&error_msg);
 	exit_on_fail(error_code, error_msg);
 	return device_count;
 }
@@ -52,14 +52,13 @@ int get_device_count() {
 int configure_xhptdc8(int device_count) {
 	xhptdc8_manager_configuration* mgr_cfg = new xhptdc8_manager_configuration;
 	xhptdc8_get_default_configuration(mgr_cfg);
-	int general_offset = 50, epsilon = 4;
+	int general_offset = 50, epsilon = 5;
 
 	// configure all devices with an identical configuration
 	for (int device_index = 0; device_index < device_count; device_index++) {
 		xhptdc8_device_configuration* device_config = &(mgr_cfg->device_configs[device_index]);
 		for (int channel_index = 0; channel_index < XHPTDC8_TDC_CHANNEL_COUNT; channel_index++)
 		{
-			// currently a negative pulse with -0.1 V is expected
 			//please change this if you have a different signal
 			device_config->trigger_threshold[channel_index] = XHPTDC8_THRESHOLD_N_NIM;
 			device_config->channel[channel_index].enable = true;
@@ -86,7 +85,7 @@ int configure_xhptdc8(int device_count) {
 			device_config->tiger_block[block_index].mode = XHPTDC8_TIGER_BIPOLAR;
 
 			// every channel pulses a little later than the previous channel, for one clock cycle
-			device_config->tiger_block[block_index].start = general_offset +  channel_offset;
+			device_config->tiger_block[block_index].start = general_offset + channel_offset;
 			device_config->tiger_block[block_index].stop = general_offset + channel_offset + 1;
 
 			// block trigger that is outside start-stop range
@@ -145,7 +144,7 @@ int poll_for_hits(TDCHit* hit_buffer, size_t events_per_read) {
 	}
 	if (trys_to_read_hits == MAX_TRYS_TO_READ_HITS)
 		printf("not enough data, check trigger source and device configuration\n");
-	return trys_to_read_hits;
+	return 0;
 }
 
 
@@ -193,7 +192,7 @@ int main(int argc, char* argv[]) {
 	exit_on_fail(xhptdc8_start_tiger(0), "Could not start TiGer.");
 
 	//collect measured data
-	read_hits_wrapper(10000);
+	read_hits_wrapper(10);
 
 	//stop measurement
 	exit_on_fail(xhptdc8_stop_capture(), "Could not stop capturing.");
