@@ -39,7 +39,7 @@ int get_device_count() {
 	int error_code;
 	char* error_msg;
 
-	int device_count = xhptdc8_count_devices(&error_code, (const char**)&error_msg); 
+	int device_count = xhptdc8_count_devices(&error_code, (const char**)&error_msg);
 	exit_on_fail(error_code, error_msg);
 	return device_count;
 }
@@ -47,19 +47,19 @@ int get_device_count() {
 int configure_xhptdc8(int device_count) {
 	xhptdc8_manager_configuration* mgr_cfg = (xhptdc8_manager_configuration*)malloc(sizeof(xhptdc8_manager_configuration));
 	xhptdc8_get_default_configuration(mgr_cfg);
-	int general_offset = 50, epsilon = 4;
+	int general_offset = 50, epsilon = 5;
 
 	// configure all devices with an identical configuration
 	for (int device_index = 0; device_index < device_count; device_index++) {
 		for (int channel_index = 0; channel_index < XHPTDC8_TDC_CHANNEL_COUNT; channel_index++)
 		{
-			mgr_cfg->device_configs[device_index].trigger_threshold[channel_index] 
+			mgr_cfg->device_configs[device_index].trigger_threshold[channel_index]
 				= XHPTDC8_THRESHOLD_N_NIM;
 			mgr_cfg->device_configs[device_index].channel[channel_index].enable = true;
 		}
 		mgr_cfg->device_configs[device_index].adc_channel.enable = 1;
 		mgr_cfg->device_configs[device_index].adc_channel.watchdog_readout = 0;
-		mgr_cfg->device_configs[device_index].adc_channel.trigger_threshold 
+		mgr_cfg->device_configs[device_index].adc_channel.trigger_threshold
 			= XHPTDC8_THRESHOLD_N_NIM;
 
 		// configure an auto trigger at 150 kHz
@@ -78,7 +78,7 @@ int configure_xhptdc8(int device_count) {
 			mgr_cfg->device_configs[device_index].tiger_block[block_index].mode = XHPTDC8_TIGER_BIPOLAR;
 
 			// every channel pulses a little later than the previous channel, for one clock cycle
-			mgr_cfg->device_configs[device_index].tiger_block[block_index].start = general_offset +  channel_offset;
+			mgr_cfg->device_configs[device_index].tiger_block[block_index].start = general_offset + channel_offset;
 			mgr_cfg->device_configs[device_index].tiger_block[block_index].stop = general_offset + channel_offset + 1;
 
 			// block trigger that is outside start-stop range
@@ -131,7 +131,7 @@ int poll_for_hits(TDCHit* hit_buffer, size_t events_per_read) {
 	}
 	if (trys_to_read_hits == MAX_TRYS_TO_READ_HITS)
 		printf("not enough data, check trigger source and device configuration\n");
-	return trys_to_read_hits;
+	return 0;
 }
 
 
@@ -139,7 +139,7 @@ int poll_for_hits(TDCHit* hit_buffer, size_t events_per_read) {
 void read_hits_wrapper(int events_per_read) {
 	int total_event_count = events_per_read * 10000;
 
-	TDCHit* hit_buffer = (TDCHit*)malloc(sizeof(TDCHit)*events_per_read);
+	TDCHit* hit_buffer = (TDCHit*)malloc(sizeof(TDCHit) * events_per_read);
 
 	int total_events = 0;
 	while (total_events < total_event_count) {
@@ -169,7 +169,7 @@ int main(int argc, char* argv[]) {
 	printf("cronologic xhptdc8_user_guide_example using driver: %s\n", xhptdc8_get_driver_revision_str());
 	printf("\n\nThis is illustrating the usage of an xHPTDC8 examplary with internal triggering\n");
 	int error_code = initialize_xhptdc8(8 * 1024 * 1024);
-    
+
 	exit_on_fail(
 		//configure all devices with that manager
 		configure_xhptdc8(get_device_count()),
