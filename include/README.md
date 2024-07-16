@@ -12,3 +12,4 @@
 
 ## `include/xhptdc8_util.h`
 - Include this header file when linking to the `xhptdc8_util` library.
+- Is updated based on `util` update.
