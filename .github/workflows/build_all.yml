@@ -620,94 +620,6 @@ jobs:
 
   # ===========================================================================
   #
-  Check-Util-Test-MSBuild:
-    runs-on: ubuntu-latest
-
-    # Map a step output to a job output
-    outputs:
-      ok_to_proceed: ${{ steps.check.outputs.ok_to_proceed_val }}
-      
-    steps:
-    - name: Checkout Code
-      uses: actions/checkout@v3
-      
-    - name: Get changed files in concerned folder(s)
-      id: changed-files-specific
-      uses: tj-actions/changed-files@v35
-      with:
-        files: |
-          include/**
-          lib/**
-          util/util_test/**
-        
-    # Check if any file(s) in the concerned folder changed
-    - name: Check
-      id: check
-      if: steps.changed-files-specific.outputs.any_changed == 'false'
-      run: |
-        echo "No concerned files changed, suppressing processing."
-        echo "ok_to_proceed_val=N" >> $GITHUB_OUTPUT
-
-  # ___________________________________________________________________________
-  # 
-  Util-Test-MSBuild:
-    runs-on: windows-latest
-
-    needs: 
-    - Check-Util-Test-MSBuild
-    - Util-Library-Win # Output needed, guarnatee Sequential Build
-
-    defaults:
-       run:
-         shell: powershell
-
-    env: 
-      BUILD_CONFIGURATION: Release
-      SOLUTION_FILE_PATH: .\util\util_test\msvscpp # The util library only
-      X64_OUTPUT_DIR: .\util\util_test\msvscpp\x64\Release\
-      X64_REPO_EXE_PATH: .\util\bin\
-      X64_EXE_NAME: xhptdc8_util_test.exe
-      X64_REPO_EXE_PTH_COMMIT: ./util/bin/        # Equal to X64_REPO_EXE_PATH, with '/' instead of '\'
-      COMMIT_MSG: 'Internal build due to Util Test code change' 
-
-    steps:
-    - name: echo Suppress Status if Needed
-      if: ${{needs.Check-Util-Test-MSBuild.outputs.ok_to_proceed == 'N' }}
-      run: |
-        echo "Job execution processing is suppressed for no cencerned files are changed."
-        
-    - name: Checkout Code
-      if: ${{needs.Check-Util-Test-MSBuild.outputs.ok_to_proceed != 'N' }}
-      uses: actions/checkout@v3
-  
-    - name: Pull Latest 
-      if: ${{needs.Check-Util-Test-MSBuild.outputs.ok_to_proceed != 'N' }}
-      run: |
-        git pull
-        
-    - name: Add MSBuild to PATH
-      if: ${{needs.Check-Util-Test-MSBuild.outputs.ok_to_proceed != 'N' }}
-      uses: microsoft/setup-msbuild@v1.1
-
-    - name: Build Release x64
-      if: ${{needs.Check-Util-Test-MSBuild.outputs.ok_to_proceed != 'N' }}
-      env:
-        BUILD_PLATFORM: x64
-      working-directory: ${{env.GITHUB_WORKSPACE}}
-      run: |
-        msbuild ${{env.SOLUTION_FILE_PATH}} /m /property:Configuration=Release /property:Platform=${{env.BUILD_PLATFORM}}
-        Copy-Item ${{env.X64_OUTPUT_DIR}}${{env.X64_EXE_NAME}} -Destination ${{env.X64_REPO_EXE_PATH}}
-  
-    - name: Commit x64 EXE
-      if: ${{needs.Check-Util-Test-MSBuild.outputs.ok_to_proceed != 'N' }}
-      uses: EndBug/add-and-commit@v9
-      with:
-          author_name: Internal Workflow Action
-          message: ${{env.COMMIT_MSG}}
-          add: ${{env.X64_REPO_EXE_PTH_COMMIT}}${{env.X64_EXE_NAME}} --force        
-
-  # ===========================================================================
-  #
   Check-Build-UG_EX:
     runs-on: ubuntu-latest
 
@@ -744,7 +656,7 @@ jobs:
 
     needs: 
     - Check-Build-UG_EX
-    - Util-Test-MSBuild # Guarnatee Sequential Build 
+    - Util-Test-Win # Guarnatee Sequential Build 
 
     env: 
       TOOLS_PATH: ug_example/tools
