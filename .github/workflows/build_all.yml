@@ -493,6 +493,7 @@ jobs:
     - name: Configure CMake and Build Release x64
       if: ${{needs.Check-Util-Test.outputs.ok_to_proceed != 'N' }}
       run: |
+        git pull
         cd ${{env.UTIL_TEST_TOOLS_SUB_DIR}}
         cmake -B ${{env.BUILD_PATH}} -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
         cmake --build ${{env.BUILD_PATH}}
