@@ -4,6 +4,7 @@ This directory contains a project to compile the C++ example shows in the user g
 
 You can download the user guide from the [product web page](https://www.cronologic.de/products/tdcs/xhptdc8-pcie).
 
+Output is `xhptdc8_ugex.exe` for Windows, and `xhptdc8_ugex` for Ubuntu/Debian, and is found on the root shared folder [`/bin`](./bin).
 
 ## Directory Structure
 ```
@@ -25,7 +26,7 @@ You can download the user guide from the [product web page](https://www.cronolog
 - If you don't have `CMake` installed, refer to [Installing CMake](https://cmake.org/install/) for instructions. You can check if `CMake` is installed by running `cmake --version`.
 - On **Windows**, you can build the project using either `CMake` directly, or using Visual Studio 2019 (or later), see [Build Using `CMake`](#build-using-cmake) or [Build Using Visual Studio](#build-using-visual-studio), respectively.
 - On **Linux**, you can build the project using `CMake`, see [Build Using `CMake`](#build-using-cmake).
-- It is possible to run the example project without actual access to the xHPTDC8 hardware by utilizing the `dummy library`. In that case, copy the DLL corresponding to your particular platform from the `.lib/<platform>` directory to the _driver directory_. E.g., for the platform _x64 Release_ `.exe`, copy `xhptdc8_driver_64.dll` from [`.lib/dummy`](../lib/dummy/) to the _driver directory_.
+- It is possible to run the example project without actual access to the xHPTDC8 hardware by utilizing the `dummy library`. In that case, copy the DLL corresponding to your particular platform from the `.lib/<platform>` directory to the _driver directory_. E.g., for the platform _x64 Release_ `.exe`, copy `xhptdc8_driver_64.dll` from [`lib/dummy`](../lib/dummy/) to the _driver directory_.
 
 ---
 
@@ -53,16 +54,14 @@ Select `Build -> Build All` from the menu bar (or any standard Visual Studio way
 
 **Project Environments and Configurations**
 
-The target executable name is `xhptdc8_ugex.exe`.
-
-| Configuration     | `CMakeSettings` | `Build root`                     | `CMake generator`     | Output Folder          |
-| ----------------- | --------------- | -------------------------------- | --------------------- | ---------------------  |
-| **x86_64 Debug**  | x64-Debug       | `${projectDir}\..\build\bfvsD`   | Visual Studio 17 2022 Win64 | `<Build root>\Debug`   |
-| **x86_64 Release**| x64-Release     | `${projectDir}\..\build\bfvsR`   | Visual Studio 17 2022 Win64 | `<Build root>\Release`   |
+| Configuration     | `CMakeSettings` | `Build root`                     | `CMake generator`     |
+| ----------------- | --------------- | -------------------------------- | --------------------- |
+| **x86_64 Debug**  | x64-Debug       | `${projectDir}\..\build\bfvsD`   | Visual Studio 17 2022 Win64 |
+| **x86_64 Release**| x64-Release     | `${projectDir}\..\build\bfvsR`   | Visual Studio 17 2022 Win64 |
 
 > **Notes**
 > * The provided file builds the project using Visual Studio 2022, however, you can change `generator` in [`CMakeSettings.json`](./tools/CMakeSettings.json) to any other Visual Studio generator you have on your machine.
-> * Driver library is copied automatically by the build script from `./lib` folder to the output folder.
+> * The output folder is the same for both release and debug builds.
 
 ---
 
@@ -70,19 +69,18 @@ The target executable name is `xhptdc8_ugex.exe`.
 
 In a terminal, navigate to `tools\` and run the following command:
 
-| Platform          | Configuration | Configure CMake command                            | Compile & Link Command                       | Output Folder |
-| ----------------- | ------------- | -------------------------------------------------  | -------------------------------------------- | -------  |
-| **Windows x86_64**| Release       | `cmake -B ..\build\bfR -A x64`                     | `cmake --build ..\build\bfR --config Release`| `${projectDir}\..\build\bfR\Release` |
-| **Windows x86_64**| Debug         | `cmake -B ..\build\bfD -A x64`                     | `cmake --build ..\build\bfD --config Debug`  | `${projectDir}\..\build\bfD\Debug` |
-| **Linux x86_64**  | Release       | `cmake -B ../build/bfR -DCMAKE_BUILD_TYPE=Release` | `cmake --build ../build/bfR`                 | `${projectDir}/../build/bfR` |
-| **Linux x86_64**  | Debug         | `cmake -B ../build/bfD -DCMAKE_BUILD_TYPE=Debug`   | `cmake --build ../build/bfD`                 | `${projectDir}/../build/bfD` |
+| Platform          | Configuration | Configure CMake command                           | Compile & Link Command                            | 
+| ----------------- | ------------- | ----------------------------------------------    | ------------------------------------------------- | 
+| **Windows x86_64**| Release       | `cmake -B ..\build\bfR -A x64`                    | `cmake --build ..\build\bfR --config Release`     | 
+| **Windows x86_64**| Debug         | `cmake -B ..\build\bfD -A x64`                    | `cmake --build ..\build\bfD --config Debug`       | 
+| **Linux x86_64**  | Release       | `cmake -B ../build/bfR -DCMAKE_BUILD_TYPE=Release`| `cmake --build ../build/bfR`                      | 
+| **Linux x86_64**  | Debug         | `cmake -B ../build/bfD -DCMAKE_BUILD_TYPE=Debug`  | `cmake --build ../build/bfD`                      | 
 
 > **Notes**
 > * The default configuration is `Debug` on Windows, and `Release` on Linux.
-> * For Windows: driver library is copied automatically by the build script from `./lib` folder to the output folder.
+> * The output folder is the same for both release and debug builds.
+> * You can change the build/output directory from `CMakeLists.txt` file.
 > * Linux `x86` is not supported.
-
----
 
 ---
 
@@ -97,8 +95,6 @@ To build the alternative C user guide example `xhptdc8_user_guide_example.c`, yo
 
 * For **Windows**, please copy the driver `.dll` from `.\lib\xhptdc8_driver_64.dll` to `ug_example\src` to be able to run `ug_example_c.exe`.
 * For **Linux**, to be able to run `ug_example_c` that uses `./lib/xhptdc8_driver.so`, either add `./lib` folder to path (e.g., `export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/path/to/lib`), or copy `xhptdc8_driver.so` to `/usr/lib` (needs `sudo`).
-
----
 
 ---
 

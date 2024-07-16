@@ -39,34 +39,17 @@ link_directories(${CRONO_LIB_DIR})
 add_executable(${CRONO_TARGET_NAME} ../src/xhptdc8_user_guide_example.cpp)
 
 set_target_properties(${CRONO_TARGET_NAME} PROPERTIES
-    RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CRONO_BIN_DIR} # for .dll, .so
-    RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CRONO_BIN_DIR} # for .dlll, .so
-    ARCHIVE_OUTPUT_DIRECTORY_DEBUG ${CRONO_LIB_DIR} # for .lib
-    ARCHIVE_OUTPUT_DIRECTORY_RELEASE ${CRONO_LIB_DIR} # for .lib
+    RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CRONO_BIN_DIR}
+    RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CRONO_BIN_DIR}
 )
 
 # Windows-specific Configurations _____________________________________________________________________________________
 IF ( CRONO_GEN_PLATFORM  STREQUAL "windows")
-        add_library(xhptdc8_driver_64 SHARED IMPORTED GLOBAL)
-        set_target_properties(xhptdc8_driver_64 PROPERTIES IMPORTED_IMPLIB xhptdc8_driver_64.lib)  
-        add_library(xhptdc8_util SHARED IMPORTED GLOBAL)
-        set_target_properties(xhptdc8_util PROPERTIES IMPORTED_IMPLIB xhptdc8_util.lib)  
         target_link_libraries(${CRONO_TARGET_NAME} xhptdc8_driver_64 xhptdc8_util)
-
-        # Copy needed DLLs to output folder for debug/run
-        add_custom_command(TARGET ${CRONO_TARGET_NAME} POST_BUILD 
-                COMMAND "echo" Copying libraries from '/lib' folder to output folder...
-                COMMAND ${CMAKE_COMMAND} -E copy_if_different
-                        \"${CRONO_BIN_DIR}/xhptdc8_driver_64.dll\" \"${CMAKE_BINARY_DIR}/$<CONFIG>\" 
-                COMMAND ${CMAKE_COMMAND} -E copy_if_different
-                        \"${CRONO_BIN_DIR}/xhptdc8_util.dll\" \"${CMAKE_BINARY_DIR}/$<CONFIG>\" 
-        )
 
 # Linux-specific Configurations _______________________________________________________________________________________
 ELSEIF (CRONO_GEN_PLATFORM STREQUAL "linux") 
         add_compile_options(-fPIC -Wall $<$<CONFIG:Debug>:-g>)
         add_compile_definitions($<$<CONFIG:Debug>:CRONO_DEBUG_ENABLED>)
-
-        # Link to libxhptdc8_driver library ___________________________________________________________________________
         target_link_libraries(${CRONO_TARGET_NAME} libxhptdc8_driver.a "${CRONO_BIN_DIR}/libxhptdc8_util.so")
 ENDIF()

@@ -558,12 +558,11 @@ In a terminal, navigate to `<path\to\project\folder>\tools` and run the followin
 | **Linux x86_64**  | Release       | `cmake -B ../build/bfR -DCMAKE_BUILD_TYPE=Release`| `cmake --build ../build/bfR`                      | 
 | **Linux x86_64**  | Debug         | `cmake -B ../build/bfD -DCMAKE_BUILD_TYPE=Debug`  | `cmake --build ../build/bfD`                      | 
 
-* Output folder is determined by every project documentation.
-* Build folder path (e.g. `../build/bfR`) is relative to project `tools` folder.
-* You can change the build/output directory from `CMakeLists.txt` file.
-
 > **Note**
 > - The default configuration is `Debug` on Windows, and `Release` on Linux.
+> * Output folder is determined by every project documentation.
+> * Build folder path (e.g. `../build/bfR`) is relative to project `tools` folder.
+> * You can change the build/output directory from `CMakeLists.txt` file.
 
 ## Build Using Visual Studio
 It is mainly done using `CMakeSettings.json` file provided in project `tools` folder, that uses the projects `CMakeLists.txt`.
