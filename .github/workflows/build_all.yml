@@ -35,6 +35,7 @@ env:
   COMMIT_MSG: 'Internal build due to code change' 
   CRONO_LIB_PATH: ./lib/
   CRONO_BIN_PATH: ./bin/
+  CRONO_BIN_PATH_WIN: .\bin\
   DUMMY_LIB_PTH: .\lib\dummy\
   DUMMY_LIB_PTH_COMMIT: ./lib/dummy/  # With `/` instead
   BUILD_PATH: '../build/bfR'  # Relative to 'tools' folder in the project
@@ -225,7 +226,7 @@ jobs:
     - name: Copy x64 EXE to Repository
       if: ${{needs.Check-Info-Tool-Build.outputs.ok_to_proceed != 'N' }}
       run: |
-        copy ${{env.SOLUTION_FILE_PATH}}${{env.X64_EXE_NAME}} ${{env.CRONO_BIN_PATH}}${{env.X64_EXE_NAME}}
+        copy ${{env.SOLUTION_FILE_PATH}}${{env.X64_EXE_NAME}} ${{env.CRONO_BIN_PATH_WIN}}${{env.X64_EXE_NAME}}
         
     - name: Commit x64 EXE
       if: ${{needs.Check-Info-Tool-Build.outputs.ok_to_proceed != 'N' }}
