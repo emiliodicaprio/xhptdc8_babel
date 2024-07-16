@@ -42,7 +42,7 @@ In order to call functions from the utility library, you need to do the followin
 ### `xhptdc8_apply_yaml`
 The purpose of this repository is to make using the [xHPTDC8 time-to-digital converter](https://www.cronologic.de/products/tdcs/xhptdc8-pcie) simpler to use for end users.
 
-Setting up the xhptdc8_manager_configuration structure is rather complicated. This shall be simplified by allowing to apply YAML files to the structure.
+Setting up the `xhptdc8_manager_configuration` structure is rather complicated. This shall be simplified by allowing to apply YAML files to the structure.
 So the workflow for the user would be:
 
 ```C++
@@ -321,6 +321,50 @@ library.
 4, "Board does not exist."
 5, "Board does not exist."
 ```
+
+### `xhptdc8_update_config_for_grouping_mode`
+Setting up the `xhptdc8_manager_configuration` structure is rather complicated. This API simplifies updating it to use the "Grouping mode".
+
+**Structure updates**
+
+It updates the structure as following:
+- All 8 TDC channels are enabled.
+- Grouping is enabled 
+- `trigger_channel` = 0
+- `zero_channel` = -1 
+- `zero_channel_offset` = 0
+- `trigger_deadtime` = 0
+- `window_hit_channels` =0
+- `trigger_channel_bitmask` = 0
+- `veto_mode` = 0
+- `overlap` = false
+
+Structure updates as per the arguments values:
+- `threshold`: is copied to `trigger_threshold` for all channels.
+- `range_start` and `range_stop`: are copied to `range_start` and `range_stop`.
+- `rising` (default is `false`): this value is copied to `channel[i].rising` of each channel.
+   - If `true`, it sets the trigger structure of each channel to `rising`=true, `falling`=false.
+   - If `false`, it sets the trigger structure of each channel to `rising`=false, `falling`=true.
+- `ingore_empty_events` (default is `false`): is copied to `ignore_empty_events`.
+
+**Signature**
+
+This API is of the following signature:
+```C
+XHPTDC8_UTIL_API int xhptdc8_update_config_for_grouping_mode(int index, xhptdc8_manager_configuration *mgr_cfg,
+                                                             float threshold, int64_t range_start, int64_t range_stop,
+                                                             crono_bool_t rising = false,
+                                                             crono_bool_t ingore_empty_events = false);
+```
+
+**Prerequisites**
+
+- `mgr_cfg` memory is allocated and initialized. Initialization to default values is an option.
+
+**Return**
+
+- `CRONO_OK`: Successfully updated values in `mgr_cfg`.
+- `CRONO_INVALID_ARGUMENTS`: if any argument is invalid.
 
 ___________________________
 
