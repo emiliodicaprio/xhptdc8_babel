@@ -58,7 +58,9 @@ set(SOURCE
         ${PROJ_SRC_INDIR}/src/errors.h
 )
 set(HEADERS ${PROJ_SRC_INDIR}/src/xhptdc8_util_yaml.h)
+
 add_library(${CRONO_TARGET_NAME} SHARED "${SOURCE}" "${HEADERS}")
+
 target_compile_definitions(${CRONO_TARGET_NAME} PRIVATE 
     $<$<CONFIG:Debug>:CRONO_DEBUG_ENABLED XHPTDC8_VERBOSE_DEBUG>)
 
@@ -69,18 +71,14 @@ set_target_properties(${CRONO_TARGET_NAME} PROPERTIES
     ARCHIVE_OUTPUT_DIRECTORY_RELEASE ${CRONO_LIB_DIR} # for .lib
 )
 
-# Windows-specific Configurations _____________________________________________________________________________________
 IF ( CRONO_GEN_PLATFORM  STREQUAL "windows")
-    add_library(xhptdc8_driver_64 SHARED IMPORTED GLOBAL)
-    set_target_properties(xhptdc8_driver_64 PROPERTIES IMPORTED_IMPLIB xhptdc8_driver_64.lib)  
+    # Windows-specific Configurations _________________________________________________________________________________
     target_link_libraries(${CRONO_TARGET_NAME} xhptdc8_driver_64)
 
-
-# Linux-specific Configurations _______________________________________________________________________________________
 ELSEIF (CRONO_GEN_PLATFORM STREQUAL "linux")   
-    # Compilation options _____________________________________________________________________________________________
+    # Linux-specific Configurations ___________________________________________________________________________________
     add_compile_options(-fPIC -Wall $<$<CONFIG:Debug>:-g>)
 
-    # Link to xhptdc8_driver library __________________________________________________________________________________
+    # Link to xhptdc8_driver library 
     target_link_libraries(${CRONO_TARGET_NAME} libxhptdc8_driver.a)
 ENDIF()
