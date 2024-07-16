@@ -65,6 +65,8 @@ jobs:
         files: |
           include/**
           dummy/**
+          .github/workflows/**
+          .github/workflows/**
           
     # Check if any file(s) in the concerned folder changed
     - name: Check
@@ -155,6 +157,7 @@ jobs:
           include/**
           lib/**
           go/info/src-cgo/** 
+          .github/workflows/**
         
     # Check if any file(s) in the concerned folder changed
     - name: Check
@@ -256,6 +259,7 @@ jobs:
           include/**
           lib/**
           util/util/**
+          .github/workflows/**
         
     # Check if any file(s) in the concerned folder changed
     - name: Check
@@ -390,6 +394,7 @@ jobs:
           include/**
           lib/**
           util/util_test/**
+          .github/workflows/**
         
     # Check if any file(s) in the concerned folder changed
     - name: Check
@@ -524,6 +529,7 @@ jobs:
           lib/**
           rust/readout/**
           util/util/**
+          .github/workflows/**
         
     # Check if any file(s) in the concerned folder changed
     - name: Check
@@ -639,6 +645,7 @@ jobs:
           lib/**
           include/**
           ug_example/**
+          .github/workflows/**
           
     # Check if any file(s) in the concerned folder changed
     - name: Check
