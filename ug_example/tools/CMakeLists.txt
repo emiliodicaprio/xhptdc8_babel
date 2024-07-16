@@ -2,16 +2,16 @@ cmake_minimum_required(VERSION 3.12)
 set(CRONO_TARGET_NAME "xhptdc8_ugex")
 project(${CRONO_TARGET_NAME})
 
-# _____________________________________________________________________________
+# _____________________________________________________________________________________________________________________
 # Build Windows/Linux `xhptdc8_ugex.exe/Linux` executable, 
 # for (Debug/Release) configurations.
-# _____________________________________________________________________________
+# _____________________________________________________________________________________________________________________
 
-# General Validations and Configurations ______________________________________
+# General Validations and Configurations ______________________________________________________________________________
 # cd indirection from /tools to the project source code, "." if no shift
 set(PROJ_SRC_INDIR ../..)
 
-# Get the platform and architecure ____________________________________________
+# Get the platform and architecure ____________________________________________________________________________________
 # Check supported architecture, and set `CRONO_GEN_ARCH` to `x86_64` for all
 # variations of `x64` platforms, and to `x86` for all variations of `x86` 
 # platforms.
@@ -26,42 +26,41 @@ IF(CMAKE_SYSTEM_PROCESSOR IN_LIST x64_archs)
         set(CRONO_GEN_ARCH "x86_64")
 ENDIF()
 
-# Include directories paths ___________________________________________________
+# Include directories paths ___________________________________________________________________________________________
 set(CRONO_DEP_PKG_INC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/${PROJ_SRC_INDIR}/include)
 include_directories(${CRONO_TARGET_NAME} PRIVATE  ${CRONO_DEP_PKG_INC_DIR})
 
-# Link to xhptdc8_driver library ______________________________________________
+# Link to xhptdc8_driver library ______________________________________________________________________________________
 set(CRONO_DEP_PKG_LIB_DIR ${CMAKE_CURRENT_SOURCE_DIR}/${PROJ_SRC_INDIR}/lib)
 set(CRONO_DEP_PKG_BIN_DIR ${CMAKE_CURRENT_SOURCE_DIR}/${PROJ_SRC_INDIR}/bin)
 link_directories(${CRONO_DEP_PKG_LIB_DIR})
 
-# Add the EXE target  _________________________________________________________
-add_executable(${CRONO_TARGET_NAME} 
-        ../src/xhptdc8_user_guide_example.cpp)
+# Add the EXE target  _________________________________________________________________________________________________
+add_executable(${CRONO_TARGET_NAME} ../src/xhptdc8_user_guide_example.cpp)
 
-# Windows-specific Configurations _____________________________________________
+# Windows-specific Configurations _____________________________________________________________________________________
 IF ( CRONO_GEN_PLATFORM  STREQUAL "windows")
         add_library(xhptdc8_driver_64 SHARED IMPORTED GLOBAL)
-        set_target_properties(xhptdc8_driver_64 PROPERTIES IMPORTED_IMPLIB 
-                xhptdc8_driver_64.lib)  
-        target_link_libraries(${CRONO_TARGET_NAME} xhptdc8_driver_64)
+        set_target_properties(xhptdc8_driver_64 PROPERTIES IMPORTED_IMPLIB xhptdc8_driver_64.lib)  
+        add_library(xhptdc8_util SHARED IMPORTED GLOBAL)
+        set_target_properties(xhptdc8_util PROPERTIES IMPORTED_IMPLIB xhptdc8_util.lib)  
+        target_link_libraries(${CRONO_TARGET_NAME} xhptdc8_driver_64 xhptdc8_util)
 
+        # Copy needed DLLs to output folder for debug/run
         add_custom_command(TARGET ${CRONO_TARGET_NAME} POST_BUILD 
                 COMMAND "echo" Copying libraries from '/lib' folder to output folder...
                 COMMAND ${CMAKE_COMMAND} -E copy_if_different
-                        \"${CRONO_DEP_PKG_BIN_DIR}/xhptdc8_driver_64.dll\" 
-                        \"${CMAKE_BINARY_DIR}/$<CONFIG>\" 
+                        \"${CRONO_DEP_PKG_BIN_DIR}/xhptdc8_driver_64.dll\" \"${CMAKE_BINARY_DIR}/$<CONFIG>\" 
                 COMMAND ${CMAKE_COMMAND} -E copy_if_different
-                        \"${CRONO_DEP_PKG_BIN_DIR}/xhptdc8_util.dll\" 
-                        \"${CMAKE_BINARY_DIR}/$<CONFIG>\" 
+                        \"${CRONO_DEP_PKG_BIN_DIR}/xhptdc8_util.dll\" \"${CMAKE_BINARY_DIR}/$<CONFIG>\" 
         )
 
-# Linux-specific Configurations _______________________________________________
+# Linux-specific Configurations _______________________________________________________________________________________
 ELSEIF (CRONO_GEN_PLATFORM STREQUAL "linux") 
-        # Compilation options _________________________________________________
+        # Compilation options _________________________________________________________________________________________
         add_compile_options(-fPIC -Wall $<$<CONFIG:Debug>:-g>)
         add_compile_definitions($<$<CONFIG:Debug>:CRONO_DEBUG_ENABLED>)
 
-        # Link to libxhptdc8_driver library ________________________________________
-        target_link_libraries(${CRONO_TARGET_NAME} libxhptdc8_driver.a) # $$ util.so
+        # Link to libxhptdc8_driver library ___________________________________________________________________________
+        target_link_libraries(${CRONO_TARGET_NAME} libxhptdc8_driver.a)
 ENDIF()
