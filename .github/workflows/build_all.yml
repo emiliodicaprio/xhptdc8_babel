@@ -436,9 +436,9 @@ jobs:
 
     # Copy to `DUMMY_LIB_PTH`
     - name: Copy output to Dummy Library Path
-     if: ${{needs.Check-Util-Test.outputs.ok_to_proceed != 'N' }}
-     run: |
-       Copy-Item ${{env.CRONO_BIN_PATH}}${{env.X64_EXE_NAME}} -Destination ${{env.DUMMY_LIB_PTH}}
+      if: ${{needs.Check-Util-Test.outputs.ok_to_proceed != 'N' }}
+      run: |
+        Copy-Item ${{env.CRONO_BIN_PATH}}${{env.X64_EXE_NAME}} -Destination ${{env.DUMMY_LIB_PTH}}
   
     - name: Commit x64 EXE
       if: ${{needs.Check-Util-Test.outputs.ok_to_proceed != 'N' }}
