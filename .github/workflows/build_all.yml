@@ -675,7 +675,7 @@ jobs:
       SOLUTION_FILE_PATH: .\rust\readout
       
       X64_OUTPUT_DIR_NAME: Build_x64
-      X64_OUTPUT_DIR: .\Build_x64\release\
+      X64_OUTPUT_DIR: Build_x64\release\
       X64_BINDINGS_REPO_DIR: .\rust\readout\src\bindings\
       X64_EXE_NAME: xhptdc8_readout.exe
       X64_BINDINGS_RS_NAME: bindings.rs
