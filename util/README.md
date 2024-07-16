@@ -12,8 +12,8 @@ A library that provides utility functionalities for xHPTDC8 Driver. It supports 
 
 | Config. | Env.  | Output Directory on github                      | Library Name    |
 | ------- |------ | -----------------------------------------       | --------------  |
-| Debug   | x64   | ..\\..\\..\\lib\x64dummy\; ..\\..\\..\\lib\ | xhptdc8_util_64.dll |
-| Release | x64   | ..\\..\\..\\lib\x64dummy\; ..\\..\\..\\lib\ | xhptdc8_util_64.dll |
+| Debug   | x64   | ..\\..\\..\\lib\dummy\; ..\\..\\..\\bin\ | xhptdc8_util.dll |
+| Release | x64   | ..\\..\\..\\lib\dummy\; ..\\..\\..\\bin\ | xhptdc8_util.dll |
 * You can change the output directory if you want to keep both the release and debug versions of the DLL concurrently
 
 ### External Libraries
@@ -30,7 +30,7 @@ With the following actions:
 ## Build the project 
 - Follow the steps in [Build CMake-based project](#build-cmake-based-project).
 - Outputs are `xhptdc8_util.dll` and `xhptdc8_util.lib` for Windows, and `xhptdc8_util.so` for Ubuntu/Debian.
-- Output folder of the library is [`/lib/x64`](./lib/x64).
+- Output folders of the library are [`/lib`](./lib) and [`/bin`](./bin).
 
 ### `github` Building Action
 `github` [Building Actions: `Check-Util-Library`, `Util-Library-Win` and `Util-Library-Linux`](https://github.com/cronologic-de/xhptdc8_babel/blob/main/.github/workflows/build_all.yml) is created to build `util` project as following:
@@ -44,7 +44,7 @@ With the following actions:
 ### Compile & Link Settings
 In order to call functions from the utility library, you need to do the following:
 1. Include [`/include/xhptdc8_util.h`](./include/xhptdc8_util.h).
-2. Link to the corresponsing library version on [`/lib/x64`](./lib/x64).
+2. Link to the corresponsing library version on [`/lib`](./lib).
 
 ### `xhptdc8_apply_yaml`
 The purpose of this repository is to make using the [xHPTDC8 time-to-digital converter](https://www.cronologic.de/products/tdcs/xhptdc8-pcie) simpler to use for end users.
@@ -392,8 +392,8 @@ The project structure follows [our standard project folder structure](https://gi
 
 | Config. | Env.  | Library Directory                       | Linker Input    |
 | ------- |-----  |-----------------                        | --------------- |
-| Debug   | x64   | ..\\..\\..\lib\x64dummy;..\\..\lib; | xhptdc8_util_64.lib;xhptdc8_driver_64.lib |
-| Release | x64   | ..\\..\\..\lib\x64dummy;..\\..\lib; | xhptdc8_util_64.lib;xhptdc8_driver_64.lib |
+| Debug   | x64   | ..\\..\\..\lib\dummy;..\\..\bin; | xhptdc8_util.lib;xhptdc8_driver_64.lib |
+| Release | x64   | ..\\..\\..\lib\dummy;..\\..\bin; | xhptdc8_util.lib;xhptdc8_driver_64.lib |
 
 ### Building Using MS Visual Studio
 Nothing special, just:
@@ -457,8 +457,8 @@ It can be downloaded from https://github.com/cronologic-de/xhptdc8_babel
 
 | Config. | Env.   | Library Directory                       | Linker Input                           | Target Name              |
 | ------- |------  | --------------------------------------- | -------------------------------------- | ------------------------ |
-| Debug   | x64    | ..\\..\\..\lib\x64dummy;..\\..\lib; | xhptdc8_util.lib;xhptdc8_driver_64.lib | xhptdc8_util_test_64.exe |
-| Release | x64    | ..\\..\\..\lib\x64dummy;..\\..\lib; | xhptdc8_util.lib;xhptdc8_driver_64.lib | xhptdc8_util_test_64.exe |
+| Debug   | x64    | ..\\..\\..\lib\dummy;..\\..\lib; | xhptdc8_util.lib;xhptdc8_driver_64.lib | xhptdc8_util_test_64.exe |
+| Release | x64    | ..\\..\\..\lib\dummy;..\\..\lib; | xhptdc8_util.lib;xhptdc8_driver_64.lib | xhptdc8_util_test_64.exe |
 
 ### Building Using MS Visual Studio
 Project can be built using the following MSVS files:

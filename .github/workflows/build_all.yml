@@ -78,11 +78,11 @@ jobs:
     env: 
           SOLUTION_FILE_PATH: .\dummy\msvscpp\
           X64_OUTPUT_DIR: .\dummy\msvscpp\x64\Release\
-          X64_REPO_LIB_PTH: .\lib\x64dummy\
+          X64_REPO_LIB_PTH: .\lib\dummy\
           X64_DUMMY_DLL_NAME: xhptdc8_driver_64.dll
           X64_DUMMY_LIB_NAME: xhptdc8_driver_64.lib
           # Internal
-          X64_REPO_LIB_PTH_COMMIT: ./lib/x64dummy/
+          X64_REPO_LIB_PTH_COMMIT: ./lib/dummy/
           COMMIT_MSG: 'Internal build due to Dummy-Library code change' 
         
     steps:
@@ -241,7 +241,7 @@ jobs:
       with:
         files: |
           include/**
-          lib/x64/**
+          lib/**
           util/util/**
         
     # Check if any file(s) in the concerned folder changed
@@ -265,10 +265,10 @@ jobs:
     env: 
       X64_DLL_NAME: xhptdc8_util.dll
       X64_LIB_NAME: xhptdc8_util.lib
-      X64_REPO_LIB_PTH_COMMIT: ./lib/x64/             # Equal to X64_REPO_LIB_PTH, with '/' instead of '\'
+      X64_REPO_LIB_PTH_COMMIT: ./lib/             # Equal to X64_REPO_LIB_PTH, with '/' instead of '\'
       BUILD_PATH: '../build/bfR'  # Relative to 'UTIL_TOOLS_SUB_DIR'
       UTIL_TOOLS_SUB_DIR: './util/util/tools'
-      X64_DUMMY_REPO_LIB_PTH: .\lib\x64dummy\
+      X64_DUMMY_REPO_LIB_PTH: .\lib\dummy\
 
     steps:
     - name: echo Suppress Status if Needed
@@ -323,7 +323,7 @@ jobs:
 
     env: 
       X64_LIB_NAME: libxhptdc8_util.so
-      X64_REPO_LIB_PTH_COMMIT: ./lib/x64/             # Equal to X64_REPO_LIB_PTH, with '/' instead of '\'
+      X64_REPO_LIB_PTH_COMMIT: ./lib/             # Equal to X64_REPO_LIB_PTH, with '/' instead of '\'
       BUILD_PATH: '../build/bfR'  # Relative to 'UTIL_TOOLS_SUB_DIR'
       UTIL_TOOLS_SUB_DIR: './util/util/tools'
 
@@ -376,7 +376,7 @@ jobs:
       with:
         files: |
           include/**
-          lib/x64/**
+          lib/**
           util/util_test/**
         
     # Check if any file(s) in the concerned folder changed
@@ -403,7 +403,7 @@ jobs:
       COMMIT_MSG: 'Internal build due to Util Test code change' 
       BUILD_PATH: '../build/bfR'  # Relative to 'UTIL_TEST_TOOLS_SUB_DIR'
       UTIL_TEST_TOOLS_SUB_DIR: './util/util_test/tools'
-      X64_DUMMY_REPO_LIB_PTH: .\lib\x64dummy\
+      X64_DUMMY_REPO_LIB_PTH: .\lib\dummy\
 
     steps:
     - name: echo Suppress Status if Needed
@@ -646,11 +646,11 @@ jobs:
       SOLUTION_FILE_PATH: .\util\util\msvscpp # The util library only, not xhptdc8_util_projects solution
       X64_OUTPUT_DIR: .\util\util\msvscpp\x64\Release\
       X64_REPO_LIB_PTH: .\lib\
-      X64_DUMMY_REPO_LIB_PTH: .\lib\x64dummy\
-      X64_DLL_NAME: xhptdc8_util_64.dll
-      X64_LIB_NAME: xhptdc8_util_64.lib
+      X64_DUMMY_REPO_LIB_PTH: .\lib\dummy\
+      X64_DLL_NAME: xhptdc8_util.dll
+      X64_LIB_NAME: xhptdc8_util.lib
       X64_REPO_LIB_PTH_COMMIT: ./lib/                 # Equal to X64_REPO_LIB_PTH, with '/' instead of '\'
-      X64_DUMMY_REPO_LIB_PTH_COMMIT: ./lib/x64dummy/  # Equal to X64_DUMMY_REPO_LIB_PTH, with '/' instead of '\'
+      X64_DUMMY_REPO_LIB_PTH_COMMIT: ./lib/dummy/  # Equal to X64_DUMMY_REPO_LIB_PTH, with '/' instead of '\'
 
     steps:
     - name: echo Suppress Status if Needed

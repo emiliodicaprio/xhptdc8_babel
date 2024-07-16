@@ -32,8 +32,8 @@ include_directories(${CRONO_TARGET_NAME} PRIVATE
 )
 
 # Link to driver library ______________________________________________________
-# On repository `./lib/x64`
-set(CRONO_DEP_PKG_LIB_DIR ${CMAKE_CURRENT_SOURCE_DIR}/${PROJ_SRC_INDIR}/../../lib/x64)
+# On repository `./lib`
+set(CRONO_DEP_PKG_LIB_DIR ${CMAKE_CURRENT_SOURCE_DIR}/${PROJ_SRC_INDIR}/../../lib)
 link_directories(${CRONO_DEP_PKG_LIB_DIR})
 
 # Set output directory_________________________________________________________
