@@ -639,7 +639,6 @@ jobs:
           lib/**
           include/**
           ug_example/**
-          .github/workflows/build_all.yml
           
     # Check if any file(s) in the concerned folder changed
     - name: Check
@@ -678,7 +677,6 @@ jobs:
         cd ${{env.TOOLS_PATH}}
         cmake -B ${{env.BUILD_PATH}} -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
         cmake --build ${{env.BUILD_PATH}}
-        cp ${{env.BUILD_PATH}}${{env.CRONO_EXE_NAME}} ../../bin
 
     - name: Commit Executable
       if: ${{needs.Check-Build-UG_EX.outputs.ok_to_proceed != 'N' }}
@@ -686,7 +684,7 @@ jobs:
       with:
           author_name: Internal Workflow Action
           message: ${{env.COMMIT_MSG}}
-          add: ./bin/${{env.CRONO_EXE_NAME}} --force
+          add: ${{env.CRONO_BIN_PATH}}${{env.CRONO_EXE_NAME}} --force
         
   # ___________________________________________________________________________
   # 
@@ -717,7 +715,6 @@ jobs:
         cd ${{env.TOOLS_PATH}}
         cmake -B ${{env.BUILD_PATH}}
         cmake --build ${{env.BUILD_PATH}} --config ${{env.BUILD_TYPE}}
-        cp ${{env.BUILD_PATH}}${{env.BUILD_TYPE}}/${{env.CRONO_EXE_NAME}} ../../bin
         
     - name: Commit Executable
       if: ${{needs.Check-Build-UG_EX.outputs.ok_to_proceed != 'N' }}
@@ -725,4 +722,4 @@ jobs:
       with:
           author_name: Internal Workflow Action
           message: ${{env.COMMIT_MSG}}
-          add: ./bin/${{env.CRONO_EXE_NAME}} --force
+          add: ${{env.CRONO_BIN_PATH}}${{env.CRONO_EXE_NAME}} --force
