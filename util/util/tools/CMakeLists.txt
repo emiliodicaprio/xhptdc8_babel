@@ -62,18 +62,19 @@ add_library(${CRONO_TARGET_NAME} SHARED "${SOURCE}" "${HEADERS}")
 target_compile_definitions(${CRONO_TARGET_NAME} PRIVATE 
     $<$<CONFIG:Debug>:CRONO_DEBUG_ENABLED XHPTDC8_VERBOSE_DEBUG>)
 
+set_target_properties(${CRONO_TARGET_NAME} PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CRONO_BIN_DIR} # for .dll, .so
+    RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CRONO_BIN_DIR} # for .dlll, .so
+    ARCHIVE_OUTPUT_DIRECTORY_DEBUG ${CRONO_LIB_DIR} # for .lib
+    ARCHIVE_OUTPUT_DIRECTORY_RELEASE ${CRONO_LIB_DIR} # for .lib
+)
+
 # Windows-specific Configurations _____________________________________________________________________________________
 IF ( CRONO_GEN_PLATFORM  STREQUAL "windows")
     add_library(xhptdc8_driver_64 SHARED IMPORTED GLOBAL)
     set_target_properties(xhptdc8_driver_64 PROPERTIES IMPORTED_IMPLIB xhptdc8_driver_64.lib)  
     target_link_libraries(${CRONO_TARGET_NAME} xhptdc8_driver_64)
 
-    set_target_properties(${CRONO_TARGET_NAME} PROPERTIES
-        RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CRONO_BIN_DIR} # for .dll
-        RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CRONO_BIN_DIR} # for .dll
-        ARCHIVE_OUTPUT_DIRECTORY_DEBUG ${CRONO_LIB_DIR} # for .lib
-        ARCHIVE_OUTPUT_DIRECTORY_RELEASE ${CRONO_LIB_DIR} # for .lib
-    )
 
 # Linux-specific Configurations _______________________________________________________________________________________
 ELSEIF (CRONO_GEN_PLATFORM STREQUAL "linux")   
