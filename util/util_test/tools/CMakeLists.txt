@@ -55,5 +55,5 @@ IF ( CRONO_GEN_PLATFORM  STREQUAL "windows")
 ELSEIF (CRONO_GEN_PLATFORM STREQUAL "linux") 
     # Linux-specific Configurations ___________________________________________________________________________________
     add_compile_options(-fPIC -Wall $<$<CONFIG:Debug>:-g>)
-    target_link_libraries(${CRONO_TARGET_NAME} libxhptdc8_util.so)
+    target_link_libraries(${CRONO_TARGET_NAME} "${CRONO_BIN_DIR}/libxhptdc8_util.so")
 ENDIF()
