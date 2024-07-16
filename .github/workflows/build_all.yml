@@ -182,8 +182,7 @@ jobs:
          
     env: 
       SOLUTION_FILE_PATH: .\go\info\src-cgo\
-      X64_EXE_NAME: xhptdc8_info_64.exe
-      X64_EXE_REPO_PATH: .\go\bin\
+      X64_EXE_NAME: xhptdc8_info.exe
           
     steps:
     - name: echo Suppress Status if Needed
@@ -226,9 +225,7 @@ jobs:
     - name: Copy x64 EXE to Repository
       if: ${{needs.Check-Info-Tool-Build.outputs.ok_to_proceed != 'N' }}
       run: |
-        mkdir -p ${{env.X64_EXE_REPO_PATH}} # Dir might exists from previous job
-        dir ${{env.X64_EXE_REPO_PATH}}
-        copy ${{env.SOLUTION_FILE_PATH}}${{env.X64_EXE_NAME}} ${{env.X64_EXE_REPO_PATH}}${{env.X64_EXE_NAME}}
+        copy ${{env.SOLUTION_FILE_PATH}}${{env.X64_EXE_NAME}} ${{env.CRONO_BIN_PATH}}${{env.X64_EXE_NAME}}
         
     - name: Commit x64 EXE
       if: ${{needs.Check-Info-Tool-Build.outputs.ok_to_proceed != 'N' }}
@@ -236,7 +233,7 @@ jobs:
       with:
         author_name: Internal Workflow Action
         message: ${{env.COMMIT_MSG}}
-        add: ${{env.X64_EXE_REPO_PATH}}${{env.X64_EXE_NAME}} --force
+        add: ${{env.CRONO_BIN_PATH}}${{env.X64_EXE_NAME}} --force
 
   # ===========================================================================
   #
@@ -559,10 +556,8 @@ jobs:
       
       X64_OUTPUT_DIR_NAME: Build_x64
       X64_OUTPUT_DIR: .\Build_x64\release\
-      X64_EXE_REPO_DIR: .\rust\bin\
       X64_BINDINGS_REPO_DIR: .\rust\readout\src\bindings\
       X64_EXE_NAME: xhptdc8_readout.exe
-      X64_EXE_REPO_NAME: xhptdc8_readout_64.exe
       X64_BINDINGS_RS_NAME: bindings.rs
       X64_BINDINGS_RS_REPO_NAME: bindings_64.rs
         
@@ -606,7 +601,7 @@ jobs:
     - name: Copy Files to Repository
       if: ${{needs.Check-Readout-Tool-Build.outputs.ok_to_proceed != 'N' }}
       run: |
-        copy ${{env.SOLUTION_FILE_PATH}}\${{env.X64_OUTPUT_DIR}}${{env.X64_EXE_NAME}} ${{env.X64_EXE_REPO_DIR}}${{env.X64_EXE_REPO_NAME}}
+        copy ${{env.SOLUTION_FILE_PATH}}\${{env.X64_OUTPUT_DIR}}${{env.X64_EXE_NAME}} ${{env.CRONO_BIN_PATH}}${{env.X64_EXE_NAME}}
         
     - name: Commit EXE
       if: ${{needs.Check-Readout-Tool-Build.outputs.ok_to_proceed != 'N' }}
@@ -614,7 +609,7 @@ jobs:
       with:
           author_name: Internal Workflow Action
           message: ${{env.COMMIT_MSG}}
-          add: ${{env.X64_EXE_REPO_DIR}}${{env.X64_EXE_REPO_NAME}} --force
+          add: ${{env.CRONO_BIN_PATH}}${{env.X64_EXE_NAME}} --force
 
     - name: Commit bindings
       if: ${{needs.Check-Readout-Tool-Build.outputs.ok_to_proceed != 'N' }}

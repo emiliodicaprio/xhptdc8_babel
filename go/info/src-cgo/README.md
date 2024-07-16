@@ -43,9 +43,9 @@ import "C"
 #### Steps
 1. Using `cmd`, cd to `\Path\To\Project\go\info\src-cgo`, and run:
 ```CMD
-go build -o xhptdc8_info_64.exe .\xhptdc8_info.go .\info_aux.go
+go build -o xhptdc8_info.exe .\xhptdc8_info.go .\info_aux.go
 ```
-2. Run `xhptdc8_info_64.exe` (generated from previous step). N.B. Driver DLL should be on the path/same folder.
+2. Run `xhptdc8_info.exe` (generated from previous step). N.B. Driver DLL should be on the path/same folder.
 
 N.B. I used go version go1.16.2 windows/amd64.
 
