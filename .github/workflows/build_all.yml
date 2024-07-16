@@ -675,7 +675,7 @@ jobs:
       SOLUTION_FILE_PATH: .\rust\readout
       
       X64_OUTPUT_DIR_NAME: Build_x64
-      X64_OUTPUT_DIR: Build_x64\release\
+      X64_OUTPUT_DIR: .\Build_x64\release\
       X64_BINDINGS_REPO_DIR: .\rust\readout\src\bindings\
       X64_EXE_NAME: xhptdc8_readout.exe
       X64_BINDINGS_RS_NAME: bindings.rs
@@ -721,7 +721,7 @@ jobs:
     - name: Copy Files to Repository
       if: ${{needs.Check-Readout-Tool-Build.outputs.ok_to_proceed != 'N' }}
       run: |
-        copy ${{env.SOLUTION_FILE_PATH}}\${{env.X64_OUTPUT_DIR}}${{env.X64_EXE_NAME}} ${{env.CRONO_BIN_PATH}}${{env.X64_EXE_NAME}}
+        copy ${{env.SOLUTION_FILE_PATH}}\${{env.X64_OUTPUT_DIR}}${{env.X64_EXE_NAME}} ${{env.CRONO_BIN_PATH_WIN}}${{env.X64_EXE_NAME}}
         
     - name: Commit EXE
       if: ${{needs.Check-Readout-Tool-Build.outputs.ok_to_proceed != 'N' }}
