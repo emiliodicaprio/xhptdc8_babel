@@ -8,14 +8,12 @@ Files are automatically updated when creating a new driver release.
 ## Files
 
 <dl>
-    <dt>x*/.dll</dt>
+    <dt>*/.dll</dt>
         <dd>Dynamic Link Libraries with C linkage that can be bound to at run time are compile time.</dd>
-    <dt>x*/.lib</dt>
+    <dt>*/.lib</dt>
         <dd>Information for a compiler compiling a project that is using the corresponding DLL. This is not a static library.</dd>
-    <dt>x64/xhptdc8_driver_64.dll or .lib</dt>
-        <dd>Libraries for 64 bit windows</dd>
-    <dt>x64/xhptdc8_driver_64.a or .so</dt>
+    <dt>libxhptdc8_driver_64.a or .so</dt>
         <dd>Libraries for 64 bit Linux</dd>
-    <dt>x64dummy/*</dt>
+    <dt>dummy/*</dt>
         <dd>Dummy driver to be used for development whithout access to the actual hardware. The sources for this are in this repository in the /dummy/ directory. The binaries are provided here to allows developing in one of the other supported languages without installing a C compiler.</dd>
 </dl>
