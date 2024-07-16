@@ -57,7 +57,7 @@ jobs:
       
     steps:
     - name: Checkout Code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       
     - name: Get changed files in concerned folder(s)
       id: changed-files-specific
@@ -105,7 +105,7 @@ jobs:
 
     - name: Checkout Code
       if: ${{needs.Check-Build-Dummy-Library-Using-MSBuild.outputs.ok_to_proceed != 'N' }}
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       
     - name: Add MSBuild to PATH
       if: ${{needs.Check-Build-Dummy-Library-Using-MSBuild.outputs.ok_to_proceed != 'N' }}
@@ -148,7 +148,7 @@ jobs:
       
     steps:
     - name: Checkout Code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       
     - name: Get changed files in concerned folder(s)
       id: changed-files-specific
@@ -193,7 +193,7 @@ jobs:
         
     - name: Checkout Code
       if: ${{needs.Check-Info-Tool-Build.outputs.ok_to_proceed != 'N' }}
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     # Handle both a normal commit and a merge request
     # As repository is in a detached HEAD state in merge request.
@@ -247,7 +247,7 @@ jobs:
       
     steps:
     - name: Checkout Code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       
     - name: Get changed files in concerned folder(s)
       id: changed-files-specific
@@ -293,7 +293,7 @@ jobs:
         
     - name: Checkout Code
       if: ${{needs.Check-Util-Library.outputs.ok_to_proceed != 'N' }}
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
   
     - name: Pull Latest 
       if: ${{needs.Check-Util-Library.outputs.ok_to_proceed != 'N' }}
@@ -348,7 +348,7 @@ jobs:
         
     - name: Checkout Code
       if: ${{needs.Check-Util-Library.outputs.ok_to_proceed != 'N' }}
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
   
     - name: Pull Latest 
       if: ${{needs.Check-Util-Library.outputs.ok_to_proceed != 'N' }}
@@ -382,7 +382,7 @@ jobs:
       
     steps:
     - name: Checkout Code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       
     - name: Get changed files in concerned folder(s)
       id: changed-files-specific
@@ -428,7 +428,7 @@ jobs:
         
     - name: Checkout Code
       if: ${{needs.Check-Util-Test.outputs.ok_to_proceed != 'N' }}
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
   
     - name: Pull Latest 
       if: ${{needs.Check-Util-Test.outputs.ok_to_proceed != 'N' }}
@@ -482,8 +482,8 @@ jobs:
         
     - name: Checkout Code
       if: ${{needs.Check-Util-Test.outputs.ok_to_proceed != 'N' }}
-      uses: actions/checkout@v3
-  
+      uses: actions/checkout@v4
+
     - name: Pull Latest 
       if: ${{needs.Check-Util-Test.outputs.ok_to_proceed != 'N' }}
       run: |
@@ -561,6 +561,11 @@ jobs:
       if: ${{needs.Check-Build-UG_EX.outputs.ok_to_proceed != 'N' }}
       uses: actions/checkout@v4
 
+    - name: Pull latest changes
+      if: ${{needs.Check-Build-UG_EX.outputs.ok_to_proceed != 'N' }}
+      run: |
+        git pull --rebase
+
     - name: Configure CMake and Build
       if: ${{needs.Check-Build-UG_EX.outputs.ok_to_proceed != 'N' }}
       run: |
@@ -599,6 +604,11 @@ jobs:
       if: ${{needs.Check-Build-UG_EX.outputs.ok_to_proceed != 'N' }}
       uses: actions/checkout@v4
 
+    - name: Pull latest changes
+      if: ${{needs.Check-Build-UG_EX.outputs.ok_to_proceed != 'N' }}
+      run: |
+        git pull --rebase
+
     - name: Configure CMake and Build
       if: ${{needs.Check-Build-UG_EX.outputs.ok_to_proceed != 'N' }}
       run: |
@@ -625,7 +635,7 @@ jobs:
       
     steps:
     - name: Checkout Code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       
     - name: Get changed files in concerned folder(s)
       id: changed-files-specific
@@ -679,7 +689,7 @@ jobs:
         
     - name: Checkout Code
       if: ${{needs.Check-Readout-Tool-Build.outputs.ok_to_proceed != 'N' }}
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
     
     - name: Pull Latest 
       if: ${{needs.Check-Readout-Tool-Build.outputs.ok_to_proceed != 'N' }}
