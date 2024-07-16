@@ -17,7 +17,7 @@ xhptdc8 APIs are called using [CGO](https://golang.org/pkg/cmd/cgo/), as followi
 /*
 	#cgo CFLAGS: -Wall -g -I../../../../include/
 	#cgo CPPFLAGS: -Wall -g -I../../../../include/	
-	#cgo LDFLAGS: -L./ -l:../../../../lib/x64dummy/xhptdc8_driver_64.lib
+	#cgo LDFLAGS: -L./ -l:../../../../lib/dummy/xhptdc8_driver_64.lib
 	#include "xhptdc8_interface.h"
 */
 import "C"
@@ -38,7 +38,7 @@ import "C"
 ### Building the Code (64-bit)
 #### Prerequisites
 1. `Go` is installed on your local machine.
-2. Just make sure you have the latest files of `\include\` and `\lib\x64dummy\` on your local machine.
+2. Just make sure you have the latest files of `\include\` and `\lib\dummy\` on your local machine.
 
 #### Steps
 1. Using `cmd`, cd to `\Path\To\Project\go\info\src-cgo`, and run:

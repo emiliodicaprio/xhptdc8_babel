@@ -8,6 +8,13 @@ A library that provides utility functionalities for xHPTDC8 Driver. It supports 
 - Project Settings -> Include Directories : `..\..\include;..\..\..\include;.\ryml_src;` is added.
 - Project Settings -> Preprocessor Definitions: `XHPTDC8_UTIL_EXPORTS` is defined.
 - Project Settings -> Preprocessor Definitions: `XHPTDC8_VERBOSE_DEBUG` is defined for _Debug Configurations_ only.
+- `Output Directory` is left as the Visual Studio _Default_ Project Settings.
+
+| Config. | Env.  | Output Directory on github                      | Library Name    |
+| ------- |------ | -----------------------------------------       | --------------  |
+| Debug   | x64   | ..\\..\\..\\lib\x64dummy\; ..\\..\\..\\lib\ | xhptdc8_util_64.dll |
+| Release | x64   | ..\\..\\..\\lib\x64dummy\; ..\\..\\..\\lib\ | xhptdc8_util_64.dll |
+* You can change the output directory if you want to keep both the release and debug versions of the DLL concurrently
 
 ### External Libraries
 The project uses the source code of the following libraries for YAML parser:
@@ -341,12 +348,8 @@ The project structure follows [our standard project folder structure](https://gi
 
 | Config. | Env.  | Library Directory                       | Linker Input    |
 | ------- |-----  |-----------------                        | --------------- |
-| Debug   | x64   | ..\\..\\..\lib\x64dummy;..\\..\lib\x64; | `xhptdc8_util.lib`;`xhptdc8_driver_64.lib` |
-| Release | x64   | ..\\..\\..\lib\x64dummy;..\\..\lib\x64; | `xhptdc8_util.lib`;`xhptdc8_driver_64.lib` |
-
-The following files (needed for run) are automatically copied to the build _output directory_:
-1. `xhptdc8_util.dll`
-2. `xhptdc8_driver_64.dll`
+| Debug   | x64   | ..\\..\\..\lib\x64dummy;..\\..\lib; | xhptdc8_util_64.lib;xhptdc8_driver_64.lib |
+| Release | x64   | ..\\..\\..\lib\x64dummy;..\\..\lib; | xhptdc8_util_64.lib;xhptdc8_driver_64.lib |
 
 ### Building Using MS Visual Studio
 Nothing special, just:
@@ -406,12 +409,23 @@ It can be downloaded from https://github.com/cronologic-de/xhptdc8_babel
 
 ### Project Environments and Configurations
 - Project Settings -> Include Directories : `..\..\..\include;..\..\include;` is added.
-- `libxhptdc8_util.so` is linked for Linux, and `xhptdc8_util xhptdc8_driver_64` are linked for Windows.
+- `Output Directory` is left as the Visual Studio _Default_ Project Settings.
 
-## Build the project 
-- Follow the steps in [Build CMake-based project](#build-cmake-based-project).
-- Outputs are `xhptdc8_util_test.exe` for Windows, and `xhptdc8_util_test` for Ubuntu/Debian.
-- Output folder of the library is [`/lib/x64`](./lib/x64).
+| Config. | Env.   | Library Directory                       | Linker Input                           | Target Name              |
+| ------- |------  | --------------------------------------- | -------------------------------------- | ------------------------ |
+| Debug   | x64    | ..\\..\\..\lib\x64dummy;..\\..\lib; | xhptdc8_util.lib;xhptdc8_driver_64.lib | xhptdc8_util_test_64.exe |
+| Release | x64    | ..\\..\\..\lib\x64dummy;..\\..\lib; | xhptdc8_util.lib;xhptdc8_driver_64.lib | xhptdc8_util_test_64.exe |
+
+### Building Using MS Visual Studio
+Project can be built using the following MSVS files:
+1. [Project File: util_test.vcxproj](./util_test/msvscpp/util_test.vcxproj)
+2. [Solution File: util_test.sln](./util_test/msvscpp/util_test.sln)
+3. [xhptdc8_util_projects Solution File: xhptdc8_util_projects.sln](./msvscpp/xhptdc8_util_projects.sln)
+
+Nothing special, just:
+1. Using MS Visual Studio compatible version, open the solution file: `/util/util_msvscpp/util_msvscpp.sln`
+2. Select the needed _Configuration_ and _Environment_ to build.
+3. Hit *Build util_test*, and check the .lib & .dll files are found in the corresponsing directory as per the table above.
 
 ### github Building Action
 github [Building Actions: `Check-Util-Test`, `Util-Test-Win`, and  `Util-Test-Linux`](https://github.com/cronologic-de/xhptdc8_babel/blob/main/.github/workflows/build_all.yml) are created to build `util_test` project as following:

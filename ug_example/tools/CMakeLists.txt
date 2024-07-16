@@ -31,13 +31,11 @@ set(CRONO_DEP_PKG_INC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/${PROJ_SRC_INDIR}/include)
 include_directories(${CRONO_TARGET_NAME} PRIVATE  ${CRONO_DEP_PKG_INC_DIR})
 
 # Link to xhptdc8_driver library ______________________________________________
-set(CRONO_DEP_PKG_LIB_DIR ${CMAKE_CURRENT_SOURCE_DIR}/${PROJ_SRC_INDIR}/lib/x64)
+set(CRONO_DEP_PKG_LIB_DIR ${CMAKE_CURRENT_SOURCE_DIR}/${PROJ_SRC_INDIR}/lib)
+set(CRONO_DEP_PKG_BIN_DIR ${CMAKE_CURRENT_SOURCE_DIR}/${PROJ_SRC_INDIR}/bin)
 link_directories(${CRONO_DEP_PKG_LIB_DIR})
 
-# Set output directory_________________________________________________________
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CRONO_DEP_PKG_LIB_DIR})
-
-# Add the EXE ytarget  ________________________________________________________
+# Add the EXE target  _________________________________________________________
 add_executable(${CRONO_TARGET_NAME} 
         ../src/xhptdc8_user_guide_example.cpp)
 
@@ -47,18 +45,20 @@ IF ( CRONO_GEN_PLATFORM  STREQUAL "windows")
         set_target_properties(xhptdc8_driver_64 PROPERTIES IMPORTED_IMPLIB 
                 xhptdc8_driver_64.lib)  
         target_link_libraries(${CRONO_TARGET_NAME} xhptdc8_driver_64)
-        message("${CMAKE_BUILD_TYPE}")
-        add_custom_command(
-        TARGET ${CRONO_TARGET_NAME} POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CRONO_DEP_PKG_LIB_DIR}/xhptdc8_driver_64.dll" "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Debug"
-        COMMAND_EXPAND_LISTS
+
+        add_custom_command(TARGET ${CRONO_TARGET_NAME} POST_BUILD 
+                COMMAND "echo" Copying libraries from '/lib' folder to output folder...
+                COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                        \"${CRONO_DEP_PKG_BIN_DIR}/xhptdc8_driver_64.dll\" 
+                        \"${CMAKE_BINARY_DIR}/$<CONFIG>\" 
         )
+
 # Linux-specific Configurations _______________________________________________
 ELSEIF (CRONO_GEN_PLATFORM STREQUAL "linux") 
         # Compilation options _________________________________________________
         add_compile_options(-fPIC -Wall $<$<CONFIG:Debug>:-g>)
         add_compile_definitions($<$<CONFIG:Debug>:CRONO_DEBUG_ENABLED>)
 
-        # Link to libxhptdc8_driver library ________________________________________
+        # Link to xhptdc8_driver library ______________________________________
         target_link_libraries(${CRONO_TARGET_NAME} libxhptdc8_driver.a)
 ENDIF()

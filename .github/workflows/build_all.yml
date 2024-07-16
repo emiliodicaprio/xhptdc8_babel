@@ -23,11 +23,15 @@ on: # workflow_dispatch
     paths: # Collected from paths of all jobs below
     - 'include/**'
     - 'dummy/**'
-    - 'lib/x64/**'
+    - 'lib/**'
     - 'go/info/src-cgo/**'
     - 'rust/readout/**'
     - 'util/util/**'
     - 'util/util_test/**'
+
+env:
+  BUILD_TYPE: Release
+  COMMIT_MSG: 'Internal build due to code change' 
 
 jobs:
   # ===========================================================================
@@ -139,7 +143,7 @@ jobs:
       with:
         files: |
           include/**
-          lib/x64/**
+          lib/**
           go/info/src-cgo/** 
         
     # Check if any file(s) in the concerned folder changed
@@ -163,9 +167,8 @@ jobs:
          
     env: 
       SOLUTION_FILE_PATH: .\go\info\src-cgo\
-      COMMIT_MSG: 'Internal build due to code change' 
       X64_EXE_NAME: xhptdc8_info_64.exe
-      X64_EXE_REPO_PATH: .\go\bin\x64\
+      X64_EXE_REPO_PATH: .\go\bin\
           
     steps:
     - name: echo Suppress Status if Needed
@@ -263,8 +266,6 @@ jobs:
       X64_DLL_NAME: xhptdc8_util.dll
       X64_LIB_NAME: xhptdc8_util.lib
       X64_REPO_LIB_PTH_COMMIT: ./lib/x64/             # Equal to X64_REPO_LIB_PTH, with '/' instead of '\'
-      COMMIT_MSG: 'Internal build due to code change' 
-      BUILD_TYPE: Release
       BUILD_PATH: '../build/bfR'  # Relative to 'UTIL_TOOLS_SUB_DIR'
       UTIL_TOOLS_SUB_DIR: './util/util/tools'
       X64_DUMMY_REPO_LIB_PTH: .\lib\x64dummy\
@@ -323,8 +324,6 @@ jobs:
     env: 
       X64_LIB_NAME: libxhptdc8_util.so
       X64_REPO_LIB_PTH_COMMIT: ./lib/x64/             # Equal to X64_REPO_LIB_PTH, with '/' instead of '\'
-      COMMIT_MSG: 'Internal build due to code change' 
-      BUILD_TYPE: Release
       BUILD_PATH: '../build/bfR'  # Relative to 'UTIL_TOOLS_SUB_DIR'
       UTIL_TOOLS_SUB_DIR: './util/util/tools'
 
@@ -399,7 +398,6 @@ jobs:
        run:
          shell: powershell
     env: 
-      BUILD_TYPE: Release
       X64_EXE_NAME: xhptdc8_util_test.exe
       X64_REPO_EXE_PTH_COMMIT: ./util/bin/
       COMMIT_MSG: 'Internal build due to Util Test code change' 
@@ -453,7 +451,6 @@ jobs:
       # Check-Util-Test # To check need to build
       # Util-Test-Win   # Guarantee Sequential Build
     env: 
-      BUILD_TYPE: Release
       X64_EXE_NAME: xhptdc8_util_test
       X64_REPO_EXE_PTH_COMMIT: ./util/bin/x64/        # Equal to X64_REPO_EXE_PATH, with '/' instead of '\'
       COMMIT_MSG: 'Internal build due to Util Test code change' 
@@ -509,7 +506,7 @@ jobs:
       with:
         files: |
           include/**
-          lib/x64/**
+          lib/**
           rust/readout/**
           util/util/**
         
@@ -538,13 +535,12 @@ jobs:
       
       X64_OUTPUT_DIR_NAME: Build_x64
       X64_OUTPUT_DIR: .\Build_x64\release\
-      X64_EXE_REPO_DIR: .\rust\bin\x64\
-      X64_BINDINGS_REPO_DIR: .\rust\readout\src\bindings\x64\
+      X64_EXE_REPO_DIR: .\rust\bin\
+      X64_BINDINGS_REPO_DIR: .\rust\readout\src\bindings\
       X64_EXE_NAME: xhptdc8_readout.exe
       X64_EXE_REPO_NAME: xhptdc8_readout_64.exe
       X64_BINDINGS_RS_NAME: bindings.rs
       X64_BINDINGS_RS_REPO_NAME: bindings_64.rs
-      COMMIT_MSG: 'Internal build due to code change' 
         
     steps:
     - name: echo Suppress Status if Needed
@@ -603,3 +599,317 @@ jobs:
           author_name: Internal Workflow Action
           message: ${{env.COMMIT_MSG}}
           add: ${{env.X64_BINDINGS_REPO_DIR}}${{env.X64_BINDINGS_RS_REPO_NAME}} --force
+
+  # ===========================================================================
+  #
+  Check-Util-Library-MSBuild:
+    runs-on: ubuntu-latest
+    # Map a step output to a job output
+    outputs:
+      ok_to_proceed: ${{ steps.check.outputs.ok_to_proceed_val }}
+      
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v3
+      
+    - name: Get changed files in concerned folder(s)
+      id: changed-files-specific
+      uses: tj-actions/changed-files@v35
+      with:
+        files: |
+          include/**
+          lib/**
+          util/util/**
+        
+    # Check if any file(s) in the concerned folder changed
+    - name: Check
+      id: check
+      if: steps.changed-files-specific.outputs.any_changed == 'false'
+      run: |
+        echo "No concerned files changed, suppressing processing."
+        echo "ok_to_proceed_val=N" >> $GITHUB_OUTPUT
+
+  # ___________________________________________________________________________
+  #
+  Util-Library-MSBuild:
+    runs-on: windows-latest
+    needs: [ Check-Util-Library-MSBuild, Readout-Tool-Build, Build-Dummy-Library-Using-MSBuild ]
+      #  Check-Util-Library-MSBuild         # To check need to build
+      #  Readout-Tool-Build                 # Guarnatee Sequential Build
+      #  Build-Dummy-Library-Using-MSBuild  # Output lib is needed for buld
+      
+    defaults:
+       run:
+         shell: powershell
+    env: 
+      BUILD_CONFIGURATION: Release
+      SOLUTION_FILE_PATH: .\util\util\msvscpp # The util library only, not xhptdc8_util_projects solution
+      X64_OUTPUT_DIR: .\util\util\msvscpp\x64\Release\
+      X64_REPO_LIB_PTH: .\lib\
+      X64_DUMMY_REPO_LIB_PTH: .\lib\x64dummy\
+      X64_DLL_NAME: xhptdc8_util_64.dll
+      X64_LIB_NAME: xhptdc8_util_64.lib
+      X64_REPO_LIB_PTH_COMMIT: ./lib/                 # Equal to X64_REPO_LIB_PTH, with '/' instead of '\'
+      X64_DUMMY_REPO_LIB_PTH_COMMIT: ./lib/x64dummy/  # Equal to X64_DUMMY_REPO_LIB_PTH, with '/' instead of '\'
+
+    steps:
+    - name: echo Suppress Status if Needed
+      if: ${{needs.Check-Util-Library-MSBuild.outputs.ok_to_proceed == 'N' }}
+      run: |
+        echo "Job execution processing is suppressed for no cencerned files are changed."
+        
+    - name: Checkout Code
+      if: ${{needs.Check-Util-Library-MSBuild.outputs.ok_to_proceed != 'N' }}
+      uses: actions/checkout@v3
+  
+    - name: Pull Latest 
+      if: ${{needs.Check-Util-Library-MSBuild.outputs.ok_to_proceed != 'N' }}
+      run: |
+        git pull
+        
+    # For some reason, EOF is not got in the file from original file
+    - name: Add newline to .\include\xHPTDC8_interface.h
+      run: |
+        $file = ".\include\xHPTDC8_interface.h"
+        $content = Get-Content -Path $file -Raw
+        if (-not $content.EndsWith("`n")) {
+          $content += "`n"
+          Set-Content -Path $file -Value $content
+        }
+      
+    - name: Add MSBuild to PATH
+      if: ${{needs.Check-Util-Library-MSBuild.outputs.ok_to_proceed != 'N' }}
+      uses: microsoft/setup-msbuild@v2
+
+    - name: Build Release x64
+      if: ${{needs.Check-Util-Library-MSBuild.outputs.ok_to_proceed != 'N' }}
+      env:
+        BUILD_PLATFORM: x64
+      working-directory: ${{env.GITHUB_WORKSPACE}}
+      run: |
+        msbuild ${{env.SOLUTION_FILE_PATH}} /m /property:Configuration=Release /property:Platform=${{env.BUILD_PLATFORM}}
+        Copy-Item ${{env.X64_OUTPUT_DIR}}${{env.X64_DLL_NAME}} -Destination ${{env.X64_REPO_LIB_PTH}}
+        Copy-Item ${{env.X64_OUTPUT_DIR}}${{env.X64_LIB_NAME}} -Destination ${{env.X64_REPO_LIB_PTH}}
+        Copy-Item ${{env.X64_OUTPUT_DIR}}${{env.X64_DLL_NAME}} -Destination ${{env.X64_DUMMY_REPO_LIB_PTH}}
+        Copy-Item ${{env.X64_OUTPUT_DIR}}${{env.X64_LIB_NAME}} -Destination ${{env.X64_DUMMY_REPO_LIB_PTH}}
+  
+    - name: Commit x64 DLL
+      if: ${{needs.Check-Util-Library-MSBuild.outputs.ok_to_proceed != 'N' }}
+      uses: EndBug/add-and-commit@v9
+      with:
+          author_name: Internal Workflow Action
+          message: ${{env.COMMIT_MSG}}
+          add: ${{env.X64_REPO_LIB_PTH_COMMIT}}${{env.X64_DLL_NAME}} --force
+          
+    - name: Commit x64 DLL to Dummy Folder
+      if: ${{needs.Check-Util-Library-MSBuild.outputs.ok_to_proceed != 'N' }}
+      uses: EndBug/add-and-commit@v9
+      with:
+          author_name: Internal Workflow Action
+          message: ${{env.COMMIT_MSG}}
+          add: ${{env.X64_DUMMY_REPO_LIB_PTH_COMMIT}}${{env.X64_DLL_NAME}} --force
+          
+    - name: Commit x64 Lib
+      if: ${{needs.Check-Util-Library-MSBuild.outputs.ok_to_proceed != 'N' }}
+      uses: EndBug/add-and-commit@v9
+      with:
+          author_name: Internal Workflow Action
+          message: ${{env.COMMIT_MSG}}
+          add: ${{env.X64_REPO_LIB_PTH_COMMIT}}${{env.X64_LIB_NAME}} --force
+
+    - name: Commit x64 Lib to Dummy Folder
+      if: ${{needs.Check-Util-Library-MSBuild.outputs.ok_to_proceed != 'N' }}
+      uses: EndBug/add-and-commit@v9
+      with:
+          author_name: Internal Workflow Action
+          message: ${{env.COMMIT_MSG}}
+          add: ${{env.X64_DUMMY_REPO_LIB_PTH_COMMIT}}${{env.X64_LIB_NAME}} --force
+
+  # ===========================================================================
+  #
+  Check-Util-Test-MSBuild:
+    runs-on: ubuntu-latest
+    # Map a step output to a job output
+    outputs:
+      ok_to_proceed: ${{ steps.check.outputs.ok_to_proceed_val }}
+      
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v3
+      
+    - name: Get changed files in concerned folder(s)
+      id: changed-files-specific
+      uses: tj-actions/changed-files@v35
+      with:
+        files: |
+          include/**
+          lib/**
+          util/util_test/**
+        
+    # Check if any file(s) in the concerned folder changed
+    - name: Check
+      id: check
+      if: steps.changed-files-specific.outputs.any_changed == 'false'
+      run: |
+        echo "No concerned files changed, suppressing processing."
+        echo "ok_to_proceed_val=N" >> $GITHUB_OUTPUT
+
+  # ___________________________________________________________________________
+  # 
+  Util-Test-MSBuild:
+    runs-on: windows-latest
+    needs: [ Check-Util-Test-MSBuild, Util-Library-MSBuild, Build-Dummy-Library-Using-MSBuild ]
+      # Check-Util-Test-MSBuild            # To check need to build
+      # Util-Library-MSBuild               # Output needed, guarnatee Sequential Build
+      # Build-Dummy-Library-Using-MSBuild  # Output lib is needed for buld
+    defaults:
+       run:
+         shell: powershell
+    env: 
+      BUILD_CONFIGURATION: Release
+      SOLUTION_FILE_PATH: .\util\util_test\msvscpp # The util library only
+      X64_OUTPUT_DIR: .\util\util_test\msvscpp\x64\Release\
+      X64_REPO_EXE_PATH: .\util\bin\
+      X64_EXE_NAME: xhptdc8_util_test_64.exe
+      X64_REPO_EXE_PTH_COMMIT: ./util/bin/        # Equal to X64_REPO_EXE_PATH, with '/' instead of '\'
+      COMMIT_MSG: 'Internal build due to Util Test code change' 
+
+    steps:
+    - name: echo Suppress Status if Needed
+      if: ${{needs.Check-Util-Test-MSBuild.outputs.ok_to_proceed == 'N' }}
+      run: |
+        echo "Job execution processing is suppressed for no cencerned files are changed."
+        
+    - name: Checkout Code
+      if: ${{needs.Check-Util-Test-MSBuild.outputs.ok_to_proceed != 'N' }}
+      uses: actions/checkout@v3
+  
+    - name: Pull Latest 
+      if: ${{needs.Check-Util-Test-MSBuild.outputs.ok_to_proceed != 'N' }}
+      run: |
+        git pull
+        
+    - name: Add MSBuild to PATH
+      if: ${{needs.Check-Util-Test-MSBuild.outputs.ok_to_proceed != 'N' }}
+      uses: microsoft/setup-msbuild@v1.1
+
+    - name: Build Release x64
+      if: ${{needs.Check-Util-Test-MSBuild.outputs.ok_to_proceed != 'N' }}
+      env:
+        BUILD_PLATFORM: x64
+      working-directory: ${{env.GITHUB_WORKSPACE}}
+      run: |
+        msbuild ${{env.SOLUTION_FILE_PATH}} /m /property:Configuration=Release /property:Platform=${{env.BUILD_PLATFORM}}
+        Copy-Item ${{env.X64_OUTPUT_DIR}}${{env.X64_EXE_NAME}} -Destination ${{env.X64_REPO_EXE_PATH}}
+  
+    - name: Commit x64 EXE
+      if: ${{needs.Check-Util-Test-MSBuild.outputs.ok_to_proceed != 'N' }}
+      uses: EndBug/add-and-commit@v9
+      with:
+          author_name: Internal Workflow Action
+          message: ${{env.COMMIT_MSG}}
+          add: ${{env.X64_REPO_EXE_PTH_COMMIT}}${{env.X64_EXE_NAME}} --force        
+
+  # ===========================================================================
+  #
+  Check-Build-UG_EX:
+    runs-on: ubuntu-latest
+    # Map a step output to a job output
+    outputs:
+      ok_to_proceed: ${{ steps.check.outputs.ok_to_proceed_val }}
+      
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+      
+    - name: Get changed files in concerned folder(s)
+      id: changed-files-specific
+      uses: tj-actions/changed-files@v42
+      with:
+        files: |
+          lib/**
+          include/**
+          ug_example/**
+          .github/workflows/build_all.yml
+          
+    # Check if any file(s) in the concerned folder changed
+    - name: Check
+      id: check
+      if: steps.changed-files-specific.outputs.any_changed == 'false'
+      run: |
+        echo "No concerned files changed, suppressing processing."       
+        echo "ok_to_proceed_val=N" >> $GITHUB_OUTPUT
+
+  # ___________________________________________________________________________
+  # 
+  UG_EX-Linux-Build:
+    needs: Check-Build-UG_EX
+    runs-on: ubuntu-latest
+
+    env: 
+      TOOLS_PATH: ug_example/tools
+      BUILD_PATH: ../build/bfR/  # Relative to TOOLS_PATH
+      CRONO_EXE_NAME: xhptdc8_ugex
+
+    steps:
+    - name: echo Suppress Status if Needed
+      if: ${{needs.Check-Build-UG_EX.outputs.ok_to_proceed == 'N' }}
+      run: |
+        echo "Job execution processing is suppressed for no cencerned files are changed."
+        
+    - name: Checkout Code
+      if: ${{needs.Check-Build-UG_EX.outputs.ok_to_proceed != 'N' }}
+      uses: actions/checkout@v4
+
+    - name: Configure CMake and Build
+      if: ${{needs.Check-Build-UG_EX.outputs.ok_to_proceed != 'N' }}
+      run: |
+        cd ${{env.TOOLS_PATH}}
+        cmake -B ${{env.BUILD_PATH}} -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+        cmake --build ${{env.BUILD_PATH}}
+        cp ${{env.BUILD_PATH}}${{env.CRONO_EXE_NAME}} ../../bin
+
+    - name: Commit Executable
+      if: ${{needs.Check-Util-Library.outputs.ok_to_proceed != 'N' }}
+      uses: EndBug/add-and-commit@v9
+      with:
+          author_name: Internal Workflow Action
+          message: ${{env.COMMIT_MSG}}
+          add: ./bin/${{env.CRONO_EXE_NAME}} --force
+        
+  # ___________________________________________________________________________
+  # 
+  UG_EX-Win-Build:
+    needs: Check-Build-UG_EX
+    runs-on:  windows-latest
+
+    env: 
+      TOOLS_PATH: ug_example/tools
+      BUILD_PATH: ../build/bfR/  # Relative to TOOLS_PATH
+      CRONO_EXE_NAME: xhptdc8_ugex.exe
+
+    steps:
+    - name: echo Suppress Status if Needed
+      if: ${{needs.Check-Build-UG_EX.outputs.ok_to_proceed == 'N' }}
+      run: |
+        echo "Job execution processing is suppressed for no cencerned files are changed."
+        
+    - name: Checkout Code
+      if: ${{needs.Check-Build-UG_EX.outputs.ok_to_proceed != 'N' }}
+      uses: actions/checkout@v4
+
+    - name: Configure CMake and Build
+      if: ${{needs.Check-Build-UG_EX.outputs.ok_to_proceed != 'N' }}
+      run: |
+        cd ${{env.TOOLS_PATH}}
+        cmake -B ${{env.BUILD_PATH}}
+        cmake --build ${{env.BUILD_PATH}} --config ${{env.BUILD_TYPE}}
+        cp ${{env.BUILD_PATH}}${{env.BUILD_TYPE}}/${{env.CRONO_EXE_NAME}} ../../bin
+        
+    - name: Commit Executable
+      if: ${{needs.Check-Util-Library.outputs.ok_to_proceed != 'N' }}
+      uses: EndBug/add-and-commit@v9
+      with:
+          author_name: Internal Workflow Action
+          message: ${{env.COMMIT_MSG}}
+          add: ./bin/${{env.CRONO_EXE_NAME}} --force

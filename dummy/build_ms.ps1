@@ -71,7 +71,7 @@ if(!(Test-Path -Path $x64_DLL_Path))
 }
 else
 {
-    [String]$Babel_Libx64_Path = $Babel_Path + "\lib\x64dummy"
+    [String]$Babel_Libx64_Path = $Babel_Path + "\lib\dummy"
     Copy-Item $x64_DLL_Path -Destination $Babel_Libx64_Path
     Copy-Item $x64_Lib_Path -Destination $Babel_Libx64_Path
     Write-Host -ForegroundColor GREEN "DLL and Lib are copied successfully to the corresponding lib folder: " $Babel_Libx64_Path

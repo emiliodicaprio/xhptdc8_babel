@@ -3,7 +3,7 @@ extern crate bindgen;
 use std::path::PathBuf;
 
 #[cfg(target_arch="x86_64")]
-static RUSTC_LINK_SEARCH : &str = "cargo:rustc-link-search=../../lib/x64dummy/" ;
+static RUSTC_LINK_SEARCH : &str = "cargo:rustc-link-search=../../lib/dummy/" ;
 
 #[cfg(target_arch="x86_64")]
 static RUSTC_DRIVER_LIB : &str = "cargo:rustc-link-lib=xhptdc8_driver_64" ;

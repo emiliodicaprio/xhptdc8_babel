@@ -104,7 +104,7 @@ bindgen = "0.58.1"
    - Used `#cfg` to define parameters of every platform
    ```RUST
    #[cfg(target_arch="x86_64")]
-   static RUSTC_LINK_SEARCH : &str = "cargo:rustc-link-search=../../lib/x64dummy/" ;
+   static RUSTC_LINK_SEARCH : &str = "cargo:rustc-link-search=../../lib/dummy/" ;
    ```
    - Used [wrapper.h](https://github.com/cronologic-de/xhptdc8_babel/blob/main/rust/readout/wrapper.h) to include the needed headers.
    - Saves `bindings_64.rs`(x64) on [.\rust\readout\src\bindings](https://github.com/cronologic-de/xhptdc8_babel/tree/main/rust/readout/src/bindings). 
