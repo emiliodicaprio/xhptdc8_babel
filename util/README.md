@@ -38,7 +38,7 @@ With the following actions:
 ### Compile & Link Settings
 In order to call functions from the utility library, you need to do the following:
 1. Include [`/include/xhptdc8_util.h`](./include/xhptdc8_util.h).
-2. Link to [`/lib/xhptdc8_util.lib`](./lib/xhptdc8_util.lib) for Windows, or [`/bin/libxhptdc8_util.so`](.//bin/libxhptdc8_util.so) for Linux.
+2. Link to [`/lib/xhptdc8_util.lib`](./lib/xhptdc8_util.lib) for Windows, or [`/bin/libxhptdc8_util.so`](./bin/libxhptdc8_util.so) for Linux.
 
 ### `xhptdc8_apply_yaml`
 The purpose of this repository is to make using the [xHPTDC8 time-to-digital converter](https://www.cronologic.de/products/tdcs/xhptdc8-pcie) simpler to use for end users.
@@ -384,10 +384,13 @@ The project structure follows [our standard project folder structure](https://gi
 - Project Settings -> Include Directories : `..\..\include` is added.
 - `Output Directory` is left as the Visual Studio _Default_ Project Settings.
 
-| Config. | Env.  | Library Directory                       | Linker Input    |
-| ------- |-----  |-----------------                        | --------------- |
-| Debug   | x64   | ..\\..\\..\lib\dummy;..\\..\bin; | xhptdc8_util.lib;xhptdc8_driver_64.lib |
-| Release | x64   | ..\\..\\..\lib\dummy;..\\..\bin; | xhptdc8_util.lib;xhptdc8_driver_64.lib |
+| Config. | Env.  | Library Directory | Linker Input    |
+| ------- |-----  |-----------------  | --------------- |
+| Debug   | x64   | ..\\..\lib;       | xhptdc8_util.lib;xhptdc8_driver_64.lib |
+| Release | x64   | ..\\..\lib;       | xhptdc8_util.lib;xhptdc8_driver_64.lib |
+
+**Notes**
+> * To test Dummy library, link to `..\..\lib\dummy` instead.
 
 ### Building Using MS Visual Studio
 Nothing special, just:

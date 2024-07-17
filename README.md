@@ -12,9 +12,9 @@ Eventually you will also find utility functions such as default configurations f
     .
     ├── dummy/      # source of dummy library to enable development in this repository without access to the hardware
     ├── go/         # utility to list information about installed devices, writtin in golang
-    ├── include/    # the header files for the C driver API
-    ├── lib/        # real and dummy driver libraries and header files
-    ├── bin/        # driver runtime files
+    ├── include/    # the header files for the C driver API/sub-projects
+    ├── lib/        # real and dummy driver/sub-projects libraries.
+    ├── bin/        # driver/sub-project runtime files
     ├── rust/       # utility to capture data into a file, written in Rust
     ├── ug_example/ # c++ example of how to use the driver
     └── util/       # utility functions common to all wrappers

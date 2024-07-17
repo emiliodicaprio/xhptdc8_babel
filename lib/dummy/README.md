@@ -1,1 +1,1 @@
-Dummy Library Files, for x64 Build
+Dummy Library and sub-projects ouptut files, for Windows Build
