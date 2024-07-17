@@ -79,9 +79,9 @@ When generated successfully, the dummy libraries will be found as following:
 | File | Build | Location |
 | ---- | ----- | -------- |
 | xhptdc8_driver_64.dll | x64 MSBuild | _your repository_\xhptdc8_babel\dummy\msvscpp\msvscpp\x64\Release |
-| xhptdc8_driver_64.dll | x64 Output  | _your repository_xhptdc8_babel\lib\x64dummy |
+| xhptdc8_driver_64.dll | x64 Output  | _your repository_xhptdc8_babel\lib\dummy |
 | xhptdc8_driver_64.lib | x64 MSBuild | _your repository_\xhptdc8_babel\dummy\msvscpp\msvscpp\x64\Release |
-| xhptdc8_driver_64.lib | x64 Output  | _your repository_\xhptdc8_babel\lib\x64dummy |
+| xhptdc8_driver_64.lib | x64 Output  | _your repository_\xhptdc8_babel\lib\dummy |
 
 ## Build Using Microsoft Visual Studio
 
@@ -105,4 +105,4 @@ github [Building Actions: `Check-Build-Dummy-Library-Using-MSBuild` and `Build-D
 - Using MSBuild.
 - It builds the code automatically with relevant code update.
 - It builds the Release configuration of x64 environment.
-- It copies and checkin the output x64 DLL and LIB files to `.\lib\x64dummy`.
+- It copies and checkin the output x64 DLL and LIB files to `.\lib\dummy`.

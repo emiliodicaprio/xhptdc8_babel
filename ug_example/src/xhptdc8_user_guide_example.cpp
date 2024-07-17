@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include "crono_interface.h"
 #include "xHPTDC8_interface.h"
+#include "xhptdc8_util.h"
 
 const int MAX_TRYS_TO_READ_HITS = 1000;
 int64_t* last_hit = nullptr;
@@ -100,6 +101,13 @@ int configure_xhptdc8(int device_count) {
 }
 
 
+int update_xhptdc8_configuration_for_grouping(xhptdc8_manager_configuration *current_mgr_cfg) {
+	int error_code= xhptdc8_update_config_for_grouping_mode(0 /*First device*/, current_mgr_cfg, (float)XHPTDC8_THRESHOLD_N_NIM, -10000, 120000);
+	exit_on_fail(error_code, "Error updating config for grouping mode");
+	return xhptdc8_configure(current_mgr_cfg);
+}
+
+
 void print_device_information() {
 	xhptdc8_static_info staticinfo;
 	printf("-------------------------\n");
@@ -184,6 +192,23 @@ int main(int argc, char* argv[]) {
 
 	last_hit = new int64_t[device_count * 10];
 	std::fill_n(last_hit, device_count * 10, 0);
+
+	//start measurement
+	exit_on_fail(xhptdc8_start_capture(), "Could not start capturing.");
+
+	//start TiGer-functionality
+	exit_on_fail(xhptdc8_start_tiger(0), "Could not start TiGer.");
+
+	//collect measured data
+	read_hits_wrapper(10);
+
+	//stop measurement
+	exit_on_fail(xhptdc8_stop_capture(), "Could not stop capturing.");
+
+	//enable grouping
+    xhptdc8_manager_configuration *current_mgr_cfg = new xhptdc8_manager_configuration;
+    exit_on_fail(xhptdc8_get_current_configuration(current_mgr_cfg), "Could not get configuration");
+	exit_on_fail(update_xhptdc8_configuration_for_grouping(current_mgr_cfg), "Could not configure grouping");
 
 	//start measurement
 	exit_on_fail(xhptdc8_start_capture(), "Could not start capturing.");

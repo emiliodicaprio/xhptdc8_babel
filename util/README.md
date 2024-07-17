@@ -2,7 +2,9 @@
 # `util` Project
 
 ## About
-A library that provides utility functionalities for xHPTDC8 Driver. It supports both Windows and Linux.
+- A library that provides utility functionalities for xHPTDC8 Driver. It supports both Windows and Linux.
+- Outputs are `xhptdc8_util.dll` and `xhptdc8_util.lib` for Windows, and `libxhptdc8_util.so` for Ubuntu/Debian.
+- Output folders are the root shared folders [`/lib`](./lib) (for `.lib`) and [`/bin`](./bin) (for `.dll` and `.so`).
 
 ### Project Environments and Configurations
 - Project Settings -> Include Directories : `..\..\include;..\..\..\include;.\ryml_src;` is added.
@@ -22,14 +24,13 @@ With the following actions:
 
 ## Build the project 
 - Follow the steps in [Build CMake-based project](#build-cmake-based-project).
-- Outputs are `xhptdc8_util.dll` and `xhptdc8_util.lib` for Windows, and `xhptdc8_util.so` for Ubuntu/Debian.
-- Output folder of the library is [`/lib/x64`](./lib/x64).
+- Note that the output folder is the same for both release and debug builds.
 
 ### `github` Building Action
 `github` [Building Actions: `Check-Util-Library`, `Util-Library-Win` and `Util-Library-Linux`](https://github.com/cronologic-de/xhptdc8_babel/blob/main/.github/workflows/build_all.yml) is created to build `util` project as following:
 1. Using `CMake`.
 2. It builds the code automatically with relevant code update.
-3. It builds the `Release` configuration of `x64` environments.
+3. It builds the `Release` configuration.
 4. It checks in the output (`.dll` and `.lib` for Windows, `.so` for Linux) file(s) to the repository.
 
 ## Using the Utility Library
@@ -37,12 +38,12 @@ With the following actions:
 ### Compile & Link Settings
 In order to call functions from the utility library, you need to do the following:
 1. Include [`/include/xhptdc8_util.h`](./include/xhptdc8_util.h).
-2. Link to the corresponsing library version on [`/lib/x64`](./lib/x64).
+2. Link to [`/lib/xhptdc8_util.lib`](./lib/xhptdc8_util.lib) for Windows, or [`/bin/libxhptdc8_util.so`](./bin/libxhptdc8_util.so) for Linux.
 
 ### `xhptdc8_apply_yaml`
 The purpose of this repository is to make using the [xHPTDC8 time-to-digital converter](https://www.cronologic.de/products/tdcs/xhptdc8-pcie) simpler to use for end users.
 
-Setting up the xhptdc8_manager_configuration structure is rather complicated. This shall be simplified by allowing to apply YAML files to the structure.
+Setting up the `xhptdc8_manager_configuration` structure is rather complicated. This shall be simplified by allowing to apply YAML files to the structure.
 So the workflow for the user would be:
 
 ```C++
@@ -322,6 +323,50 @@ library.
 5, "Board does not exist."
 ```
 
+### `xhptdc8_update_config_for_grouping_mode`
+Setting up the `xhptdc8_manager_configuration` structure is rather complicated. This API simplifies updating it to use the "Grouping mode".
+
+**Structure updates**
+
+It updates the structure as following:
+- All 8 TDC channels are enabled.
+- Grouping is enabled 
+- `trigger_channel` = 0
+- `zero_channel` = -1 
+- `zero_channel_offset` = 0
+- `trigger_deadtime` = 0
+- `window_hit_channels` =0
+- `trigger_channel_bitmask` = 0
+- `veto_mode` = 0
+- `overlap` = false
+
+Structure updates as per the arguments values:
+- `threshold`: is copied to `trigger_threshold` for all channels.
+- `range_start` and `range_stop`: are copied to `range_start` and `range_stop`.
+- `rising` (default is `false`): this value is copied to `channel[i].rising` of each channel.
+   - If `true`, it sets the trigger structure of each channel to `rising`=true, `falling`=false.
+   - If `false`, it sets the trigger structure of each channel to `rising`=false, `falling`=true.
+- `ingore_empty_events` (default is `false`): is copied to `ignore_empty_events`.
+
+**Signature**
+
+This API is of the following signature:
+```C
+XHPTDC8_UTIL_API int xhptdc8_update_config_for_grouping_mode(int index, xhptdc8_manager_configuration *mgr_cfg,
+                                                             float threshold, int64_t range_start, int64_t range_stop,
+                                                             crono_bool_t rising = false,
+                                                             crono_bool_t ingore_empty_events = false);
+```
+
+**Prerequisites**
+
+- `mgr_cfg` memory is allocated and initialized. Initialization to default values is an option.
+
+**Return**
+
+- `CRONO_OK`: Successfully updated values in `mgr_cfg`.
+- `CRONO_INVALID_ARGUMENTS`: if any argument is invalid.
+
 ___________________________
 
 # `util_unit_test` Project
@@ -339,14 +384,13 @@ The project structure follows [our standard project folder structure](https://gi
 - Project Settings -> Include Directories : `..\..\include` is added.
 - `Output Directory` is left as the Visual Studio _Default_ Project Settings.
 
-| Config. | Env.  | Library Directory                       | Linker Input    |
-| ------- |-----  |-----------------                        | --------------- |
-| Debug   | x64   | ..\\..\\..\lib\x64dummy;..\\..\lib\x64; | `xhptdc8_util.lib`;`xhptdc8_driver_64.lib` |
-| Release | x64   | ..\\..\\..\lib\x64dummy;..\\..\lib\x64; | `xhptdc8_util.lib`;`xhptdc8_driver_64.lib` |
+| Config. | Env.  | Library Directory | Linker Input    |
+| ------- |-----  |-----------------  | --------------- |
+| Debug   | x64   | ..\\..\lib;       | xhptdc8_util.lib;xhptdc8_driver_64.lib |
+| Release | x64   | ..\\..\lib;       | xhptdc8_util.lib;xhptdc8_driver_64.lib |
 
-The following files (needed for run) are automatically copied to the build _output directory_:
-1. `xhptdc8_util.dll`
-2. `xhptdc8_driver_64.dll`
+**Notes**
+> * To test Dummy library, link to `..\..\lib\dummy` instead.
 
 ### Building Using MS Visual Studio
 Nothing special, just:
@@ -379,7 +423,9 @@ ___________________________
 # `util_test` Project
 
 ## About
-A console application that is used to provide sample code and data for calling the Utility Library Functions, for both Windows and Linux.
+- A console application that is used to provide sample code and data for calling the Utility Library Functions, for both Windows and Linux.
+- Output is `xhptdc8_util_test.exe` for Windows, and `xhptdc8_util_test` for Ubuntu/Debian.
+- Output folder is the root shared folder [`/bin`](./bin).
 
 ```
 -----------------------------------------------------------------------------
@@ -406,22 +452,19 @@ It can be downloaded from https://github.com/cronologic-de/xhptdc8_babel
 
 ### Project Environments and Configurations
 - Project Settings -> Include Directories : `..\..\..\include;..\..\include;` is added.
-- `libxhptdc8_util.so` is linked for Linux, and `xhptdc8_util xhptdc8_driver_64` are linked for Windows.
 
-## Build the project 
+### Building Using MS Visual Studio
 - Follow the steps in [Build CMake-based project](#build-cmake-based-project).
-- Outputs are `xhptdc8_util_test.exe` for Windows, and `xhptdc8_util_test` for Ubuntu/Debian.
-- Output folder of the library is [`/lib/x64`](./lib/x64).
+- Note that the output folder is the same for both release and debug builds.
 
 ### github Building Action
 github [Building Actions: `Check-Util-Test`, `Util-Test-Win`, and  `Util-Test-Linux`](https://github.com/cronologic-de/xhptdc8_babel/blob/main/.github/workflows/build_all.yml) are created to build `util_test` project as following:
 1. Using `CMake`.
 2. It builds the code automatically with relevant code update.
-3. It builds the `Release` configuration of `x64` environments.
-4. It copies and checks in the output executable files to [`./util/bin/x64`](./util/bin/x64) folder.
+3. It builds the `Release` configuration.
+4. It checks in the output executable files to the repository.
 
-### Running the Application
-* Make sure you have the linked libraries copied to the application output directory.
+### Usage
 
 #### YAML Entry Testing
 Selecting the flag `-yamlentry` when running the application, as following:
@@ -518,11 +561,11 @@ In a terminal, navigate to `<path\to\project\folder>\tools` and run the followin
 | **Linux x86_64**  | Release       | `cmake -B ../build/bfR -DCMAKE_BUILD_TYPE=Release`| `cmake --build ../build/bfR`                      | 
 | **Linux x86_64**  | Debug         | `cmake -B ../build/bfD -DCMAKE_BUILD_TYPE=Debug`  | `cmake --build ../build/bfD`                      | 
 
-* Output folder should be determined by the project documentation.
-* You can change the output directory from `CMakeLists.txt` file.
-
 > **Note**
-The default configuration is `Debug` on Windows, and `Release` on Linux.
+> - The default configuration is `Debug` on Windows, and `Release` on Linux.
+> * Output folder is determined by every project documentation.
+> * Build folder path (e.g. `../build/bfR`) is relative to project `tools` folder.
+> * You can change the build/output directory from `CMakeLists.txt` file.
 
 ## Build Using Visual Studio
 It is mainly done using `CMakeSettings.json` file provided in project `tools` folder, that uses the projects `CMakeLists.txt`.
@@ -550,10 +593,10 @@ Select `Build -> Build All` from the menu bar (or any standard Visual Studio way
 
 The target executable name is `xhptdc8_ugex.exe`.
 
-| Configuration     | `CMakeSettings` | `Build root`                     | `CMake generator`     | Output Folder          |
-| ----------------- | --------------- | -------------------------------- | --------------------- | ---------------------  |
-| **x86_64 Debug**  | x64-Debug       | `${projectDir}\..\build\bfvsD`   | Visual Studio 17 2022 Win64 | `lib\x64\Release`   |
-| **x86_64 Release**| x64-Release     | `${projectDir}\..\build\bfvsR`   | Visual Studio 17 2022 Win64 | `lib\x64\Debug`   |
+| Configuration     | `CMakeSettings` | `Build root`                     | `CMake generator`     | 
+| ----------------- | --------------- | -------------------------------- | --------------------- | 
+| **x86_64 Debug**  | x64-Debug       | `${projectDir}\..\build\bfvsD`   | Visual Studio 17 2022 Win64 | 
+| **x86_64 Release**| x64-Release     | `${projectDir}\..\build\bfvsR`   | Visual Studio 17 2022 Win64 | 
 
 > **Note**<br>
-The provided file builds the project using Visual Studio 2022, however, you can change `generator` in [`CMakeSettings.json`](./tools/CMakeSettings.json) to any other Visual Studio generator you have on your machine.
+> - The provided file builds the project using Visual Studio 2022, however, you can change `generator` in [`CMakeSettings.json`](./tools/CMakeSettings.json) to any other Visual Studio generator you have on your machine.

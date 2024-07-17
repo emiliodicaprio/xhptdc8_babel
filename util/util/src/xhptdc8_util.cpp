@@ -200,11 +200,13 @@ int xhptdc8_update_config_for_grouping_mode(int index, xhptdc8_manager_configura
     if (nullptr == mgr_cfg || index < 0) {
         return CRONO_INVALID_ARGUMENTS;
     }
-    // All 8 TDC channels are enabled
+
+    // Enable all 8 TDC channels
     for (int i = 0; i < XHPTDC8_TDC_CHANNEL_COUNT; i++) {
         mgr_cfg->device_configs[index].channel[i].enable = true;
     }
-    // Grouping is enabled
+
+    // Enable grouping
     mgr_cfg->grouping.enabled = true;
     mgr_cfg->grouping.trigger_channel = 0;
     mgr_cfg->grouping.zero_channel = -1;
@@ -216,14 +218,15 @@ int xhptdc8_update_config_for_grouping_mode(int index, xhptdc8_manager_configura
     mgr_cfg->grouping.overlap = false;
     mgr_cfg->grouping.range_start = range_start;
     mgr_cfg->grouping.range_stop = range_stop;
+    mgr_cfg->grouping.ignore_empty_events = ingore_empty_events;
 
     // Copy threshold to trigger_threshold for all channels
     for (int i = 0; i < XHPTDC8_TDC_CHANNEL_COUNT; i++) {
         mgr_cfg->device_configs[index].trigger_threshold[i] = threshold;
     }
 
-    // `rising` is copied to channel[i].rising of each channel
-    // if true, sets the trigger structure of each channel to rising=true, falling= false.
+    // Copy `rising` to channel[i].rising of each channel
+    // If true, set the trigger structure of each channel to rising=true, falling= false.
     // If false, set the structure to rising=false, falling=true
     for (int i = 0; i < XHPTDC8_TRIGGER_COUNT; i++) {
         mgr_cfg->device_configs[index].trigger[i].rising = rising;

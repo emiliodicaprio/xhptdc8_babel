@@ -49,13 +49,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>..\..\include;..\include;$(IncludePath)</IncludePath>
-    <LibraryPath>..\..\lib\x64;$(LibraryPath)</LibraryPath>
+    <LibraryPath>..\..\lib;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
     <IncludePath>..\..\include;..\include;$(IncludePath)</IncludePath>
-    <LibraryPath>..\..\lib\x64;$(LibraryPath)</LibraryPath>
+    <LibraryPath>..\..\lib;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -112,8 +112,8 @@
   </ImportGroup>
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
     <Message Text="Copying external DLLs to output directory..." Importance="high"/>
-    <Copy SourceFiles="..\..\lib\x64\xhptdc8_driver_64.dll" DestinationFolder="$(OutDir)" />
-    <Copy SourceFiles="..\..\lib\x64\xhptdc8_util.dll" DestinationFolder="$(OutDir)" />
+    <Copy SourceFiles="..\..\bin\xhptdc8_driver_64.dll" DestinationFolder="$(OutDir)" />
+    <Copy SourceFiles="..\..\bin\xhptdc8_util.dll" DestinationFolder="$(OutDir)" />
     <!-- Add more Copy tasks as needed -->
   </Target>
 </Project>

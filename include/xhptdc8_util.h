@@ -54,9 +54,14 @@ XHPTDC8_UTIL_API const char *xhptdc8_get_err_message(int err_code);
  */
 XHPTDC8_UTIL_API int xhptdc8_update_config_for_grouping_mode(int index, xhptdc8_manager_configuration *mgr_cfg,
                                                              float threshold, int64_t range_start, int64_t range_stop,
-                                                             crono_bool_t rising /*=false*/,
-                                                             crono_bool_t ingore_empty_events /*=false*/);
-
+#ifndef DEFAULT_ARGS_NOT_ALLOWED
+                                                             crono_bool_t rising = false,
+                                                             crono_bool_t ingore_empty_events = false
+#else
+                                                             crono_bool_t rising,
+                                                             crono_bool_t ingore_empty_events
+#endif
+                                                            );
 #ifdef __cplusplus
 }
 #endif
