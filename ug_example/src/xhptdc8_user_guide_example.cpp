@@ -121,8 +121,10 @@ void print_device_information() {
 void print_hit(TDCHit *hit) {
     int channel = hit->channel;
     bool adc_data = ((channel % 10) == 8) || ((channel % 10) == 9);
-    if (hit->type & XHPTDC8_TDCHIT_TYPE_ERROR)
+    if (hit->type & XHPTDC8_TDCHIT_TYPE_ERROR) {
         printf("Error:\n");
+        return;
+    }
 
     int64_t diff = last_hit[channel] > 0 ? hit->time - last_hit[channel] : 0;
     printf("Channel %u - Time %lld - Type 0x%x - Diff %lld", hit->channel, hit->time, hit->type, diff);
@@ -231,6 +233,9 @@ void run_grouping_scenario() {
     exit_on_fail(xhptdc8_get_current_configuration(current_mgr_cfg), "Could not get configuration");
     exit_on_fail(update_xhptdc8_configuration_for_grouping(current_mgr_cfg), "Could not configure grouping");
 
+    last_hit = new int64_t[device_count * 10];
+    std::fill_n(last_hit, device_count * 10, 0);
+
     // start measurement
     exit_on_fail(xhptdc8_start_capture(), "Could not start capturing.");
 
@@ -248,17 +253,22 @@ void run_grouping_scenario() {
 }
 
 int test_apply_yaml(const char *src) {
-    xhptdc8_manager_init_parameters *params = NULL;
-    int error_code;
-    error_code = xhptdc8_init(params);
-    xhptdc8_manager_configuration *cfg = new xhptdc8_manager_configuration;
-    xhptdc8_get_default_configuration(cfg);
-    int results = xhptdc8_apply_yaml(cfg, src);
+    xhptdc8_manager_init_parameters params;
+    xhptdc8_manager_configuration *current_mgr_cfg = new xhptdc8_manager_configuration;
+
+    exit_on_fail(xhptdc8_get_default_init_parameters(&params), "Could not get default params.");
+    exit_on_fail(xhptdc8_init(&params), "Could not initialize device.");
+    
+    xhptdc8_get_default_configuration(current_mgr_cfg);
+    int results = xhptdc8_apply_yaml(current_mgr_cfg, src);
     if (results > 0) {
-        exit_on_fail(xhptdc8_configure(cfg), "Could not start capturing.");
+        exit_on_fail(xhptdc8_configure(current_mgr_cfg), "Could not configure device.");
+        printf("Yaml is applied successfully.");
+    } else {
+        printf("Error applying yaml.");
     }
-    delete cfg;
-    xhptdc8_close();
+    delete current_mgr_cfg;
+    exit_on_fail(xhptdc8_close(), "Could not close devices-manager.");
     return results;
 }
 

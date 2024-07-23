@@ -107,9 +107,12 @@ int main(int argc,  char* argv[])
 
 int test_apply_yaml(const char* src)
 {
-	xhptdc8_manager_init_parameters* params = NULL;
+	xhptdc8_manager_init_parameters params;
 	int error_code;
-	error_code = xhptdc8_init(params);
+
+    xhptdc8_get_default_init_parameters(&params);
+	error_code = xhptdc8_init(&params);
+
 	xhptdc8_manager_configuration* cfg = new xhptdc8_manager_configuration;
 	xhptdc8_get_default_configuration(cfg);
 	int results = xhptdc8_apply_yaml(cfg, src);
