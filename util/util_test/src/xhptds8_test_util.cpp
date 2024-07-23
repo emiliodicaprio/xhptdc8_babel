@@ -112,14 +112,31 @@ int test_apply_yaml(const char* src)
 
     xhptdc8_get_default_init_parameters(&params);
 	error_code = xhptdc8_init(&params);
-
+    if (XHPTDC8_OK != error_code) {
+        printf("Error initializing the device, %d\n", error_code);
+        return error_code;
+    }
 	xhptdc8_manager_configuration* cfg = new xhptdc8_manager_configuration;
-	xhptdc8_get_default_configuration(cfg);
+	error_code = xhptdc8_get_default_configuration(cfg);
+    if (XHPTDC8_OK != error_code) {
+        printf("Error getting defaut configuration, %d\n", error_code);
+    	delete cfg;
+    	xhptdc8_close();
+        return error_code;
+    }
 	int results = xhptdc8_apply_yaml(cfg, src);
-	if (results > 0)
-	{
-		xhptdc8_configure(cfg);
-	}
+    if (results > 0) {
+		error_code = xhptdc8_configure(cfg);
+        if (XHPTDC8_OK != error_code) {
+            printf("Error configuring the device, %d\n", error_code);
+        	delete cfg;
+        	xhptdc8_close();
+            return error_code;
+        }
+        printf("Yaml is applied successfully.\n");
+    } else {
+        printf("Error applying yaml.\n");
+    }
 	delete cfg;
 	xhptdc8_close();
 	return results;
