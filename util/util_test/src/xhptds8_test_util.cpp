@@ -93,8 +93,8 @@ int main(int argc,  char* argv[])
 			if (result < 0)
 			{
 				printf("Function returned error code <%d>.\n", result);
-				printf("Please refer to driver utility header file for code values meaning: \n");
-				printf("https://github.com/cronologic-de/xhptdc8_babel/blob/main/include/xhptdc8_util.h \n");
+				printf("Please refer to driver utility errors header file for code values meaning: \n");
+				printf("https://github.com/cronologic-de/xhptdc8_babel/blob/main/util/util/src/errors.h \n");
 			}
 		}
 		else
