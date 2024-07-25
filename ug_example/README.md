@@ -14,13 +14,7 @@ Output is `xhptdc8_ugex.exe` for Windows, and `xhptdc8_ugex` for Ubuntu/Debian, 
     └── build/      # (default) compiled output for any OS, configuration, platform
 ```
 
----
-
-## Build the C++ Project
-> **Note**<br>
-> In most cases we recommend using the C++ version of the example `xhptdc8_user_guide_example.cpp`.<br>
-> If, however, you require a pure C version, instructions on how to compile `xhptdc8_user_guide_example.c` are provided below.
-
+## Build the project
 - The project is a `Console` App.
 - The project is built using `CMake`.
 - If you don't have `CMake` installed, refer to [Installing CMake](https://cmake.org/install/) for instructions. You can check if `CMake` is installed by running `cmake --version`.
@@ -81,20 +75,6 @@ In a terminal, navigate to `tools\` and run the following command:
 > * The output folder is the same for both release and debug builds.
 > * You can change the build/output directory from `CMakeLists.txt` file.
 > * Linux `x86` is not supported.
-
----
-
-## Build the `C` Project
-
-To build the alternative C user guide example `xhptdc8_user_guide_example.c`, you can use `gcc` or `g++` as following:
-
-| Platform          | Configure CMake command                               
-| ----------------- | -------------------------------------------------     
-| **Windows x86_64**| `cd ug_example\src`<br>`gcc xhptdc8_user_guide_example.c -o ug_example_c -L ..\..\lib -lxhptdc8_driver_64 -lstdc++ -shared-libgcc`<br>or,<br>`g++ xhptdc8_user_guide_example.c -o ug_example_c -L ..\..\lib -lxhptdc8_driver_64`
-| **Linux x86_64**| `cd ug_example/src`<br>`gcc xhptdc8_user_guide_example.c -o ug_example_c -L ../../lib -lxhptdc8_driver -lstdc++ -shared-libgcc`<br>or,<br>`g++ xhptdc8_user_guide_example.c -o ug_example_c -L ../../lib -lxhptdc8_driver`
-
-* For **Windows**, please copy the driver `.dll` from `.\lib\xhptdc8_driver_64.dll` to `ug_example\src` to be able to run `ug_example_c.exe`.
-* For **Linux**, to be able to run `ug_example_c` that uses `./lib/xhptdc8_driver.so`, either add `./lib` folder to path (e.g., `export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/path/to/lib`), or copy `xhptdc8_driver.so` to `/usr/lib` (needs `sudo`).
 
 ---
 
