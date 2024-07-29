@@ -93,8 +93,8 @@ int main(int argc,  char* argv[])
 			if (result < 0)
 			{
 				printf("Function returned error code <%d>.\n", result);
-				printf("Please refer to driver utility header file for code values meaning: \n");
-				printf("https://github.com/cronologic-de/xhptdc8_babel/blob/main/include/xhptdc8_util.h \n");
+				printf("Please refer to driver utility errors header file for code values meaning: \n");
+				printf("https://github.com/cronologic-de/xhptdc8_babel/blob/main/util/util/src/errors.h \n");
 			}
 		}
 		else
@@ -107,16 +107,36 @@ int main(int argc,  char* argv[])
 
 int test_apply_yaml(const char* src)
 {
-	xhptdc8_manager_init_parameters* params = NULL;
+	xhptdc8_manager_init_parameters params;
 	int error_code;
-	error_code = xhptdc8_init(params);
+
+    xhptdc8_get_default_init_parameters(&params);
+	error_code = xhptdc8_init(&params);
+    if (XHPTDC8_OK != error_code) {
+        printf("Error initializing the device, %d\n", error_code);
+        return error_code;
+    }
 	xhptdc8_manager_configuration* cfg = new xhptdc8_manager_configuration;
-	xhptdc8_get_default_configuration(cfg);
+	error_code = xhptdc8_get_default_configuration(cfg);
+    if (XHPTDC8_OK != error_code) {
+        printf("Error getting defaut configuration, %d\n", error_code);
+    	delete cfg;
+    	xhptdc8_close();
+        return error_code;
+    }
 	int results = xhptdc8_apply_yaml(cfg, src);
-	if (results > 0)
-	{
-		xhptdc8_configure(cfg);
-	}
+    if (results > 0) {
+		error_code = xhptdc8_configure(cfg);
+        if (XHPTDC8_OK != error_code) {
+            printf("Error configuring the device, %d\n", error_code);
+        	delete cfg;
+        	xhptdc8_close();
+            return error_code;
+        }
+        printf("Yaml is applied successfully.\n");
+    } else {
+        printf("Error applying yaml.\n");
+    }
 	delete cfg;
 	xhptdc8_close();
 	return results;

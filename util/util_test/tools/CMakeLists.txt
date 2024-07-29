@@ -36,7 +36,7 @@ set(CRONO_BIN_DIR ${CMAKE_CURRENT_SOURCE_DIR}/${PROJ_SRC_INDIR}/../../bin)
 link_directories(${CRONO_LIB_DIR})
 
 # Add the target  _____________________________________________________________________________________________________
-set(SOURCE ${PROJ_SRC_INDIR}/src/xhptds8_test_util.cpp)
+set(SOURCE ${PROJ_SRC_INDIR}/src/xhptdc8_test_util.cpp)
 
 add_executable(${CRONO_TARGET_NAME} "${SOURCE}")
 

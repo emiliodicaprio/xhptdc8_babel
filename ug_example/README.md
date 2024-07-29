@@ -81,7 +81,7 @@ In a terminal, navigate to `tools\` and run the following command:
 ## Run/Debug the Sample
 
 ### Windows
-In a terminal, navigate to the _Output Folder_ and run the executable. Alternatively, if you are using Visual Studio, you can run/debug the program from within Visual Studio.
+In a terminal, navigate to `/bin` and run the executable. Alternatively, if you are using Visual Studio, you can run/debug the program from within Visual Studio.
 
 ### Linux
 1. `Cronologic PCI Linux Kernel Module` needs to be installed on your machine. You can build it from [`cronologic_linux_kernel`](https://github.com/cronologic-de/cronologic_linux_kernel) on GitHub.
