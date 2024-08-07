@@ -76,6 +76,10 @@ jobs:
       run: |
         echo "No concerned files changed, suppressing processing."       
         echo "ok_to_proceed_val=N" >> $GITHUB_OUTPUT
+        
+    - name: Pull latest
+      run: |
+        git pull
 
   # ___________________________________________________________________________
   #
@@ -106,33 +110,11 @@ jobs:
     - name: Checkout Code
       if: ${{needs.Check-Build-Dummy-Library-Using-MSBuild.outputs.ok_to_proceed != 'N' }}
       uses: actions/checkout@v4
-
-    - name: List contents of .git directory
-      if: ${{ needs.Check-Build-Dummy-Library-Using-MSBuild.outputs.ok_to_proceed != 'N' }}
-      run: |
-        if (Test-Path -Path .git) {
-          Get-ChildItem -Path .git -Recurse
-        } else {
-          Write-Host ".git directory does not exist"
-        }
-        
-    - name: Remove existing .git directory (cleanup)
-      if: ${{ needs.Check-Build-Dummy-Library-Using-MSBuild.outputs.ok_to_proceed != 'N' }}
-      run: |
-        if (Test-Path -Path .git) {
-          Remove-Item -Recurse -Force .git
-        } else {
-          Write-Host ".git directory does not exist"
-        }
-          
-    - name: Checkout Code
-      if: ${{needs.Check-Build-Dummy-Library-Using-MSBuild.outputs.ok_to_proceed != 'N' }}
-      uses: actions/checkout@v4
-      
+             
     - name: Pull latest
       if: ${{needs.Check-Build-Dummy-Library-Using-MSBuild.outputs.ok_to_proceed != 'N' }}
       run: |
-        git fetch
+        git pull
 
     - name: Add MSBuild to PATH
       if: ${{needs.Check-Build-Dummy-Library-Using-MSBuild.outputs.ok_to_proceed != 'N' }}
