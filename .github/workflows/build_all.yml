@@ -110,6 +110,8 @@ jobs:
     - name: Pull Latest 
       if: ${{needs.Check-Build-Dummy-Library-Using-MSBuild.outputs.ok_to_proceed != 'N' }}
       run: |
+        BRANCH_NAME=$(git symbolic-ref refs/remotes/origin/HEAD | sed 's@^refs/remotes/origin/@@')
+        git checkout ${{ BRANCH_NAME }}
         git pull
         
     - name: Add MSBuild to PATH
