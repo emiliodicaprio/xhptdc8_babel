@@ -110,8 +110,9 @@ jobs:
     - name: Pull Latest 
       if: ${{needs.Check-Build-Dummy-Library-Using-MSBuild.outputs.ok_to_proceed != 'N' }}
       run: |
-        BRANCH_NAME=$(git symbolic-ref refs/remotes/origin/HEAD | sed 's@^refs/remotes/origin/@@')
-        git checkout $BRANCH_NAME
+        $branch = git symbolic-ref --short HEAD
+        echo "branch=$branch" | Out-File -FilePath $env:GITHUB_ENV -Append
+        git checkout $branch
         git pull
         
     - name: Add MSBuild to PATH
