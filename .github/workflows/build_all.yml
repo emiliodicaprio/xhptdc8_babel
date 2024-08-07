@@ -43,6 +43,31 @@ env:
 jobs:
   # ===========================================================================
   #
+  # If triggered by a new tag then no need/do not commit the output files, just 
+  # make sure they build. As outputs saved on main are supposed to be latest
+  # once built from the latest update.
+  #
+  Check-Trigger:
+    runs-on: windows-latest
+    outputs:
+      is_tag: ${{ steps.set-tag-output.outputs.is_tag }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Check if triggered by a tag
+        id: set-tag-output
+        run: |
+          if ($env:GITHUB_REF -like 'refs/tags/*') {
+            echo "Triggered by a tag"
+            echo "::set-output name=is_tag::true"
+          } else {
+            echo "Not triggered by a tag"
+            echo "::set-output name=is_tag::false"
+          }
+
+  # ===========================================================================
+  #
   # Upon any change in sub files of ./dummy, the action does the following:
   # 1. Builds the Dummy Library Release x64 DLL & Lib, using MSBuild
   # 2. Copies the DLLs & Libs to the corresponding folders on ./lib 
@@ -67,7 +92,6 @@ jobs:
           include/**
           dummy/**
           .github/workflows/**
-          .github/workflows/**
           
     # Check if any file(s) in the concerned folder changed
     - name: Check
@@ -88,6 +112,7 @@ jobs:
 
     needs:
     - Check-Build-Dummy-Library-Using-MSBuild
+    - Check-Trigger
     
     defaults:
        run:
@@ -112,9 +137,8 @@ jobs:
       uses: actions/checkout@v4
              
     - name: Pull latest
-      if: ${{needs.Check-Build-Dummy-Library-Using-MSBuild.outputs.ok_to_proceed != 'N' }}
-      run: |
-        git pull
+      if: ${{needs.Check-Trigger.outputs.is_tag != 'true' && needs.Check-Build-Dummy-Library-Using-MSBuild.outputs.ok_to_proceed != 'N' }}
+      run: git pull
 
     - name: Add MSBuild to PATH
       if: ${{needs.Check-Build-Dummy-Library-Using-MSBuild.outputs.ok_to_proceed != 'N' }}
@@ -131,7 +155,7 @@ jobs:
         Copy-Item ${{env.X64_OUTPUT_DIR}}${{env.X64_DUMMY_LIB_NAME}} -Destination ${{env.DUMMY_LIB_PTH}}
   
     - name: Commit x64 DLL
-      if: ${{needs.Check-Build-Dummy-Library-Using-MSBuild.outputs.ok_to_proceed != 'N' }}
+      if: ${{needs.Check-Trigger.outputs.is_tag != 'true' && needs.Check-Build-Dummy-Library-Using-MSBuild.outputs.ok_to_proceed != 'N' }}
       uses: EndBug/add-and-commit@v9
       with:
           author_name: Internal Workflow Action
@@ -139,7 +163,7 @@ jobs:
           add: ${{env.DUMMY_LIB_PTH_COMMIT}}${{env.X64_DUMMY_DLL_NAME}} --force
           
     - name: Commit x64 Lib
-      if: ${{needs.Check-Build-Dummy-Library-Using-MSBuild.outputs.ok_to_proceed != 'N' }}
+      if: ${{needs.Check-Trigger.outputs.is_tag != 'true' && needs.Check-Build-Dummy-Library-Using-MSBuild.outputs.ok_to_proceed != 'N' }}
       uses: EndBug/add-and-commit@v9
       with:
           author_name: Internal Workflow Action
@@ -185,6 +209,7 @@ jobs:
     needs: 
     - Check-Info-Tool-Build    
     - Build-Dummy-Library-Using-MSBuild # Guarantee Sequential Build
+    - Check-Trigger
 
     defaults:
        run:
@@ -204,19 +229,9 @@ jobs:
       if: ${{needs.Check-Info-Tool-Build.outputs.ok_to_proceed != 'N' }}
       uses: actions/checkout@v4
 
-    # Handle both a normal commit and a merge request
-    # As repository is in a detached HEAD state in merge request.
-    - name: Determine branch name
-      if: ${{needs.Check-Info-Tool-Build.outputs.ok_to_proceed != 'N' }}
-      id: branch_name
-      run: echo "BRANCH_NAME=$(echo ${GITHUB_REF#refs/heads/} | sed 's/\/merge$//')" >> $GITHUB_ENV
-
     - name: Pull changes
-      if: ${{needs.Check-Info-Tool-Build.outputs.ok_to_proceed != 'N' }}
-      run: |
-        git fetch origin
-        git checkout ${{ env.BRANCH_NAME }}
-        git pull origin ${{ env.BRANCH_NAME }}
+      if: ${{needs.Check-Trigger.outputs.is_tag != 'true' && needs.Check-Info-Tool-Build.outputs.ok_to_proceed != 'N' }}
+      run: git pull
         
     - name: Display Versions 
       if: ${{needs.Check-Info-Tool-Build.outputs.ok_to_proceed != 'N' }}
@@ -233,12 +248,12 @@ jobs:
         cd ..\..\..\       
     
     - name: Copy x64 EXE to Repository
-      if: ${{needs.Check-Info-Tool-Build.outputs.ok_to_proceed != 'N' }}
+      if: ${{needs.Check-Trigger.outputs.is_tag != 'true' && needs.Check-Info-Tool-Build.outputs.ok_to_proceed != 'N' }}
       run: |
         copy ${{env.SOLUTION_FILE_PATH}}${{env.X64_EXE_NAME}} ${{env.CRONO_BIN_PATH_WIN}}${{env.X64_EXE_NAME}}
         
     - name: Commit x64 EXE
-      if: ${{needs.Check-Info-Tool-Build.outputs.ok_to_proceed != 'N' }}
+      if: ${{needs.Check-Trigger.outputs.is_tag != 'true' && needs.Check-Info-Tool-Build.outputs.ok_to_proceed != 'N' }}
       uses: EndBug/add-and-commit@v9
       with:
         author_name: Internal Workflow Action
@@ -284,6 +299,7 @@ jobs:
     needs: 
     - Check-Util-Library
     - Info-Tool-Build # Guarantee Sequential Build
+    - Check-Trigger
 
     defaults:
        run:
@@ -305,9 +321,8 @@ jobs:
       uses: actions/checkout@v4
   
     - name: Pull Latest 
-      if: ${{needs.Check-Util-Library.outputs.ok_to_proceed != 'N' }}
-      run: |
-        git pull
+      if: ${{needs.Check-Trigger.outputs.is_tag != 'true' && needs.Check-Util-Library.outputs.ok_to_proceed != 'N' }}
+      run: git pull
 
     # Build release, output by CMake to `X64_REPO_LIB_PTH`
     - name: Configure CMake and Build Release x64
@@ -318,13 +333,13 @@ jobs:
         cmake --build ${{env.BUILD_PATH}} --config ${{env.BUILD_TYPE}}
 
     - name: Copy output to Dummy Library Folder
-      if: ${{needs.Check-Util-Library.outputs.ok_to_proceed != 'N' }}
+      if: ${{needs.Check-Trigger.outputs.is_tag != 'true' && needs.Check-Util-Library.outputs.ok_to_proceed != 'N' }}
       run: |
         Copy-Item ${{env.CRONO_BIN_PATH}}${{env.X64_DLL_NAME}} -Destination ${{env.DUMMY_LIB_PTH}}
         Copy-Item ${{env.CRONO_LIB_PATH}}${{env.X64_LIB_NAME}} -Destination ${{env.DUMMY_LIB_PTH}}
  
     - name: Commit DLL and Lib
-      if: ${{needs.Check-Util-Library.outputs.ok_to_proceed != 'N' }}
+      if: ${{needs.Check-Trigger.outputs.is_tag != 'true' && needs.Check-Util-Library.outputs.ok_to_proceed != 'N' }}
       uses: EndBug/add-and-commit@v9
       with:
           author_name: Internal Workflow Action
@@ -343,7 +358,8 @@ jobs:
 
     needs: 
     - Check-Util-Library
-    - Util-Library-Win # Guarantee Sequential Build 
+    - Util-Library-Win # Guarantee Sequential Build
+    - Check-Trigger
 
     env: 
       X64_LIB_NAME: libxhptdc8_util.so
@@ -361,8 +377,7 @@ jobs:
   
     - name: Pull Latest 
       if: ${{needs.Check-Util-Library.outputs.ok_to_proceed != 'N' }}
-      run: |
-        git pull
+      run: git pull
 
     # Build release, output by CMake to `X64_REPO_LIB_PTH`
     - name: Configure CMake and Build Release x64
@@ -373,7 +388,7 @@ jobs:
         cmake --build ${{env.BUILD_PATH}}
  
     - name: Commit Lib
-      if: ${{needs.Check-Util-Library.outputs.ok_to_proceed != 'N' }}
+      if: ${{needs.Check-Trigger.outputs.is_tag != 'true' && needs.Check-Util-Library.outputs.ok_to_proceed != 'N' }}
       uses: EndBug/add-and-commit@v9
       with:
           author_name: Internal Workflow Action
@@ -419,6 +434,7 @@ jobs:
     needs: 
     - Check-Util-Test
     - Util-Library-Linux # Output needed, Guarantee Sequential Build
+    - Check-Trigger
 
     defaults:
        run:
@@ -456,12 +472,12 @@ jobs:
 
     # Copy to `DUMMY_LIB_PTH`
     - name: Copy output to Dummy Library Path
-      if: ${{needs.Check-Util-Test.outputs.ok_to_proceed != 'N' }}
+      if: ${{needs.Check-Trigger.outputs.is_tag != 'true' && needs.Check-Util-Test.outputs.ok_to_proceed != 'N' }}
       run: |
         Copy-Item ${{env.CRONO_BIN_PATH}}${{env.X64_EXE_NAME}} -Destination ${{env.DUMMY_LIB_PTH}}
   
     - name: Commit x64 EXE
-      if: ${{needs.Check-Util-Test.outputs.ok_to_proceed != 'N' }}
+      if: ${{needs.Check-Trigger.outputs.is_tag != 'true' && needs.Check-Util-Test.outputs.ok_to_proceed != 'N' }}
       uses: EndBug/add-and-commit@v9
       with:
           author_name: Internal Workflow Action
@@ -477,6 +493,7 @@ jobs:
     needs:
     - Check-Util-Test
     - Util-Test-Win # Guarantee Sequential Build
+    - Check-Trigger
 
     env: 
       X64_EXE_NAME: xhptdc8_util_test
@@ -494,7 +511,7 @@ jobs:
       uses: actions/checkout@v4
 
     - name: Pull Latest 
-      if: ${{needs.Check-Util-Test.outputs.ok_to_proceed != 'N' }}
+      if: ${{needs.Check-Trigger.outputs.is_tag != 'true' && needs.Check-Util-Test.outputs.ok_to_proceed != 'N' }}
       run: |
         git pull
         
@@ -508,7 +525,7 @@ jobs:
         cmake --build ${{env.BUILD_PATH}}
   
     - name: Commit x64 EXE
-      if: ${{needs.Check-Util-Test.outputs.ok_to_proceed != 'N' }}
+      if: ${{needs.Check-Trigger.outputs.is_tag != 'true' && needs.Check-Util-Test.outputs.ok_to_proceed != 'N' }}
       uses: EndBug/add-and-commit@v9
       with:
           author_name: Internal Workflow Action
@@ -555,6 +572,7 @@ jobs:
     needs: 
     - Check-Build-UG_EX
     - Util-Test-Linux # Guarnatee Sequential Build 
+    - Check-Trigger
 
     env: 
       TOOLS_PATH: ug_example/tools
@@ -583,7 +601,7 @@ jobs:
         cmake --build ${{env.BUILD_PATH}}
 
     - name: Commit Executable
-      if: ${{needs.Check-Build-UG_EX.outputs.ok_to_proceed != 'N' }}
+      if: ${{needs.Check-Trigger.outputs.is_tag != 'true' && needs.Check-Build-UG_EX.outputs.ok_to_proceed != 'N' }}
       uses: EndBug/add-and-commit@v9
       with:
           author_name: Internal Workflow Action
@@ -598,6 +616,7 @@ jobs:
     needs: 
     - Check-Build-UG_EX
     - UG_EX-Linux-Build # Guarnatee Sequential Build
+    - Check-Trigger
 
     env: 
       TOOLS_PATH: ug_example/tools
@@ -626,7 +645,7 @@ jobs:
         cmake --build ${{env.BUILD_PATH}} --config ${{env.BUILD_TYPE}}
         
     - name: Commit Executable
-      if: ${{needs.Check-Build-UG_EX.outputs.ok_to_proceed != 'N' }}
+      if: ${{needs.Check-Trigger.outputs.is_tag != 'true' && needs.Check-Build-UG_EX.outputs.ok_to_proceed != 'N' }}
       uses: EndBug/add-and-commit@v9
       with:
           author_name: Internal Workflow Action
@@ -674,6 +693,7 @@ jobs:
     - Check-Readout-Tool-Build    
     - Util-Library-Win # Dependency
     - UG_EX-Win-Build # Guarantee Sequential Build
+    - Check-Trigger
 
     defaults:
       run:
@@ -728,12 +748,12 @@ jobs:
         
     # Copy EXE 
     - name: Copy Files to Repository
-      if: ${{needs.Check-Readout-Tool-Build.outputs.ok_to_proceed != 'N' }}
+      if: ${{needs.Check-Trigger.outputs.is_tag != 'true' && needs.Check-Readout-Tool-Build.outputs.ok_to_proceed != 'N' }}
       run: |
         copy ${{env.SOLUTION_FILE_PATH}}\${{env.X64_OUTPUT_DIR}}${{env.X64_EXE_NAME}} ${{env.CRONO_BIN_PATH_WIN}}${{env.X64_EXE_NAME}}
         
     - name: Commit EXE
-      if: ${{needs.Check-Readout-Tool-Build.outputs.ok_to_proceed != 'N' }}
+      if: ${{needs.Check-Trigger.outputs.is_tag != 'true' && needs.Check-Readout-Tool-Build.outputs.ok_to_proceed != 'N' }}
       uses: EndBug/add-and-commit@v9
       with:
           author_name: Internal Workflow Action
@@ -741,7 +761,7 @@ jobs:
           add: ${{env.CRONO_BIN_PATH}}${{env.X64_EXE_NAME}} --force
 
     - name: Commit bindings
-      if: ${{needs.Check-Readout-Tool-Build.outputs.ok_to_proceed != 'N' }}
+      if: ${{needs.Check-Trigger.outputs.is_tag != 'true' && needs.Check-Readout-Tool-Build.outputs.ok_to_proceed != 'N' }}
       uses: EndBug/add-and-commit@v9
       with:
           author_name: Internal Workflow Action
