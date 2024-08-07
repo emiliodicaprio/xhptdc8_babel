@@ -106,7 +106,18 @@ jobs:
     - name: Checkout Code
       if: ${{needs.Check-Build-Dummy-Library-Using-MSBuild.outputs.ok_to_proceed != 'N' }}
       uses: actions/checkout@v4
-      
+      with:
+        fetch-depth: 0 # Fetch all history so we can checkout branches and tags
+
+    - name: List contents of .git directory
+      if: ${{ needs.Check-Build-Dummy-Library-Using-MSBuild.outputs.ok_to_proceed != 'N' }}
+      run: |
+        if (Test-Path -Path .git) {
+          Get-ChildItem -Path .git -Recurse
+        } else {
+          Write-Host ".git directory does not exist"
+        }
+          
     - name: Pull latest
       if: ${{needs.Check-Build-Dummy-Library-Using-MSBuild.outputs.ok_to_proceed != 'N' }}
       run: |
