@@ -114,7 +114,7 @@ jobs:
           git fetch origin
           git checkout origin/main
         }
-        git pull --rebase
+        git pull --rebase origin main
         
     - name: Add MSBuild to PATH
       if: ${{needs.Check-Build-Dummy-Library-Using-MSBuild.outputs.ok_to_proceed != 'N' }}
