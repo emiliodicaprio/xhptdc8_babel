@@ -233,7 +233,7 @@ jobs:
         go build -o ${{env.X64_EXE_NAME}} .\xhptdc8_info.go .\info_aux.go
         cd ..\..\..\
     
-    - name: Copy x64 EXE to Repository
+    - name: Copy EXE to Repository
       if: ${{needs.Check-Info-Tool-Build.outputs.ok_to_proceed != 'N' }}
       run: |
         copy ${{env.SOLUTION_FILE_PATH}}${{env.X64_EXE_NAME}} ${{env.CRONO_BIN_PATH_WIN}}${{env.X64_EXE_NAME}}
@@ -461,7 +461,7 @@ jobs:
       run: |
         Copy-Item ${{env.CRONO_BIN_PATH}}${{env.X64_EXE_NAME}} -Destination ${{env.DUMMY_LIB_PTH}}
   
-    - name: Commit x64 EXE
+    - name: Commit EXE
       if: ${{needs.Check-Util-Test.outputs.ok_to_proceed != 'N' }}
       uses: EndBug/add-and-commit@v9
       with:
@@ -508,7 +508,7 @@ jobs:
         cmake -B ${{env.BUILD_PATH}} -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
         cmake --build ${{env.BUILD_PATH}}
   
-    - name: Commit x64 EXE
+    - name: Commit EXE
       if: ${{needs.Check-Util-Test.outputs.ok_to_proceed != 'N' }}
       uses: EndBug/add-and-commit@v9
       with:
