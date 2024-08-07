@@ -107,6 +107,11 @@ jobs:
       if: ${{needs.Check-Build-Dummy-Library-Using-MSBuild.outputs.ok_to_proceed != 'N' }}
       uses: actions/checkout@v4
       
+    - name: Pull Latest 
+      if: ${{needs.Check-Build-Dummy-Library-Using-MSBuild.outputs.ok_to_proceed != 'N' }}
+      run: |
+        git pull
+        
     - name: Add MSBuild to PATH
       if: ${{needs.Check-Build-Dummy-Library-Using-MSBuild.outputs.ok_to_proceed != 'N' }}
       uses: microsoft/setup-msbuild@v1.1
@@ -195,6 +200,11 @@ jobs:
       if: ${{needs.Check-Info-Tool-Build.outputs.ok_to_proceed != 'N' }}
       uses: actions/checkout@v4
 
+    - name: Pull Latest 
+      if: ${{needs.Check-Info-Tool-Build.outputs.ok_to_proceed != 'N' }}
+      run: |
+        git pull
+        
     # Handle both a normal commit and a merge request
     # As repository is in a detached HEAD state in merge request.
     - name: Determine branch name
