@@ -49,24 +49,21 @@ jobs:
   # on main are supposed to be latest once built from the latest update.
   #
   Check-Trigger:
-    runs-on: windows-latest
-    outputs:
-      is_tag: ${{ steps.set-tag-output.outputs.is_tag }}
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
       - name: Check if triggered by a tag
-        id: set-tag-output
+        id: check
         run: |
-          if ($env:GITHUB_REF -like 'refs/tags/*') {
-            echo "Triggered by a tag"
+          if [[ "${GITHUB_REF}" == refs/tags/* ]]; then
             echo "is_tag=true" >> $GITHUB_ENV
-          } else {
-            echo "Not triggered by a tag"
+          else
             echo "is_tag=false" >> $GITHUB_ENV
-          }
-
+          fi
+          echo "Tag Triggered: ${{env.is_tag}}"
+          
   # ===========================================================================
   #
   # Upon any change in sub files of ./dummy, the action does the following:
@@ -76,8 +73,8 @@ jobs:
   #
   Check-Build-Dummy-Library-Using-MSBuild:
     runs-on: ubuntu-latest
-    if: env.is_tag == 'false'
     needs: Check-Trigger
+    if: env.is_tag == 'false'
 
     # Map a step output to a job output
     outputs:
