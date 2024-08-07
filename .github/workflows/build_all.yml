@@ -106,16 +106,26 @@ jobs:
     - name: Checkout Code
       if: ${{needs.Check-Build-Dummy-Library-Using-MSBuild.outputs.ok_to_proceed != 'N' }}
       uses: actions/checkout@v4
-      
+
+    - name: Check if triggered by a tag
+      if: ${{needs.Check-Build-Dummy-Library-Using-MSBuild.outputs.ok_to_proceed != 'N' }}
+      id: check_tag
+      run: |
+        if ($env:GITHUB_REF -like 'refs/tags/*') {
+          echo "is_tag=true" | Out-File -FilePath $env:GITHUB_ENV -Append
+        } else {
+          echo "is_tag=false" | Out-File -FilePath $env:GITHUB_ENV -Append
+        }      
+        
     - name: Pull Latest 
       if: ${{needs.Check-Build-Dummy-Library-Using-MSBuild.outputs.ok_to_proceed != 'N' }}
       run: |
-        if ($env:GITHUB_REF -like 'refs/tags/*') {
+        if ($env.is_tag == 'true') {
           git fetch origin
           git checkout origin/main
         }
         git pull --rebase origin main
-        
+
     - name: Add MSBuild to PATH
       if: ${{needs.Check-Build-Dummy-Library-Using-MSBuild.outputs.ok_to_proceed != 'N' }}
       uses: microsoft/setup-msbuild@v1.1
@@ -129,6 +139,7 @@ jobs:
         msbuild ${{env.SOLUTION_FILE_PATH}} /m /property:Configuration=Release /property:Platform=${{env.BUILD_PLATFORM}}
         Copy-Item ${{env.X64_OUTPUT_DIR}}${{env.X64_DUMMY_DLL_NAME}} -Destination ${{env.DUMMY_LIB_PTH}}
         Copy-Item ${{env.X64_OUTPUT_DIR}}${{env.X64_DUMMY_LIB_NAME}} -Destination ${{env.DUMMY_LIB_PTH}}
+         git push origin HEAD:<name-of-remote-branch>
   
     - name: Commit x64 DLL
       if: ${{needs.Check-Build-Dummy-Library-Using-MSBuild.outputs.ok_to_proceed != 'N' }}
