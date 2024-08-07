@@ -106,26 +106,7 @@ jobs:
     - name: Checkout Code
       if: ${{needs.Check-Build-Dummy-Library-Using-MSBuild.outputs.ok_to_proceed != 'N' }}
       uses: actions/checkout@v4
-
-    - name: Check if triggered by a tag
-      if: ${{needs.Check-Build-Dummy-Library-Using-MSBuild.outputs.ok_to_proceed != 'N' }}
-      id: check_tag
-      run: |
-        if ($env:GITHUB_REF -like 'refs/tags/*') {
-          echo "is_tag=true" | Out-File -FilePath $env:GITHUB_ENV -Append
-        } else {
-          echo "is_tag=false" | Out-File -FilePath $env:GITHUB_ENV -Append
-        }      
-        
-    - name: Pull Latest 
-      if: ${{needs.Check-Build-Dummy-Library-Using-MSBuild.outputs.ok_to_proceed != 'N' }}
-      run: |
-        if ($env:GITHUB_REF -like 'refs/tags/*') {
-          git fetch origin
-          git checkout origin/main
-        }
-        git pull --rebase origin main
-
+      
     - name: Add MSBuild to PATH
       if: ${{needs.Check-Build-Dummy-Library-Using-MSBuild.outputs.ok_to_proceed != 'N' }}
       uses: microsoft/setup-msbuild@v1.1
@@ -139,7 +120,6 @@ jobs:
         msbuild ${{env.SOLUTION_FILE_PATH}} /m /property:Configuration=Release /property:Platform=${{env.BUILD_PLATFORM}}
         Copy-Item ${{env.X64_OUTPUT_DIR}}${{env.X64_DUMMY_DLL_NAME}} -Destination ${{env.DUMMY_LIB_PTH}}
         Copy-Item ${{env.X64_OUTPUT_DIR}}${{env.X64_DUMMY_LIB_NAME}} -Destination ${{env.DUMMY_LIB_PTH}}
-         git push origin HEAD:<name-of-remote-branch>
   
     - name: Commit x64 DLL
       if: ${{needs.Check-Build-Dummy-Library-Using-MSBuild.outputs.ok_to_proceed != 'N' }}
@@ -215,11 +195,6 @@ jobs:
       if: ${{needs.Check-Info-Tool-Build.outputs.ok_to_proceed != 'N' }}
       uses: actions/checkout@v4
 
-    - name: Pull Latest 
-      if: ${{needs.Check-Info-Tool-Build.outputs.ok_to_proceed != 'N' }}
-      run: |
-        git pull
-        
     # Handle both a normal commit and a merge request
     # As repository is in a detached HEAD state in merge request.
     - name: Determine branch name
@@ -246,14 +221,14 @@ jobs:
       run: |
         cd go\info\src-cgo 
         go build -o ${{env.X64_EXE_NAME}} .\xhptdc8_info.go .\info_aux.go
-        cd ..\..\..\
+        cd ..\..\..\       
     
-    - name: Copy EXE to Repository
+    - name: Copy x64 EXE to Repository
       if: ${{needs.Check-Info-Tool-Build.outputs.ok_to_proceed != 'N' }}
       run: |
         copy ${{env.SOLUTION_FILE_PATH}}${{env.X64_EXE_NAME}} ${{env.CRONO_BIN_PATH_WIN}}${{env.X64_EXE_NAME}}
         
-    - name: Commit EXE
+    - name: Commit x64 EXE
       if: ${{needs.Check-Info-Tool-Build.outputs.ok_to_proceed != 'N' }}
       uses: EndBug/add-and-commit@v9
       with:
@@ -476,7 +451,7 @@ jobs:
       run: |
         Copy-Item ${{env.CRONO_BIN_PATH}}${{env.X64_EXE_NAME}} -Destination ${{env.DUMMY_LIB_PTH}}
   
-    - name: Commit EXE
+    - name: Commit x64 EXE
       if: ${{needs.Check-Util-Test.outputs.ok_to_proceed != 'N' }}
       uses: EndBug/add-and-commit@v9
       with:
@@ -523,7 +498,7 @@ jobs:
         cmake -B ${{env.BUILD_PATH}} -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
         cmake --build ${{env.BUILD_PATH}}
   
-    - name: Commit EXE
+    - name: Commit x64 EXE
       if: ${{needs.Check-Util-Test.outputs.ok_to_proceed != 'N' }}
       uses: EndBug/add-and-commit@v9
       with:
