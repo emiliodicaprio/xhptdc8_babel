@@ -103,6 +103,11 @@ jobs:
       run: |
         echo "Job execution processing is suppressed for no cencerned files are changed."
 
+    - name: Pull latest
+      if: ${{needs.Check-Build-Dummy-Library-Using-MSBuild.outputs.ok_to_proceed != 'N' }}
+      run: |
+        git pull
+
     - name: Checkout Code
       if: ${{needs.Check-Build-Dummy-Library-Using-MSBuild.outputs.ok_to_proceed != 'N' }}
       uses: actions/checkout@v4
