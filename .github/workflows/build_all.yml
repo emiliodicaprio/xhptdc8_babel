@@ -120,7 +120,7 @@ jobs:
     - name: Pull Latest 
       if: ${{needs.Check-Build-Dummy-Library-Using-MSBuild.outputs.ok_to_proceed != 'N' }}
       run: |
-        if ($env.is_tag == 'true') {
+        if ($env:GITHUB_REF -like 'refs/tags/*') {
           git fetch origin
           git checkout origin/main
         }
