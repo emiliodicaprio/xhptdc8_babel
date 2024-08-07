@@ -171,6 +171,7 @@ jobs:
   Check-Info-Tool-Build:
     runs-on: ubuntu-latest
     # Map a step output to a job output
+    needs: Check-Trigger    
     if: env.is_tag == 'false'
 
     outputs:
@@ -261,6 +262,7 @@ jobs:
   #
   Check-Util-Library:
     runs-on: ubuntu-latest
+    needs: Check-Trigger
     if: env.is_tag == 'false'
 
     # Map a step output to a job output
@@ -397,6 +399,7 @@ jobs:
   #
   Check-Util-Test:
     runs-on: ubuntu-latest
+    needs: Check-Trigger
     if: env.is_tag == 'false'
 
     # Map a step output to a job output
@@ -533,6 +536,7 @@ jobs:
   #
   Check-Build-UG_EX:
     runs-on: ubuntu-latest
+    needs: Check-Trigger
     if: env.is_tag == 'false'
 
     # Map a step output to a job output
@@ -653,6 +657,7 @@ jobs:
   #
   Check-Readout-Tool-Build:
     runs-on: ubuntu-latest
+    needs: Check-Trigger
     if: env.is_tag == 'false'
 
     # Map a step output to a job output
