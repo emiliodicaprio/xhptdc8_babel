@@ -110,10 +110,10 @@ jobs:
     - name: Pull Latest 
       if: ${{needs.Check-Build-Dummy-Library-Using-MSBuild.outputs.ok_to_proceed != 'N' }}
       run: |
-        $branch = git symbolic-ref --short HEAD
-        echo "branch=$branch" | Out-File -FilePath $env:GITHUB_ENV -Append
-        git checkout $branch
-        git pull
+        if ($env:GITHUB_REF -like 'refs/tags/*') {
+           git checkout main
+        }
+        git pull --rebase
         
     - name: Add MSBuild to PATH
       if: ${{needs.Check-Build-Dummy-Library-Using-MSBuild.outputs.ok_to_proceed != 'N' }}
