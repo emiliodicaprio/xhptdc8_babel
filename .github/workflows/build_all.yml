@@ -115,7 +115,20 @@ jobs:
         } else {
           Write-Host ".git directory does not exist"
         }
+        
+    - name: Remove existing .git directory (cleanup)
+      if: ${{ needs.Check-Build-Dummy-Library-Using-MSBuild.outputs.ok_to_proceed != 'N' }}
+      run: |
+        if (Test-Path -Path .git) {
+          Remove-Item -Recurse -Force .git
+        } else {
+          Write-Host ".git directory does not exist"
+        }
           
+    - name: Checkout Code
+      if: ${{needs.Check-Build-Dummy-Library-Using-MSBuild.outputs.ok_to_proceed != 'N' }}
+      uses: actions/checkout@v4
+      
     - name: Pull latest
       if: ${{needs.Check-Build-Dummy-Library-Using-MSBuild.outputs.ok_to_proceed != 'N' }}
       run: |
