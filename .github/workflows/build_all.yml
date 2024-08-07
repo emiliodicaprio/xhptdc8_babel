@@ -111,7 +111,8 @@ jobs:
       if: ${{needs.Check-Build-Dummy-Library-Using-MSBuild.outputs.ok_to_proceed != 'N' }}
       run: |
         if ($env:GITHUB_REF -like 'refs/tags/*') {
-           git checkout origin/main
+          git fetch origin
+          git checkout origin/main
         }
         git pull --rebase
         
