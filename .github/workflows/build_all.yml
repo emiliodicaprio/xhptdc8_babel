@@ -61,10 +61,10 @@ jobs:
         run: |
           if ($env:GITHUB_REF -like 'refs/tags/*') {
             echo "Triggered by a tag"
-            echo "is_tag=true" >> $GITHUB_OUTPUT
+            echo "is_tag=true" >> $GITHUB_ENV
           } else {
             echo "Not triggered by a tag"
-            echo "is_tag=false" >> $GITHUB_OUTPUT
+            echo "is_tag=false" >> $GITHUB_ENV
           }
 
   # ===========================================================================
@@ -76,7 +76,7 @@ jobs:
   #
   Check-Build-Dummy-Library-Using-MSBuild:
     runs-on: ubuntu-latest
-    if: ${{needs.Check-Trigger.outputs.is_tag != 'true'}}  
+    if: env.is_tag == 'false'
 
     # Map a step output to a job output
     outputs:
@@ -107,7 +107,7 @@ jobs:
   #
   Build-Dummy-Library-Using-MSBuild:
     runs-on: windows-latest
-    if: ${{needs.Check-Trigger.outputs.is_tag != 'true'}}  
+    if: env.is_tag == 'false'
 
     needs:
     - Check-Build-Dummy-Library-Using-MSBuild
@@ -173,7 +173,7 @@ jobs:
   Check-Info-Tool-Build:
     runs-on: ubuntu-latest
     # Map a step output to a job output
-    if: ${{needs.Check-Trigger.outputs.is_tag != 'true'}}  
+    if: env.is_tag == 'false'
 
     outputs:
       ok_to_proceed: ${{ steps.check.outputs.ok_to_proceed_val }}
@@ -204,7 +204,7 @@ jobs:
   #
   Info-Tool-Build:
     runs-on: windows-latest
-    if: ${{needs.Check-Trigger.outputs.is_tag != 'true'}}  
+    if: env.is_tag == 'false'
 
     needs: 
     - Check-Info-Tool-Build    
@@ -263,7 +263,7 @@ jobs:
   #
   Check-Util-Library:
     runs-on: ubuntu-latest
-    if: ${{needs.Check-Trigger.outputs.is_tag != 'true'}}  
+    if: env.is_tag == 'false'
 
     # Map a step output to a job output
     outputs:
@@ -295,7 +295,7 @@ jobs:
   #
   Util-Library-Win:
     runs-on: windows-latest
-    if: ${{needs.Check-Trigger.outputs.is_tag != 'true'}}  
+    if: env.is_tag == 'false'
 
     needs: 
     - Check-Util-Library
@@ -355,7 +355,7 @@ jobs:
   #
   Util-Library-Linux:
     runs-on: ubuntu-latest
-    if: ${{needs.Check-Trigger.outputs.is_tag != 'true'}}  
+    if: env.is_tag == 'false'
 
     needs: 
     - Check-Util-Library
@@ -399,7 +399,7 @@ jobs:
   #
   Check-Util-Test:
     runs-on: ubuntu-latest
-    if: ${{needs.Check-Trigger.outputs.is_tag != 'true'}}  
+    if: env.is_tag == 'false'
 
     # Map a step output to a job output
     outputs:
@@ -431,7 +431,7 @@ jobs:
   # 
   Util-Test-Win:
     runs-on: windows-latest
-    if: ${{needs.Check-Trigger.outputs.is_tag != 'true'}}  
+    if: env.is_tag == 'false'
 
     needs: 
     - Check-Util-Test
@@ -489,7 +489,7 @@ jobs:
   # ___________________________________________________________________________
   Util-Test-Linux:
     runs-on: ubuntu-latest
-    if: ${{needs.Check-Trigger.outputs.is_tag != 'true'}}  
+    if: env.is_tag == 'false'
 
     needs:
     - Check-Util-Test
@@ -535,7 +535,7 @@ jobs:
   #
   Check-Build-UG_EX:
     runs-on: ubuntu-latest
-    if: ${{needs.Check-Trigger.outputs.is_tag != 'true'}}  
+    if: env.is_tag == 'false'
 
     # Map a step output to a job output
     outputs:
@@ -567,7 +567,7 @@ jobs:
   # 
   UG_EX-Linux-Build:
     runs-on: ubuntu-latest
-    if: ${{needs.Check-Trigger.outputs.is_tag != 'true'}}  
+    if: env.is_tag == 'false'
 
     needs: 
     - Check-Build-UG_EX
@@ -611,7 +611,7 @@ jobs:
   # 
   UG_EX-Win-Build:
     runs-on:  windows-latest
-    if: ${{needs.Check-Trigger.outputs.is_tag != 'true'}}  
+    if: env.is_tag == 'false'
 
     needs: 
     - Check-Build-UG_EX
@@ -655,7 +655,7 @@ jobs:
   #
   Check-Readout-Tool-Build:
     runs-on: ubuntu-latest
-    if: ${{needs.Check-Trigger.outputs.is_tag != 'true'}}  
+    if: env.is_tag == 'false'
 
     # Map a step output to a job output
     outputs:
@@ -688,7 +688,7 @@ jobs:
   #
   Readout-Tool-Build:
     runs-on: windows-latest
-    if: ${{needs.Check-Trigger.outputs.is_tag != 'true'}}  
+    if: env.is_tag == 'false'
 
     needs: 
     - Check-Readout-Tool-Build    
